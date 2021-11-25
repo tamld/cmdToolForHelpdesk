@@ -1,6 +1,6 @@
 # InstallAppForHelpDesk
 
-Batch script CMD dành cho các bạn Helpdesk 
+Batch script CMD 
 - Hỗ trợ Font Unicode
 - Ứng dụng dành cho HĐH W10 x64
 - Offline file installer cần được tạo và đặt chung folder với file CMD
@@ -15,13 +15,13 @@ Batch script CMD dành cho các bạn Helpdesk
   + BCUninstaller.exe
   + SlackSetup.msi
 ======================================================================
-- Lưu ý: Nếu lười phải download thì có thể chọn chức năng [Main] > 6. Update bộ ứng dụng để download. File sẽ download về cùng thư mục với file CMD!
-- Nếu không muốn cài ứng dụng nào thì thêm REM trước dòng (80-87) trong installAPP.cmd
+- Lưu ý: Chức năng [Main] > 6. Update bộ ứng dụng có thể download luôn các offline cần thiết. File sẽ download về cùng thư mục với file CMD. Sau khi update thì bỏ vào chung 1 thư mục hoặc USB để tiện cho việc sử dụng
+- Nếu không muốn cài ứng dụng nào thì thêm REM trước dòng (từ dòng 80-87) trong installAPP.cmd
 - Ví dụ: REM MsiExec.exe /i SlackSetup.msi /qn /norestart
 ========================================================================
 Menu chức năng
 1. Cài Minisoft
-=> Các ứng dụng offline, dành cho văn phòng. 
+=> Các ứng dụng offline, dành cho văn phòng
 2. Cài Office 2019
 => Đang phát triển, dự kiến kết hợp 3rd App để download và cài đặt theo ngữ cảnh yêu cầu
 3. Active Windows+Office
@@ -33,5 +33,7 @@ Menu chức năng
 6. Update bộ ứng dụng
 => Download bộ ứng dụng offline install. Tiện cho việc bỏ vào USB, update thường xuyên dựa trên source trang chủ hoặc sourforget (latest)
 7. Winget
-=> Bộ công cụ quản lí gói cài đặt, hỗ trợ trên Windows 10, 1809 trở đi. Phát triển bởi Microsoft
+=> Bộ công cụ quản lí gói cài đặt, hỗ trợ trên Windows 10, 1809 trở đi. Phát triển bởi Microsoft. Hỗ trợ việc cài đặt, gỡ, update online bằng câu lệnh
 ========================================================================
+- Mục tiêu hỗ trợ cho công việc Helpdesk, kĩ thuật viên hàng ngày.
+- Các gói ứng dụng được lấy URL từ trang chủ hoặc SourceForget. Vui lòng kiểm tra xem gói ứng dụng là commercial hay noncommercial để có nhu cầu sử dụng phù hợp với đối tượng cá nhân hoặc doanh nghiệp
