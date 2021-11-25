@@ -85,7 +85,6 @@ npp.Installer.x64.exe /S
 AcroRdrDC.exe /sAll /rs /msi EULA_ACCEPT=YES
 BCUninstaller.exe /VERYSILENT 
 MsiExec.exe /i SlackSetup.msi /qn /norestart
-REM powershell Add-AppPackage -ForceUpdateFromAnyVersion .\Microsoft.DesktopAppInstaller.msixbundle
 xcopy "c:\Program Files\Unikey\UniKeyNT.exe" "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp" /y
 echo Softwares have been installed successfully
 goto winFreshConfigure
