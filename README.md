@@ -15,7 +15,7 @@ Batch script CMD dành cho các bạn Helpdesk
 	BCUninstaller.exe
 	SlackSetup.msi
 **** Lưu ý: Nếu lười phải download thì có thể chọn chức năng [Main] > 6. Update bộ ứng dụng để download. File sẽ download về cùng thư mục với file CMD!
-========================================================================================================================================================
+========================================================================
 1. Cài Minisoft
 => Các ứng dụng offline, dành cho văn phòng. 
 2. Cài Office 2019
@@ -30,4 +30,4 @@ Batch script CMD dành cho các bạn Helpdesk
 => Download bộ ứng dụng offline install. Tiện cho việc bỏ vào USB, update thường xuyên dựa trên source trang chủ hoặc sourforget (latest)
 7. Winget
 => Bộ công cụ quản lí gói cài đặt, hỗ trợ trên Windows 10, 1809 trở đi. Phát triển bởi Microsoft
-========================================================================================================================================================  
+========================================================================
