@@ -14,9 +14,9 @@ Batch script CMD dành cho các bạn Helpdesk
   + AcroRdrDC.exe
   + BCUninstaller.exe
   + SlackSetup.msi
-**** Lưu ý: Nếu lười phải download thì có thể chọn chức năng [Main] > 6. Update bộ ứng dụng để download. File sẽ download về cùng thư mục với file CMD!
-**** Nếu không muốn cài ứng dụng nào thì thêm REM trước dòng (80-87) trong installAPP.cmd
-********** Ví dụ: REM MsiExec.exe /i SlackSetup.msi /qn /norestart
+Lưu ý: Nếu lười phải download thì có thể chọn chức năng [Main] > 6. Update bộ ứng dụng để download. File sẽ download về cùng thư mục với file CMD!
+Nếu không muốn cài ứng dụng nào thì thêm REM trước dòng (80-87) trong installAPP.cmd
+Ví dụ: REM MsiExec.exe /i SlackSetup.msi /qn /norestart
 ========================================================================
 1. Cài Minisoft
 => Các ứng dụng offline, dành cho văn phòng. 
