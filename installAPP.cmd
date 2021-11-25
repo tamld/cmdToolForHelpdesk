@@ -210,9 +210,8 @@ goto main
 
 :installWinget
 cls
-CHCP 65001 >nul 2>&1
 echo Tiến hành cài đặt Winget
-if not exist Microsoft.VCLibs.x64.14.00.Desktop.appx (curl -o Microsoft.VCLibs.x64.14.00.Desktop.appx -fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx.appx)
+if not exist Microsoft.VCLibs.x64.14.00.Desktop.appx (curl -o Microsoft.VCLibs.x64.14.00.Desktop.appx -fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx)
 start powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
 if not exist Microsoft.DesktopAppInstaller.msixbundle (curl -o Microsoft.DesktopAppInstaller.msixbundle -fsSL https://github.com/microsoft/winget-cli/releases/download/v1.1.12653/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle)
 start powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
