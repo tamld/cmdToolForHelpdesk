@@ -130,19 +130,31 @@ goto main
 
 :supportAssistant
 cls
-echo Cài đặt ứng dụng Support Assistant cho Dell hoặc HP
-timeout 2
 for /f "tokens=2 delims==" %%b in ('wmic csproduct get vendor /value') do set branch=%%b
-if %branch%==HP (
+for /f "tokens=2 delims==" %%c in ('wmic computersystem get model /value') do set model=%%c
+echo ========================================================================
+echo 			Máy bạn là hãng: "%branch%"
+echo 			Model: "%model%"
+echo ========================================================================
+timeout 3
+if "%branch%"=="HP" (goto installSupportAssistant) else if "%branch%"=="DELL" (goto installSupportAssistant) else (cls && echo 			Máy không hỗ trợ ứng dụng này)
+timeout 1
+goto main
+
+:installSupportAssistant
+cls 
+echo Tiến hành cài đặt ứng dụng
+timeout 2
+if "%branch%"=="HP" (
 				if not exist HPSupportTools.exe (curl -# -o HPSupportTools.exe -fSL https://ftp.ext.hp.com/pub/softpaq/sp136001-136500/sp136195.exe)
-				call HPSupportTools.exe /s /f %temp%\HP
-				) else if %branch%==DELL (
-									if not exist DellSupportAssistant.exe (curl -# -o DellSupportAssistant.exe -L https://downloads.dell.com/serviceability/catalog/SupportAssistInstaller.exe)
-									call DellSupportAssistant.exe /s
-									)
-									else (echo Không tìm thấy Phần mềm phù hợp)
+				call HPSupportTools.exe /s /f %temp%\HP)
+if "%branch%"=="DELL" (
+					if not exist DellSupportAssistant.exe (curl -# -o DellSupportAssistant.exe -L https://downloads.dell.com/serviceability/catalog/SupportAssistInstaller.exe)
+					call DellSupportAssistant.exe /s)
+echo Đã cài đặt xong và tiến hành dọn file rác
 if exist "%temp%\HP" (rd "%temp%\HP" /q /s) else (echo Không tìm thấy file rác)
 if exist c:\system.sav (rd c:\system.sav /q /s)
+timeout 2
 goto main
 
 :updateSoftware
