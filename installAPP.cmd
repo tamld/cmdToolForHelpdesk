@@ -158,6 +158,7 @@ timeout 2
 goto main
 
 :updateSoftware
+cls
 echo Update Unikey 4.3 RC5 200929
 curl -# -o unikey43RC5-200929-win64.zip -L https://www.unikey.org/assets/release/unikey43RC5-200929-win64.zip
 timeout 1
@@ -197,6 +198,8 @@ cls
 echo Update Adobe Reader DC
 curl -o AcroRdrDC.exe -#fSL https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/2100720099/AcroRdrDC2100720099_en_US.exe
 echo update date (MM/DD/YY): %time%-%date% >>update.log
+echo Update các gói ứng dụng hoàn tất
+timeout 3
 goto main
 
 :winget
