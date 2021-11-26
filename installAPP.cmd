@@ -197,6 +197,13 @@ timeout 1
 cls
 echo Update Adobe Reader DC
 curl -o AcroRdrDC.exe -#fSL https://ardownload2.adobe.com/pub/adobe/reader/win/AcrobatDC/2100720099/AcroRdrDC2100720099_en_US.exe
+timeout 1
+cls
+echo Update VCLibs.x64.14
+curl -o Microsoft.VCLibs.x64.14.00.Desktop.appx -fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
+echo Update Winget
+curl -o Microsoft.DesktopAppInstaller.msixbundle -fsSL https://github.com/microsoft/winget-cli/releases/download/v1.1.12653/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+cls
 echo update date (MM/DD/YY): %time%-%date% >>update.log
 echo Update các gói ứng dụng hoàn tất
 timeout 3
@@ -230,6 +237,8 @@ if not exist Microsoft.VCLibs.x64.14.00.Desktop.appx (curl -o Microsoft.VCLibs.x
 start powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
 if not exist Microsoft.DesktopAppInstaller.msixbundle (curl -o Microsoft.DesktopAppInstaller.msixbundle -fsSL https://github.com/microsoft/winget-cli/releases/download/v1.1.12653/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle)
 start powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
+REM del Microsoft.VCLibs.x64.14.00.Desktop.appx
+REM del Microsoft.DesktopAppInstaller.msixbundle
 echo Đã cài đặt Winget thành công
 timeout 2
 goto :winget
@@ -266,7 +275,7 @@ REM winget install --scope machine -h
 REM DucFabulous.UltraViewer
 REM TeamViewer.TeamViewer
 echo Tiến hành cài đặt Ultraviewer và Teamviewer 
-winget install DucFabulous.UltraViewer -h && winget install TeamViewer.TeamViewer -h
+winget install TeamViewer.TeamViewer -h && winget install DucFabulous.UltraViewer -h --force
 cls
 goto :winget
 
