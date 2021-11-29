@@ -17,10 +17,10 @@ title Main menu
 @echo                    [  3. Active Windows+Office     		  : Nhấn phím số 3  ]
 @echo                    [  4. Đổi tên hostname       		  : Nhấn phím số 4  ]
 REM @echo                    [  5. Lấy thông tin máy tính       		  : Nhấn phím số 5  ]
-@echo                    [  5. Cài đặt Support Assistant                : Nhấn phím số 6  ]
-@echo                    [  6. Update bộ ứng dụng                	  : Nhấn phím số 7  ]
-@echo                    [  7. Winget                	  		  : Nhấn phím số 8  ]
-@echo                    [  8. Thoát                               	  : Nhấn phím số 9  ]
+@echo                    [  5. Cài đặt Support Assistant                : Nhấn phím số 5  ]
+@echo                    [  6. Update bộ ứng dụng                	  : Nhấn phím số 6  ]
+@echo                    [  7. Winget                	  		  : Nhấn phím số 7  ]
+@echo                    [  8. Thoát                               	  : Nhấn phím số 8  ]
 @echo                    ===========================================================================
 Choice /N /C 123456789 /M "* Nhập lựa chọn của bạn :
 if ERRORLEVEL == 8 goto :end
@@ -275,7 +275,7 @@ REM winget install --scope machine -h
 REM DucFabulous.UltraViewer
 REM TeamViewer.TeamViewer
 echo Tiến hành cài đặt Ultraviewer và Teamviewer 
-winget install TeamViewer.TeamViewer -h && winget install DucFabulous.UltraViewer -h --force
+winget install TeamViewer.TeamViewer -h --accept-source-agreements && winget install DucFabulous.UltraViewer -h --force --accept-source-agreements
 cls
 goto :winget
 
