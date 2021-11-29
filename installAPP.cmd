@@ -69,11 +69,11 @@ goto main
 
 :installMiniSofts
 cls
-echo ==================================================
+echo ===================================================================================
 echo 					Script auto install some software
 echo 	7zip, Unikey, Chrome, Firefox, Notepad++, PDF Reader (Adobe)
-echo 	offline files must place within batch file
-echo ==================================================
+echo 			 Offline files must place within batch file
+echo ===================================================================================
 timeout 2
 cls
 @echo off
