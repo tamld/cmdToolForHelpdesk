@@ -8,6 +8,7 @@ if '%errorlevel%' NEQ '0' ( echo Chạy CMD với quyền quản trị Administr
 							goto exit
 							) else ( goto main )
 :main
+cd /d %~dp0
 CHCP 65001 >nul 2>&1
 cls
 title Main menu
@@ -66,7 +67,7 @@ REM echo ==================================================
 echo 					Restart máy tính để apply các thiết đặt
 timeout 2
 cls
-goto main
+goto:eof
 
 :installMiniSofts
 cls
@@ -78,6 +79,11 @@ echo ===========================================================================
 timeout 2
 cls
 @echo off
+if not exist localFiles (mkdir localFiles && call:updateSoftware && call:installOfflineFile) else (call:installOfflineFile)
+goto main
+
+:installOfflineFile
+cd /d localFiles
 7zx64.exe /S
 if not exist "C:\Program Files\Unikey" ("c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey")
 ChromeStandaloneSetup64.exe /silent /install
@@ -87,8 +93,8 @@ AcroRdrDC.exe /sAll /rs /msi EULA_ACCEPT=YES
 BCUninstaller.exe /VERYSILENT 
 MsiExec.exe /i SlackSetup.msi /qn /norestart
 xcopy "c:\Program Files\Unikey\UniKeyNT.exe" "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp" /y
-echo Softwares have been installed successfully
-goto winFreshConfigure
+REM call:winFreshConfigure
+goto:eof
 
 :changeComputerName
 cls
@@ -159,6 +165,7 @@ timeout 2
 goto main
 
 :updateSoftware
+cd /d localFiles
 cls
 echo Update Unikey 4.3 RC5 200929
 curl -# -o unikey43RC5-200929-win64.zip -L https://www.unikey.org/assets/release/unikey43RC5-200929-win64.zip
@@ -208,9 +215,10 @@ cls
 echo update date (MM/DD/YY): %time%-%date% >>update.log
 echo Update các gói ứng dụng hoàn tất
 timeout 3
-goto main
+goto:eof
 
 :winget
+cd /d %~dp0
 CHCP 65001 >nul 2>&1
 cls
 title Winget Main Menu
@@ -257,6 +265,7 @@ echo *******************************************
 timeout 2
 cls
 winget install VNGCorp.Zalo -h && winget install SlackTechnologies.Slack --scope machine -h && winget install -h 7zip.7zip && winget install -h Foxit.FoxitReader && winget install -h Notepad++.Notepad++ && winget install -h --scope machine Google.Chrome && winget install -h --scope machine Mozilla.Firefox && winget install -h Klocman.BulkCrapUninstaller && winget install --scope machine -h Klocman.BulkCrapUninstaller
+REM if not exist unikey43RC5-200929-win64.zip 
 if not exist "C:\Program Files\Unikey" ("c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey")
 if not exist "C:\Program Files\Unikey" (echo Không tìm thấy Unikey để thêm vào startup) else (xcopy "c:\Program Files\Unikey\UniKeyNT.exe" "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp" /y)
 REM winget install --scope machine -h
