@@ -8,6 +8,7 @@ if '%errorlevel%' NEQ '0' ( echo Chạy CMD với quyền quản trị Administr
 							goto exit
 							) else ( goto main )
 :main
+CHCP 65001 >nul 2>&1
 cls
 title Main menu
 @echo Bạn muốn làm gì
@@ -210,15 +211,16 @@ timeout 3
 goto main
 
 :winget
+CHCP 65001 >nul 2>&1
 cls
 title Winget Main Menu
 @echo Bạn muốn làm gì
 @echo                    ===========================================================================
 @echo                    [  1. Cài đặt Winget         			: Nhấn phím số 1  ]
-@echo                    [  2. Cài các ứng dụng cơ bản online         	: Nhấn phím số 1  ]
-@echo                    [  3. Cài các ứng dụng hỗ trợ từ xa          	: Nhấn phím số 2  ]
-@echo                    [  4. Uprade tất cả ứng dụng online          	: Nhấn phím số 3  ]
-@echo                    [  5. Về Main Menu                             	: Nhấn phím số 4  ]
+@echo                    [  2. Cài các ứng dụng cơ bản online         	: Nhấn phím số 2  ]
+@echo                    [  3. Cài các ứng dụng hỗ trợ từ xa          	: Nhấn phím số 3  ]
+@echo                    [  4. Uprade tất cả ứng dụng online          	: Nhấn phím số 4  ]
+@echo                    [  5. Về Main Menu                             	: Nhấn phím số 5  ]
 @echo                    ===========================================================================
 Choice /N /C 12345 /M "* Nhập lựa chọn của bạn :
 
