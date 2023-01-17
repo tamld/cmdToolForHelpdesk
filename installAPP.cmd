@@ -21,13 +21,13 @@ rem Go UAC to get Admin privileges
     CD /D "%~dp0"
 rem ========================================================================================================================================	
 :main
-setlocal
 set "_dp=%~dp0"
 set "_sys32=%windir%\system32"
 call :get_OfficePath
 set "_officePath=%cd%"
 set "_programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
 cd /d "%_dp%"
+setlocal
 cls
 title Main Menu
 echo.
@@ -42,7 +42,7 @@ echo    [7] Exit                                : Press 7
 echo    =================================================
 Choice /N /C 1234567 /M " Your choice is :"
 if ERRORLEVEL == 7 goto end
-if ERRORLEVEL == 6 goto updateCMD-Menu
+if ERRORLEVEL == 6 goto updateCMD
 if ERRORLEVEL == 5 goto winget
 if ERRORLEVEL == 4 goto utilities
 if ERRORLEVEL == 3 goto activeLicenses
@@ -233,6 +233,7 @@ rem Start of Active Lienses functions
 rem End of Active Lienses functions
 REM ========================================================================================================================================
 :utilities
+setlocal
 rem Start of Utilities Menu
 cls
 title Utilities Main Menu
@@ -260,6 +261,7 @@ if ERRORLEVEL == 4 goto :updateWinget-All
 if ERRORLEVEL == 3 goto :cleanUpSystem
 if ERRORLEVEL == 2 goto :changeHostName
 if ERRORLEVEL == 1 goto :setHighPerformance
+endlocal
 rem End of Utilities Menu
 rem ==============================================================================
 rem Start of Utilities functions
@@ -306,6 +308,7 @@ rem Start of Utilities functions
 rem End of Utilities functions
 REM ========================================================================================================================================
 :winget
+setlocal
 rem Start of Winget Menu
 cd /d %_dp%
 cls
@@ -324,16 +327,42 @@ if ERRORLEVEL == 4 goto :updateWinget-All
 if ERRORLEVEL == 3 goto :installWinget-RemoteSupport
 if ERRORLEVEL == 2 goto :installWinget-Utilities
 if ERRORLEVEL == 1 goto :installWinget
+endlocal
 rem End of Winget Menu
 rem ==============================================================================
 rem Start of Winget functions
 :updateWinget-All
+   cls
+    ::put actions here
+    goto :winget
+
 :installWinget-RemoteSupport
+   cls
+    ::put actions here
+    goto :winget
+
 :installWinget-Utilities
+   cls
+    ::put actions here
+    goto :winget
+
 :installWinget
+   cls
+    ::put actions here
+    goto :winget
+
 rem End of Winget functions
 REM ========================================================================================================================================
+rem function update CMD via github
+:updateCMD
+   cls
+    ::put actions here
+    goto :main
 
+REM ========================================================================================================================================
+rem Start of child process functions
+
+rem End of child process functions
 REM ========================================================================================================================================
 :end
 exit
