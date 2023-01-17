@@ -1,41 +1,114 @@
 echo off
-Title Script Auto install Software v0.1
-cd /d %~dp0
-CHCP 65001 >nul 2>&1
+Title Script Auto install Software v0.1 Jan 16, 2023
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
-if '%errorlevel%' NEQ '0' ( echo Chạy CMD với quyền quản trị Administrator - Run as Administrator...
-							PAUSE 
-							goto exit
-							) else ( goto main )
+if '%errorlevel%' NEQ '0' (
+    echo  Run CMD as Administrator...
+    goto goUAC
+) else (
+ goto goADMIN )
+
+::Go UAC to get Admin privileges
+:goUAC
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    set params = %*:"=""
+    echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs"
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /B
+
+:goADMIN
+    pushd "%CD%"
+    CD /D "%~dp0"
+REM ========================================================================================================================================	
 :main
-cd /d %~dp0
-CHCP 65001 >nul 2>&1
+setlocal
+set "_dp=%~dp0"
+set "_sys32=%windir%\system32"
+call :get_OfficePath
+set "_officePath=%cd%"
+set "_programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
+cd /d "%_dp%"
 cls
-title Main menu
-@echo Bạn muốn làm gì
-@echo                    ===========================================================================
-@echo                    [  1. Cài Minisoft                             : Nhấn phím số 1  ]
-@echo                    [  2. Cài Office 2016                          : Nhấn phím số 2  ]
-@echo                    [  3. Active Windows+Office     		  : Nhấn phím số 3  ]
-@echo                    [  4. Đổi tên hostname       		  : Nhấn phím số 4  ]
-REM @echo                    [  5. Lấy thông tin máy tính       		  : Nhấn phím số 5  ]
-@echo                    [  5. Cài đặt Support Assistant                : Nhấn phím số 5  ]
-@echo                    [  6. Update bộ ứng dụng                	  : Nhấn phím số 6  ]
-@echo                    [  7. Winget                	  		  : Nhấn phím số 7  ]
-@echo                    [  8. Thoát                               	  : Nhấn phím số 8  ]
-@echo                    ===========================================================================
-Choice /N /C 123456789 /M "* Nhập lựa chọn của bạn :
-if ERRORLEVEL == 8 goto :end
-if ERRORLEVEL == 7 goto :winget
-if ERRORLEVEL == 6 goto :updateSoftware
-if ERRORLEVEL == 5 goto :supportAssistant
-REM if ERRORLEVEL == 5 goto :getPCInfor
-if ERRORLEVEL == 4 goto :changeComputerName
-if ERRORLEVEL == 3 goto :activeLicenses
-if ERRORLEVEL == 2 goto :installOffice
-if ERRORLEVEL == 1 goto :installMiniSofts
-PAUSE
+title Main Menu
+echo.
+echo    =================================================
+echo    [1] Install AIO Online                  : Press 1
+echo    [2] Office                              : Press 2
+echo    [3] Active Windows-Office               : Press 3
+echo    [4] Utilities                           : Press 4
+echo    [5] Winget                              : Press 5
+echo    [6] Update CMD                          : Press 6
+echo    [7] Exit                                : Press 7
+echo    =================================================
+Choice /N /C 1234567 /M " Your choice is :"
+if ERRORLEVEL == 7 goto end
+if ERRORLEVEL == 6 goto updateCMD-Menu
+if ERRORLEVEL == 5 goto winget
+if ERRORLEVEL == 4 goto utilities
+if ERRORLEVEL == 3 goto activeO-W
+if ERRORLEVEL == 2 goto office-windows
+if ERRORLEVEL == 1 goto installAIOMenu
+endlocal
 goto end
+REM ========================================================================================================================================
+rem Install Software Online using Winget or Chocolately
+:installAIOMenu
+setlocal
+cls
+title Install AIO online
+echo.
+echo  Sub menu Install AIO online
+echo.
+echo        =================================================
+echo        [1] Fresh Install                       : Press 1
+echo        [2] From Backup                         : Press 2
+echo        [3] Main Menu                           : Press 3
+echo        =================================================
+Choice /N /C 123 /M " Press your choice : "
+if ERRORLEVEL == 3 goto main
+if ERRORLEVEL == 2 goto installAIOFromBK
+if ERRORLEVEL == 1 goto installAIO
+endlocal
+REM ========================================================================================================================================
+rem function install fresh Windows using Winget utilities
+:installAIO
+rem call :settingWindows
+rem call :installWinget
+rem call :installWinget-Utilities
+rem call :installWinget-Remote
+rem call :installUnikey
+rem call :func_CreateShortcut
+rem call :settingPowerPlan
+rem call :func_InstallOffice19Pro_VL
+REM call :func_InstallSupportAssist
+goto :main
+
+rem function install Windows from a backup - has been generated from Winget and reinstall once
+:installAIOFromBK
+rem call :settingWindows
+rem call :installWinget
+rem call :installWinget-Utilities
+rem call :installWinget-Remote
+rem call :installUnikey
+rem call :func_InstallOffice19Pro_VL
+rem call :func_CreateShortcut
+rem call :settingPowerPlan
+rem call :func_InstallSupportAssist
+goto :main
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 :winFreshConfigure
 cls
@@ -102,7 +175,7 @@ echo ==================================================
 echo 			Change Computer Name
 echo ==================================================
 echo Nhập hostname mới
-echo Hostname cần viết liền, gồm chữ và số và dấu - hoặc _
+echo Hostname cần viết liờn, gồm chữ và số và dấu - hoặc _
 echo Không có kí tự đặc biệt (!@#$~./...)
 echo Restart để apply 
 set /p newcomputername=
@@ -158,7 +231,7 @@ if "%branch%"=="HP" (
 if "%branch%"=="DELL" (
 					if not exist DellSupportAssistant.exe (curl -# -o DellSupportAssistant.exe -L https://downloads.dell.com/serviceability/catalog/SupportAssistInstaller.exe)
 					call DellSupportAssistant.exe /s)
-echo Đã cài đặt xong và tiến hành dọn file rác
+echo ĝã cài đặt xong và tiến hành dờn file rác
 if exist "%temp%\HP" (rd "%temp%\HP" /q /s) else (echo Không tìm thấy file rác)
 if exist c:\system.sav (rd c:\system.sav /q /s)
 timeout 2
@@ -228,9 +301,9 @@ title Winget Main Menu
 @echo                    [  2. Cài các ứng dụng cơ bản online         	: Nhấn phím số 2  ]
 @echo                    [  3. Cài các ứng dụng hỗ trợ từ xa          	: Nhấn phím số 3  ]
 @echo                    [  4. Uprade tất cả ứng dụng online          	: Nhấn phím số 4  ]
-@echo                    [  5. Về Main Menu                             	: Nhấn phím số 5  ]
+@echo                    [  5. Vờ Main Menu                             	: Nhấn phím số 5  ]
 @echo                    ===========================================================================
-Choice /N /C 12345 /M "* Nhập lựa chọn của bạn :
+Choice /N /C 12345 /M "* Nhập lựa chờn của bạn :
 
 if ERRORLEVEL == 5 goto :main
 if ERRORLEVEL == 4 goto :wingetUpdateAll
@@ -249,7 +322,7 @@ if not exist Microsoft.DesktopAppInstaller.msixbundle (curl -o Microsoft.Desktop
 start powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
 REM del Microsoft.VCLibs.x64.14.00.Desktop.appx
 REM del Microsoft.DesktopAppInstaller.msixbundle
-echo Đã cài đặt Winget thành công
+echo ĝã cài đặt Winget thành công
 timeout 2
 goto :winget
 
