@@ -348,7 +348,7 @@ rem Start of Winget functions
 
 :installWinget
    cls
-    ::put actions here
+    call :checkWinget
     goto :winget
 
 rem End of Winget functions
@@ -361,6 +361,48 @@ rem function update CMD via github
 
 REM ========================================================================================================================================
 rem Start of child process functions
+rem function checkWinget will check if winget is installed or neither. If not, go to installWinget function
+:checkWinget
+    cls
+    echo off
+    if not exist "%ProgramFiles(x86)%\WindowsApps\Microsoft.WindowsStore_11901.1001.0.0_x64__8wekyb3d8bbwe\AppxManifest.xml" (
+       echo Start to install winget
+    	 call :log "Winget Installation started"
+       call :installWinget
+       call :log "Winget Installation finished"
+    	 timeout 3
+    ) else (
+        call :log "Winget already installed"
+        timeout 3
+    )
+    exit /b
+
+:installWinget
+    cd /d %temp%
+    cls
+    call :log "Starting Winget installation from GitHub"
+    rem Download the latest version of Winget from GitHub
+    curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
+    curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+    start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
+    call :log "Finished Winget installation requesting packages"
+	 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
+    call :log "Finished Winget installation msixbundle"
+	 call :log "Finished Winget installation from GitHub"
+	 cls
+    cd /d "%_dp%"
+    exit /b
+
+
+
+rem function log will append log to %temp%\installAPP.log with time, date, and the other function task
+rem %1 will inherit parameters from outside input function
+rem exit /b will exit function instead of remaining running scripts codes
+:log
+set logfile=%temp%\installAPP.log
+set timestamp=%date% %time%
+echo %timestamp% %1 >> %logfile%
+goto :EOF
 
 rem End of child process functions
 REM ========================================================================================================================================
