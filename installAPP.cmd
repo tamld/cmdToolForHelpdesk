@@ -332,22 +332,65 @@ rem End of Winget Menu
 rem ==============================================================================
 rem Start of Winget functions
 :updateWinget-All
-   cls
-    ::put actions here
+    call :checkWinget
+	 cls
+    rem accept all question with "yes" or "y". All packages will be installed silent with -h
+	 rem winget source reset msstore
+    echo y | winget upgrade -h --all
+	 call :log "Winget finished upgrading all packages successfully"
     goto :winget
 
 :installWinget-RemoteSupport
-   cls
-    ::put actions here
+    call :checkWinget
+    cls
+    echo y | winget install TeamViewer.TeamViewer -h
+	 call :log "Installing Teamviewer"
+    rem echo y | winget install TeamViewer.TeamViewer -h --accept-source-agreements
+	 call :log "Installing Ultraview"
+	 echo y| winget install DucFabulous.UltraViewer -h
     goto :winget
 
 :installWinget-Utilities
-   cls
-    ::put actions here
-    goto :winget
+    call :checkWinget
+    call :log "Starting software utilities installation"
+    cls
+    echo.
+    echo *******************************************
+    echo 		List Software to Install
+    echo 		7zip, Notepad++ 
+    echo 		Foxit Reader
+    echo 		Zalo, Slack, Skype
+    echo 		Google Chrome, Firefox
+    echo 		BulkCrapUninstaller
+    echo 		Google Drive
+    echo *******************************************
+    timeout 2
+    cls
+    call :log "Installing Zalo"
+    winget install VNGCorp.Zalo -h --accept-package-agreements --accept-source-agreements
+    call :log "Installing Slack"
+    winget install --scope machine -h SlackTechnologies.Slack
+    call :log "Installing 7zip"
+    winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
+    call :log "Installing Foxit Reader"
+    winget install Foxit.FoxitReader -h --accept-package-agreements --accept-source-agreements
+    call :log "Installing Notepad++"
+    winget install --scope machine Notepad++.Notepad++ -h --accept-package-agreements --accept-source-agreements
+    call :log "Installing Google Chrome"
+    winget install --scope machine Google.Chrome -h --accept-package-agreements --accept-source-agreements
+    call :log "Installing Firefox"
+    winget install --scope machine Mozilla.Firefox -h --accept-package-agreements --accept-source-agreements
+    call :log "Installing BulkCrapUninstaller"
+    winget install --scope machine Klocman.BulkCrapUninstaller -h --accept-package-agreements --accept-source-agreements
+    call :log "Installing Google Drive"
+    winget install --scope machine google.drive -h --accept-package-agreements --accept-source-agreements
+    call :log "Installing VLC"
+    winget install VideoLAN.VLC -h --accept-package-agreements --accept-source-agreements
+    call :log "Finishing software installation"
+	 goto :winget
 
 :installWinget
-   cls
+    cls
     call :checkWinget
     goto :winget
 
@@ -360,19 +403,19 @@ rem function update CMD via github
     goto :main
 
 REM ========================================================================================================================================
-rem Start of child process functions
+rem Start of child process that can be reused functions
 rem function checkWinget will check if winget is installed or neither. If not, go to installWinget function
 :checkWinget
     cls
-    echo off
-    if not exist "%ProgramFiles(x86)%\WindowsApps\Microsoft.WindowsStore_11901.1001.0.0_x64__8wekyb3d8bbwe\AppxManifest.xml" (
+    if not exist "%localappdata%\Microsoft\WindowsApps\winget.exe" (
        echo Start to install winget
     	 call :log "Winget Installation started"
        call :installWinget
        call :log "Winget Installation finished"
     	 timeout 3
     ) else (
-        call :log "Winget already installed"
+        echo Winget already installed
+		  call :log "Winget already installed"
         timeout 3
     )
     exit /b
@@ -399,10 +442,10 @@ rem function log will append log to %temp%\installAPP.log with time, date, and t
 rem %1 will inherit parameters from outside input function
 rem exit /b will exit function instead of remaining running scripts codes
 :log
-set logfile=%temp%\installAPP.log
-set timestamp=%date% %time%
-echo %timestamp% %1 >> %logfile%
-goto :EOF
+    set logfile=%temp%\installAPP.log
+    set timestamp=%date% %time%
+    echo %timestamp% %1 >> %logfile%
+    goto :EOF
 
 rem End of child process functions
 REM ========================================================================================================================================
