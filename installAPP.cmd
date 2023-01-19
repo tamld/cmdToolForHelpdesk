@@ -357,21 +357,20 @@ rem Start of Winget functions
     echo.
     echo *******************************************
     echo 		List Software to Install
-    echo 		7zip, Notepad++ 
-    echo 		Foxit Reader
-    echo 		Zalo, Slack, Skype
+    echo 		7zip, Notepad++, Foxit Reader
+    echo 		Zalo, Slack, Skype, Unikey
     echo 		Google Chrome, Firefox
     echo 		BulkCrapUninstaller
     echo 		Google Drive
     echo *******************************************
     timeout 2
     cls
+    call :log "Installing 7zip"
+    winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
     call :log "Installing Zalo"
     winget install VNGCorp.Zalo -h --accept-package-agreements --accept-source-agreements
     call :log "Installing Slack"
     winget install --scope machine -h SlackTechnologies.Slack
-    call :log "Installing 7zip"
-    winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
     call :log "Installing Foxit Reader"
     winget install Foxit.FoxitReader -h --accept-package-agreements --accept-source-agreements
     call :log "Installing Notepad++"
@@ -387,7 +386,10 @@ rem Start of Winget functions
     call :log "Installing VLC"
     winget install VideoLAN.VLC -h --accept-package-agreements --accept-source-agreements
     call :log "Finishing software installation"
-	 goto :winget
+    call :installUnikey
+	REM Notepad++ theme is a plus action. Comment "rem" before the function to avoid this task
+	call :installNotepadplusplusThemes
+	goto :winget
 
 :installWinget
     cls
@@ -446,6 +448,97 @@ rem exit /b will exit function instead of remaining running scripts codes
     set timestamp=%date% %time%
     echo %timestamp% %1 >> %logfile%
     goto :EOF
+
+:installSoftByWinget
+set "soft=%~1"
+winget check %soft%
+if %errorlevel% == 0 (
+    call :log "Software %soft% already installed with version %winget_output%"
+) else (
+    winget install %soft% -h --accept-package-agreements --accept-source-agreements
+    call :log "Installed software %soft%"
+)
+goto :eof
+
+rem function download Unikey from unikey.org, extract to C:\Program Files\Unikey and add to start up
+:installUnikey
+    cls
+    call :log "Starting Unikey installation"
+    @echo off
+    cd /d %temp%
+    call :log "Downloading Unikey"
+    curl -# -o unikey43RC5-200929-win64.zip -L https://www.unikey.org/assets/release/unikey43RC5-200929-win64.zip
+    if not exist "%ProgramFiles%\7-Zip" (
+      call :log "Installing 7zip"
+      call :install7zip
+    )
+    if not exist "C:\Program Files\Unikey" (
+      call :log "Unzipping Unikey"
+      "c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey"
+    )
+    call :log "Copying Unikey to Startup"
+    xcopy "c:\Program Files\Unikey\UniKeyNT.exe" "%_programDATA%\StartUp" /y
+    call :log "Creating Unikey shortcut on desktop"
+    mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
+    cd /d %_dp%
+    call :log "Finishing Unikey installation"
+    exit /b
+
+function install 7zip by using winget
+:install7zip
+    cls
+    call :checkWinget
+    if not exist "%ProgramFiles%\7-Zip" (
+      call :log "Starting 7zip installation"
+      echo y | winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
+      call :log "Finishing 7zip installation"
+    ) else (
+      call :log "7zip already installed"
+    )
+    rem associate regular files extension with 7zip
+    assoc .7z=7-Zip
+    assoc .zip=7-Zip
+    assoc .rar=7-Zip
+    assoc .tar=7-Zip
+    assoc .gz=7-Zip
+    assoc .bzip2=7-Zip
+    assoc .xz=7-Zip
+    exit /b
+	
+:installNotepadplusplusThemes
+if not exist "%ProgramFiles(x86)%\Notepad++" (
+    call :log "Notepad++ not found, go for it"
+	call :checkWinget
+	echo y | winget install notepad++.notepad++
+	call :log "Notepad++ is installed" )
+	call :log "Starting Notepad++ theme installation"
+	cd /d %temp%
+	echo Notepad++ theme installation started > themes_installation.log
+	rem Dracula theme
+	call :log "Installing Dracula theme"
+	curl https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml -o Dracula.xml
+	xcopy Dracula.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
+	rem Material Theme
+	call :log "Installing Material Theme"
+	curl https://raw.githubusercontent.com/HiSandy/npp-material-theme/master/Material%20Theme.xml -o "Material Theme.xml"
+	xcopy "Material Theme.xml" %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
+	rem Nord theme
+	call :log "Installing Nord theme"
+	curl https://raw.githubusercontent.com/arcticicestudio/nord-notepadplusplus/develop/src/xml/nord.xml -LJ -o Nord.xml
+	xcopy Nord.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
+	rem Mariana theme
+	call :log "Installing Mariana theme"
+	curl https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
+	xcopy Mariana.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
+	call :log "Notepad++ themes installation finished"
+	
+
+rem function force delete all file created in %temp% folder
+:clean
+    del /q /f /s %temp%\*.*
+    rem forfiles search files with criteria > 7 days and delete
+    rem forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
+    exit /b
 
 rem End of child process functions
 REM ========================================================================================================================================
