@@ -7,7 +7,7 @@ if '%errorlevel%' NEQ '0' (
 ) else (
  goto goADMIN )
 
-rem Go UAC to get Admin privileges
+REM Go UAC to get Admin privileges
 :goUAC
     echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
     set params = %*:"=""
@@ -19,7 +19,7 @@ rem Go UAC to get Admin privileges
 :goADMIN
     pushd "%CD%"
     CD /D "%~dp0"
-rem ========================================================================================================================================	
+REM ========================================================================================================================================	
 :main
 set "_dp=%~dp0"
 set "_sys32=%windir%\system32"
@@ -51,9 +51,9 @@ if ERRORLEVEL == 1 goto installAIOMenu
 endlocal
 goto end
 REM ========================================================================================================================================
-rem ==============================================================================
-rem Start of installAIOMenu
-rem Install Software Online using Winget or Chocolately
+REM ==============================================================================
+REM Start of installAIOMenu
+REM Install Software Online using Winget or Chocolately
 REM #installAIOMenu
 :installAIOMenu
 setlocal
@@ -73,16 +73,16 @@ if ERRORLEVEL == 2 goto installAIO-FromBackup
 if ERRORLEVEL == 1 goto installAIO-Fresh
 endlocal
 REM ========================================================================================================================================
-rem function install fresh Windows using Winget utilities
+REM function install fresh Windows using Winget utilities
 :installAIO-Fresh
-rem call :settingWindows
-rem call :installWinget
-rem call :installWinget-Utilities
-rem call :installWinget-Remote
-rem call :installUnikey
-rem call :func_CreateShortcut
-rem call :settingPowerPlan
-rem call :func_InstallOffice19Pro_VL
+REM call :settingWindows
+REM call :installWinget
+REM call :installWinget-Utilities
+REM call :installWinget-Remote
+REM call :installUnikey
+REM call :func_CreateShortcut
+REM call :settingPowerPlan
+REM call :func_InstallOffice19Pro_VL
 REM call :func_InstallSupportAssist
 cls
 echo.
@@ -92,26 +92,26 @@ echo Have a nice day!
 PAUSE
 goto :main
 
-rem function install Windows from a backup - has been generated from Winget and reinstalled once
+REM function install Windows from a backup - has been generated from Winget and reinstalled once
 :installAIO-FromBackup
-rem call :settingWindows
-rem call :installWinget
-rem call :installWinget-Utilities
-rem call :installWinget-Remote
-rem call :installUnikey
-rem call :func_InstallOffice19Pro_VL
-rem call :func_CreateShortcut
-rem call :settingPowerPlan
-rem call :func_InstallSupportAssist
+REM call :settingWindows
+REM call :installWinget
+REM call :installWinget-Utilities
+REM call :installWinget-Remote
+REM call :installUnikey
+REM call :func_InstallOffice19Pro_VL
+REM call :func_CreateShortcut
+REM call :settingPowerPlan
+REM call :func_InstallSupportAssist
 echo All the steps has been running successfully
 echo Logs has been generated and placed in the %temp% folder
 echo Have a nice day!
 PAUSE
 goto :main
-rem End of Install AIO Online
+REM End of Install AIO Online
 REM ========================================================================================================================================
-rem ==============================================================================
-rem Start of Windows Office Utilities Menu
+REM ==============================================================================
+REM Start of Windows Office Utilities Menu
 :office-windows
 setlocal
 cd /d %_dp%
@@ -138,8 +138,8 @@ if ERRORLEVEL == 3 goto :removeOfficeKey
 if ERRORLEVEL == 2 goto :uninstallOffice
 if ERRORLEVEL == 1 goto :installOffice
 endlocal
-rem ==============================================================================
-rem Start of Windows Office Utilities functions
+REM ==============================================================================
+REM Start of Windows Office Utilities functions
 :loadSkus
 cls
 ::put actions here
@@ -169,10 +169,10 @@ goto :office-windows
 cls
 ::put actions here
 goto :office-windows
-rem End of Windows Office Utilities functions
+REM End of Windows Office Utilities functions
 REM ========================================================================================================================================
 :activeLicenses
-rem Start of Active Licenses Menu
+REM Start of Active Licenses Menu
 setlocal
 Title Active Licenses Menu
 cls
@@ -198,9 +198,9 @@ if ERRORLEVEL == 2 goto :activeByPhone
 if ERRORLEVEL == 1 goto :activeOnline
 goto main
 endlocal
-rem End of Active Licenses Menu
-rem ==============================================================================
-rem Start of Active Lienses functions
+REM End of Active Licenses Menu
+REM ==============================================================================
+REM Start of Active Lienses functions
 :MAS
     cls
     ::put actions here
@@ -230,11 +230,11 @@ rem Start of Active Lienses functions
     cls
     ::put actions here
     goto :activeLicenses
-rem End of Active Lienses functions
+REM End of Active Lienses functions
 REM ========================================================================================================================================
 :utilities
 setlocal
-rem Start of Utilities Menu
+REM Start of Utilities Menu
 cls
 title Utilities Main Menu
 echo.
@@ -262,9 +262,9 @@ if ERRORLEVEL == 3 goto :cleanUpSystem
 if ERRORLEVEL == 2 goto :changeHostName
 if ERRORLEVEL == 1 goto :setHighPerformance
 endlocal
-rem End of Utilities Menu
-rem ==============================================================================
-rem Start of Utilities functions
+REM End of Utilities Menu
+REM ==============================================================================
+REM Start of Utilities functions
 :addLocalUser
     cls
     ::put actions here
@@ -305,11 +305,11 @@ rem Start of Utilities functions
     ::put actions here
     goto :utilities
 
-rem End of Utilities functions
+REM End of Utilities functions
 REM ========================================================================================================================================
 :winget
 setlocal
-rem Start of Winget Menu
+REM Start of Winget Menu
 cd /d %_dp%
 cls
 title Winget Main Menu
@@ -328,14 +328,14 @@ if ERRORLEVEL == 3 goto :installWinget-RemoteSupport
 if ERRORLEVEL == 2 goto :installWinget-Utilities
 if ERRORLEVEL == 1 goto :installWinget
 endlocal
-rem End of Winget Menu
-rem ==============================================================================
-rem Start of Winget functions
+REM End of Winget Menu
+REM ==============================================================================
+REM Start of Winget functions
 :updateWinget-All
     call :checkWinget
 	 cls
-    rem accept all question with "yes" or "y". All packages will be installed silent with -h
-	 rem winget source reset msstore
+    REM accept all question with "yes" or "y". All packages will be installed silent with -h
+	 REM winget source reset msstore
     echo y | winget upgrade -h --all
 	 call :log "Winget finished upgrading all packages successfully"
     goto :winget
@@ -345,68 +345,68 @@ rem Start of Winget functions
     cls
     echo y | winget install TeamViewer.TeamViewer -h
 	 call :log "Installing Teamviewer"
-    rem echo y | winget install TeamViewer.TeamViewer -h --accept-source-agreements
+    REM echo y | winget install TeamViewer.TeamViewer -h --accept-source-agreements
 	 call :log "Installing Ultraview"
 	 echo y| winget install DucFabulous.UltraViewer -h
     goto :winget
 
-:installWinget-Utilities
-    call :checkWinget
-    call :log "Starting software utilities installation"
-    cls
-    echo.
-    echo *******************************************
-    echo 		List Software to Install
-    echo 		7zip, Notepad++, Foxit Reader
-    echo 		Zalo, Slack, Skype, Unikey
-    echo 		Google Chrome, Firefox
-    echo 		BulkCrapUninstaller
-    echo 		Google Drive
-    echo *******************************************
-    timeout 2
-    cls
-    call :log "Installing 7zip"
-    winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
-    call :log "Installing Zalo"
-    winget install VNGCorp.Zalo -h --accept-package-agreements --accept-source-agreements
-    call :log "Installing Slack"
-    winget install --scope machine -h SlackTechnologies.Slack
-    call :log "Installing Foxit Reader"
-    winget install Foxit.FoxitReader -h --accept-package-agreements --accept-source-agreements
-    call :log "Installing Notepad++"
-    winget install --scope machine Notepad++.Notepad++ -h --accept-package-agreements --accept-source-agreements
-    call :log "Installing Google Chrome"
-    winget install --scope machine Google.Chrome -h --accept-package-agreements --accept-source-agreements
-    call :log "Installing Firefox"
-    winget install --scope machine Mozilla.Firefox -h --accept-package-agreements --accept-source-agreements
-    call :log "Installing BulkCrapUninstaller"
-    winget install --scope machine Klocman.BulkCrapUninstaller -h --accept-package-agreements --accept-source-agreements
-    call :log "Installing Google Drive"
-    winget install --scope machine google.drive -h --accept-package-agreements --accept-source-agreements
-    call :log "Installing VLC"
-    winget install VideoLAN.VLC -h --accept-package-agreements --accept-source-agreements
-    call :log "Finishing software installation"
-    call :installUnikey
-	REM Notepad++ theme is a plus action. Comment "rem" before the function to avoid this task
-	call :installNotepadplusplusThemes
-	goto :winget
+REM :installWinget-Utilities
+    REM call :checkWinget
+    REM call :log "Starting software utilities installation"
+    REM cls
+    REM echo.
+    REM echo *******************************************
+    REM echo 		List Software to Install
+    REM echo 		7zip, Notepad++, Foxit Reader
+    REM echo 		Zalo, Slack, Skype, Unikey
+    REM echo 		Google Chrome, Firefox
+    REM echo 		BulkCrapUninstaller
+    REM echo 		Google Drive
+    REM echo *******************************************
+    REM timeout 2
+    REM cls
+    REM call :log "Installing 7zip"
+    REM winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Installing Zalo"
+    REM winget install VNGCorp.Zalo -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Installing Slack"
+    REM winget install --scope machine -h SlackTechnologies.Slack
+    REM call :log "Installing Foxit Reader"
+    REM winget install Foxit.FoxitReader -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Installing Notepad++"
+    REM winget install --scope machine Notepad++.Notepad++ -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Installing Google Chrome"
+    REM winget install --scope machine Google.Chrome -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Installing Firefox"
+    REM winget install --scope machine Mozilla.Firefox -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Installing BulkCrapUninstaller"
+    REM winget install --scope machine Klocman.BulkCrapUninstaller -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Installing Google Drive"
+    REM winget install --scope machine google.drive -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Installing VLC"
+    REM winget install VideoLAN.VLC -h --accept-package-agreements --accept-source-agreements
+    REM call :log "Finishing software installation"
+    REM call :installUnikey
+	REM REM Notepad++ theme is a plus action. Comment "REM" before the function to avoid this task
+	REM call :installNotepadplusplusThemes
+	REM goto :winget
 
 :installWinget
     cls
     call :checkWinget
     goto :winget
 
-rem End of Winget functions
+REM End of Winget functions
 REM ========================================================================================================================================
-rem function update CMD via github
+REM function update CMD via github
 :updateCMD
    cls
     ::put actions here
     goto :main
 
 REM ========================================================================================================================================
-rem Start of child process that can be reused functions
-rem function checkWinget will check if winget is installed or neither. If not, go to installWinget function
+REM Start of child process that can be reused functions
+REM function checkWinget will check if winget is installed or neither. If not, go to installWinget function
 :checkWinget
     cls
     if not exist "%localappdata%\Microsoft\WindowsApps\winget.exe" (
@@ -426,7 +426,7 @@ rem function checkWinget will check if winget is installed or neither. If not, g
     cd /d %temp%
     cls
     call :log "Starting Winget installation from GitHub"
-    rem Download the latest version of Winget from GitHub
+    REM Download the latest version of Winget from GitHub
     curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
     curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
     start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
@@ -440,27 +440,48 @@ rem function checkWinget will check if winget is installed or neither. If not, g
 
 
 
-rem function log will append log to %temp%\installAPP.log with time, date, and the other function task
-rem %1 will inherit parameters from outside input function
-rem exit /b will exit function instead of remaining running scripts codes
+REM function log will append log to %temp%\installAPP.log with time, date, and the other function task
+REM %1 will inherit parameters from outside input function
+REM exit /b will exit function instead of remaining running scripts codes
 :log
     set logfile=%temp%\installAPP.log
     set timestamp=%date% %time%
     echo %timestamp% %1 >> %logfile%
     goto :EOF
 
-:installSoftByWinget
-set "soft=%~1"
-winget check %soft%
-if %errorlevel% == 0 (
-    call :log "Software %soft% already installed with version %winget_output%"
-) else (
-    winget install %soft% -h --accept-package-agreements --accept-source-agreements
-    call :log "Installed software %soft%"
-)
-goto :eof
+REM function to install soft using Winget utilities
+REM to install winget, call function by using call :installsoft "software id"
+:installSoft
+	REM Set the software name to install
+	set app=%1
+	
+	REM Set the path to winget executable
+	REM "set winget=%localappdata%\Microsoft\WindowsApps\winget.exe"
 
-rem function download Unikey from unikey.org, extract to C:\Program Files\Unikey and add to start up
+	echo Checking if %app% is already installed...
+	echo y | winget list %app% > nul
+	if errorlevel 0 (
+		echo %app% is already installed.
+		call :log "%app% is already installed."
+		timeout 2
+		cls
+	) else (
+		echo Installing %app%...
+		echo y | winget install -e %app%
+		if errorlevel 1 (
+			echo Installation of %app% failed.
+			call :log "Installation of %app% failed."
+			cls
+		) else (
+			echo Installation of %app% succeeded.
+			call :log "Installation of %app% succeeded."
+			cls
+		)
+		timeout 2
+	)
+	exit /b
+	
+REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey and add to start up
 :installUnikey
     cls
     call :log "Starting Unikey installation"
@@ -495,7 +516,7 @@ function install 7zip by using winget
     ) else (
       call :log "7zip already installed"
     )
-    rem associate regular files extension with 7zip
+    REM associate regular files extension with 7zip
     assoc .7z=7-Zip
     assoc .zip=7-Zip
     assoc .rar=7-Zip
@@ -514,33 +535,33 @@ if not exist "%ProgramFiles(x86)%\Notepad++" (
 	call :log "Starting Notepad++ theme installation"
 	cd /d %temp%
 	echo Notepad++ theme installation started > themes_installation.log
-	rem Dracula theme
+	REM Dracula theme
 	call :log "Installing Dracula theme"
 	curl https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml -o Dracula.xml
 	xcopy Dracula.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
-	rem Material Theme
+	REM Material Theme
 	call :log "Installing Material Theme"
 	curl https://raw.githubusercontent.com/HiSandy/npp-material-theme/master/Material%20Theme.xml -o "Material Theme.xml"
 	xcopy "Material Theme.xml" %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
-	rem Nord theme
+	REM Nord theme
 	call :log "Installing Nord theme"
 	curl https://raw.githubusercontent.com/arcticicestudio/nord-notepadplusplus/develop/src/xml/nord.xml -LJ -o Nord.xml
 	xcopy Nord.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
-	rem Mariana theme
+	REM Mariana theme
 	call :log "Installing Mariana theme"
 	curl https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
 	xcopy Mariana.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
 	call :log "Notepad++ themes installation finished"
 	
 
-rem function force delete all file created in %temp% folder
+REM function force delete all file created in %temp% folder
 :clean
     del /q /f /s %temp%\*.*
-    rem forfiles search files with criteria > 7 days and delete
-    rem forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
+    REM forfiles search files with criteria > 7 days and delete
+    REM forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
     exit /b
 
-rem End of child process functions
+REM End of child process functions
 REM ========================================================================================================================================
 :end
 exit
