@@ -350,21 +350,21 @@ REM Start of Winget functions
 	 echo y| winget install DucFabulous.UltraViewer -h
     goto :winget
 
-REM :installWinget-Utilities
-    REM call :checkWinget
-    REM call :log "Starting software utilities installation"
-    REM cls
-    REM echo.
-    REM echo *******************************************
-    REM echo 		List Software to Install
-    REM echo 		7zip, Notepad++, Foxit Reader
-    REM echo 		Zalo, Slack, Skype, Unikey
-    REM echo 		Google Chrome, Firefox
-    REM echo 		BulkCrapUninstaller
-    REM echo 		Google Drive
-    REM echo *******************************************
-    REM timeout 2
-    REM cls
+:installWinget-Utilities
+    call :checkWinget
+    call :log "Starting software utilities installation"
+    cls
+    echo.
+    echo *******************************************
+    echo 		List Software to Install
+    echo 		7zip, Notepad++, Foxit Reader
+    echo 		Zalo, Slack, Skype, Unikey
+    echo 		Google Chrome, Firefox
+    echo 		BulkCrapUninstaller
+    echo 		Google Drive
+    echo *******************************************
+    timeout 2
+    cls
     REM call :log "Installing 7zip"
     REM winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
     REM call :log "Installing Zalo"
@@ -386,10 +386,30 @@ REM :installWinget-Utilities
     REM call :log "Installing VLC"
     REM winget install VideoLAN.VLC -h --accept-package-agreements --accept-source-agreements
     REM call :log "Finishing software installation"
-    REM call :installUnikey
-	REM REM Notepad++ theme is a plus action. Comment "REM" before the function to avoid this task
-	REM call :installNotepadplusplusThemes
-	REM goto :winget
+	setlocal
+    REM call :installSoft 7zip.7zip
+    REM call :installSoft VNGCorp.Zalo
+    REM call :installSoft "SlackTechnologies.Slack" "--scope machine"
+    REM call :installSoft Foxit.FoxitReader
+    REM call :installSoft Notepad++.Notepad++
+    REM call :installSoft Google.Chrome "--scope machine"
+    REM call :installSoft Mozilla.Firefox
+    REM call :installSoft Klocman.BulkCrapUninstaller
+    REM call :installSoft google.drive "--scope machine"
+	set packageList=7zip.7zip ^
+					Notepad++.Notepad++ ^
+					Klocman.BulkCrapUninstaller ^
+					google.drive ^
+					VideoLAN.VLC
+	for %%p in (%packageList%) do (
+		call :installSoft %%p
+	)
+	endlocal
+	exit /b
+    call :installUnikey
+	REM Notepad++ theme is a plus action. Comment "REM" before the function to avoid this task
+	call :installNotepadplusplusThemes
+	goto :winget
 
 :installWinget
     cls
@@ -453,33 +473,34 @@ REM function to install soft using Winget utilities
 REM to install winget, call function by using call :installsoft "software id"
 :installSoft
 	REM Set the software name to install
-	set app=%1
+    set "software=%~1"
+	REM Set the scope machine if supported
+    set "scope=%~2"
+	REM Set status software installed or not
+	set "installed=0"
 	
-	REM Set the path to winget executable
-	REM "set winget=%localappdata%\Microsoft\WindowsApps\winget.exe"
-
-	echo Checking if %app% is already installed...
-	echo y | winget list %app% > nul
-	if errorlevel 0 (
-		echo %app% is already installed.
-		call :log "%app% is already installed."
-		timeout 2
-		cls
-	) else (
-		echo Installing %app%...
-		echo y | winget install -e %app%
-		if errorlevel 1 (
-			echo Installation of %app% failed.
-			call :log "Installation of %app% failed."
+	REM check if %software has been installed before
+	echo y | winget list %software% > nul
+	if "%errorlevel%" == "0" (
+		set "installed=1"
+	)
+	if "%installed%"=="0" (
+		if "%scope%"=="" (
+			echo y | winget install %software%
+			call :log "%software% installed without scope"
 			cls
 		) else (
-			echo Installation of %app% succeeded.
-			call :log "Installation of %app% succeeded."
+			echo y | winget install %software% %scope%
+			call :log "%software% installed with %scope%"
 			cls
 		)
-		timeout 2
+	) else (
+		echo %software% already installed
+		timeout 3
+		call :log "%software% already installed"
+		cls
 	)
-	exit /b
+    goto :EOF
 	
 REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey and add to start up
 :installUnikey

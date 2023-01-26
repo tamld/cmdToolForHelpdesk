@@ -8,7 +8,8 @@ goto :end
 
 :checkWinget
     cls
-    if not exist "%localappdata%\Microsoft\WindowsApps\winget.exe" (
+    winget -v
+	if "%errorlevel%" NEQ "0" (
 		echo Start to install winget
 		call :log "Winget Installation started"
 		call :installWinget
@@ -41,46 +42,59 @@ goto :end
     echo %timestamp% %1 >> %logfile%
     goto :EOF
 
-REM REM function to install software using winget
+REM function to install software using winget
 :installSoft
+	REM Set the software name to install
     set "software=%~1"
+	REM Set the scope machine if supported
     set "scope=%~2"
-
-    if "%scope%"=="" (
-        echo y | winget install %software%
-        call :log "%software% installed without scope"
+	REM Set status software installed or not
+	set "installed=0"
+	
+	REM check if %software has been installed before
+	echo y | winget list %software% > nul
+	if "%errorlevel%" == "0" (
+		set "installed=1"
+	)
+	if "%installed%"=="0" (
+		if "%scope%"=="" (
+			echo y | winget install %software%
+			call :log "%software% installed without scope"
+			cls
+		) else (
+			echo y | winget install %software% %scope%
+			call :log "%software% installed with %scope%"
+			cls
+		)
+	) else (
+		echo %software% already installed
+		timeout 3
+		call :log "%software% already installed"
 		cls
-    ) else (
-        echo y | winget install %software% %scope%
-        call :log "%software% installed with %scope%"
-		cls
-    )
+	)
     goto :EOF
 
 
 :installWinget-Utilities
-    call :installSoft 7zip.7zip
-    call :installSoft VNGCorp.Zalo
-    call :installSoft "SlackTechnologies.Slack" "--scope machine"
-    call :installSoft Foxit.FoxitReader
-    call :installSoft Notepad++.Notepad++
-    call :installSoft Google.Chrome "--scope machine"
-    call :installSoft Mozilla.Firefox
-    call :installSoft Klocman.BulkCrapUninstaller
-    call :installSoft google.drive "--scope machine"
-	REM set "packageList=7zip.7zip ^
-					REM VNGCorp.Zalo ^
-					REM SlackTechnologies.Slack ^
-					REM Foxit.FoxitReader ^
-					REM Notepad++.Notepad++ ^
-					REM Google.Chrome ^
-					REM Mozilla.Firefox ^
-					REM Klocman.BulkCrapUninstaller ^
-					REM google.drive ^
-					REM VideoLAN.VLC"
-	REM for %%p in (%packageList%) do (
-		REM call :installSoft %%p
-	REM )
+	setlocal
+    REM call :installSoft 7zip.7zip
+    REM call :installSoft VNGCorp.Zalo
+    REM call :installSoft "SlackTechnologies.Slack" "--scope machine"
+    REM call :installSoft Foxit.FoxitReader
+    REM call :installSoft Notepad++.Notepad++
+    REM call :installSoft Google.Chrome "--scope machine"
+    REM call :installSoft Mozilla.Firefox
+    REM call :installSoft Klocman.BulkCrapUninstaller
+    REM call :installSoft google.drive "--scope machine"
+	set packageList=7zip.7zip ^
+					Notepad++.Notepad++ ^
+					Klocman.BulkCrapUninstaller ^
+					google.drive ^
+					VideoLAN.VLC
+	for %%p in (%packageList%) do (
+		call :installSoft %%p
+	)
+	endlocal
 	exit /b
 :end
 
