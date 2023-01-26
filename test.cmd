@@ -7,14 +7,14 @@ call :installWinget-Utilities
 goto :end
 
 :checkWinget
-    rem Get the Windows build number
-    for /f "tokens=4" %%i in ('systeminfo ^| find "OS Build"') do (
-        set BUILD=%%i
+    rem Get the Windows version number
+    for /f "tokens=2" %%i in ('ver') do (
+        set VERSION=%%i
     )
 
-    rem Check if the build number is 19041 or later
-    if %BUILD% geq 19041 (
-        call :log "Windows build check: Build %BUILD% is suitable for installing winget"
+    rem Check if the version number is 10.0.19041 or later
+    if "%VERSION%" GEQ "10.0.19041" (
+        call :log "Windows version check: Version %VERSION% is suitable for installing winget"
         cls
         winget -v
         if "%errorlevel%" NEQ "0" (
@@ -25,15 +25,14 @@ goto :end
         ) else (
             echo Winget already installed
             call :log "Winget already installed"
-			cls
         )
     ) else (
-        call :log "Windows build check: Build %BUILD% is not suitable for installing winget"
-        echo Your Windows build is not suitable for installing winget
-		cls
+        call :log "Windows version check: Version %VERSION% is not suitable for installing winget"
+        echo Your Windows version is not suitable for installing winget.
         goto :EOF
     )
     goto :EOF
+
 
 :installWinget
     cd /d %temp%
