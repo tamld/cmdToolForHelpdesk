@@ -25,15 +25,15 @@ goto :end
         ) else (
             echo Winget already installed
             call :log "Winget already installed"
+			cls
         )
     ) else (
         call :log "Windows build check: Build %BUILD% is not suitable for installing winget"
-        echo Your Windows build is not suitable for installing winget.
+        echo Your Windows build is not suitable for installing winget
+		cls
         goto :EOF
     )
     goto :EOF
-
-
 
 :installWinget
     cd /d %temp%
