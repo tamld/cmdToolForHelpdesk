@@ -365,38 +365,16 @@ REM Start of Winget functions
     echo *******************************************
     timeout 2
     cls
-    REM call :log "Installing 7zip"
-    REM winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Installing Zalo"
-    REM winget install VNGCorp.Zalo -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Installing Slack"
-    REM winget install --scope machine -h SlackTechnologies.Slack
-    REM call :log "Installing Foxit Reader"
-    REM winget install Foxit.FoxitReader -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Installing Notepad++"
-    REM winget install --scope machine Notepad++.Notepad++ -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Installing Google Chrome"
-    REM winget install --scope machine Google.Chrome -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Installing Firefox"
-    REM winget install --scope machine Mozilla.Firefox -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Installing BulkCrapUninstaller"
-    REM winget install --scope machine Klocman.BulkCrapUninstaller -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Installing Google Drive"
-    REM winget install --scope machine google.drive -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Installing VLC"
-    REM winget install VideoLAN.VLC -h --accept-package-agreements --accept-source-agreements
-    REM call :log "Finishing software installation"
 	setlocal
-    REM call :installSoft 7zip.7zip
-    REM call :installSoft VNGCorp.Zalo
-    REM call :installSoft "SlackTechnologies.Slack" "--scope machine"
-    REM call :installSoft Foxit.FoxitReader
-    REM call :installSoft Notepad++.Notepad++
-    REM call :installSoft Google.Chrome "--scope machine"
-    REM call :installSoft Mozilla.Firefox
-    REM call :installSoft Klocman.BulkCrapUninstaller
-    REM call :installSoft google.drive "--scope machine"
+	REM for each software named by command [winget search "software"]
+	REM Use the "software ID" instead of Name to specify softwares list
+	REM Each software must be gather with ^
+	REM The last one use nothing to complete the set packageList variable
 	set packageList=7zip.7zip ^
+					VNGCorp.Zalo ^
+					Foxit.FoxitReader ^
+					Google.Chrome ^
+					Mozilla.Firefox ^
 					Notepad++.Notepad++ ^
 					Klocman.BulkCrapUninstaller ^
 					google.drive ^
