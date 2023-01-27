@@ -351,8 +351,9 @@ REM Start of Winget functions
     goto :winget
 
 :installWinget-Utilities
-    call :checkWinget
-    call :log "Starting software utilities installation"
+	call :checkWinget
+	setlocal
+	call :log "Starting software utilities installation"
     cls
     echo.
     echo *******************************************
@@ -363,31 +364,31 @@ REM Start of Winget functions
     echo 		BulkCrapUninstaller
     echo 		Google Drive
     echo *******************************************
-    timeout 2
-    cls
-	setlocal
-	REM for each software named by command [winget search "software"]
-	REM Use the "software ID" instead of Name to specify softwares list
-	REM Each software must be gather with ^
-	REM The last one use nothing to complete the set packageList variable
-	set packageList=7zip.7zip ^
-					VNGCorp.Zalo ^
-					Foxit.FoxitReader ^
-					Google.Chrome ^
-					Mozilla.Firefox ^
-					Notepad++.Notepad++ ^
-					Klocman.BulkCrapUninstaller ^
-					google.drive ^
-					VideoLAN.VLC
-	for %%p in (%packageList%) do (
-		call :installSoft %%p
+	set packageListWithScope=SlackTechnologies.Slack 
+								Google.Chrome ^
+								Mozilla.Firefox ^
+								google.drive ^
+								Google.Chrome ^
+								Mozilla.Firefox
+	set packageListWithoutScope=7zip.7zip ^
+									VideoLAN.VLC ^
+									Foxit.FoxitReader ^
+									Notepad++.Notepad 
+									Klocman.BulkCrapUninstaller ^
+									VNGCorp.Zalo
+	REM first loop to install software without scope machine
+	for %%p in (%packageListWithoutScope%) do (
+		call :installSoft %%p ""
+	)
+	
+	REM second loop to install software with scope machine
+	for %%p in (%packageListWithScope%) do (
+		call :installSoft %%p "--scope machine"
 	)
 	endlocal
-	exit /b
-    call :installUnikey
-	REM Notepad++ theme is a plus action. Comment "REM" before the function to avoid this task
 	call :installNotepadplusplusThemes
-	goto :winget
+	exit /b
+
 
 :installWinget
     cls
@@ -406,37 +407,50 @@ REM ============================================================================
 REM Start of child process that can be reused functions
 REM function checkWinget will check if winget is installed or neither. If not, go to installWinget function
 :checkWinget
-    cls
-    if not exist "%localappdata%\Microsoft\WindowsApps\winget.exe" (
-       echo Start to install winget
-    	 call :log "Winget Installation started"
-       call :installWinget
-       call :log "Winget Installation finished"
-    	 timeout 3
+	echo off
+    rem Get the Windows version number
+    for /f "tokens=4 delims=[] " %%i in ('ver') do set VERSION=%%i
+
+    rem Check if the version number is 10.0.19041 or later
+    if "%VERSION%" GEQ "10.0.19041" (
+        echo.
+		echo "Current Windows version: %VERSION% is suitable for installing winget"
+		call :log "Windows version check: Version %VERSION% is suitable for installing winget"
+		timeout 2
+		cls
+        winget -v
+        if ERRORLEVEL 1 (
+            echo Start to install winget
+            call :installWinget
+			cls
+        ) else (
+            echo Winget already installed
+            call :log "Winget already installed"
+			cls
+        )
     ) else (
-        echo Winget already installed
-		  call :log "Winget already installed"
-        timeout 3
+        call :log "Windows version check: Version %VERSION% is not suitable for installing winget"
+        echo Your Windows version is not suitable for installing winget
+		timeout 2
     )
-    exit /b
+    cls
+    goto :EOF
 
 :installWinget
     cd /d %temp%
     cls
     call :log "Starting Winget installation from GitHub"
-    REM Download the latest version of Winget from GitHub
-    curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
-    curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
-    start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
-    call :log "Finished Winget installation requesting packages"
-	 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
-    call :log "Finished Winget installation msixbundle"
-	 call :log "Finished Winget installation from GitHub"
-	 cls
+    rem Download the latest version of Winget from GitHub
+	curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
+	curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+	start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
+	call :log "Finished Winget installation requesting packages"
+	start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
+	call :log "Finished Winget installation msixbundle"
+	call :log "Finished Winget installation from GitHub"
+	cls
     cd /d "%_dp%"
     exit /b
-
-
 
 REM function log will append log to %temp%\installAPP.log with time, date, and the other function task
 REM %1 will inherit parameters from outside input function
@@ -469,7 +483,7 @@ REM to install winget, call function by using call :installsoft "software id"
 			cls
 		) else (
 			echo y | winget install %software% %scope%
-			call :log "%software% installed with %scope%"
+			call :log "%software% installed with scope %scope%"
 			cls
 		)
 	) else (
@@ -479,7 +493,13 @@ REM to install winget, call function by using call :installsoft "software id"
 		cls
 	)
     goto :EOF
-	
+
+:addScheduleUpgrade
+REM Create schedule task auto upgrade all software with hidden option
+REM Schedule task run onlogon with current user running
+schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon
+goto :eof	
+
 REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey and add to start up
 :installUnikey
     cls

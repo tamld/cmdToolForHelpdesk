@@ -4,35 +4,39 @@ set "_sys32=%windir%\system32"
 cd /d "%_dp%"
 call :checkWinget
 call :installWinget-Utilities
+call :addScheduleUpgrade
 goto :end
 
 :checkWinget
+	echo off
     rem Get the Windows version number
-    for /f "tokens=2" %%i in ('ver') do (
-        set VERSION=%%i
-    )
+    for /f "tokens=4 delims=[] " %%i in ('ver') do set VERSION=%%i
 
     rem Check if the version number is 10.0.19041 or later
     if "%VERSION%" GEQ "10.0.19041" (
-        call :log "Windows version check: Version %VERSION% is suitable for installing winget"
-        cls
+        echo.
+		echo "Current Windows version: %VERSION% is suitable for installing winget"
+		call :log "Windows version check: Version %VERSION% is suitable for installing winget"
+		timeout 2
+		cls
         winget -v
-        if "%errorlevel%" NEQ "0" (
+        if ERRORLEVEL 1 (
             echo Start to install winget
-            call :log "Winget Installation started"
             call :installWinget
-            call :log "Winget Installation finished"
+			cls
         ) else (
             echo Winget already installed
             call :log "Winget already installed"
+			cls
         )
     ) else (
         call :log "Windows version check: Version %VERSION% is not suitable for installing winget"
-        echo Your Windows version is not suitable for installing winget.
-        goto :EOF
+        echo Your Windows version is not suitable for installing winget
+		timeout 2
     )
+    cls
     goto :EOF
-
+	
 
 :installWinget
     cd /d %temp%
@@ -77,7 +81,7 @@ REM function to install software using winget
 			cls
 		) else (
 			echo y | winget install %software% %scope%
-			call :log "%software% installed with %scope%"
+			call :log "%software% installed with scope %scope%"
 			cls
 		)
 	) else (
@@ -88,28 +92,29 @@ REM function to install software using winget
 	)
     goto :EOF
 
+:addScheduleUpgrade
+REM Create schedule task auto upgrade all software with hidden option
+REM Schedule task run onlogon with current user running
+schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon
+goto :eof
 
 :installWinget-Utilities
 	setlocal
-    REM call :installSoft 7zip.7zip
-    REM call :installSoft VNGCorp.Zalo
-    REM call :installSoft "SlackTechnologies.Slack" "--scope machine"
-    REM call :installSoft Foxit.FoxitReader
-    REM call :installSoft Notepad++.Notepad++
-    REM call :installSoft Google.Chrome "--scope machine"
-    REM call :installSoft Mozilla.Firefox
-    REM call :installSoft Klocman.BulkCrapUninstaller
-    REM call :installSoft google.drive "--scope machine"
-	set packageList=7zip.7zip ^
-					Notepad++.Notepad++ ^
-					Klocman.BulkCrapUninstaller ^
-					google.drive ^
-					VideoLAN.VLC
-	for %%p in (%packageList%) do (
-		call :installSoft %%p
+	set packageListWithScope=SlackTechnologies.Slack ^
+								Notepad++.Notepad								
+	set packageListWithoutScope=VNGCorp.Zalo
+	REM first loop to install software without scope machine
+	for %%p in (%packageListWithoutScope%) do (
+		call :installSoft %%p ""
+	)
+	
+	REM second loop to install software with scope machine
+	for %%p in (%packageListWithScope%) do (
+		call :installSoft %%p "--scope machine"
 	)
 	endlocal
 	exit /b
+
 :end
 
 
