@@ -332,48 +332,46 @@ REM End of Winget Menu
 REM ==============================================================================
 REM Start of Winget functions
 :updateWinget-All
-    call :checkWinget
-	 cls
-    REM accept all question with "yes" or "y". All packages will be installed silent with -h
-	 REM winget source reset msstore
-    echo y | winget upgrade -h --all
-	 call :log "Winget finished upgrading all packages successfully"
-    goto :winget
+	call :checkWinget
+	cls
+	echo y | winget upgrade -h --all
+	call :log "Winget finished upgrading all packages successfully"
+	goto :winget
 
 :installWinget-RemoteSupport
     call :checkWinget
-    cls
-    echo y | winget install TeamViewer.TeamViewer -h
-	 call :log "Installing Teamviewer"
-    REM echo y | winget install TeamViewer.TeamViewer -h --accept-source-agreements
-	 call :log "Installing Ultraview"
-	 echo y| winget install DucFabulous.UltraViewer -h
+	call :installsoft TeamViewer.TeamViewer
+	call :installsoft DucFabulous.UltraViewer
     goto :winget
 
 :installWinget-Utilities
+	Title Install Utilities by Winget
 	call :checkWinget
 	setlocal
 	call :log "Starting software utilities installation"
     cls
     echo.
-    echo *******************************************
+    echo **********************************************************************
     echo 		List Software to Install
     echo 		7zip, Notepad++, Foxit Reader
     echo 		Zalo, Slack, Skype, Unikey
     echo 		Google Chrome, Firefox
-    echo 		BulkCrapUninstaller
+    echo 		BulkCrapUninstaller, Microsoft PowerToys
     echo 		Google Drive
-    echo *******************************************
-	set packageListWithScope=SlackTechnologies.Slack 
+    echo **********************************************************************
+	timeout 3
+	REM Without Scope Machine, the software will be installed with the current user profile instead of the system profile
+	set packageListWithScope=SlackTechnologies.Slack ^
 								Google.Chrome ^
 								Mozilla.Firefox ^
 								google.drive ^
 								Google.Chrome ^
+								Microsoft.PowerToys ^
 								Mozilla.Firefox
 	set packageListWithoutScope=7zip.7zip ^
 									VideoLAN.VLC ^
 									Foxit.FoxitReader ^
-									Notepad++.Notepad 
+									Notepad++.Notepad ^
 									Klocman.BulkCrapUninstaller ^
 									VNGCorp.Zalo
 	REM first loop to install software without scope machine
@@ -386,12 +384,11 @@ REM Start of Winget functions
 		call :installSoft %%p "--scope machine"
 	)
 	endlocal
-	call :installNotepadplusplusThemes
+	REM call :installNotepadplusplusThemes
 	exit /b
 
 
 :installWinget
-    cls
     call :checkWinget
     goto :winget
 
@@ -407,13 +404,14 @@ REM ============================================================================
 REM Start of child process that can be reused functions
 REM function checkWinget will check if winget is installed or neither. If not, go to installWinget function
 :checkWinget
+	Title Check Winget 
 	echo off
     rem Get the Windows version number
     for /f "tokens=4 delims=[] " %%i in ('ver') do set VERSION=%%i
 
     rem Check if the version number is 10.0.19041 or later
     if "%VERSION%" GEQ "10.0.19041" (
-        echo.
+        cls
 		echo "Current Windows version: %VERSION% is suitable for installing winget"
 		call :log "Windows version check: Version %VERSION% is suitable for installing winget"
 		timeout 2
@@ -437,6 +435,7 @@ REM function checkWinget will check if winget is installed or neither. If not, g
     goto :EOF
 
 :installWinget
+	Title Install Winget
     cd /d %temp%
     cls
     call :log "Starting Winget installation from GitHub"
@@ -453,7 +452,7 @@ REM function checkWinget will check if winget is installed or neither. If not, g
     exit /b
 
 REM function log will append log to %temp%\installAPP.log with time, date, and the other function task
-REM %1 will inherit parameters from outside input function
+REM %1 will inherit parameters from the outside input function
 REM exit /b will exit function instead of remaining running scripts codes
 :log
     set logfile=%temp%\installAPP.log
@@ -464,6 +463,7 @@ REM exit /b will exit function instead of remaining running scripts codes
 REM function to install soft using Winget utilities
 REM to install winget, call function by using call :installsoft "software id"
 :installSoft
+	Title Install Software
 	REM Set the software name to install
     set "software=%~1"
 	REM Set the scope machine if supported
@@ -488,17 +488,18 @@ REM to install winget, call function by using call :installsoft "software id"
 		)
 	) else (
 		echo %software% already installed
-		timeout 3
+		timeout 1
 		call :log "%software% already installed"
 		cls
 	)
     goto :EOF
 
 :addScheduleUpgrade
-REM Create schedule task auto upgrade all software with hidden option
-REM Schedule task run onlogon with current user running
-schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon
-goto :eof	
+	Title Add Winget Shedule Upgrade
+	REM Create schedule task auto upgrade all software with hidden option
+	REM Schedule task run onlogon with current user running
+	echo y | schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon
+	goto :eof	
 
 REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey and add to start up
 :installUnikey
@@ -517,7 +518,7 @@ REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey
       "c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey"
     )
     call :log "Copying Unikey to Startup"
-    xcopy "c:\Program Files\Unikey\UniKeyNT.exe" "%_programDATA%\StartUp" /y
+    mklink "c:\Program Files\Unikey\UniKeyNT.exe" "%_programDATA%\StartUp" /y
     call :log "Creating Unikey shortcut on desktop"
     mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
     cd /d %_dp%
@@ -527,14 +528,7 @@ REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey
 function install 7zip by using winget
 :install7zip
     cls
-    call :checkWinget
-    if not exist "%ProgramFiles%\7-Zip" (
-      call :log "Starting 7zip installation"
-      echo y | winget install 7zip.7zip -h --accept-package-agreements --accept-source-agreements
-      call :log "Finishing 7zip installation"
-    ) else (
-      call :log "7zip already installed"
-    )
+	call :installsoft 7zip.7zip
     REM associate regular files extension with 7zip
     assoc .7z=7-Zip
     assoc .zip=7-Zip

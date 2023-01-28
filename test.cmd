@@ -8,13 +8,14 @@ call :addScheduleUpgrade
 goto :end
 
 :checkWinget
+	Title Check Winget 
 	echo off
     rem Get the Windows version number
     for /f "tokens=4 delims=[] " %%i in ('ver') do set VERSION=%%i
 
     rem Check if the version number is 10.0.19041 or later
     if "%VERSION%" GEQ "10.0.19041" (
-        echo.
+        cls
 		echo "Current Windows version: %VERSION% is suitable for installing winget"
 		call :log "Windows version check: Version %VERSION% is suitable for installing winget"
 		timeout 2
@@ -39,6 +40,7 @@ goto :end
 	
 
 :installWinget
+	Title Install Winget
     cd /d %temp%
     cls
     call :log "Starting Winget installation from GitHub"
@@ -62,6 +64,7 @@ goto :end
 
 REM function to install software using winget
 :installSoft
+	Title Install Software
 	REM Set the software name to install
     set "software=%~1"
 	REM Set the scope machine if supported
@@ -86,23 +89,49 @@ REM function to install software using winget
 		)
 	) else (
 		echo %software% already installed
-		timeout 3
+		timeout 1
 		call :log "%software% already installed"
 		cls
 	)
     goto :EOF
 
 :addScheduleUpgrade
-REM Create schedule task auto upgrade all software with hidden option
-REM Schedule task run onlogon with current user running
-schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon
-goto :eof
+	Title Add Winget Shedule Upgrade
+	REM Create schedule task auto upgrade all software with hidden option
+	REM Schedule task run onlogon with current user running
+	echo y | schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon
+	goto :eof
 
 :installWinget-Utilities
+	Title Install Utilities by Winget
+	call :checkWinget
 	setlocal
+	call :log "Starting software utilities installation"
+    cls
+    echo.
+    echo **********************************************************************
+    echo 		List Software to Install
+    echo 		7zip, Notepad++, Foxit Reader
+    echo 		Zalo, Slack, Skype, Unikey
+    echo 		Google Chrome, Firefox
+    echo 		BulkCrapUninstaller, Microsoft PowerToys
+    echo 		Google Drive
+    echo **********************************************************************
+	timeout 3
+	REM Without Scope Machine, the software will be installed with the current user profile instead of the system profile
 	set packageListWithScope=SlackTechnologies.Slack ^
-								Notepad++.Notepad								
-	set packageListWithoutScope=VNGCorp.Zalo
+								Google.Chrome ^
+								Mozilla.Firefox ^
+								google.drive ^
+								Google.Chrome ^
+								Microsoft.PowerToys ^
+								Mozilla.Firefox
+	set packageListWithoutScope=7zip.7zip ^
+									VideoLAN.VLC ^
+									Foxit.FoxitReader ^
+									Notepad++.Notepad ^
+									Klocman.BulkCrapUninstaller ^
+									VNGCorp.Zalo
 	REM first loop to install software without scope machine
 	for %%p in (%packageListWithoutScope%) do (
 		call :installSoft %%p ""
@@ -113,6 +142,7 @@ goto :eof
 		call :installSoft %%p "--scope machine"
 	)
 	endlocal
+	REM call :installNotepadplusplusThemes
 	exit /b
 
 :end
