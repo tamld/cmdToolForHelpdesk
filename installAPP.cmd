@@ -384,7 +384,7 @@ REM Start of Winget functions
 		call :installSoft %%p "--scope machine"
 	)
 	endlocal
-	REM call :installNotepadplusplusThemes
+	call :installNotepadplusplusThemes
 	exit /b
 
 
@@ -525,7 +525,7 @@ REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey
     call :log "Finishing Unikey installation"
     exit /b
 
-function install 7zip by using winget
+REM function install 7zip by using winget
 :install7zip
     cls
 	call :installsoft 7zip.7zip
@@ -540,32 +540,31 @@ function install 7zip by using winget
     exit /b
 	
 :installNotepadplusplusThemes
-if not exist "%ProgramFiles(x86)%\Notepad++" (
+	Title Install Notepad++ Themes
+	if not exist "%ProgramFiles(x86)%\Notepad++" (
     call :log "Notepad++ not found, go for it"
-	call :checkWinget
-	echo y | winget install notepad++.notepad++
-	call :log "Notepad++ is installed" )
-	call :log "Starting Notepad++ theme installation"
+	call :installSoft notepad++.notepad++
 	cd /d %temp%
 	echo Notepad++ theme installation started > themes_installation.log
 	REM Dracula theme
 	call :log "Installing Dracula theme"
 	curl https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml -o Dracula.xml
-	xcopy Dracula.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
+	xcopy Dracula.xml %AppData%\Notepad++\themes\ /E /C /I /Q
 	REM Material Theme
 	call :log "Installing Material Theme"
 	curl https://raw.githubusercontent.com/HiSandy/npp-material-theme/master/Material%20Theme.xml -o "Material Theme.xml"
-	xcopy "Material Theme.xml" %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
+	xcopy "Material Theme.xml" %AppData%\Notepad++\themes\ /E /C /I /Q
 	REM Nord theme
 	call :log "Installing Nord theme"
 	curl https://raw.githubusercontent.com/arcticicestudio/nord-notepadplusplus/develop/src/xml/nord.xml -LJ -o Nord.xml
-	xcopy Nord.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
+	xcopy Nord.xml %AppData%\Notepad++\themes\ /E /C /I /Q
 	REM Mariana theme
 	call :log "Installing Mariana theme"
 	curl https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
-	xcopy Mariana.xml %AppData%\Notepad++\themes\ /E /C /I /Q >> themes_installation.log
+	xcopy Mariana.xml %AppData%\Notepad++\themes\ /E /C /I /Q
 	call :log "Notepad++ themes installation finished"
-	
+	cd %_dp%
+	goto :EOF
 
 REM function force delete all file created in %temp% folder
 :clean
@@ -577,4 +576,5 @@ REM function force delete all file created in %temp% folder
 REM End of child process functions
 REM ========================================================================================================================================
 :end
+call :clean
 exit

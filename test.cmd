@@ -2,9 +2,10 @@ echo off
 set "_dp=%~dp0"
 set "_sys32=%windir%\system32"
 cd /d "%_dp%"
-call :checkWinget
-call :installWinget-Utilities
-call :addScheduleUpgrade
+REM call :checkWinget
+REM call :installWinget-Utilities
+REM call :addScheduleUpgrade
+call :installNotepadplusplusThemes
 goto :end
 
 :checkWinget
@@ -142,9 +143,103 @@ REM function to install software using winget
 		call :installSoft %%p "--scope machine"
 	)
 	endlocal
-	REM call :installNotepadplusplusThemes
+	call :installNotepadplusplusThemes
+	call :installUnikey
 	exit /b
 
+:installNotepadplusplusThemes
+	Title Install Notepad++ Themes
+	if not exist "%ProgramFiles(x86)%\Notepad++" (
+		echo Notepad++ not found, exiting...
+		goto :EOF
+	)
+	call :log "Notepad++ found, proceeding with installation"
+	cd %temp%
+	REM Dracula theme
+	call :log "Installing Dracula theme"
+	curl https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml -o Dracula.xml
+	if %errorlevel% neq 0 (
+		echo Failed to download Dracula theme, error code %errorlevel%, exiting...
+		goto :EOF
+	)
+	xcopy Dracula.xml %AppData%\Notepad++\themes\ /E /C /I /Q
+	if %errorlevel% neq 0 (
+		echo Failed to copy Dracula theme, error code %errorlevel%, exiting...
+		goto :EOF
+	)
+	REM Material Theme
+	call :log "Installing Material Theme"
+	curl https://raw.githubusercontent.com/HiSandy/npp-material-theme/master/Material%20Theme.xml -o "Material Theme.xml"
+	if %errorlevel% neq 0 (
+		echo Failed to download Material Theme, error code %errorlevel%, exiting...
+		goto :EOF
+	)
+	xcopy "Material Theme.xml" %AppData%\Notepad++\themes\ /E /C /I /Q
+	if %errorlevel% neq 0 (
+		echo Failed to copy Material Theme, error code %errorlevel%, exiting...
+		goto :EOF
+	)
+	REM Nord theme
+	call :log "Installing Nord theme"
+	curl https://raw.githubusercontent.com/arcticicestudio/nord-notepadplusplus/develop/src/xml/nord.xml -LJ -o Nord.xml
+	if %errorlevel% neq 0 (
+		echo Failed to download Nord theme, error code %errorlevel%, exiting...
+		goto :EOF
+	)
+	xcopy Nord.xml %AppData%\Notepad++\themes\ /E /C /I /Q
+	if %errorlevel% neq 0 (
+		echo Failed to copy Nord theme, error code %errorlevel%, exiting...
+		goto :EOF
+	)
+	REM Mariana theme
+	call :log "Installing Mariana theme"
+	curl https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
+	if %errorlevel% neq 0 (
+		echo Failed to download Mariana theme, error code %errorlevel%, exiting...
+		goto :EOF
+	)
+	xcopy Mariana.xml %AppData%\Notepad++\themes\ /E /C /I /Q
+	if %errorlevel% neq 0 (
+		echo Failed to copy Mariana theme, error code %errorlevel%, exiting...
+		goto :EOF
+	)
+	
+
+
+:installUnikey
+    cls
+    call :log "Starting Unikey installation"
+    @echo off
+    cd /d %temp%
+    call :log "Downloading Unikey"
+    curl -# -o unikey43RC5-200929-win64.zip -L https://www.unikey.org/assets/release/unikey43RC5-200929-win64.zip
+    if not exist "%ProgramFiles%\7-Zip" (
+      call :log "Installing 7zip"
+      call :install7zip
+    )
+    if not exist "C:\Program Files\Unikey" (
+      call :log "Unzipping Unikey"
+      "c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey"
+    )
+    call :log "Copying Unikey to Startup"
+    mklink "c:\Program Files\Unikey\UniKeyNT.exe" "%_programDATA%\StartUp" /y
+    call :log "Creating Unikey shortcut on desktop"
+    mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
+    cd /d %_dp%
+    call :log "Finishing Unikey installation"
+    exit /b
+
+REM function install 7zip by using winget
+:install7zip
+    cls
+	call :installsoft 7zip.7zip
+    REM associate regular files extension with 7zip
+    assoc .7z=7-Zip
+    assoc .zip=7-Zip
+    assoc .rar=7-Zip
+    assoc .tar=7-Zip
+    assoc .gz=7-Zip
+    assoc .bzi
 :end
 
 
