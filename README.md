@@ -21,4 +21,3 @@ Thêm MAS để lấy BQS 1 số eddition như LTSB, LTSC
 => Bộ công cụ quản lí gói cài đặt, hỗ trợ trên Windows 10, 1809 trở đi. Phát triển bởi Microsoft. Hỗ trợ việc cài đặt, gỡ, update online bằng câu lệnh
 ========================================================================
 - Mục tiêu hỗ trợ cho công việc Helpdesk, kĩ thuật viên hàng ngày.
-- Các gói ứng dụng được lấy URL từ trang chủ hoặc SourceForget. Vui lòng kiểm tra xem gói ứng dụng là commercial hay noncommercial để có nhu cầu sử dụng phù hợp với đối tượng cá nhân hoặc doanh nghiệp
