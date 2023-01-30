@@ -244,7 +244,7 @@ echo        =================================================
 echo        [1] Set High Performance                : Press 1
 echo        [2] Change hostname                     : Press 2
 echo        [3] Clean up system                     : Press 3
-echo        [4] Upgrade online al                   : Press 4
+echo        [4] Upgrade online all                  : Press 4
 echo        [5] Join domain                         : Press 5
 echo        [6] Install SupportAssistInstaller      : Press 6
 echo        [7] Restart Windows                     : Press 7
@@ -257,7 +257,7 @@ if ERRORLEVEL == 8 goto :addLocalUser
 if ERRORLEVEL == 7 goto :restartPC
 if ERRORLEVEL == 6 goto :installSupportAssist
 if ERRORLEVEL == 5 goto :joinDomain
-if ERRORLEVEL == 4 goto :updateWinget-All
+REM if ERRORLEVEL == 4 goto :updateWinget-All
 if ERRORLEVEL == 3 goto :cleanUpSystem
 if ERRORLEVEL == 2 goto :changeHostName
 if ERRORLEVEL == 1 goto :setHighPerformance
@@ -266,8 +266,30 @@ REM End of Utilities Menu
 REM ==============================================================================
 REM Start of Utilities functions
 :addLocalUser
-    cls
-    ::put actions here
+	Title Add local user with administrator privilege
+	setLocal EnableDelayedExpansion
+	echo Write down new username to add:
+	set /p _user=
+
+	echo Do you want to set a password for %_user%? [Y/N]
+	set /p _setpass=
+
+	if /i "%_setpass%" == "Y" (
+	  echo %_user%'s password is:
+	  set /p _pass=
+	  net user %_user% %_pass% /add 2>nul
+	) else (
+	  net user %_user% "" /add 2>nul
+	)
+
+	if %errorlevel% equ 0 (
+	  net localgroup administrators %_user% /add
+	  echo User "%_user%" with admin privileges added successfully.
+	) else (
+	  echo Failed to add user.
+	)
+	endlocal
+	cls
     goto :utilities
 
 :restartPC
@@ -275,9 +297,31 @@ REM Start of Utilities functions
     ::put actions here
     goto :utilities
 
-:installSupportAssist
-   cls
-    ::put actions here
+:installSupportAssistant
+	Title install Support Assistant
+	setlocal
+	cd %temp%
+	REM Detect brand name
+	for /f %%b in ('wmic computersystem get manufacturer ^| findstr /I "Dell HP Lenovo"') do set "BRAND=%%b"
+
+	REM Download and install appropriate support assistant
+	if /I "%BRAND%" == "Dell Inc." (
+	  curl -o SupportAssistx64-3.12.3.5.msi https://downloads.dell.com/serviceability/catalog/SupportAssistx64-3.12.3.5.msi
+	  start /wait SupportAssistx64-3.12.3.5.msi /quiet
+	  call :log DELL Assistant is installed
+	) else if /I "%BRAND%" == "HP" (
+	  curl -fSL -o sp114036.exe https://ftp.hp.com/pub/softpaq/sp114001-114500/sp114036.exe
+	  "c:\Program Files\7-Zip\7z.exe" x -y sp114036.exe -o"sp114036"
+	  start /wait sp114036\InstallHPSA.exe
+	  call :log HP Assistant is installed
+	) else if /I "%BRAND%" == "Lenovo" (
+	  call :checkWinget
+	  call :installSoft "Lenovo.SystemUpdate"
+	) else (
+	  echo Unknown brand: %BRAND%
+	)
+	endlocal
+	cd %_dp%
     goto :utilities
 
 :joinDomain
@@ -285,10 +329,6 @@ REM Start of Utilities functions
     ::put actions here
     goto :utilities
 
-:updateWinget-All
-   cls
-    ::put actions here
-    goto :utilities
 REM This function will use Windows Disk Cleanup to remove unnecessary files
 :cleanUpSystem
 	Title Clean Up System
@@ -449,8 +489,8 @@ REM Start of Winget functions
 	cls
 	echo y | winget upgrade -h --all
 	call :log "Winget finished upgrading all packages successfully"
-	goto :winget
-
+    goto :winget
+	
 :installWinget-RemoteSupport
     call :checkWinget
 	call :installsoft TeamViewer.TeamViewer

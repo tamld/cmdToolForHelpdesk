@@ -4,13 +4,70 @@ set "_sys32=%windir%\system32"
 cd /d "%_dp%"
 REM call :checkWinget
 REM call :installWinget-Utilities
-call :addScheduleUpgrade
+REM call :addScheduleUpgrade
 REM call :installNotepadplusplusThemes
-call :setHighPerformance
-call :cleanUpSystem
-REM call :changeHostName
+REM call :setHighPerformance
+REM call :cleanUpSystem
+REM call :installSupportAssistant
+call :addLocalUser
+REM call :clean
 goto :end
+REM Add local admin user 
+	
+:addLocalUser
+	Title Add local user with administrator privilege
+	setLocal EnableDelayedExpansion
+	echo Write down new username to add:
+	set /p _user=
 
+	echo Do you want to set a password for %_user%? [Y/N]
+	set /p _setpass=
+
+	if /i "%_setpass%" == "Y" (
+	  echo %_user%'s password is:
+	  set /p _pass=
+	  net user %_user% %_pass% /add 2>nul
+	) else (
+	  net user %_user% "" /add 2>nul
+	)
+
+	if %errorlevel% equ 0 (
+	  net localgroup administrators %_user% /add
+	  echo User "%_user%" with admin privileges added successfully.
+	) else (
+	  echo Failed to add user.
+	)
+	endlocal
+	goto :eof
+
+
+:installSupportAssistant
+	Title install Support Assistant
+	setlocal
+	cd %temp%
+	REM Detect brand name
+	for /f %%b in ('wmic computersystem get manufacturer ^| findstr /I "Dell HP Lenovo"') do set "BRAND=%%b"
+
+	REM Download and install appropriate support assistant
+	if /I "%BRAND%" == "Dell Inc." (
+	  curl -o SupportAssistx64-3.12.3.5.msi https://downloads.dell.com/serviceability/catalog/SupportAssistx64-3.12.3.5.msi
+	  start /wait SupportAssistx64-3.12.3.5.msi /quiet
+	  call :log DELL Assistant is installed
+	) else if /I "%BRAND%" == "HP" (
+	  curl -fSL -o sp114036.exe https://ftp.hp.com/pub/softpaq/sp114001-114500/sp114036.exe
+	  "c:\Program Files\7-Zip\7z.exe" x -y sp114036.exe -o"sp114036"
+	  start /wait sp114036\InstallHPSA.exe
+	  call :log HP Assistant is installed
+	) else if /I "%BRAND%" == "Lenovo" (
+	  call :checkWinget
+	  call :installSoft "Lenovo.SystemUpdate"
+	) else (
+	  echo Unknown brand: %BRAND%
+	)
+	endlocal
+	cd %_dp%
+	exit /b
+	
 :setHighPerformance
 	Title "Set Windows Powerplan - High performance"
 	cls
@@ -370,6 +427,12 @@ REM function install 7zip by using winget
     assoc .gz=7-Zip
     assoc .bzi
 :end
+
+:clean
+    del /q /f /s %temp%\*.*
+    REM forfiles search files with criteria > 7 days and delete
+    REM forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
+    exit /b
 
 
 
