@@ -257,8 +257,8 @@ if ERRORLEVEL == 8 goto :joinDomain
 
 if ERRORLEVEL == 7 goto :restartPC
 if ERRORLEVEL == 6 goto :installSupportAssist
-if ERRORLEVEL == 5 goto :addLocalUserUsers
-if ERRORLEVEL == 4 goto :addLocalUserAdmin
+if ERRORLEVEL == 5 goto :addUserToUsers
+if ERRORLEVEL == 4 goto :addUserToAdmins
 if ERRORLEVEL == 3 goto :cleanUpSystem
 if ERRORLEVEL == 2 goto :changeHostName
 if ERRORLEVEL == 1 goto :setHighPerformance
@@ -267,15 +267,10 @@ REM End of Utilities Menu
 REM ==============================================================================
 REM Start of Utilities functions
 
-:addLocalUserUsers
-
-
-REM Add local admin user 
-:addLocalUserAdmin
-	REM Add local user with administrator privilege
-	setLocal EnableDelayedExpansion
+:GetUserInformation
+	Title Get User Information
 	REM Prompt user for new username
-	echo Enter new username with administrator privilege to add:
+	echo Enter new username that you'd like to add:
 	set /p _user=
 
 	REM Prompt user to set password or not
@@ -300,20 +295,80 @@ REM Add local admin user
 	  goto :input_pass
 	  cls
 	)
-	REM Add user to local administrators group
-	if %errorlevel% equ 0 (
-	  net localgroup administrators %_user% /add
-	  call :log "User %_user% added to local administrators group successfully."
-	  echo User "%_user%" with admin privileges added successfully.
-	  timeout 2
+	goto :EOF
+
+:addUserToAdmins
+	REM This function adds the user to the Administrators group.
+	Title Add User to Administrators Group
+	call :GetUserInformation
+	net localgroup administrators %_user% /add
+	if %errorlevel% == 0 (
+	call :log "User %_user% was added to administrators group"
+	echo User %_user% was added to administrators group.
+	timeout 2
+	cls
 	) else (
-	  call :log "Failed to add user %_user%."
-	  echo Failed to add user.
-	  timeout 2
+	call :log "Failed to add user %_user% to administrators group"
+	echo Failed to add user %_user% to administrators group.
 	)
-	endlocal
 	cls
 	goto :utilities
+
+:addUserToUsers
+	REM This function adds the user to the Users group.
+	Title Add User to Users Group
+	call :GetUserInformation
+	call :log "User %_user% was added to Users group"
+	echo User %_user% was added to users group.
+	timeout 2
+	cls
+	goto :utilities
+	
+
+REM REM Add local admin user 
+REM :addLocalUserAdmin
+	REM REM Add local user with administrator privilege
+	REM setLocal EnableDelayedExpansion
+	REM REM Prompt user for new username
+	REM echo Enter new username with administrator privilege to add:
+	REM set /p _user=
+
+	REM REM Prompt user to set password or not
+	REM :input_pass
+	REM echo Do you want to set a password for %_user%? [Y/N]
+	REM set /p _setpass=
+
+	REM REM Add user with or without password
+	REM if /i "%_setpass%" == "Y" (
+	  REM echo %_user%'s password is:
+	  REM set /p _pass=
+	  REM net user %_user% %_pass% /add 2>nul
+	  REM call :log "User %_user% added with password successfully."
+	  REM timeout 2
+	  REM cls
+	REM ) else if /i "%_setpass%" == "N" (
+	  REM net user %_user% "" /add 2>nul
+	  REM call :log "User %_user% added without password successfully."
+	  REM cls
+	REM ) else (
+	  REM echo Invalid input. Please try again.
+	  REM goto :input_pass
+	  REM cls
+	REM )
+	REM REM Add user to local administrators group
+	REM if %errorlevel% equ 0 (
+	  REM net localgroup administrators %_user% /add
+	  REM call :log "User %_user% added to local administrators group successfully."
+	  REM echo User "%_user%" with admin privileges added successfully.
+	  REM timeout 2
+	REM ) else (
+	  REM call :log "Failed to add user %_user%."
+	  REM echo Failed to add user.
+	  REM timeout 2
+	REM )
+	REM endlocal
+	REM cls
+	REM goto :utilities
 
 :restartPC
    cls

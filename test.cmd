@@ -9,37 +9,17 @@ REM call :installNotepadplusplusThemes
 REM call :setHighPerformance
 REM call :cleanUpSystem
 REM call :installSupportAssistant
-call :addLocalUser
+REM call :addLocalUser
+call :addUserToAdmins
+call :addUserToUsers
 REM call :restartPC
 REM call :clean
 goto :end
 
-
-:restartPC
-	REM Ask the user if they want to set a timeout for the restart
-	echo Do you want to set a timeout for restarting? [Y/N]
-	set /p _timeout=
-	REM If the user chooses to set a timeout, restart the computer with the specified timeout
-	if /i "%_timeout%" == "Y" (
-		echo Enter the timeout in seconds:
-		set /p _seconds=
-		shutdown /r /t %_seconds% /f
-	) else (
-		REM If the user doesn't choose to set a timeout, restart the computer immediately
-		shutdown /r /f
-	)
-	call :log "Computer will restart (if defined %_timeout%) in %_seconds% seconds."
-	echo The computer will restart (if defined) in %_seconds% seconds.
-	goto :eof
-
-
-
-REM Add local admin user 
-:addLocalUserAdmin
-	REM Add local user with administrator privilege
-	setLocal EnableDelayedExpansion
+:GetUserInformation
+	Title Get User Information
 	REM Prompt user for new username
-	echo Enter new username with administrator privilege to add:
+	echo Enter new username that you'd like to add:
 	set /p _user=
 
 	REM Prompt user to set password or not
@@ -64,20 +44,51 @@ REM Add local admin user
 	  goto :input_pass
 	  cls
 	)
-	REM Add user to local administrators group
-	if %errorlevel% equ 0 (
-	  net localgroup administrators %_user% /add
-	  call :log "User %_user% added to local administrators group successfully."
-	  echo User "%_user%" with admin privileges added successfully.
-	  timeout 2
+	goto :EOF
+
+:addUserToAdmins
+	REM This function adds the user to the Administrators group.
+	Title Add User to Administrators Group
+	call :GetUserInformation
+	net localgroup administrators %_user% /add
+	if %errorlevel% == 0 (
+	call :log "User %_user% was added to administrators group"
+	echo User %_user% was added to administrators group.
+	timeout 2
+	cls
 	) else (
-	  call :log "Failed to add user %_user%."
-	  echo Failed to add user.
-	  timeout 2
+	call :log "Failed to add user %_user% to administrators group"
+	echo Failed to add user %_user% to administrators group.
 	)
-	endlocal
 	cls
 	exit /b
+
+:addUserToUsers
+	REM This function adds the user to the Users group.
+	Title Add User to Users Group
+	call :GetUserInformation
+	call :log "User %_user% was added to Users group"
+	echo User %_user% was added to users group.
+	timeout 2
+	cls
+	exit /b
+
+:restartPC
+	REM Ask the user if they want to set a timeout for the restart
+	echo Do you want to set a timeout for restarting? [Y/N]
+	set /p _timeout=
+	REM If the user chooses to set a timeout, restart the computer with the specified timeout
+	if /i "%_timeout%" == "Y" (
+		echo Enter the timeout in seconds:
+		set /p _seconds=
+		shutdown /r /t %_seconds% /f
+	) else (
+		REM If the user doesn't choose to set a timeout, restart the computer immediately
+		shutdown /r /f
+	)
+	call :log "Computer will restart (if defined %_timeout%) in %_seconds% seconds."
+	echo The computer will restart (if defined) in %_seconds% seconds.
+	goto :eof
 
 :installSupportAssistant
 	Title install Support Assistant
@@ -323,7 +334,7 @@ REM function to install software using winget
 	Title Add Winget Shedule Upgrade
 	REM Create schedule task auto upgrade all software with hidden option
 	REM Schedule task run onlogon with current user running
-	schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon /ru %username% /f
+	schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon /ru %_user% /f
 	goto :eof
 
 
