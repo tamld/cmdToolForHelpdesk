@@ -244,20 +244,21 @@ echo        =================================================
 echo        [1] Set High Performance                : Press 1
 echo        [2] Change hostname                     : Press 2
 echo        [3] Clean up system                     : Press 3
-echo        [4] Upgrade online all                  : Press 4
-echo        [5] Join domain                         : Press 5
+echo        [4] Add user to Admin group             : Press 4
+echo        [5] Add user to Users group             : Press 5
 echo        [6] Install SupportAssistInstaller      : Press 6
 echo        [7] Restart Windows                     : Press 7
-echo        [8] Add user local admin                : Press 8
+echo        [8] Join domain                         : Press 8
 echo        [9] Back to Main Menu                   : Press 9
 echo        =================================================
 Choice /N /C 123456789 /M " Press your choice : "
 if ERRORLEVEL == 9 goto :main
-if ERRORLEVEL == 8 goto :addLocalUser
+if ERRORLEVEL == 8 goto :joinDomain
+
 if ERRORLEVEL == 7 goto :restartPC
 if ERRORLEVEL == 6 goto :installSupportAssist
-if ERRORLEVEL == 5 goto :joinDomain
-REM if ERRORLEVEL == 4 goto :updateWinget-All
+if ERRORLEVEL == 5 goto :addLocalUserUsers
+if ERRORLEVEL == 4 goto :addLocalUserAdmin
 if ERRORLEVEL == 3 goto :cleanUpSystem
 if ERRORLEVEL == 2 goto :changeHostName
 if ERRORLEVEL == 1 goto :setHighPerformance
@@ -265,36 +266,58 @@ endlocal
 REM End of Utilities Menu
 REM ==============================================================================
 REM Start of Utilities functions
-:addLocalUser
-	Title Add local user with administrator privilege
+
+:addLocalUserUsers
+
+
+REM Add local admin user 
+:addLocalUserAdmin
+	REM Add local user with administrator privilege
 	setLocal EnableDelayedExpansion
-	echo Write down new username to add:
+	REM Prompt user for new username
+	echo Enter new username with administrator privilege to add:
 	set /p _user=
 
+	REM Prompt user to set password or not
+	:input_pass
 	echo Do you want to set a password for %_user%? [Y/N]
 	set /p _setpass=
 
+	REM Add user with or without password
 	if /i "%_setpass%" == "Y" (
 	  echo %_user%'s password is:
 	  set /p _pass=
 	  net user %_user% %_pass% /add 2>nul
-	) else (
+	  call :log "User %_user% added with password successfully."
+	  timeout 2
+	  cls
+	) else if /i "%_setpass%" == "N" (
 	  net user %_user% "" /add 2>nul
+	  call :log "User %_user% added without password successfully."
+	  cls
+	) else (
+	  echo Invalid input. Please try again.
+	  goto :input_pass
+	  cls
 	)
-
+	REM Add user to local administrators group
 	if %errorlevel% equ 0 (
 	  net localgroup administrators %_user% /add
+	  call :log "User %_user% added to local administrators group successfully."
 	  echo User "%_user%" with admin privileges added successfully.
+	  timeout 2
 	) else (
+	  call :log "Failed to add user %_user%."
 	  echo Failed to add user.
+	  timeout 2
 	)
 	endlocal
 	cls
-    goto :utilities
+	goto :utilities
 
 :restartPC
    cls
-    ::put actions here
+    
     goto :utilities
 
 :installSupportAssistant

@@ -10,36 +10,74 @@ REM call :setHighPerformance
 REM call :cleanUpSystem
 REM call :installSupportAssistant
 call :addLocalUser
+REM call :restartPC
 REM call :clean
 goto :end
+
+
+:restartPC
+	REM Ask the user if they want to set a timeout for the restart
+	echo Do you want to set a timeout for restarting? [Y/N]
+	set /p _timeout=
+	REM If the user chooses to set a timeout, restart the computer with the specified timeout
+	if /i "%_timeout%" == "Y" (
+		echo Enter the timeout in seconds:
+		set /p _seconds=
+		shutdown /r /t %_seconds% /f
+	) else (
+		REM If the user doesn't choose to set a timeout, restart the computer immediately
+		shutdown /r /f
+	)
+	call :log "Computer will restart (if defined %_timeout%) in %_seconds% seconds."
+	echo The computer will restart (if defined) in %_seconds% seconds.
+	goto :eof
+
+
+
 REM Add local admin user 
-	
-:addLocalUser
-	Title Add local user with administrator privilege
+:addLocalUserAdmin
+	REM Add local user with administrator privilege
 	setLocal EnableDelayedExpansion
-	echo Write down new username to add:
+	REM Prompt user for new username
+	echo Enter new username with administrator privilege to add:
 	set /p _user=
 
+	REM Prompt user to set password or not
+	:input_pass
 	echo Do you want to set a password for %_user%? [Y/N]
 	set /p _setpass=
 
+	REM Add user with or without password
 	if /i "%_setpass%" == "Y" (
 	  echo %_user%'s password is:
 	  set /p _pass=
 	  net user %_user% %_pass% /add 2>nul
-	) else (
+	  call :log "User %_user% added with password successfully."
+	  timeout 2
+	  cls
+	) else if /i "%_setpass%" == "N" (
 	  net user %_user% "" /add 2>nul
+	  call :log "User %_user% added without password successfully."
+	  cls
+	) else (
+	  echo Invalid input. Please try again.
+	  goto :input_pass
+	  cls
 	)
-
+	REM Add user to local administrators group
 	if %errorlevel% equ 0 (
 	  net localgroup administrators %_user% /add
+	  call :log "User %_user% added to local administrators group successfully."
 	  echo User "%_user%" with admin privileges added successfully.
+	  timeout 2
 	) else (
+	  call :log "Failed to add user %_user%."
 	  echo Failed to add user.
+	  timeout 2
 	)
 	endlocal
-	goto :eof
-
+	cls
+	exit /b
 
 :installSupportAssistant
 	Title install Support Assistant
@@ -426,7 +464,6 @@ REM function install 7zip by using winget
     assoc .tar=7-Zip
     assoc .gz=7-Zip
     assoc .bzi
-:end
 
 :clean
     del /q /f /s %temp%\*.*
@@ -434,5 +471,6 @@ REM function install 7zip by using winget
     REM forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
     exit /b
 
+:end
 
 
