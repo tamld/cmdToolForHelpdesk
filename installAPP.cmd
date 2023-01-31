@@ -136,10 +136,33 @@ if ERRORLEVEL == 5 goto :fixNonCore
 if ERRORLEVEL == 4 goto :convertOfficeEddition
 if ERRORLEVEL == 3 goto :removeOfficeKey
 if ERRORLEVEL == 2 goto :uninstallOffice
-if ERRORLEVEL == 1 goto :installOffice
+if ERRORLEVEL == 1 goto :installOfficeMenu
 endlocal
 REM ==============================================================================
 REM Start of Windows Office Utilities functions
+REM ==============================================================================
+REM Sub menu Install Office Online
+:installOfficeMenu
+Title Select Office Version to Install
+cls
+echo.
+echo  Sub menu Install Office Online
+echo.
+echo                =================================================
+echo                [1] Office 365                          : Press 1
+echo                [2] Office 2021 MSDN                         : Press 2
+echo                [3] Office 2019                         : Press 3
+echo                [4] Office 2016                         : Press 4
+echo                [5] Main Menu                           : Press 5
+echo                =================================================
+Choice /N /C 12345 /M " Press your choice : "
+if ERRORLEVEL == 5 goto :fixNonCore
+if ERRORLEVEL == 4 goto :o2016
+if ERRORLEVEL == 3 goto :o2019
+if ERRORLEVEL == 2 goto :o2021
+if ERRORLEVEL == 1 goto :o365
+goto :office-windows
+
 :loadSkus
 cls
 ::put actions here
@@ -202,14 +225,14 @@ REM End of Active Licenses Menu
 REM ==============================================================================
 REM Start of Active Lienses functions
 :MAS
-    cls
-    ::put actions here
-    goto :activeLicenses
+	cls
+	::put actions here
+	goto :activeLicenses
 
 :restoreLicenses
-    cls
-    ::put actions here
-    goto :activeLicenses
+	cls
+	::put actions here
+	goto :activeLicenses
 
 :backupLicenses
     cls
@@ -254,7 +277,6 @@ echo        =================================================
 Choice /N /C 123456789 /M " Press your choice : "
 if ERRORLEVEL == 9 goto :main
 if ERRORLEVEL == 8 goto :joinDomain
-
 if ERRORLEVEL == 7 goto :restartPC
 if ERRORLEVEL == 6 goto :installSupportAssist
 if ERRORLEVEL == 5 goto :addUserToUsers
@@ -284,7 +306,7 @@ REM Start of Utilities functions
 	  set /p _pass=
 	  net user %_user% %_pass% /add 2>nul
 	  call :log "User %_user% added with password successfully."
-	  timeout 2
+	  ping -n 2 localhost 1>NUL
 	  cls
 	) else if /i "%_setpass%" == "N" (
 	  net user %_user% "" /add 2>nul
@@ -305,7 +327,7 @@ REM Start of Utilities functions
 	if %errorlevel% == 0 (
 	call :log "User %_user% was added to administrators group"
 	echo User %_user% was added to administrators group.
-	timeout 2
+	ping -n 2 localhost 1>NUL
 	cls
 	) else (
 	call :log "Failed to add user %_user% to administrators group"
@@ -320,7 +342,7 @@ REM Start of Utilities functions
 	call :GetUserInformation
 	call :log "User %_user% was added to Users group"
 	echo User %_user% was added to users group.
-	timeout 2
+	ping -n 2 localhost 1>NUL
 	cls
 	goto :utilities
 	
@@ -344,7 +366,7 @@ REM :addLocalUserAdmin
 	  REM set /p _pass=
 	  REM net user %_user% %_pass% /add 2>nul
 	  REM call :log "User %_user% added with password successfully."
-	  REM timeout 2
+	  REM ping -n 2 localhost 1>NUL
 	  REM cls
 	REM ) else if /i "%_setpass%" == "N" (
 	  REM net user %_user% "" /add 2>nul
@@ -360,20 +382,20 @@ REM :addLocalUserAdmin
 	  REM net localgroup administrators %_user% /add
 	  REM call :log "User %_user% added to local administrators group successfully."
 	  REM echo User "%_user%" with admin privileges added successfully.
-	  REM timeout 2
+	  REM ping -n 2 localhost 1>NUL
 	REM ) else (
 	  REM call :log "Failed to add user %_user%."
 	  REM echo Failed to add user.
-	  REM timeout 2
+	  REM ping -n 2 localhost 1>NUL
 	REM )
 	REM endlocal
 	REM cls
 	REM goto :utilities
 
 :restartPC
-   cls
-    
-    goto :utilities
+	cls
+
+	goto :utilities
 
 :installSupportAssistant
 	Title install Support Assistant
@@ -442,7 +464,7 @@ REM This function will use Windows Disk Cleanup to remove unnecessary files
 	echo Your new computername is:
 	set /p _newComputername=
 	echo This will change your computername from: %computername% to: %_newComputername%
-	timeout 3
+	ping -n 3 localhost 1>NUL
 	WMIC ComputerSystem where Name="%computername%" call Rename Name="%_newComputername%"
 	for /f "skip=1 tokens=2 delims==; " %%i in ('WMIC ComputerSystem where Name^="%computername%" call Rename Name^="%_newComputername%" ^| findstr "ReturnValue ="') do set _statusChangeHostName=%%i
 	cls
@@ -590,7 +612,7 @@ REM Start of Winget functions
     echo 		BulkCrapUninstaller, Microsoft PowerToys
     echo 		Google Drive
     echo **********************************************************************
-	timeout 3
+	ping -n 3 localhost 1>NUL
 	REM Without Scope Machine, the software will be installed with the current user profile instead of the system profile
 	set packageListWithScope=SlackTechnologies.Slack ^
 								Google.Chrome ^
@@ -645,7 +667,7 @@ REM function checkWinget will check if winget is installed or neither. If not, g
         cls
 		echo "Current Windows version: %VERSION% is suitable for installing winget"
 		call :log "Windows version check: Version %VERSION% is suitable for installing winget"
-		timeout 2
+		ping -n 2 localhost 1>NUL
 		cls
         winget -v
         if ERRORLEVEL 1 (
@@ -660,7 +682,7 @@ REM function checkWinget will check if winget is installed or neither. If not, g
     ) else (
         call :log "Windows version check: Version %VERSION% is not suitable for installing winget"
         echo Your Windows version is not suitable for installing winget
-		timeout 2
+		ping -n 2 localhost 1>NUL
     )
     cls
     goto :EOF
