@@ -21,35 +21,47 @@ REM Go UAC to get Admin privileges
     CD /D "%~dp0"
 REM ========================================================================================================================================	
 :main
-set "_dp=%~dp0"
-set "_sys32=%windir%\system32"
-call :get_OfficePath
-set "_officePath=%cd%"
-set "_programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
-cd /d "%_dp%"
-setlocal
-cls
-title Main Menu
-echo.
-echo    =================================================
-echo    [1] Install AIO Online                  : Press 1
-echo    [2] Windows Office Utilities            : Press 2
-echo    [3] Active Licenses                     : Press 3
-echo    [4] Utilities                           : Press 4
-echo    [5] Winget                              : Press 5
-echo    [6] Update CMD                          : Press 6
-echo    [7] Exit                                : Press 7
-echo    =================================================
-Choice /N /C 1234567 /M " Your choice is :"
-if ERRORLEVEL == 7 goto end
-if ERRORLEVEL == 6 goto updateCMD
-if ERRORLEVEL == 5 goto winget
-if ERRORLEVEL == 4 goto utilities
-if ERRORLEVEL == 3 goto activeLicenses
-if ERRORLEVEL == 2 goto office-windows
-if ERRORLEVEL == 1 goto installAIOMenu
-endlocal
-goto end
+	@echo off
+	REM version 0.1
+	set "versoin=0.1"
+	set "dp=%~dp0"
+	set "sys32=%windir%\system32"
+	call :get_OfficePath
+	set "_officePath=%cd%"
+	set "_programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
+	cd /d "%dp%"
+	echo. 
+	echo You are using version %version%
+	echo 
+	set /p answer=Would you like update to the latest version? [Y/N]
+	if /i "%answer%" == "Y" (
+		call :update) else (
+							echo You set to do nothing
+							ping -n 2 localhost 1>NUL
+							)
+	setlocal
+	cls
+	title Main Menu
+	echo.
+	echo    =================================================
+	echo    [1] Install AIO Online                  : Press 1
+	echo    [2] Windows Office Utilities            : Press 2
+	echo    [3] Active Licenses                     : Press 3
+	echo    [4] Utilities                           : Press 4
+	echo    [5] Winget                              : Press 5
+	echo    [6] Update CMD                          : Press 6
+	echo    [7] Exit                                : Press 7
+	echo    =================================================
+	Choice /N /C 1234567 /M " Your choice is :"
+	if ERRORLEVEL == 7 goto end
+	if ERRORLEVEL == 6 call :updateCMD&goto :main
+	if ERRORLEVEL == 5 goto winget
+	if ERRORLEVEL == 4 goto utilities
+	if ERRORLEVEL == 3 goto activeLicenses
+	if ERRORLEVEL == 2 goto office-windows
+	if ERRORLEVEL == 1 goto installAIOMenu
+	endlocal
+	goto end
 REM ========================================================================================================================================
 REM ==============================================================================
 REM Start of installAIOMenu
@@ -114,7 +126,7 @@ REM ============================================================================
 REM Start of Windows Office Utilities Menu
 :office-windows
 setlocal
-cd /d %_dp%
+cd /d %dp%
 cls
 title Office Main Menu
 echo.
@@ -173,8 +185,8 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	TITLE Microsoft Office ProPlus - Online Installer
 	REM Define value default for install
 	set "_dp=%~dp0"
-	set "_sys32=%windir%\system32"
-	cd /d "%_dp%"
+	set "sys32=%windir%\system32"
+	cd /d "%dp%"
 	Set "on=(YES)"
 	Set "off=(NO)"
 	Set "opt1=%on%" ::Word
@@ -249,7 +261,7 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	REM REM Deploy template via link: https://config.office.com/deploymentsettings
 	Set "OCS="%temp%\Office %office% Setup Config.xml""
 						  >%OCS% echo ^<Configuration^>
-						 REM >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly" SourcePath="%_dp%"^>
+						 REM >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly" SourcePath="%dp%"^>
 						 >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly"^>					 
 						 >>%OCS% echo     ^<Product ID="ProPlus%office%Retail"^>
 						 >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
@@ -536,7 +548,7 @@ REM :addLocalUserAdmin
 	  echo Unknown brand: %BRAND%
 	)
 	endlocal
-	cd %_dp%
+	cd %dp%
     goto :utilities
 
 :joinDomain
@@ -677,7 +689,7 @@ REM ============================================================================
 :winget
 setlocal
 REM Start of Winget Menu
-cd /d %_dp%
+cd /d %dp%
 cls
 title Winget Main Menu
 echo.
@@ -764,9 +776,14 @@ REM End of Winget functions
 REM ========================================================================================================================================
 REM function update CMD via github
 :updateCMD
-   cls
-    call :hold
-    goto :main
+	cls
+	pushd %dp%
+	curl -sO https://raw.githubusercontent.com/tamld/cmdToolForHelpdesk/main/installAPP.cmd
+	call :log installAPP file has been updated
+	echo installAPP file has been updated
+	ping -n 2 localhost 1>NUL
+	popd
+	goto :EOF
 
 REM ========================================================================================================================================
 REM Start of child process that can be reused functions
@@ -816,7 +833,7 @@ REM function checkWinget will check if winget is installed or neither. If not, g
 	call :log "Finished Winget installation msixbundle"
 	call :log "Finished Winget installation from GitHub"
 	cls
-    cd /d "%_dp%"
+    cd /d "%dp%"
     exit /b
 
 REM function log will append log to %temp%\installAPP.log with time, date, and the other function task
@@ -890,7 +907,7 @@ REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey
     mklink "c:\Program Files\Unikey\UniKeyNT.exe" "%_programDATA%\StartUp" /y
     call :log "Creating Unikey shortcut on desktop"
     mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
-    cd /d %_dp%
+    cd /d %dp%
     call :log "Finishing Unikey installation"
     exit /b
 
@@ -934,7 +951,7 @@ REM function install 7zip by using winget
 	curl https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
 	xcopy Mariana.xml %AppData%\Notepad++\themes\ /E /C /I /Q
 	call :log "Notepad++ themes installation finished"
-	cd %_dp%
+	cd %dp%
 	goto :EOF
 
 REM function force delete all file created in %temp% folder
