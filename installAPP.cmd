@@ -23,22 +23,21 @@ REM ============================================================================
 :main
 	@echo off
 	REM version 0.1
-	set "versoin=0.1"
+	set "version=0.1"
 	set "dp=%~dp0"
 	set "sys32=%windir%\system32"
-	call :get_OfficePath
-	set "_officePath=%cd%"
-	set "_programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
+	REM call :get_OfficePath
+	REM set "_officePath=%cd%"
+	set "programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
 	cd /d "%dp%"
-	echo. 
-	echo You are using version %version%
-	echo 
-	set /p answer=Would you like update to the latest version? [Y/N]
-	if /i "%answer%" == "Y" (
-		call :update) else (
-							echo You set to do nothing
-							ping -n 2 localhost 1>NUL
-							)
+	cls
+	REM echo. 
+	REM echo You are using version %version%
+	REM set /p answer=Would you like update to the latest version? [Y/N] 
+	REM if /i "%answer%" == "Y" (call :updateCMD) else (
+							REM echo You set to do nothing
+							REM ping -n 2 localhost 1>NUL
+							REM )
 	setlocal
 	cls
 	title Main Menu
@@ -420,24 +419,24 @@ REM Start of Utilities functions
 	Title Get User Information
 	REM Prompt user for new username
 	echo Enter new username that you'd like to add:
-	set /p _user=
+	set /p user=
 
 	REM Prompt user to set password or not
 	:input_pass
-	echo Do you want to set a password for %_user%? [Y/N]
-	set /p _setpass=
+	echo Do you want to set a password for %user%? [Y/N]
+	set /p setpass=
 
 	REM Add user with or without password
-	if /i "%_setpass%" == "Y" (
-	  echo %_user%'s password is:
+	if /i "%setpass%" == "Y" (
+	  echo %user%'s password is:
 	  set /p _pass=
-	  net user %_user% %_pass% /add 2>nul
-	  call :log "User %_user% added with password successfully."
+	  net user %user% %_pass% /add 2>nul
+	  call :log "User %user% added with password successfully."
 	  ping -n 2 localhost 1>NUL
 	  cls
-	) else if /i "%_setpass%" == "N" (
-	  net user %_user% "" /add 2>nul
-	  call :log "User %_user% added without password successfully."
+	) else if /i "%setpass%" == "N" (
+	  net user %user% "" /add 2>nul
+	  call :log "User %user% added without password successfully."
 	  cls
 	) else (
 	  echo Invalid input. Please try again.
@@ -450,15 +449,15 @@ REM Start of Utilities functions
 	REM This function adds the user to the Administrators group.
 	Title Add User to Administrators Group
 	call :GetUserInformation
-	net localgroup administrators %_user% /add
+	net localgroup administrators %user% /add
 	if %errorlevel% == 0 (
-	call :log "User %_user% was added to administrators group"
-	echo User %_user% was added to administrators group.
+	call :log "User %user% was added to administrators group"
+	echo User %user% was added to administrators group.
 	ping -n 2 localhost 1>NUL
 	cls
 	) else (
-	call :log "Failed to add user %_user% to administrators group"
-	echo Failed to add user %_user% to administrators group.
+	call :log "Failed to add user %user% to administrators group"
+	echo Failed to add user %user% to administrators group.
 	)
 	cls
 	goto :utilities
@@ -467,8 +466,8 @@ REM Start of Utilities functions
 	REM This function adds the user to the Users group.
 	Title Add User to Users Group
 	call :GetUserInformation
-	call :log "User %_user% was added to Users group"
-	echo User %_user% was added to users group.
+	call :log "User %user% was added to Users group"
+	echo User %user% was added to users group.
 	ping -n 2 localhost 1>NUL
 	cls
 	goto :utilities
@@ -480,24 +479,24 @@ REM :addLocalUserAdmin
 	REM setLocal EnableDelayedExpansion
 	REM REM Prompt user for new username
 	REM echo Enter new username with administrator privilege to add:
-	REM set /p _user=
+	REM set /p user=
 
 	REM REM Prompt user to set password or not
 	REM :input_pass
-	REM echo Do you want to set a password for %_user%? [Y/N]
-	REM set /p _setpass=
+	REM echo Do you want to set a password for %user%? [Y/N]
+	REM set /p setpass=
 
 	REM REM Add user with or without password
-	REM if /i "%_setpass%" == "Y" (
-	  REM echo %_user%'s password is:
+	REM if /i "%setpass%" == "Y" (
+	  REM echo %user%'s password is:
 	  REM set /p _pass=
-	  REM net user %_user% %_pass% /add 2>nul
-	  REM call :log "User %_user% added with password successfully."
+	  REM net user %user% %_pass% /add 2>nul
+	  REM call :log "User %user% added with password successfully."
 	  REM ping -n 2 localhost 1>NUL
 	  REM cls
-	REM ) else if /i "%_setpass%" == "N" (
-	  REM net user %_user% "" /add 2>nul
-	  REM call :log "User %_user% added without password successfully."
+	REM ) else if /i "%setpass%" == "N" (
+	  REM net user %user% "" /add 2>nul
+	  REM call :log "User %user% added without password successfully."
 	  REM cls
 	REM ) else (
 	  REM echo Invalid input. Please try again.
@@ -506,12 +505,12 @@ REM :addLocalUserAdmin
 	REM )
 	REM REM Add user to local administrators group
 	REM if %errorlevel% equ 0 (
-	  REM net localgroup administrators %_user% /add
-	  REM call :log "User %_user% added to local administrators group successfully."
-	  REM echo User "%_user%" with admin privileges added successfully.
+	  REM net localgroup administrators %user% /add
+	  REM call :log "User %user% added to local administrators group successfully."
+	  REM echo User "%user%" with admin privileges added successfully.
 	  REM ping -n 2 localhost 1>NUL
 	REM ) else (
-	  REM call :log "Failed to add user %_user%."
+	  REM call :log "Failed to add user %user%."
 	  REM echo Failed to add user.
 	  REM ping -n 2 localhost 1>NUL
 	REM )
@@ -521,7 +520,6 @@ REM :addLocalUserAdmin
 
 :restartPC
 	cls
-
 	goto :utilities
 
 :installSupportAssistant
@@ -531,7 +529,7 @@ REM :addLocalUserAdmin
 	REM Detect brand name
 	for /f %%b in ('wmic computersystem get manufacturer ^| findstr /I "Dell HP Lenovo"') do set "BRAND=%%b"
 
-	REM Download and install appropriate support assistant
+	REM Download and install the appropriate support assistant
 	if /I "%BRAND%" == "Dell Inc." (
 	  curl -o SupportAssistx64-3.12.3.5.msi https://downloads.dell.com/serviceability/catalog/SupportAssistx64-3.12.3.5.msi
 	  start /wait SupportAssistx64-3.12.3.5.msi /quiet
@@ -777,13 +775,12 @@ REM ============================================================================
 REM function update CMD via github
 :updateCMD
 	cls
-	pushd %dp%
+	cd %dp%
 	curl -sO https://raw.githubusercontent.com/tamld/cmdToolForHelpdesk/main/installAPP.cmd
 	call :log installAPP file has been updated
 	echo installAPP file has been updated
 	ping -n 2 localhost 1>NUL
-	popd
-	goto :EOF
+	exit /b
 
 REM ========================================================================================================================================
 REM Start of child process that can be reused functions
@@ -904,7 +901,7 @@ REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey
       "c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey"
     )
     call :log "Copying Unikey to Startup"
-    mklink "c:\Program Files\Unikey\UniKeyNT.exe" "%_programDATA%\StartUp" /y
+    mklink "c:\Program Files\Unikey\UniKeyNT.exe" "%programDATA%\StartUp" /y
     call :log "Creating Unikey shortcut on desktop"
     mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
     cd /d %dp%
