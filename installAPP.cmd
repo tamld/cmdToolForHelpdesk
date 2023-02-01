@@ -78,94 +78,87 @@ endlocal
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities
 :installAIO-Fresh
-REM call :settingWindows
-REM call :installWinget
-REM call :installWinget-Utilities
-REM call :installWinget-Remote
-REM call :installUnikey
-REM call :func_CreateShortcut
-REM call :settingPowerPlan
-REM call :func_InstallOffice19Pro_VL
-REM call :func_InstallSupportAssist
-cls
-echo.
-echo All the steps has been running successfully
-echo Logs has been generated and placed in the %temp% folder
-echo Have a nice day!
-PAUSE
-goto :main
+	REM call :settingWindows
+	REM call :installWinget
+	REM call :installWinget-Utilities
+	REM call :installWinget-Remote
+	REM call :installUnikey
+	REM call :func_CreateShortcut
+	REM call :settingPowerPlan
+	REM call :func_InstallOffice19Pro_VL
+	REM call :func_InstallSupportAssist
+	cls
+	call :hold
+	goto :main
 
 REM function install Windows from a backup - has been generated from Winget and reinstalled once
 :installAIO-FromBackup
-REM call :settingWindows
-REM call :installWinget
-REM call :installWinget-Utilities
-REM call :installWinget-Remote
-REM call :installUnikey
-REM call :func_InstallOffice19Pro_VL
-REM call :func_CreateShortcut
-REM call :settingPowerPlan
-REM call :func_InstallSupportAssist
-echo All the steps has been running successfully
-echo Logs has been generated and placed in the %temp% folder
-echo Have a nice day!
-PAUSE
-goto :main
+	REM call :settingWindows
+	REM call :installWinget
+	REM call :installWinget-Utilities
+	REM call :installWinget-Remote
+	REM call :installUnikey
+	REM call :func_InstallOffice19Pro_VL
+	REM call :func_CreateShortcut
+	REM call :settingPowerPlan
+	REM call :func_InstallSupportAssist
+	cls
+	call :hold
+	goto :main
 REM End of Install AIO Online
 REM ========================================================================================================================================
 REM ==============================================================================
 REM Start of Windows Office Utilities Menu
 :office-windows
-setlocal
-cd /d %dp%
-cls
-title Office Main Menu
-echo.
-echo  Sub menu Office
-echo.
-echo        =================================================
-echo        [1] Install Office Online               : Press 1
-echo        [2] Uninstall Office                    : Press 2
-echo        [3] Remove Office Key                   : Press 3
-echo        [4] Convert Office Retail ^<==^> VL       : Press 4
-echo        [5] Fix Noncore Windows                 : Press 5
-echo        [6] Load SKUS Windows                   : Press 6
-echo        [7] Main Menu                           : Press 7
-echo        =================================================
-Choice /N /C 12345678 /M " Press your choice : "
-if ERRORLEVEL == 7 goto :main
-if ERRORLEVEL == 6 goto :loadSkus
-if ERRORLEVEL == 5 goto :fixNonCore
-if ERRORLEVEL == 4 goto :convertOfficeEddition
-if ERRORLEVEL == 3 goto :removeOfficeKey
-if ERRORLEVEL == 2 goto :uninstallOffice
-if ERRORLEVEL == 1 goto :installOfficeMenu
-endlocal
+	setlocal
+	cd /d %dp%
+	cls
+	title Office Main Menu
+	echo.
+	echo  Sub menu Office
+	echo.
+	echo        =================================================
+	echo        [1] Install Office Online               : Press 1
+	echo        [2] Uninstall Office                    : Press 2
+	echo        [3] Remove Office Key                   : Press 3
+	echo        [4] Convert Office Retail ^<==^> VL       : Press 4
+	echo        [5] Fix Noncore Windows                 : Press 5
+	echo        [6] Load SKUS Windows                   : Press 6
+	echo        [7] Main Menu                           : Press 7
+	echo        =================================================
+	Choice /N /C 12345678 /M " Press your choice : "
+	if ERRORLEVEL == 7 goto :main
+	if ERRORLEVEL == 6 goto :loadSkus
+	if ERRORLEVEL == 5 goto :fixNonCore
+	if ERRORLEVEL == 4 goto :convertOfficeEddition
+	if ERRORLEVEL == 3 goto :removeOfficeKey
+	if ERRORLEVEL == 2 goto :uninstallOffice
+	if ERRORLEVEL == 1 goto :installOfficeMenu
+	endlocal
 REM ==============================================================================
 REM Start of Windows Office Utilities functions
 REM ==============================================================================
 REM Sub menu Install Office Online
 :installOfficeMenu
-Title Select Office Version to Install
-cls
-echo.
-echo  Sub menu Install Office Online
-echo.
-echo                =================================================
-echo                [1] Office 365                          : Press 1
-echo                [2] Office 2021 Proplus Retail          : Press 2
-echo                [3] Office 2019 Proplus Retail          : Press 3
-echo                [4] Office 2016 Proplus Retail          : Press 4
-echo                [5] Main Menu                           : Press 5
-echo                =================================================
-Choice /N /C 12345 /M " Press your choice : "
-if ERRORLEVEL == 5 goto :office-windows
-if ERRORLEVEL == 4 set office=2016& goto :defineOffice
-if ERRORLEVEL == 3 set office=2019& goto :defineOffice
-if ERRORLEVEL == 2 set office=2021& goto :defineOffice
-REM if ERRORLEVEL == 1 set office=365& goto :defineOffice
-if ERRORLEVEL == 1 call :hold& goto :office-windows
-REM set _typeW=Professional&goto :func_LoadSkusWindows
+	Title Select Office Version to Install
+	cls
+	echo.
+	echo  Sub menu Install Office Online
+	echo.
+	echo                =================================================
+	echo                [1] Office 365                          : Press 1
+	echo                [2] Office 2021 Proplus Retail          : Press 2
+	echo                [3] Office 2019 Proplus Retail          : Press 3
+	echo                [4] Office 2016 Proplus Retail          : Press 4
+	echo                [5] Main Menu                           : Press 5
+	echo                =================================================
+	Choice /N /C 12345 /M " Press your choice : "
+	if ERRORLEVEL == 5 goto :office-windows
+	if ERRORLEVEL == 4 set office=2016& goto :defineOffice
+	if ERRORLEVEL == 3 set office=2019& goto :defineOffice
+	if ERRORLEVEL == 2 set office=2021& goto :defineOffice
+	REM if ERRORLEVEL == 1 set office=365& goto :defineOffice
+	if ERRORLEVEL == 1 call :hold& goto :office-windows
 REM ============================================
 REM Stat of install office  online
 
@@ -286,59 +279,59 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 REM End of install office online
 REM ============================================
 :loadSkus
-cls
-call :hold
-goto :office-windows
+	cls
+	call :hold
+	goto :office-windows
 
 :fixNonCore
-cls
-call :hold
-goto :office-windows
+	cls
+	call :hold
+	goto :office-windows
 
 :convertOfficeEddition
-cls
-call :hold
-goto :office-windows
+	cls
+	call :hold
+	goto :office-windows
 
 :removeOfficeKey
-cls
-call :hold
-goto :office-windows
+	cls
+	call :hold
+	goto :office-windows
 
 :uninstallOffice
-cls
-call :hold
-goto :office-windows
+	cls
+	call :hold
+	goto :office-windows
 
 REM End of Windows Office Utilities functions
 REM ========================================================================================================================================
 :activeLicenses
 REM Start of Active Licenses Menu
-setlocal
-Title Active Licenses Menu
-cls
-echo.
-echo  Sub menu Active Licenses
-echo.
-echo        =================================================
-echo        [1] Online                              : Press 1
-echo        [2] By Phone                            : Press 2
-echo        [3] Check Licenses                      : Press 3
-echo        [4] Backup Licenses                     : Press 4
-echo        [5] Restore License                     : Press 5
-echo        [6] MAS                                 : Press 6
-echo        [7] Back to Main Menu                   : Press 7
-echo        =================================================
-Choice /N /C 1234567 /M " Press your choice : "
-if ERRORLEVEL == 7 goto :main
-if ERRORLEVEL == 6 goto :MAS
-if ERRORLEVEL == 5 goto :restoreLicenses
-if ERRORLEVEL == 4 goto :backupLicenses
-if ERRORLEVEL == 3 goto :checkLicense
-if ERRORLEVEL == 2 goto :activeByPhone
-if ERRORLEVEL == 1 goto :activeOnline
-goto main
-endlocal
+	setlocal
+	Title Active Licenses Menu
+	cls
+	echo.
+	echo  Sub menu Active Licenses
+	echo.
+	echo        =================================================
+	echo        [1] Online                              : Press 1
+	echo        [2] By Phone                            : Press 2
+	echo        [3] Check Licenses                      : Press 3
+	echo        [4] Backup Licenses                     : Press 4
+	echo        [5] Restore License                     : Press 5
+	echo        [6] MAS                                 : Press 6
+	echo        [7] Back to Main Menu                   : Press 7
+	echo        =================================================
+	Choice /N /C 1234567 /M " Press your choice : "
+	if ERRORLEVEL == 7 goto :main
+	if ERRORLEVEL == 6 goto :MAS
+	if ERRORLEVEL == 5 goto :restoreLicenses
+	if ERRORLEVEL == 4 goto :backupLicenses
+	if ERRORLEVEL == 3 goto :checkLicense
+	if ERRORLEVEL == 2 goto :activeByPhone
+	if ERRORLEVEL == 1 goto :activeOnline
+	endlocal
+
 REM End of Active Licenses Menu
 REM ==============================================================================
 REM Start of Active Lienses functions
@@ -374,35 +367,35 @@ REM Start of Active Lienses functions
 REM End of Active Lienses functions
 REM ========================================================================================================================================
 :utilities
-setlocal
-REM Start of Utilities Menu
-cls
-title Utilities Main Menu
-echo.
-echo  Sub menu Utilities
-echo.
-echo        =================================================
-echo        [1] Set High Performance                : Press 1
-echo        [2] Change hostname                     : Press 2
-echo        [3] Clean up system                     : Press 3
-echo        [4] Add user to Admin group             : Press 4
-echo        [5] Add user to Users group             : Press 5
-echo        [6] Install SupportAssistInstaller      : Press 6
-echo        [7] Restart Windows                     : Press 7
-echo        [8] Join domain                         : Press 8
-echo        [9] Back to Main Menu                   : Press 9
-echo        =================================================
-Choice /N /C 123456789 /M " Press your choice : "
-if ERRORLEVEL == 9 goto :main
-if ERRORLEVEL == 8 goto :joinDomain
-if ERRORLEVEL == 7 goto :restartPC
-if ERRORLEVEL == 6 goto :installSupportAssist
-if ERRORLEVEL == 5 goto :addUserToUsers
-if ERRORLEVEL == 4 goto :addUserToAdmins
-if ERRORLEVEL == 3 goto :cleanUpSystem
-if ERRORLEVEL == 2 goto :changeHostName
-if ERRORLEVEL == 1 goto :setHighPerformance
-endlocal
+	setlocal
+	REM Start of Utilities Menu
+	cls
+	title Utilities Main Menu
+	echo.
+	echo  Sub menu Utilities
+	echo.
+	echo        =================================================
+	echo        [1] Set High Performance                : Press 1
+	echo        [2] Change hostname                     : Press 2
+	echo        [3] Clean up system                     : Press 3
+	echo        [4] Add user to Admin group             : Press 4
+	echo        [5] Add user to Users group             : Press 5
+	echo        [6] Install SupportAssistInstaller      : Press 6
+	echo        [7] Restart Windows                     : Press 7
+	echo        [8] Join domain                         : Press 8
+	echo        [9] Back to Main Menu                   : Press 9
+	echo        =================================================
+	Choice /N /C 123456789 /M " Press your choice : "
+	if ERRORLEVEL == 9 goto :main
+	if ERRORLEVEL == 8 goto :joinDomain
+	if ERRORLEVEL == 7 goto :restartPC
+	if ERRORLEVEL == 6 goto :installSupportAssist
+	if ERRORLEVEL == 5 goto :addUserToUsers
+	if ERRORLEVEL == 4 goto :addUserToAdmins
+	if ERRORLEVEL == 3 goto :cleanUpSystem
+	if ERRORLEVEL == 2 goto :changeHostName
+	if ERRORLEVEL == 1 goto :setHighPerformance
+	endlocal
 REM End of Utilities Menu
 REM ==============================================================================
 REM Start of Utilities functions
@@ -677,27 +670,27 @@ REM This function will use Windows Disk Cleanup to remove unnecessary files
 REM End of Utilities functions
 REM ========================================================================================================================================
 :winget
-setlocal
-REM Start of Winget Menu
-cd /d %dp%
-cls
-title Winget Main Menu
-echo.
-echo        =================================================
-echo        [1] Install Winget                      : Press 1
-echo        [2] Install Utilities online            : Press 2
-echo        [3] Install Remote Support              : Press 3
-echo        [4] Upgrade online all                  : Press 4
-echo        [5] Main Menu                           : Press 5
-echo        =================================================
+	setlocal
+	REM Start of Winget Menu
+	cd /d %dp%
+	cls
+	title Winget Main Menu
+	echo.
+	echo        =================================================
+	echo        [1] Install Winget                      : Press 1
+	echo        [2] Install Utilities online            : Press 2
+	echo        [3] Install Remote Support              : Press 3
+	echo        [4] Upgrade online all                  : Press 4
+	echo        [5] Main Menu                           : Press 5
+	echo        =================================================
 
-Choice /N /C 12345 /M " Press your choice : "
-if ERRORLEVEL == 5 goto :main
-if ERRORLEVEL == 4 goto :updateWinget-All
-if ERRORLEVEL == 3 goto :installWinget-RemoteSupport
-if ERRORLEVEL == 2 goto :installWinget-Utilities
-if ERRORLEVEL == 1 goto :installWinget
-endlocal
+	Choice /N /C 12345 /M " Press your choice : "
+	if ERRORLEVEL == 5 goto :main
+	if ERRORLEVEL == 4 goto :updateWinget-All
+	if ERRORLEVEL == 3 goto :installWinget-RemoteSupport
+	if ERRORLEVEL == 2 goto :installWinget-Utilities
+	if ERRORLEVEL == 1 goto :installWinget
+	endlocal
 REM End of Winget Menu
 REM ==============================================================================
 REM Start of Winget functions
