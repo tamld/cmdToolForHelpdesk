@@ -31,15 +31,7 @@ REM ============================================================================
 	set "programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
 	cd /d "%dp%"
 	cls
-	REM echo. 
-	REM echo You are using version %version%
-	REM set /p answer=Would you like update to the latest version? [Y/N] 
-	REM if /i "%answer%" == "Y" (call :updateCMD) else (
-							REM echo You set to do nothing
-							REM ping -n 2 localhost 1>NUL
-							REM )
 	setlocal
-	cls
 	title Main Menu
 	echo.
 	echo    =================================================
@@ -53,7 +45,7 @@ REM ============================================================================
 	echo    =================================================
 	Choice /N /C 1234567 /M " Your choice is :"
 	if ERRORLEVEL == 7 goto end
-	if ERRORLEVEL == 6 call :updateCMD&goto :main
+	if ERRORLEVEL == 6 call :updateCMD & goto :main
 	if ERRORLEVEL == 5 goto winget
 	if ERRORLEVEL == 4 goto utilities
 	if ERRORLEVEL == 3 goto activeLicenses
