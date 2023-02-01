@@ -6,6 +6,7 @@ REM call :addUserToAdmins
 call :defineOffice
 goto :end
 
+REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-script
 :defineOffice
 	@echo off
 	cls
@@ -31,7 +32,7 @@ goto :end
 	IF "%Processor_Architecture%"=="AMD64" Set "CPU=64"
 	IF "%Processor_Architecture%"=="x86" Set "CPU=32"
 	
-	:selectOfficeApp
+:selectOfficeApp
 	cls
 	REM Menu select app to install. Default is yes with Yes colored green.
 	echo.
@@ -79,9 +80,13 @@ goto :end
 	echo Disabling Microsoft Office 2021 Telemetry . . .
 	ping -n 2 localhost 1>NUL
 	REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
-	cd /d %temp%
+	start "" explorer %temp%
+	if not exist "%ProgramFiles%\7-Zip" call :install7zip
+	pushd %temp%
+	curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_15928-20216.exe
+	"%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
 	SETLOCAL
-	Set "OCS=".\Office 2021 Setup Config.xml"
+	Set "OCS="%temp%\Office 2021 Setup Config.xml""
 						  >%OCS% echo ^<Configuration^>
 						 REM >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly" SourcePath="%_dp%"^>
 						 >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly"^>					 
@@ -109,14 +114,10 @@ goto :end
 						 >>%OCS% echo ^</Configuration^>
 	ENDLOCAL
 	echo Installing Microsoft Office 2021 ProPlus %CPU%-bit . . .
-	ping -n 2 localhost 1>NUL
-	if not exist "%ProgramFiles%\7-Zip" call :install7zip
-	curl -o officedeploymenttool.exe -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_15928-20216.exe
-	"%ProgramFiles%\7-Zip\7z.exe" e .\"officedeploymenttool.exe" -y
-	REM START "" /WAIT /B setup.exe /configure "Office 2021 Setup Config.xml"
-	START /WAIT setup.exe /configure "Office 2021 Setup Config.xml"
-	cd %_dp%
-	exit /b 
+	ping -n 3 localhost 1>NUL
+	
+	START "" /WAIT /B ".\setup.exe" /configure ".\Office 2021 Setup Config.xml"
+	exit /b
 
 :GetUserInformation
 	Title Get User Information
@@ -564,7 +565,7 @@ REM function to install software using winget
     mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
     cd /d %_dp%
     call :log "Finishing Unikey installation"
-    exit /b
+    goto :EOF
 
 REM function install 7zip by using winget
 :install7zip
