@@ -150,48 +150,163 @@ echo  Sub menu Install Office Online
 echo.
 echo                =================================================
 echo                [1] Office 365                          : Press 1
-echo                [2] Office 2021 MSDN                         : Press 2
-echo                [3] Office 2019                         : Press 3
-echo                [4] Office 2016                         : Press 4
+echo                [2] Office 2021 Proplus Retail          : Press 2
+echo                [3] Office 2019 Proplus Retail          : Press 3
+echo                [4] Office 2016 Proplus Retail          : Press 4
 echo                [5] Main Menu                           : Press 5
 echo                =================================================
 Choice /N /C 12345 /M " Press your choice : "
-if ERRORLEVEL == 5 goto :fixNonCore
-if ERRORLEVEL == 4 goto :o2016
-if ERRORLEVEL == 3 goto :o2019
-if ERRORLEVEL == 2 goto :o2021
-if ERRORLEVEL == 1 goto :o365
-goto :office-windows
+if ERRORLEVEL == 5 goto :office-windows
+if ERRORLEVEL == 4 set office=2016& goto :defineOffice
+if ERRORLEVEL == 3 set office=2019& goto :defineOffice
+if ERRORLEVEL == 2 set office=2021& goto :defineOffice
+REM if ERRORLEVEL == 1 set office=365& goto :defineOffice
+if ERRORLEVEL == 1 call :hold& goto :office-windows
+REM set _typeW=Professional&goto :func_LoadSkusWindows
+REM ============================================
+REM Stat of install office  online
 
+REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-script
+:defineOffice
+	@echo off
+	cls
+	TITLE Microsoft Office ProPlus - Online Installer
+	REM Define value default for install
+	set "_dp=%~dp0"
+	set "_sys32=%windir%\system32"
+	cd /d "%_dp%"
+	Set "on=(YES)"
+	Set "off=(NO)"
+	Set "opt1=%on%" ::Word
+	Set "opt2=%on%" ::Excel
+	Set "opt3=%on%" ::PowerPoint
+	Set "opt4=%on%" ::Outlook
+	Set "opt5=%on%" ::OneNote
+	Set "opt6=%on%" ::Publisher
+	Set "opt7=%on%" ::Access
+	Set "opt8=%on%" ::OneDrive
+	Set "opt9=%on%" ::VisioPro2021Retail
+	Set "optP=%on%" ::ProjectPro2021Retail
+	Set "optD=%on%" ::ProofingTools
+	REM Dectect version Architecture 
+	IF "%Processor_Architecture%"=="AMD64" Set "CPU=64"
+	IF "%Processor_Architecture%"=="x86" Set "CPU=32"
+	
+:selectOfficeApp
+	cls
+	REM Menu select app to install. Default is yes with Yes colored green.
+	echo.
+	echo Select options to install Office %office%
+	<NUL Set/P=[1] & (if "%opt1%"=="%on%" (Call :setColor "%opt1%" 0a) Else (<NUL Set/P="%opt1%")) & echo  Microsoft Office Word.
+	<NUL Set/P=[2] & (if "%opt2%"=="%on%" (Call :setColor "%opt2%" 0a) Else (<NUL Set/P="%opt2%")) & echo  Microsoft Office Excel.
+	<NUL Set/P=[3] & (if "%opt3%"=="%on%" (Call :setColor "%opt3%" 0a) Else (<NUL Set/P="%opt3%")) & echo  Microsoft Office PowerPoint.
+	<NUL Set/P=[4] & (if "%opt4%"=="%on%" (Call :setColor "%opt4%" 0a) Else (<NUL Set/P="%opt4%")) & echo  Microsoft Office Outlook.
+	<NUL Set/P=[5] & (if "%opt5%"=="%on%" (Call :setColor "%opt5%" 0a) Else (<NUL Set/P="%opt5%")) & echo  Microsoft Office OneNote.
+	<NUL Set/P=[6] & (if "%opt6%"=="%on%" (Call :setColor "%opt6%" 0a) Else (<NUL Set/P="%opt6%")) & echo  Microsoft Office Publisher.
+	<NUL Set/P=[7] & (if "%opt7%"=="%on%" (Call :setColor "%opt7%" 0a) Else (<NUL Set/P="%opt7%")) & echo  Microsoft Office Access.
+	<NUL Set/P=[8] & (if "%opt8%"=="%on%" (Call :setColor "%opt8%" 0a) Else (<NUL Set/P="%opt8%")) & echo  Microsoft Office Visio.
+	<NUL Set/P=[9] & (if "%opt9%"=="%on%" (Call :setColor "%opt9%" 0a) Else (<NUL Set/P="%opt9%")) & echo  Microsoft Office Project.
+	<NUL Set/P=[P] & (if "%optP%"=="%on%" (Call :setColor "%optP%" 0a) Else (<NUL Set/P="%optP%")) & echo  Microsoft Office Proofing Tools.
+	<NUL Set/P=[D] & (if "%optD%"=="%on%" (Call :setColor "%optD%" 0a) Else (<NUL Set/P="%optD%")) & echo  Microsoft OneDrive Desktop.
+	echo.
+	CHOICE /c 123456789PDX /n /m "--> Toggle your option(s) and toggle [X] to Start: "
+	if ERRORLEVEL 12 goto :installOffice
+	if ERRORLEVEL 11 (if "%optD%"=="%on%" (Set "optD=%off%") Else (Set "optD=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 10 (if "%optP%"=="%on%" (Set "optP=%off%") Else (Set "optP=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 9 (if "%opt9%"=="%on%" (Set "opt9=%off%") Else (Set "opt9=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 8 (if "%opt8%"=="%on%" (Set "opt8=%off%") Else (Set "opt8=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 7 (if "%opt7%"=="%on%" (Set "opt7=%off%") Else (Set "opt7=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 6 (if "%opt6%"=="%on%" (Set "opt6=%off%") Else (Set "opt6=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 5 (if "%opt5%"=="%on%" (Set "opt5=%off%") Else (Set "opt5=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 4 (if "%opt4%"=="%on%" (Set "opt4=%off%") Else (Set "opt4=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 3 (if "%opt3%"=="%on%" (Set "opt3=%off%") Else (Set "opt3=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 2 (if "%opt2%"=="%on%" (Set "opt2=%off%") Else (Set "opt2=%on%")) & goto :selectOfficeApp
+	if ERRORLEVEL 1 (if "%opt1%"=="%on%" (Set "opt1=%off%") Else (Set "opt1=%on%")) & goto :selectOfficeApp
+	:setColor (Text, Color)
+	REM Function that will colored text with Green = 0a	
+	MkDir "%Temp%\_%1" 1>NUL
+	PushD "%Temp%\_%1"
+	For /f %%a in ('Echo PROMPT $H ^| "CMD.exe"') do Set "bs=%%a"
+	<NUL Set /P="_" >"%1"
+	FindStr /s /b /p /a:%2 /C:"_" "%1"
+	<NUL Set /P=%bs%%bs%
+	PopD
+	RmDir /s /q "%Temp%\_%1"
+	GoTo :EOF
+	
+:installOffice
+	cls
+	echo.
+	echo Disabling Microsoft Office %office% Telemetry . . .
+	ping -n 2 localhost 1>NUL
+	REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
+	start "" explorer %temp%
+	if not exist "%ProgramFiles%\7-Zip" call :install7zip
+	pushd %temp%
+	curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_15928-20216.exe
+	"%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
+	SETLOCAL
+	REM REM Deploy template via link: https://config.office.com/deploymentsettings
+	Set "OCS="%temp%\Office %office% Setup Config.xml""
+						  >%OCS% echo ^<Configuration^>
+						 REM >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly" SourcePath="%_dp%"^>
+						 >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly"^>					 
+						 >>%OCS% echo     ^<Product ID="ProPlus%office%Retail"^>
+						 >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
+	if "%opt1%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Word" /^>
+	if "%opt2%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Excel" /^>
+	if "%opt3%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="PowerPoint" /^>
+	if "%opt4%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Outlook" /^>
+	if "%opt5%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="OneNote" /^>
+	if "%opt6%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Publisher" /^>
+	if "%opt7%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Access" /^>
+	if "%optD%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="OneDrive" /^>
+						 >>%OCS% echo     ^</Product^>
+	if "%opt8%"=="%on%"  >>%OCS% echo     ^<Product ID="VisioPro%office%Retail"^>
+	if "%opt8%"=="%on%"  >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
+	if "%opt8%"=="%on%"  >>%OCS% echo     ^</Product^>
+	if "%opt9%"=="%on%"  >>%OCS% echo     ^<Product ID="ProjectPro%office%Retail"^>
+	if "%opt9%"=="%on%"  >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
+	if "%opt9%"=="%on%"  >>%OCS% echo     ^</Product^>
+	if "%optP%"=="%on%"  >>%OCS% echo     ^<Product ID="ProofingTools"^>
+	if "%optP%"=="%on%"  >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
+	if "%optP%"=="%on%"  >>%OCS% echo     ^</Product^>
+						 >>%OCS% echo   ^</Add^>
+						 >>%OCS% echo ^</Configuration^>
+	ENDLOCAL
+	echo Installing Microsoft Office %office% ProPlus %CPU%-bit . . .
+	ping -n 3 localhost 1>NUL
+	
+	START "" /WAIT /B ".\setup.exe" /configure ".\Office %office% Setup Config.xml"
+	popd
+	exit /b
+REM End of install office online
+REM ============================================
 :loadSkus
 cls
-::put actions here
+call :hold
 goto :office-windows
 
 :fixNonCore
 cls
-::put actions here
+call :hold
 goto :office-windows
 
 :convertOfficeEddition
 cls
-::put actions here
+call :hold
 goto :office-windows
 
 :removeOfficeKey
 cls
-::put actions here
+call :hold
 goto :office-windows
 
 :uninstallOffice
 cls
-::put actions here
+call :hold
 goto :office-windows
 
-:installOffice
-cls
-::put actions here
-goto :office-windows
 REM End of Windows Office Utilities functions
 REM ========================================================================================================================================
 :activeLicenses
@@ -226,32 +341,32 @@ REM ============================================================================
 REM Start of Active Lienses functions
 :MAS
 	cls
-	::put actions here
+	call :hold
 	goto :activeLicenses
 
 :restoreLicenses
 	cls
-	::put actions here
+	call :hold
 	goto :activeLicenses
 
 :backupLicenses
     cls
-    ::put actions here
+    call :hold
     goto :activeLicenses
 
 :checkLicense
     cls
-    ::put actions here
+    call :hold
     goto :activeLicenses
 
 :activeByPhone
     cls
-    ::put actions here
+    call :hold
     goto :activeLicenses
 
 :activeOnline
     cls
-    ::put actions here
+    call :hold
     goto :activeLicenses
 REM End of Active Lienses functions
 REM ========================================================================================================================================
@@ -426,7 +541,7 @@ REM :addLocalUserAdmin
 
 :joinDomain
    cls
-    ::put actions here
+    call :hold
     goto :utilities
 
 REM This function will use Windows Disk Cleanup to remove unnecessary files
@@ -650,7 +765,7 @@ REM ============================================================================
 REM function update CMD via github
 :updateCMD
    cls
-    ::put actions here
+    call :hold
     goto :main
 
 REM ========================================================================================================================================
@@ -782,6 +897,7 @@ REM function download Unikey from unikey.org, extract to C:\Program Files\Unikey
 REM function install 7zip by using winget
 :install7zip
     cls
+	call :checkWinget
 	call :installsoft 7zip.7zip
     REM associate regular files extension with 7zip
     assoc .7z=7-Zip
@@ -792,6 +908,7 @@ REM function install 7zip by using winget
     assoc .bzip2=7-Zip
     assoc .xz=7-Zip
     exit /b
+	REM goto :EOF
 	
 :installNotepadplusplusThemes
 	Title Install Notepad++ Themes
@@ -829,6 +946,14 @@ REM function force delete all file created in %temp% folder
 
 REM End of child process functions
 REM ========================================================================================================================================
+:hold
+	@echo off
+	cls
+	echo.
+	echo Function in developing
+	echo Please be patient
+	ping -n 3 localhost 1>NUL
+	exit /b
 :end
 call :clean
 exit

@@ -6,6 +6,21 @@ REM call :addUserToAdmins
 call :defineOffice
 goto :end
 
+:updateCMD
+	cls
+	cd /d %_dp%
+	setlocal
+	set _token=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
+	set _fileAPP=tamld/installAPP/main/installAPP.cmd
+	curl -O -s https://%_token%@raw.githubusercontent.com/%_fileAPP%
+	endlocal
+	goto :eof
+
+:selectOfficeVersion
+	cls
+	
+	goto :defineOffice
+
 REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-script
 :defineOffice
 	@echo off
@@ -25,8 +40,8 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	Set "opt6=%on%" ::Publisher
 	Set "opt7=%on%" ::Access
 	Set "opt8=%on%" ::OneDrive
-	Set "opt9=%on%" ::VisioPro2021Retail
-	Set "optP=%on%" ::ProjectPro2021Retail
+	Set "opt9=%on%" ::VisioPro
+	Set "optP=%on%" ::ProjectPro
 	Set "optD=%on%" ::ProofingTools
 	REM Dectect version Architecture 
 	IF "%Processor_Architecture%"=="AMD64" Set "CPU=64"
