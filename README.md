@@ -1,7 +1,16 @@
 # InstallAppForHelpDesk
-
+- Mục tiêu hỗ trợ cho công việc Helpdesk, kĩ thuật viên hàng ngày.
+- Cải thiện hiệu quả và năng suất lao động
+- Có cơ hội lười hơn :X
+========================================================================
 Batch script CMD 
-- Ứng dụng viết, test cho HĐH W10 x64
+- Ứng dụng hỗ trợ Windows 10 1809 trở đi
+- Test trên Windows Sanbox 11 Enterprise
+- Một số chức năng, không hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại URL:
+https://github.com/tamld/cmdToolForHelpdesk/issues
+để mình hoàn thiện thêm bộ tool này,
+- Một số tính năng vẫn đang trong giai đoạn phát triển
+- Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM vào câu lệnh đó
 Menu chức năng
 1. Cài AIO
 Cho phép cài đặt, cấu hình tự động các chức năng cơ bản như: múi giờ GMT+7, cài đặt các gói ứng dụng miễn phí, cơ bản như 7zip, Unikey, Chrome, Firefox, Foxit PDF Reader, Ultraview, Teamviewer...v..v..
@@ -34,6 +43,5 @@ Cập nhật các ứng dụng trên máy bằng Winget
 Tính năng tự động download file InstallAPP.cmd trực tiếp từ github. Giúp cập nhật latest version cho file
 
 ========================================================================
-- Một số tính năng vẫn đang trong giai đoạn phát triển
-- Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM vào câu lệnh đó
-- Mục tiêu hỗ trợ cho công việc Helpdesk, kĩ thuật viên hàng ngày.
+
+
