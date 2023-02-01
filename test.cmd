@@ -1,21 +1,37 @@
-echo off
-set "_dp=%~dp0"
-set "_sys32=%windir%\system32"
-cd /d "%_dp%"
-REM call :addUserToAdmins
-call :defineOffice
+@echo off
+REM version 0.1
+set "version=0.1"
+set "dp=%~dp0"
+set "sys32=%windir%\system32"
+REM call :get_OfficePath
+REM set "_officePath=%cd%"
+set "programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
+cd /d "%dp%"
+call :uninstallOffice
+REM call :defineOffice
 goto :end
 
-:updateCMD
+:uninstallOffice
+	Title Uninstall office completely
 	cls
-	cd /d %_dp%
-	setlocal
-	set _token=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
-	set _fileAPP=tamld/installAPP/main/installAPP.cmd
-	curl -O -s https://%_token%@raw.githubusercontent.com/%_fileAPP%
-	endlocal
-	goto :eof
-
+	@echo off
+	pushd %temp%
+	if not exist "%ProgramFiles%\7-Zip\7z.exe" call :install7zip
+	curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_CommandLineVersionFiles
+	"c:\Program Files\7-Zip\7z.exe" x -y SaRACmd.zip -o"SaRACmd"
+	cls
+	echo.
+	echo Start to uninstall office via SaRACmd
+	echo It could took a while, please wait to end
+	ping -n 2 localhost 1>NUL
+	cls
+	SaRACmd\SaRAcmd.exe -S OfficeScrubScenario -AcceptEula
+	call :log "Office uninstalled successfully"
+	popd
+	cd /d %dp%
+	cls
+	exit /b
+	
 :selectOfficeVersion
 	cls
 	

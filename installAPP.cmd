@@ -126,7 +126,7 @@ REM Start of Windows Office Utilities Menu
 	echo        [6] Load SKUS Windows                   : Press 6
 	echo        [7] Main Menu                           : Press 7
 	echo        =================================================
-	Choice /N /C 12345678 /M " Press your choice : "
+	Choice /N /C 1234567 /M " Press your choice : "
 	if ERRORLEVEL == 7 goto :main
 	if ERRORLEVEL == 6 goto :loadSkus
 	if ERRORLEVEL == 5 goto :fixNonCore
@@ -299,8 +299,24 @@ REM ============================================
 	goto :office-windows
 
 :uninstallOffice
+	Title Uninstall office completely
 	cls
-	call :hold
+	@echo off
+	pushd %temp%
+	if not exist "%ProgramFiles%\7-Zip\7z.exe" call :install7zip
+	curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_CommandLineVersionFiles
+	"c:\Program Files\7-Zip\7z.exe" x -y SaRACmd.zip -o"SaRACmd"
+	cls
+	echo.
+	echo Start to uninstall office via SaRACmd
+	echo It could took a while, please wait to end
+	ping -n 2 localhost 1>NUL
+	cls
+	SaRACmd\SaRAcmd.exe -S OfficeScrubScenario -AcceptEula
+	call :log "Office uninstalled successfully"
+	popd
+	cd /d %dp%
+	cls
 	goto :office-windows
 
 REM End of Windows Office Utilities functions
