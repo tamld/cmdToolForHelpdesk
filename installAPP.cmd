@@ -396,7 +396,7 @@ REM ============================================================================
 	echo        [3] Clean up system                     : Press 3
 	echo        [4] Add user to Admin group             : Press 4
 	echo        [5] Add user to Users group             : Press 5
-	echo        [6] Install SupportAssistInstaller      : Press 6
+	echo        [6] Install Support Assistance          : Press 6
 	echo        [7] Restart Windows                     : Press 7
 	echo        [8] Join domain                         : Press 8
 	echo        [9] Back to Main Menu                   : Press 9
