@@ -270,9 +270,9 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 						 >>%OCS% echo   ^</Add^>
 						 >>%OCS% echo ^</Configuration^>
 	ENDLOCAL
+	cls
 	echo Installing Microsoft Office %office% ProPlus %CPU%-bit . . .
 	ping -n 3 localhost 1>NUL
-	
 	START "" /WAIT /B ".\setup.exe" /configure ".\Office %office% Setup Config.xml"
 	popd
 	exit /b
@@ -826,7 +826,7 @@ REM function checkWinget will check if winget is installed or neither. If not, g
 	echo Install require packages VCLibs x64 14 and UI.Xaml 2.7
 	ping -n 2 localhost 1>NUL
     call :log "Starting Winget installation from GitHub"
-    curl -O -fSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
+    curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
 	curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
 	curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 	start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
@@ -840,7 +840,7 @@ REM function checkWinget will check if winget is installed or neither. If not, g
 	call :log "Finished Winget installation msixbundle"
 	call :log "Finished Winget installation from GitHub"
 	cls
-    cd /d "%_dp%"
+    cd /d "%dp%"
     exit /b
 
 REM function log will append log to %temp%\installAPP.log with time, date, and the other function task
