@@ -149,16 +149,16 @@ REM Sub menu Install Office Online
 	echo                [1] Office 365                          : Press 1
 	echo                [2] Office 2021 Proplus Retail          : Press 2
 	echo                [3] Office 2019 Proplus Retail          : Press 3
-	echo                [4] Office 2016 Proplus Retail          : Press 4
-	echo                [5] Main Menu                           : Press 5
+	REM echo                [4] Office 2016 Proplus Retail          : Press 4
+	echo                [4] Main Menu                           : Press 5
 	echo                =================================================
-	Choice /N /C 12345 /M " Press your choice : "
-	if ERRORLEVEL == 5 goto :office-windows
-	if ERRORLEVEL == 4 set office=2016& call :defineOffice& goto :office-windows
+	Choice /N /C 1234 /M " Press your choice : "
+	if ERRORLEVEL == 4 goto :office-windows
+	REM if ERRORLEVEL == 4 set office=2016& call :defineOffice& goto :office-windows
 	if ERRORLEVEL == 3 set office=2019& call :defineOffice& goto :office-windows
 	if ERRORLEVEL == 2 set office=2021& call :defineOffice& goto :office-windows
-	REM if ERRORLEVEL == 1 set office=365& goto :defineOffice
-	if ERRORLEVEL == 1 call :hold& goto :office-windows
+	if ERRORLEVEL == 1 set office=O365& call :defineOffice& goto :office-windows
+	REM if ERRORLEVEL == 1 call :hold& goto :office-windows
 REM ============================================
 REM Stat of install office  online
 
@@ -247,7 +247,8 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 						  >%OCS% echo ^<Configuration^>
 						 REM >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly" SourcePath="%dp%"^>
 						 >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly"^>					 
-						 >>%OCS% echo     ^<Product ID="ProPlus%office%Retail"^>
+	if "%office%"=="O365" >>%OCS% echo     ^<Product ID="%office%ProPlusRetail"^> else (
+						 >>%OCS% echo     ^<Product ID="ProPlus%office%Retail"^>	)
 						 >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
 	if "%opt1%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Word" /^>
 	if "%opt2%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Excel" /^>
@@ -271,10 +272,12 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 						 >>%OCS% echo ^</Configuration^>
 	ENDLOCAL
 	cls
-	echo Installing Microsoft Office %office% ProPlus %CPU%-bit . . .
+	echo Installing Microsoft Office %office% ProPlus %CPU%-bit
+	echo Don't close this window until the installation process is completed
 	ping -n 3 localhost 1>NUL
 	START "" /WAIT /B ".\setup.exe" /configure ".\Office %office% Setup Config.xml"
 	popd
+	cd %dp%
 	exit /b
 REM End of install office online
 REM ============================================
