@@ -154,9 +154,9 @@ REM Sub menu Install Office Online
 	echo                =================================================
 	Choice /N /C 12345 /M " Press your choice : "
 	if ERRORLEVEL == 5 goto :office-windows
-	if ERRORLEVEL == 4 set office=2016& goto :defineOffice
-	if ERRORLEVEL == 3 set office=2019& goto :defineOffice
-	if ERRORLEVEL == 2 set office=2021& goto :defineOffice
+	if ERRORLEVEL == 4 set office=2016& call :defineOffice& goto :office-windows
+	if ERRORLEVEL == 3 set office=2019& call :defineOffice& goto :office-windows
+	if ERRORLEVEL == 2 set office=2021& call :defineOffice& goto :office-windows
 	REM if ERRORLEVEL == 1 set office=365& goto :defineOffice
 	if ERRORLEVEL == 1 call :hold& goto :office-windows
 REM ============================================
@@ -236,7 +236,7 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	echo Disabling Microsoft Office %office% Telemetry . . .
 	ping -n 2 localhost 1>NUL
 	REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
-	start "" explorer %temp%
+	REM start "" explorer %temp%
 	if not exist "%ProgramFiles%\7-Zip" call :install7zip
 	pushd %temp%
 	curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_15928-20216.exe
