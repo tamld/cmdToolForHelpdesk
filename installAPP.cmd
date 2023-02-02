@@ -705,7 +705,7 @@ REM ============================================================================
 	if ERRORLEVEL == 4 goto :updateWinget-All
 	if ERRORLEVEL == 3 goto :installWinget-RemoteSupport
 	if ERRORLEVEL == 2 goto :installWinget-Utilities
-	if ERRORLEVEL == 1 goto :installWinget
+	if ERRORLEVEL == 1 goto :installWingetMenu
 	endlocal
 REM End of Winget Menu
 REM ==============================================================================
@@ -767,7 +767,7 @@ REM Start of Winget functions
 	exit /b
 
 
-:installWinget
+:installWingetMenu
     call :checkWinget
     goto :winget
 
@@ -821,17 +821,26 @@ REM function checkWinget will check if winget is installed or neither. If not, g
 	Title Install Winget
     cd /d %temp%
     cls
+	REM Install require packages VCLibs x64 14 and UI.Xaml 2.7
+	echo. 
+	echo Install require packages VCLibs x64 14 and UI.Xaml 2.7
+	ping -n 2 localhost 1>NUL
     call :log "Starting Winget installation from GitHub"
-    rem Download the latest version of Winget from GitHub
+    curl -O -fSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
 	curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
 	curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 	start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
+	start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
 	call :log "Finished Winget installation requesting packages"
+	cls
+	echo.
+	echo Install winget application
+	ping -n 1 localhost 1>NUL
 	start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
 	call :log "Finished Winget installation msixbundle"
 	call :log "Finished Winget installation from GitHub"
 	cls
-    cd /d "%dp%"
+    cd /d "%_dp%"
     exit /b
 
 REM function log will append log to %temp%\installAPP.log with time, date, and the other function task
@@ -915,6 +924,8 @@ REM function install 7zip by using winget
 	call :checkWinget
 	call :installsoft 7zip.7zip
     REM associate regular files extension with 7zip
+	echo. associate regular files extension with 7zip
+	ping -n 2 localhost 1>NUL
     assoc .7z=7-Zip
     assoc .zip=7-Zip
     assoc .rar=7-Zip
