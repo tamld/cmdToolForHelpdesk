@@ -26,8 +26,8 @@ REM ============================================================================
 	set "version=0.1"
 	set "dp=%~dp0"
 	set "sys32=%windir%\system32"
-	REM call :get_OfficePath
-	REM set "_officePath=%cd%"
+	call :getOfficePath
+	set "officePath=%cd%"
 	set "programDATA=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
 	cd /d "%dp%"
 	cls
@@ -281,6 +281,13 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	exit /b
 REM End of install office online
 REM ============================================
+:getOfficePath
+cls
+@echo off
+for %%a in (4,5,6) do (if exist "%ProgramFiles%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles%\Microsoft Office\Office1%%a")
+if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles(x86)%\Microsoft Office\Office1%%a"))
+goto :eof
+
 :loadSkus
 	cls
 	call :hold
@@ -295,12 +302,54 @@ REM ============================================
 	cls
 	call :hold
 	goto :office-windows
-
+REM ============================================
+REM Start of Remove Office Keys
 :removeOfficeKey
 	cls
-	call :hold
-	goto :office-windows
+	Title Remove Office Key
+	echo.
+	echo Which way do you want to remove the office key
+	echo            =================================================
+	echo            [1] One by one                          : Press 1
+	echo            [2] ALL                                 : Press 2
+	echo            [3] Back to Windows Office Menu         : Press 3
+	echo            =================================================
+	Choice /N /C 123 /M " Press your choice : "
+	if ERRORLEVEL == 3 goto :office-windows
+	if ERRORLEVEL == 2 goto :removeOfficeKey-All
+	if ERRORLEVEL == 1 goto :removeOfficeKey-1B1
 
+:removeOfficeKey-1B1
+	setlocal 
+	cd /d %officePath% 
+	REM Get input from user
+	set /p key=Write down/Paste 5 letters key need to uninstall: 
+	REM Loop through the OSPP.VBS file and find the key to uninstall
+	for /f "tokens=8" %%b in ('findstr /b /c:"%key%" OSPP.VBS') do (
+		cscript //nologo ospp.vbs /unpkey:%%b
+		echo Key %%b has been removed
+		call :log Key %%b has been removed
+	)
+	endlocal 
+	ping -n 2 localhost 1>NUL
+	goto :eof
+
+:removeOfficeKey-All
+	@echo off 
+	setlocal 
+	cd /d %officePath% 
+
+	REM Loop through the OSPP.VBS file and find the last 5 keys
+	for /f "tokens=8" %%b in ('findstr /b /c:"Last 5" OSPP.VBS') do (
+		cscript //nologo ospp.vbs /unpkey:%%b
+		call :log "Key removed" "%%b"
+		echo Key %%b has been removed
+	)
+	endlocal 
+	ping -n 2 localhost 1>NUL
+	goto :eof
+	
+	
 :uninstallOffice
 	Title Uninstall office completely
 	cls
@@ -322,6 +371,8 @@ REM ============================================
 	cls
 	goto :office-windows
 
+REM End of Remove Office Keys
+REM ============================================
 REM End of Windows Office Utilities functions
 REM ========================================================================================================================================
 :activeLicenses
@@ -356,19 +407,49 @@ REM ============================================================================
 REM Start of Active Lienses functions
 :MAS
 	cls
-	call :hold
+	REM call :hold
+	pushd %temp%
+	echo.
+	echo This will open an external link from Github call Microsoft Activation Script
+	echo Refer link https://github.com/massgravel/Microsoft-Activation-Scripts
+	ping -n 7 localhost 1>NUL
+	start powershell.exe -command "irm https://massgrave.dev/get | iex"
+	popd
+	cd %dp%
+	cls
 	goto :activeLicenses
 
 :restoreLicenses
 	cls
 	call :hold
 	goto :activeLicenses
-
+REM ============================================
+REM Start of Backup License Windows & Office
 :backupLicenses
-    cls
-    call :hold
-    goto :activeLicenses
+	cls
+	Title Backup License Windows ^& Office
+	echo.
+	echo            =================================================
+	echo            [1] BACKUP To Local                     : Press 1
+	echo            [2] BACKUP To NAS STORAGE               : Press 2
+	echo            [3] Back to Main Menu                   : Press 3
+	echo            =================================================
+	Choice /N /C 123 /M " Press your choice : "
+	if ERRORLEVEL == 3 goto :activeLicenses
+	if ERRORLEVEL == 2 goto :backupToNAS
+	if ERRORLEVEL == 1 goto :backupToLocal
 
+:backupToNAS
+
+goto :backupLicenses
+
+:backupToLocal
+call :func_WindowsActivationStatus
+call :func_OfficeActivationStatus
+
+goto :backupLicenses
+REM End of Backup License Windows & Office
+REM ============================================
 :checkLicense
     cls
     call :hold
@@ -589,29 +670,33 @@ REM This function will use Windows Disk Cleanup to remove unnecessary files
 :changeHostName
 	Title Change host name
 	setlocal EnableDelayedExpansion
+	cls
 	echo.
 	echo Your new computername is:
 	set /p _newComputername=
+	cls
+	echo.
 	echo This will change your computername from: %computername% to: %_newComputername%
-	ping -n 3 localhost 1>NUL
+	ping -n 2 localhost 1>NUL
 	WMIC ComputerSystem where Name="%computername%" call Rename Name="%_newComputername%"
 	for /f "skip=1 tokens=2 delims==; " %%i in ('WMIC ComputerSystem where Name^="%computername%" call Rename Name^="%_newComputername%" ^| findstr "ReturnValue ="') do set _statusChangeHostName=%%i
 	cls
 	if %_statusChangeHostName% == 0 (
+						echo.
 						echo Your computername will change to %_newComputername%
 						echo Restart computer to apply the change
+						ping -n 3 localhost 1>NUL
 						cls
 					)
 	if %_statusChangeHostName% NEQ 0 (
+						echo.
 						echo Your computer name will not change 
-						echo Try a name containing special characters like ^~, ^!, ^@.....
+						echo Try a name without containing special characters like ^~, ^!, ^@.....
 						echo Do you want to change your computer hostname again^?
-						Choice /N /C YN /M "[Y], [N]:     Default [N]"
-						If ERRORLEVEL ==Y goto :changeHostName
+						Choice /N /C YN /M "[Yes], [No]: "
+						If ERRORLEVEL == Y goto :changeHostName
 						)
 	endlocal
-	PAUSE
-	exit /b
     goto :utilities
 
 :setHighPerformance
