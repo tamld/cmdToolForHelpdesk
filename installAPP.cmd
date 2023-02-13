@@ -157,7 +157,7 @@ REM Sub menu Install Office Online
 	REM if ERRORLEVEL == 4 set office=2016& call :defineOffice& goto :office-windows
 	if ERRORLEVEL == 3 set office=2019& call :defineOffice& goto :office-windows
 	if ERRORLEVEL == 2 set office=2021& call :defineOffice& goto :office-windows
-	if ERRORLEVEL == 1 set office=O365& call :defineOffice& goto :office-windows
+	if ERRORLEVEL == 1 set office=365& call :installO365& goto :office-windows
 	REM if ERRORLEVEL == 1 call :hold& goto :office-windows
 REM ============================================
 REM Stat of install office  online
@@ -272,6 +272,7 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 						 >>%OCS% echo ^</Configuration^>
 	ENDLOCAL
 	cls
+	echo. 
 	echo Installing Microsoft Office %office% ProPlus %CPU%-bit
 	echo Don't close this window until the installation process is completed
 	ping -n 3 localhost 1>NUL
@@ -280,6 +281,30 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	cd %dp%
 	exit /b
 REM End of install office online
+:installO365
+	cls
+	echo.
+	echo Disabling Microsoft Office %office% Telemetry . . .
+	ping -n 2 localhost 1>NUL
+	REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
+	REM start "" explorer %temp%
+	if not exist "%ProgramFiles%\7-Zip" call :install7zip
+	pushd %temp%
+	curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_15928-20216.exe
+	"%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
+	IF "%Processor_Architecture%"=="AMD64" Set "CPU=x64"
+	IF "%Processor_Architecture%"=="x86" Set "CPU=x32"
+	cls
+	echo. 
+	echo Installing Microsoft Office 365 ProPlus %CPU%-bit
+	echo Don't close this window until the installation process is completed
+	ping -n 3 localhost 1>NUL
+	START "" /WAIT /B ".\setup.exe" /configure configuration-Office365-%CPU%.xml
+	popd
+	cd %dp%
+	exit /b
+
+
 REM ============================================
 :getOfficePath
 cls
