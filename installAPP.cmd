@@ -731,9 +731,42 @@ REM :addLocalUserAdmin
     goto :utilities
 
 :joinDomain
-   cls
-    call :hold
-    goto :utilities
+	cls
+	setlocal
+	REM input Fully Qualified Domain Name
+	set /p server=Enter the Domain Name: 
+	call :log "Joining domain %server%..."
+	REM check if host can reach the AD with FQDN
+	REM ping %server%
+	ping -n 4 %server% 1>NUL
+	if %errorlevel% neq 0 (
+		echo Cannot reach server. Exiting...
+		call :log "Cannot reach server. Exiting..."
+		ping -n 5 localhost 1>NUL
+		exit /b 1
+	) else (
+		echo %server% is pingable. Proceeding with upgrade...
+		call :log "%server% is pingable. Proceeding with upgrade..."
+		ping -n 5 localhost 1>NUL
+	)
+	REM input user credential to join domain
+	cls
+	echo.
+	echo Please enter FQDN username instead of username only (abc\1 instead of 1)
+	call :inputCredential
+	REM return ERROR CODE if success or not
+	wmic computersystem where name="%computername%" call joindomainorworkgroup name=%server% user=%username% password=%password%
+	if %errorlevel% neq 0 (
+	echo Failed to join domain. Error code: %errorlevel%
+	call :log "Failed to join domain. Error code: %errorlevel%"
+	ping -n 5 localhost 1>NUL
+	) else (
+	echo Successfully joined domain.
+	call :log "Successfully joined domain."
+	ping -n 5 localhost 1>NUL
+	)
+	endlocal
+	goto :utilities
 
 REM This function will use Windows Disk Cleanup to remove unnecessary files
 :cleanUpSystem
@@ -1146,6 +1179,14 @@ REM function install 7zip by using winget
 	call :log "Notepad++ themes installation finished"
 	cd %dp%
 	goto :EOF
+
+REM function asks the user to input username and password for credential checking
+:inputCredential
+echo.
+set /p username=Enter the username:
+echo.
+set /p password=Enter the password:
+goto :EOF
 
 REM function force delete all file created in %temp% folder
 :clean
