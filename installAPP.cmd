@@ -128,7 +128,7 @@ REM Start of Windows Office Utilities Menu
 	echo        =================================================
 	Choice /N /C 1234567 /M " Press your choice : "
 	if ERRORLEVEL == 7 goto :main
-	if ERRORLEVEL == 6 goto :loadSkus
+	if ERRORLEVEL == 6 goto :loadSkusMenu
 	if ERRORLEVEL == 5 goto :fixNonCore
 	if ERRORLEVEL == 4 goto :convertOfficeEddition
 	if ERRORLEVEL == 3 goto :removeOfficeKey
@@ -149,16 +149,13 @@ REM Sub menu Install Office Online
 	echo                [1] Office 365                          : Press 1
 	echo                [2] Office 2021 Proplus Retail          : Press 2
 	echo                [3] Office 2019 Proplus Retail          : Press 3
-	REM echo                [4] Office 2016 Proplus Retail          : Press 4
 	echo                [4] Main Menu                           : Press 5
 	echo                =================================================
 	Choice /N /C 1234 /M " Press your choice : "
 	if ERRORLEVEL == 4 goto :office-windows
-	REM if ERRORLEVEL == 4 set office=2016& call :defineOffice& goto :office-windows
 	if ERRORLEVEL == 3 set office=2019& call :defineOffice& goto :office-windows
 	if ERRORLEVEL == 2 set office=2021& call :defineOffice& goto :office-windows
 	if ERRORLEVEL == 1 set office=365& call :installO365& goto :office-windows
-	REM if ERRORLEVEL == 1 call :hold& goto :office-windows
 REM ============================================
 REM Stat of install office  online
 
@@ -168,8 +165,6 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	cls
 	TITLE Microsoft Office ProPlus - Online Installer
 	REM Define value default for install
-	set "_dp=%~dp0"
-	set "sys32=%windir%\system32"
 	cd /d "%dp%"
 	Set "on=(YES)"
 	Set "off=(NO)"
@@ -236,7 +231,6 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	echo Disabling Microsoft Office %office% Telemetry . . .
 	ping -n 2 localhost 1>NUL
 	REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
-	REM start "" explorer %temp%
 	if not exist "%ProgramFiles%\7-Zip" call :install7zip
 	pushd %temp%
 	curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_15928-20216.exe
@@ -245,7 +239,6 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	REM REM Deploy template via link: https://config.office.com/deploymentsettings
 	Set "OCS="%temp%\Office %office% Setup Config.xml""
 						  >%OCS% echo ^<Configuration^>
-						 REM >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly" SourcePath="%dp%"^>
 						 >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly"^>					 
 	if "%office%"=="O365" >>%OCS% echo     ^<Product ID="%office%ProPlusRetail"^> else (
 						 >>%OCS% echo     ^<Product ID="ProPlus%office%Retail"^>	)
@@ -274,20 +267,21 @@ REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-s
 	cls
 	echo. 
 	echo Installing Microsoft Office %office% ProPlus %CPU%-bit
+	call :log Installing Microsoft Office %office% ProPlus %CPU%-bit
 	echo Don't close this window until the installation process is completed
 	ping -n 3 localhost 1>NUL
 	START "" /WAIT /B ".\setup.exe" /configure ".\Office %office% Setup Config.xml"
 	popd
+	call :log Finished Microsoft Office %office% ProPlus %CPU%-bit installation
 	cd %dp%
 	exit /b
-REM End of install office online
+
 :installO365
 	cls
 	echo.
 	echo Disabling Microsoft Office %office% Telemetry . . .
 	ping -n 2 localhost 1>NUL
 	REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
-	REM start "" explorer %temp%
 	if not exist "%ProgramFiles%\7-Zip" call :install7zip
 	pushd %temp%
 	curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_15928-20216.exe
@@ -296,14 +290,16 @@ REM End of install office online
 	IF "%Processor_Architecture%"=="x86" Set "CPU=x32"
 	cls
 	echo. 
-	echo Installing Microsoft Office 365 ProPlus %CPU%-bit
+	echo Installing Microsoft Office 365 %CPU%-bit
+	call :log Installing Microsoft Office 365 %CPU%-bit
 	echo Don't close this window until the installation process is completed
 	ping -n 3 localhost 1>NUL
 	START "" /WAIT /B ".\setup.exe" /configure configuration-Office365-%CPU%.xml
+	call :log Finished Microsoft Office 365 %CPU%-bit
 	popd
 	cd %dp%
 	exit /b
-
+REM End of install office online
 
 REM ============================================
 :getOfficePath
@@ -313,10 +309,85 @@ for %%a in (4,5,6) do (if exist "%ProgramFiles%\Microsoft Office\Office1%%a\ospp
 if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles(x86)%\Microsoft Office\Office1%%a"))
 goto :eof
 
-:loadSkus
+:loadSkusMenu
 	cls
-	call :hold
-	goto :office-windows
+	setLocal
+	REM for /f "tokens=2,3" %%b in ('wmic os get Caption /value') do (
+		REM if %%b%%c==Windows7 (
+							REM echo.
+							REM echo This function does not support Windows 7 or other earlier version
+							REM echo Get back to the menu
+							REM goto :office-windows
+							REM )
+	Title Load Windows Eddition
+	echo.
+	echo Select Windows Skus edition to convert
+	echo Sub menu Office Windows
+	echo.
+	echo        ==================================================
+	echo		[1] Professional                        : PRESS A
+	echo		[2] ProfessionalEducation               : PRESS B
+	echo		[3] ProfessionalN                       : PRESS C
+	echo		[4] ProfessionalWorkstation             : PRESS D
+	echo		[5] ProfessionalWorkstationN            : PRESS E
+	echo		[6] Enterprise                          : PRESS F
+	echo		[7] EnterpriseS                         : PRESS G
+	echo		[8] IoTEnterprise                       : PRESS H
+	echo		[9] Education                           : PRESS I
+	echo		[10] EducationN                         : PRESS J
+	echo		[11] LTSB 2015                          : PRESS K
+	echo		[12] LTSB 2016                          : PRESS L
+	echo		[13] LTSC 2019                          : PRESS M
+	echo		[14] CoreN                              : PRESS N
+	echo		[15] CoreSingleLanguage                 : PRESS O
+	echo		[16] Menu Active Office                 : PRESS P
+	echo        ==================================================
+	Choice /N /C ABCDEFGHIJKLMNOP /M " Press your choice : "
+	if %errorlevel% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T& set typeW=Professional& goto :loadSKUS
+	if %errorlevel% == 2 set keyW=8PTT6-RNW4C-6V7J2-C2D3X-MHBPB& set typeW=ProfessionalEducation& goto :loadSKUS
+	if %errorlevel% == 3 set keyW=2B87N-8KFHP-DKV6R-Y2C8J-PKCKT& set typeW=ProfessionalN& goto :loadSKUS
+	if %errorlevel% == 4 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77& set typeW=ProfessionalWorkstation& goto :loadSKUS
+	if %errorlevel% == 5 set keyW=WYPNQ-8C467-V2W6J-TX4WX-WT2RQ& set typeW=ProfessionalWorkstationN& goto :loadSKUS
+	if %errorlevel% == 6 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C& set typeW=Enterprise& goto :loadSKUS
+	if %errorlevel% == 7 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX& set typeW=EnterpriseS& goto :loadSKUS
+	if %errorlevel% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D& set typeW=IoTEnterprise& goto :loadSKUS
+	if %errorlevel% == 9 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY& set typeW=Education& goto :loadSKUS
+	if %errorlevel% == 10 set keyW=84NGF-MHBT6-FXBX8-QWJK7-DRR8H& set typeW=EducationN& goto :loadSKUS
+	if %errorlevel% == 11 set keyW=WNMTR-4C88C-JK8YV-HQ7T2-76DF9& set typeW=wdLTSB2015&goto :loadSKUS
+	if %errorlevel% == 12 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK& set typeW=wdLTSB2016& goto :loadSKUS
+	if %errorlevel% == 13 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D& set typeW=wdLTSC2019& goto :loadSKUS
+	if %errorlevel% == 14 set keyW=4CPRK-NM3K3-X6XXQ-RXX86-WXCHW& set typeW=CoreN& goto :loadSKUS
+	if %errorlevel% == 15 set keyW=BT79Q-G7N6G-PGBYW-4YWX6-6F4BT& set typeW=CoreSingleLanguage& goto :loadSKUS
+	if %errorlevel% == 16 goto :office-windows
+	endlocal
+
+:loadSKUS
+	cls
+	echo off
+	if not exist "%ProgramFiles%\7-Zip\7z.exe" call :install7zip
+	pushd %temp%
+	if not exist Licenses.zip (
+								curl -L -o "Licenses.zip" "https://drive.google.com/uc?export=download&id=1Cl7yQ5YPLh8laCfKBrkyVK_PEJN-GjWR"
+								"%ProgramFiles%\7-Zip\7z.exe" x -y Licenses.zip -o"Licenses"
+								)
+	xcopy "Licenses\Licenses\Skus Windows\%typeW%" "%sys32%\spp\tokens\skus\%typeW%\" /IS /Y
+	REM echo Generic Windows %typeW% key is %keyW%
+	cd %sys32%
+	cscript.exe slmgr.vbs /rilc
+	cscript.exe slmgr.vbs /upk >nul 2>&1
+	cscript.exe slmgr.vbs /ckms >nul 2>&1
+	cscript.exe slmgr.vbs /cpky >nul 2>&1
+	cscript.exe slmgr.vbs /ipk %keyW%
+	sc config LicenseManager start= auto & net start LicenseManager
+	sc config wuauserv start= auto & net start wuauserv
+	clipup -v -o -altto c:\
+	cls
+	echo.
+	echo Load skus %typeW% completed
+	ping -n 3 localhost 1>NUL
+	cd %dp%
+	exit /b
+:office-windows
 
 :fixNonCore
 	cls
@@ -378,7 +449,7 @@ REM Start of Remove Office Keys
 :uninstallOffice
 	Title Uninstall office completely
 	cls
-	@echo off
+	echo off
 	pushd %temp%
 	if not exist "%ProgramFiles%\7-Zip\7z.exe" call :install7zip
 	curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_CommandLineVersionFiles
