@@ -737,8 +737,8 @@ REM :addLocalUserAdmin
 	set /p server=Enter the Domain Name: 
 	call :log "Joining domain %server%..."
 	REM check if host can reach the AD with FQDN
-	REM ping %server%
-	ping -n 4 %server% 1>NUL
+	ping %server%
+	REM ping -n 4 %server% 1>NUL
 	if %errorlevel% neq 0 (
 		echo Cannot reach server. Exiting...
 		call :log "Cannot reach server. Exiting..."
