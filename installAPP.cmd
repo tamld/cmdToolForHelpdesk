@@ -709,11 +709,11 @@ REM :addLocalUserAdmin
 	cd %temp%
 	REM Detect brand name
 	for /f %%b in ('wmic computersystem get manufacturer ^| findstr /I "Dell HP Lenovo"') do set "BRAND=%%b"
-
 	REM Download and install the appropriate support assistant
-	if /I "%BRAND%" == "Dell Inc." (
+	if /I "%BRAND%" == "Dell" (
 	  curl -o SupportAssistx64-3.12.3.5.msi https://downloads.dell.com/serviceability/catalog/SupportAssistx64-3.12.3.5.msi
 	  start /wait SupportAssistx64-3.12.3.5.msi /quiet
+	  call :installSoft "Microsoft.DotNet.Runtime.6"
 	  call :log DELL Assistant is installed
 	) else if /I "%BRAND%" == "HP" (
 	  curl -fSL -o sp114036.exe https://ftp.hp.com/pub/softpaq/sp114001-114500/sp114036.exe
