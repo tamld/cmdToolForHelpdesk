@@ -16,33 +16,33 @@ exit /B
 :goADMIN
 pushd "%CD%"
 CD /D "%~dp0"
-::===================================================================================================================================================================
+::===================================================================================================================================================	
 :main
-call :checkOS
 call :checkWinget
-call :installChoco
+rem Install choco
+powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+set "path=%path%;C:\Program Files (x86)\ZeroTier\One\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\HashiCorp\Vagrant\bin"
 call :settingOS
 call :installUnikey
 call :listInstallSoftware_winget
 call :listInstallSoftware_choco
+choco install -y vmwareworkstation --version 17.0.1.21139696 --params='"/SERIALNUMBER=MC60H-DWHD5-H80U9-6V85M-8280D"' --force
+call :settingMS-Terminal
+REM call :installcygwin
 call :activeIDM
 call :settingNotepad
 call :settingMobaXterm
 call :installFastone
-call :addStartup
-call :restoreBackup
-call :addVagrantImage
-call :installSupportAssist
-call :enableWindowsSandbox
-refreshenv
-call :installcygwin
-refreshenv
-call :settingOpenSSH
 call :taskkill
+call :addStartup
+call :addVagrantImage
 call :clean
-call :w11Debloat
+call :enableWindowsSandbox
+call :installSupportAssist
+call :setPath
+REM call :w11Debloat
 goto :end
-::===================================================================================================================================================================
+::===================================================================================================================================================	
 :checkWinget
 echo off
 rem Get the Windows version number
@@ -75,8 +75,8 @@ cls
 echo Install require packages VCLibs x64 14 and UI.Xaml 2.7
 ping -n 2 localhost 1>NUL 
 curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
-curl -O -fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
-curl -o Microsoft.DesktopAppInstaller.msixbundle -fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
+curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
 cls
@@ -85,22 +85,6 @@ ping -n 2 localhost 1>NUL
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
 cls
 popd
-goto :EOF
-
-:installChoco
-cls
-echo Install chocolately
-powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-set "path=%path%;C:\ProgramData\chocolatey\bin"
-rem Check if choco is in the PATH
-REM echo Checking choco if exist in the PATH
-REM echo %PATH% | findstr "C:\ProgramData\chocolatey" > nul
-REM if errorlevel 1 (
-REM cls
-REM echo The choco path does not exist. Add to the PATH....
-REM setx PATH "%PATH%;C:\ProgramData\chocolatey" /M
-REM ) else (echo Choco has been set to the PATH already)
-REM ping -n 2 localhost 1>NUL
 goto :EOF
 
 :installSoft
@@ -158,23 +142,6 @@ set FILE_EXTS=.7z .zip .rar .tar .gz .bzip2 .xz
 for %%f in (%FILE_EXTS%) do (
 	assoc %%f=7-Zip
 )
-endlocal
-goto :EOF
-
-::Check if Windows is running Home SL or not. Some apps and settings may not be available.
-:checkOS
-setlocal
-REM Get the OS name and version using the systeminfo command
-for /f "tokens=3-5,6* delims=: " %%a in ('systeminfo ^| findstr /i /c:"OS Name"') do set win=%%a %%b %%c&set ver=%%d
-REM Check if the OS version contains "Home SL"
-echo %ver% | findstr /I /C:"Home SL" > nul
-if %errorlevel%==0 (
-echo This is a computer running Windows %win% Home Single Language.
-echo Some apps and settings may not be available.
-) else (
-echo The OS version is: %win% %ver%
-)
-ping -n 3 localhost 1>NUL
 endlocal
 goto :EOF
 
@@ -304,16 +271,17 @@ netsh advfirewall firewall add rule name="Allow from specific IP addresses" dir=
 goto :EOF
 
 :installcygwin
-cls
-echo Install cygwin and packages
 REM Check for $HOME folder exist
 if not exist (C:\tools\cygwin\home\%username%) mkdir C:\tools\cygwin\home\%username%
 REM Install apt-cyg
 pushd C:\tools\cygwin\home\%username%
+::Preconfig for .ssh
+if not exist c:\tools\cygwin\home\%username%\.ssh (
+echo .ssh folder not found. Copy it...
+xcopy /i %userprofile%\.ssh c:\tools\cygwin\home\%username%\.ssh /y)
 REM Check if required packages are already installed
-REM Set package list
 setlocal
-set packageList=lynx nano zsh curl git wget mosh
+set packageList=lynx nano zsh curl git wget
 REM Check if required packages are already installed
 for %%p in (%packageList%) do (
 if not exist "C:\tools\cygwin\bin\%%p.exe" (
@@ -324,25 +292,9 @@ echo Package %%p is already installed.
 )
 )
 endlocal
-::====================================================
 REM add git to $PATH to the top
-REM set PATH=C:\tools\cygwin\bin;%PATH%
+set PATH=C:\tools\cygwin\bin;%PATH%
 REM export PATH=/cygdrive/c/tools/cygwin/bin:$PATH
-::====================================================
-rem Check if cygwin is in the top of 
-echo %PATH% | findstr /b /c:"C:\tools\cygwin\bin;" > nul
-if errorlevel 1 (
-echo The Cygwin path is not at the top of the PATH environment variable. Adding it to the top...
-REM remove other path "C:\tools\cygwin\bin"
-setx PATH "%PATH:;C:\tools\cygwin\bin=%" /M
-REM move cygwin in the top menu
-setx PATH "C:\tools\cygwin\bin;%PATH%" /M
-REM add to the end of the PATH
-REM setx PATH "%PATH%;C:\tools\cygwin\bin" /M
-) else (
-echo The Cygwin path is already at the top of the PATH environment variable.
-)
-::====================================================
 curl -s -o c:\tools\cygwin\home\%username%\apt-cyg https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
 install c:\tools\cygwin\home\%username%\apt-cyg /bin
 curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash
@@ -423,8 +375,9 @@ popd
 goto :EOF
 
 :settingMS-Terminal
+cls
 pushd %localappdata%\Packages\Microsoft.WindowsTerminal*\LocalState
-call :taskkill
+tasklist | findstr /b WindowsTerminal.exe > NUL | if %errorlevel% == 0 (taskkill /im WindowsTerminal.exe /f) else (echo Windows Terminal is not running)
 choco install -y nerdfont-hack font-nerd-dejavusansmono nerd-fonts-meslo
 curl -sL -o "terminal_settings.zip" "https://drive.google.com/uc?export=download&id=1RBI_AliiFsWExSiZLR_HddGy7jhirb_2"
 "%ProgramFiles%\7-Zip\7z.exe" e -y terminal_settings.zip
@@ -435,24 +388,17 @@ goto :EOF
 :listInstallSoftware_choco
 cls
 echo Install List Software by choco
-choco install -y vmwareworkstation --version 17.0.1.21139696 --params='"/SERIALNUMBER=MC60H-DWHD5-H80U9-6V85M-8280D"' --force ^
-vagrant ^
-vagrant-manager ^
-python ^
-lockhunter ^
+choco install -y python ^
 ultraviewer --ignore-checksums ^
 internet-download-manager --ignore-checksums ^
-rclone ^
-rdm ^
+cygwin ^
 virtualbox ^
 virtualbox-guest-additions-guest.install ^
 processhacker ^
 vagrant-vmware-utility ^
-nerdfont-hack ^
-font-nerd-dejavusansmono ^
-terminal-icons.powershell ^
 jdownloader ^
 bulk-crap-uninstaller ^
+cloc ^
 packer
 refreshenv	
 goto :EOF
@@ -473,15 +419,20 @@ set packageList=Notepad++.Notepad++ ^
 ZeroTier.ZeroTierOne ^
 Microsoft.OpenSSH.Beta ^
 git.git ^
-lencx.ChatGPT ^
-Singlebox ^
-WinFsp.WinFsp ^
-SSHFS-Win.SSHFS-Win ^
-Microsoft.VisualStudioCode ^
-Microsoft.WindowsTerminal ^
+Rclone.Rclone ^
+kapitainsky.RcloneBrowser ^
+Famatech.AdvancedIPScanner ^
 Mobatek.MobaXterm ^
 Google.Drive ^
-Famatech.AdvancedIPScanner
+nilesoft.shell ^
+Microsoft.VisualStudioCode ^
+Hashicorp.Vagrant ^
+Singlebox ^
+lencx.ChatGPT ^
+WinFsp.WinFsp ^
+SSHFS-Win.SSHFS-Win ^
+Atlassian.Sourcetree ^
+Microsoft.WindowsTerminal
 
 for %%p in (%packageList%) do (
 call :installSoft %%p
@@ -490,43 +441,46 @@ popd
 endlocal
 goto :EOF
 
-:checkEnvironment
+:setPath
 cls
-REM Set the path has been to check
-set "_path=%~1"
-REM Set status software found or not
-set "found=0"
-REM check if path has exist
-echo Checking if %_path% is exist in the PATH enviroment
-ping -n 3 localhost 1 > NUL
-echo %PATH% | findstr "%_path%" > nul
-if "%errorlevel%" == "0" (
-set "found=1"
-echo The "%_path%" is found in the PATH environment variable
-)
-if "%found%"=="0" (
-if exist "%_path%" (
-echo Adding directory %_path% into the PATH...
-REM set to the top of the PATH
-REM set "PATH=C:\tools\cygwin\bin;%PATH%"
-REM add to the end of the PATH
-REM set "PATH=%PATH%;C:\tools\cygwin\bin"
-REM set to current session
-REM set "PATH=%PATH%;%_path%"
-REM set to system, permanent
-setx PATH "%PATH%;%_path%" /M
-) else (
-echo Can not adding %_path% into the PATH. The directory is not found
-)
-)
+::============================================================
+REM set apply to current session, PATH_TO_APP will be cleared next session. Effect immediately 
+REM set "PATH=%path%;PATH_TO_APP"
+REM set PATH "PATH_TO_APP;%PATH%"
+
+REM setx apply to current user profile, PATH_TO_APP will be kept permanently. Need to start new session to apply
+REM setx PATH "%PATH%;PATH_TO_APP"
+REM setx PATH "PATH_TO_APP;%PATH%"
+
+REM setx /m apply to system, PATH_TO_APP will be kept permanently
+REM setx PATH "PATH_TO_APP;%PATH%" /M
+REM setx PATH "PATH_TO_APP;%PATH%" /M
+::============================================================
+REM remove PATH from system session at TOP
+REM setx PATH "%PATH:;PATH_TO_APP=%" /M
+::==============================
+REM remove multi PATH from system session
+REM setx PATH "%PATH:PATH_TO_APP;=%;%PATH:C:\Program Files\OpenSSH;=%;%PATH:C:\Windows\System32\OpenSSH;=%" /M
+::============================================================
+::Requirements
+REM set cygwin at the top to running git with zsh shell. Windows Git is not compatible with zsh shell
+REM set openssh at top to define which ssh client is using. Check with WHERE
+::============================================================
+echo Setting PATH enviroments
+::Remove PATH if exist
+setx PATH "%PATH:;C:\Program Files\OpenSSH=%"
+setx PATH "%PATH:;C:\tools\cygwin\bin=%"
+::Add PATH to top of %username% enviroment. Add permanent
+REM setx PATH "C:\Program Files\OpenSSH;C:\tools\cygwin\bin;%PATH%"
+::Add PATH to top of system enviroment. Add permanent
+setx /M PATH "C:\Program Files\OpenSSH;C:\tools\cygwin\bin;%PATH%"
 refreshenv
-ping -n 3 localhost 1>NUL
+ping -n 2 localhost 1 > NUL
 goto :EOF
 
 :checkPath
 cls
 setlocal enabledelayedexpansion
-echo.
 echo Checking directories...
 ping -n 3 localhost 1>NUL
 set dirsToCheck="C:\Program Files\OpenSSH\" ^
@@ -537,7 +491,6 @@ set dirsToCheck="C:\Program Files\OpenSSH\" ^
 "%localappdata%\Microsoft VS Code\bin\"
 for %%d in (%dirsToCheck%) do (
 cls
-echo.
 set "dirToAdd=%%~d"
 echo Checking if "!dirToAdd!" is in the PATH...
 echo .....
@@ -559,79 +512,44 @@ echo Finished checking directories.
 goto :EOF
 
 :settingNotepad
-cls
 pushd %temp%
-echo Start install Notepad++ style configurator
-ping -n 3 localhost 1>NUL
+echo Notepad++ theme installation started > themes_installation.log
 REM Dracula theme
-curl -s https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml -o Dracula.xml
+curl https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml -o Dracula.xml
 xcopy Dracula.xml %AppData%\Notepad++\themes\ /E /C /I /Q /Y
 REM Material Theme
-curl -s  https://raw.githubusercontent.com/HiSandy/npp-material-theme/master/Material%20Theme.xml -o "Material Theme.xml"
+curl https://raw.githubusercontent.com/HiSandy/npp-material-theme/master/Material%20Theme.xml -o "Material Theme.xml"
 xcopy "Material Theme.xml" %AppData%\Notepad++\themes\ /E /C /I /Q /Y
 REM Nord theme
-curl -s https://raw.githubusercontent.com/arcticicestudio/nord-notepadplusplus/develop/src/xml/nord.xml -LJ -o Nord.xml
+curl https://raw.githubusercontent.com/arcticicestudio/nord-notepadplusplus/develop/src/xml/nord.xml -LJ -o Nord.xml
 xcopy Nord.xml %AppData%\Notepad++\themes\ /E /C /I /Q /Y
 REM Mariana theme
-curl -s https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
+curl https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
 xcopy Mariana.xml %AppData%\Notepad++\themes\ /E /C /I /Q /Y
 popd
 goto :EOF
 
-:settingOpenSSH
-cls
-echo Setting OpenSSH
-::=======================================================================================================================================
-REM Fix issue that openssh can not read config from %userprofile%\.ssh\ folder
-echo %PATH% | findstr /b /c:"C:\Program Files\OpenSSH;" > nul
-if errorlevel 1 (
-echo The SSH path is not at the top of the PATH environment variable. Adding it to the top...
-REM remove the OpenSSH directory from the PATH environment variable:
-setx PATH "%PATH:;C:\Program Files\OpenSSH=%" /M
-REM add openSSH to the Top
-setx PATH "C:\Program Files\OpenSSH;%PATH%" /M
-) else (
-echo  The SSH path is already at the top of the PATH environment variable.
-)
-ping -n 3 localhost 1>NUL
-::=======================================================================================================================================
-if not exist %userprofile%\.ssh\*.pub (
-mkdir %userprofile%\.ssh
-ssh-keygen -t rsa -f %userprofile%\.ssh\id_rsa -q -N ""
-)
-cls
-echo Your ssh-keygen profile has been placed at %USERPROFILE%\.ssh\
-echo Your public keygen is:
-type %USERPROFILE%\.ssh\id_rsa.pub
-ping -n 3 localhost 1>NUL
-goto :EOF
-	
 :installFastone
 cls
-setlocal
-ping -n 2 localhost 1 > NUL
 pushd %userprofile%\Desktop
-set "file_url=https://www.faststonesoft.net/DN/FSCaptureSetup99.exe"
-set "file_name=Fastone Capture 99.exe"
-echo Downloading %file_name%... to %userprofile%\Desktop
-curl -fsSL -o "%file_name%" "%file_url%" > nul
-icacls "Fastone Capture 99.exe" /grant:r "Administrators":(F) /grant:r "SYSTEM":(F) /grant:r "%USERNAME%":(F) /grant:r "Everyone":(R) /remove:g "Authenticated Users" /remove:g "Users" /inheritance:r > nul
+REM start /wait curl -fsSL -o "Fastone.rar" "https://drive.google.com/uc?export=download&id=1O49H_gvRQqMP-eRCcXO5qzvZK14dd0dA"
+echo Download Fastone Capture v9.9 and key file into %userprofile%\Desktop
+curl -s -O https://www.faststonesoft.net/DN/FSCaptureSetup99.exe
 echo Free Software > fastone_key.txt
 echo BXRQE-RMMXB-QRFSZ-CVVOX >> fastone_key.txt
 popd
-endlocal
 goto :EOF	
 
 :activeIDM
 cls
 pushd %temp%
-curl -sL -o "IAS.rar" "https://drive.google.com/uc?export=download&id=1PH4mhy3ODBF9X9boZNyHLoUG1y9GSp1G"
+curl -L -o "IAS.rar" "https://drive.google.com/uc?export=download&id=1PH4mhy3ODBF9X9boZNyHLoUG1y9GSp1G"
 if not exist "c:\Program Files\7-Zip\7z.exe" call :installSoft 7zip.7zip
 "%ProgramFiles%\7-Zip\7z.exe" e -y -p1234 "IAS.rar"
 xcopy /y IAS_0.7_CRC32_58F0EACC.cmd %userprofile%\Desktop\
 setlocal
 set file=%userprofile%\Desktop\IAS_0.7_CRC32_58F0EACC.cmd
-PowerShell -Command "(Get-Content '%file%') -replace 'set name=', 'set name=IDM' | Set-Content '%file%'"
+PowerShell -Command "(Get-Content '%file%') -replace 'set name=', 'set name=sirHunter' | Set-Content '%file%'"
 REM (echo 1 & echo 6) | IAS_0.7_CRC32_58F0EACC.cmd
 endlocal
 popd
@@ -646,24 +564,27 @@ for %%p in (%task_to_kill%) do (taskkill /IM %%p /F)
 endlocal
 goto :EOF
 
-:restoreBackup
+:settingGit
 cls
-echo Restore from backup located in D:\Backup
-if exist d:\Backup\%username% (
-call :taskkill
-robocopy d:\Backup\%username%\ %userprofile%\ /zb /e /copyall /W:10
-) else (
-echo No backup found
-ping -n 2 localhost 1>NUL)
+echo Setting git configuration
+git config --global user.name tamld 
+git config --global user.email ductam1828@gmail.com
+goto :EOF
+
+:settingZeroTier
+cls
+echo Setting ZeroTierOne
+zerotier-cli join 35c192ce9b7283f2
+zerotier-cli set 35c192ce9b7283f2 allowManaged=true
 goto :EOF
 
 :settingMobaXterm
 cls
 echo Setting MobaXterm
 ping -n 3 localhost 1>NUL
-if not exist "C:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" (curl -sL -o "C:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1La_J5_5Ntng35S-mL_h_zuYa2iSceXUC")
+if not exist "C:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" (curl -L -o "C:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1La_J5_5Ntng35S-mL_h_zuYa2iSceXUC")
 if exist "C:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" (
-echo Copy complete
+echo copy complete
 ping -n 2 localhost 1>NUL )
 goto :EOF
 
@@ -677,11 +598,11 @@ REM Detect brand name
 for /f %%b in ('wmic computersystem get manufacturer ^| findstr /I "Dell HP Lenovo"') do set "BRAND=%%b"
 REM Download and install the appropriate support assistant
 if /I "%BRAND%" == "Dell" (
-choco install -y supportassist --ignore-checksums --no-exec
+choco install -y supportassist --ignore-checksums
 ) else if /I "%BRAND%" == "HP" (
-choco install -y hpsupportassistant --ignore-checksums --no-exec
+choco install -y hpsupportassistant --ignore-checksums
 ) else if /I "%BRAND%" == "Lenovo" (
-choco install -y lenovo-thinkvantage-system-update --ignore-checksums --no-exec
+choco install -y lenovo-thinkvantage-system-update --ignore-checksums
 ) else (
 echo Unknown brand: %BRAND%
 )
@@ -690,7 +611,6 @@ goto :EOF
 
 :addVagrantImage
 cls
-call :checkEnvironment "C:\HashiCorp\Vagrant\bin"
 echo Add vagrant image
 echo Please wait. This could take a while, depending on your network speed
 ping -n 3 localhost 1>NUL
@@ -700,8 +620,7 @@ REM generic/ubuntu2010 ^
 REM gusztavvargadr/windows-10 ^
 REM gusztavvargadr/windows-11 ^
 REM gusztavvargadr/windows-server
-REM set boxes=bento/ubuntu-20.04 gusztavvargadr/windows-11 gusztavvargadr/windows-server
-set boxes=bento/ubuntu-20.04
+set boxes=bento/ubuntu-20.04 gusztavvargadr/windows-11
 set providers=virtualbox vmware_workstation
 REM Download a list of boxes for the specified providers
 for %%b in (%boxes%) do (
@@ -735,7 +654,6 @@ cls
 echo Enable Windows Sandbox
 start powershell dism.exe /online /enable-feature /featurename:Containers-DisposableClientVM
 cls
-echo.
 echo Windows need restart to update the setting
 ping -n 3 localhost 1>NUL
 goto :EOF
