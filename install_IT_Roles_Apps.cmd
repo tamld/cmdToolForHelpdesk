@@ -564,20 +564,6 @@ for %%p in (%task_to_kill%) do (taskkill /IM %%p /F)
 endlocal
 goto :EOF
 
-:settingGit
-cls
-echo Setting git configuration
-git config --global user.name tamld 
-git config --global user.email ductam1828@gmail.com
-goto :EOF
-
-:settingZeroTier
-cls
-echo Setting ZeroTierOne
-zerotier-cli join 35c192ce9b7283f2
-zerotier-cli set 35c192ce9b7283f2 allowManaged=true
-goto :EOF
-
 :settingMobaXterm
 cls
 echo Setting MobaXterm
