@@ -1,5 +1,5 @@
 echo off
-Title Script Auto install Software v0.6 June 28, 2023
+Title Script Auto install Software
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 if '%errorlevel%' NEQ '0' (
     echo  Run CMD as Administrator...
@@ -22,8 +22,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================	
 :main
 @echo off
-REM version 0.1
-set "version=0.1"
+set "appversion=v0.6 June 28, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -34,6 +33,7 @@ cls
 setlocal
 title Main Menu
 echo.
+echo %appversion%
 echo    ========================================================
 echo    [1] Install All In One Online                  : Press 1
 echo    [2] Windows Office Utilities                   : Press 2
