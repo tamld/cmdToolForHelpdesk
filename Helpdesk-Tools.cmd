@@ -1,3 +1,4 @@
+:: Test function update code. Test 1, before upload code
 echo off
 Title Script Auto install Software v0.1 Jan 16, 2023
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
@@ -962,7 +963,7 @@ cls
 title Package Management Software main Menu
 echo.
 echo        ====================================================
-echo        [1] Package Management                     : Press 1
+echo        [1] Install Package Management             : Press 1
 echo        [2] Install Utilities online               : Press 2
 echo        [3] Install Remote Support                 : Press 3
 echo        [4] Upgrade online all                     : Press 4
@@ -1014,7 +1015,7 @@ echo 		Google Drive
 echo **********************************************************************
 ping -n 3 localhost 1>NUL
 ::=======================================================================================================================
-:: @Note
+:: Note
 :: Without Scope Machine, the software will be installed with the current user profile instead of the system profile
 :: Package list can be search with command: 
 ::            *winget search [software name]* eg: winget search teamviewer
@@ -1053,8 +1054,8 @@ endlocal
 call :installNotepadplusplusThemes
 goto :EOF
 
-
 :installpackageManagement
+cls
 call :checkCompatibility
 goto :packageManagement
 
@@ -1063,8 +1064,8 @@ REM ============================================================================
 REM function update CMD via github
 :updateCMD
 cls
-cd %dp%
-curl -sO https://raw.githubusercontent.com/tamld/cmdToolForHelpdesk/main/installAPP.cmd
+cd /d %dp%
+curl -sO https://raw.githubusercontent.com/tamld/cmdToolForHelpdesk/main/Helpdesk-Tools.cmd
 call :log installAPP file has been updated
 echo File has been updated. Reopen it again
 echo Check for the version, release date
@@ -1091,12 +1092,12 @@ cls
 winget -v
 if ERRORLEVEL 1 (
 echo Start to install
-call :installWinget
 call :installChocolately
+call :installWinget
 cls
 ) else (
-echo Winget already installed
-call :log "Winget already installed"
+echo Package Management software already installed
+call :log "Package Management Software already installed"
 cls
 )
 ) else (
@@ -1107,40 +1108,35 @@ ping -n 2 localhost 1>NUL
 cls
 goto :EOF
 
-:installChocolately
-Title Install Chocolately
-echo Installing Chocolately
-powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-cls
-echo Set Chocolately path
-set "path=%path%;C:\ProgramData\chocolatey\bin"
-call :log "Finished Chocolately themes_installation"
-goto: EOF
+rem :installChocolately
+rem Title Install Chocolately
+rem echo Installing Chocolately
+rem powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+rem cls
+rem echo Set Chocolately path
+rem set "path=%path%;C:\ProgramData\chocolatey\bin"
+rem call :log "Finished Chocolately installation"
+rem goto: EOF
 
 :installWinget
 Title Install Winget
-cd /d %temp%
+pushd %temp%
 cls
 REM Install require packages VCLibs x64 14 and UI.Xaml 2.7
 echo. 
 echo Install require packages VCLibs x64 14 and UI.Xaml 2.7
 ping -n 2 localhost 1>NUL
-call :log "Starting Winget installation from GitHub"
 curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
 curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
 curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
-call :log "Finished Winget installation msixbundle"
-call :log "Finished Winget installation requesting packages"
 cls
-echo.
 echo Install winget application
 ping -n 1 localhost 1>NUL
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
-call :log "Finished Winget installation from GitHub"
 cls
-cd /d "%dp%"
+popd
 goto :EOF
 
 ::@%1 will inherit parameters from the outside input function
