@@ -1,5 +1,6 @@
 :: Test function update code. Test 1, before upload code
 :: Test function update code. Test 2, after upload code
+:: Test function update code. Test 3, automate update
 echo off
 Title Script Auto install Software v0.1 Jan 16, 2023
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
@@ -1066,11 +1067,12 @@ REM function update CMD via github
 :updateCMD
 cls
 cd /d %dp%
+copy Helpdesk-Tools.cmd Helpdesk-Tools-old.cmd
 curl -sO https://raw.githubusercontent.com/tamld/cmdToolForHelpdesk/main/Helpdesk-Tools.cmd
-call :log installAPP file has been updated
 echo File has been updated. Reopen it again
 echo Check for the version, release date
 ping -n 2 localhost 1>NUL
+popd
 goto :EOF
 
 REM ========================================================================================================================================
