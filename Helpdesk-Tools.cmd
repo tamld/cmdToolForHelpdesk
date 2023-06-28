@@ -46,7 +46,7 @@ echo    ========================================================
 Choice /N /C 1234567 /M " Your choice is :"
 if ERRORLEVEL == 7 goto end
 if ERRORLEVEL == 6 call :updateCMD & goto main
-if ERRORLEVEL == 5 goto packageManagement
+if ERRORLEVEL == 5 goto packageManagementMenu
 if ERRORLEVEL == 4 goto utilities
 if ERRORLEVEL == 3 goto activeLicenses
 if ERRORLEVEL == 2 goto office-windows
@@ -64,35 +64,39 @@ cls
 title Install All In One online
 echo.
 echo        =================================================
-echo        [1] Fresh Install                       : Press 1
-echo        [2] From Backup                         : Press 2
-echo        [3] Main Menu                           : Press 3
+echo        [1] Fresh Install without Office        : Press 1
+echo        [2] Fresh Install with Office 2019      : Press 2
+echo        [3] Fresh Install with Office 2021      : Press 3
+echo        [4] Main Menu                           : Press 4
 echo        =================================================
-Choice /N /C 123 /M " Press your choice : "
-if ERRORLEVEL == 3 goto main
-if ERRORLEVEL == 2 goto installAIO-FromBackup
+Choice /N /C 1234 /M " Press your choice : "
+if ERRORLEVEL == 4 goto main
+if ERRORLEVEL == 3 goto installAIO-O2021
+if ERRORLEVEL == 2 goto installAIO-O2019
 if ERRORLEVEL == 1 goto installAIO-Fresh
 endlocal
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities
 :installAIO-Fresh
+rem call :hold
 Title Install All in one from fresh Windows 
 cls
-Echo This will adjust settings, install softwares for fresh computer
+Echo This will adjust settings, install softwares for fresh computer wihtout Office
 call :settingWindows
 call :setHighPerformance
-call :installpackageManagement
+call :checkCompatibility
 call :installWinget-Utilities
 call :installChoco-RemoteSupport
 call :installUnikey
-call :func_InstallOffice19Pro_VL
 call :createShortcut
 call :installSupportAssistant
-rem call :hold
-goto :main
+
+goto :installAIOMenu
 
 REM function install Windows from a backup - has been generated from Winget and reinstalled once
-:installAIO-FromBackup
+:installAIO-O2019
+cls
+call :hold
 REM call :settingWindows
 REM call :installWinget
 REM call :installWinget-Utilities
@@ -102,9 +106,13 @@ REM call :func_InstallOffice19Pro_VL
 REM call :func_CreateShortcut
 REM call :settingPowerPlan
 REM call :func_InstallSupportAssist
+goto :installAIOMenu
+
+installAIO-O2021
 cls
 call :hold
-goto :main
+goto :installAIOMenu
+
 REM End of Install AIO Online
 REM ========================================================================================================================================
 REM ==============================================================================
@@ -827,7 +835,7 @@ echo Show this PC view
 powershell Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name LaunchTo -Value 1
 setlocal
 :: Detect Windows 10 or 11
-for /f "tokens=2,3 delims= " %a in ('wmic os get name /value ^| findstr /i "name"') do set winver=%b
+for /f "tokens=2,3 delims= " %%a in ('wmic os get name /value ^| findstr /i "name"') do set winver=%%b
 if %winver%==11 (
 echo Revert classic menu Right click W11
 reg add HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2} /ve /t REG_SZ /d "" /f
@@ -939,7 +947,7 @@ powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c e73a048d-bf27-4f1
 powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c e73a048d-bf27-4f12-9731-8b2076e8891f f3c5027d-cd16-4930-aa6b-90db844a8f00 3
 powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c e73a048d-bf27-4f12-9731-8b2076e8891f f3c5027d-cd16-4930-aa6b-90db844a8f00 3
 call :log High performance has been set
-goto :utilities
+goto :EOF
 
 :createShortcut
 cls
@@ -954,7 +962,7 @@ goto :eof
 
 REM End of Utilities functions
 REM ========================================================================================================================================
-:packageManagement
+:packageManagementMenu
 setlocal
 REM Start of Winget Menu
 cd /d %dp%
@@ -974,45 +982,11 @@ if ERRORLEVEL == 5 goto :main
 if ERRORLEVEL == 4 goto :updateWinget-All
 if ERRORLEVEL == 3 goto :installWinget-RemoteSupport
 if ERRORLEVEL == 2 goto :installWinget-Utilities
-if ERRORLEVEL == 1 goto :installpackageManagement
+rem if ERRORLEVEL == 1 goto :checkCompatibility
+if ERRORLEVEL == 1 goto :packageManagement
 REM End of Winget Menu
 REM ==============================================================================
 REM Start of Winget functions
-:updateWinget-All
-call :checkCompatibility
-cls
-echo y | winget upgrade -h --all
-call :log "Winget finished upgrading all packages successfully"
-goto :packageManagement
-	
-:installWinget-RemoteSupport
-call :checkCompatibility
-call :installsoft TeamViewer.TeamViewer
-call :installsoft DucFabulous.UltraViewer
-goto :packageManagement
-
-:installChoco-RemoteSupport
-call :checkCompatibility
-choco install -y teamviewer
-choco install -y ultraviewer --ignore-checksums
-goto :packageManagement
-
-:installWinget-Utilities
-Title Install Utilities by Winget
-call :checkCompatibility
-setlocal
-call :log "Starting software utilities installation"
-cls
-echo.
-echo **********************************************************************
-echo 		List Software to Install
-echo 		7zip, Notepad++, Foxit Reader
-echo 		Zalo, Slack, Skype, Unikey
-echo 		Google Chrome, Firefox
-echo 		BulkCrapUninstaller, Microsoft PowerToys
-echo 		Google Drive
-echo **********************************************************************
-ping -n 3 localhost 1>NUL
 ::=======================================================================================================================
 :: Note
 :: Without Scope Machine, the software will be installed with the current user profile instead of the system profile
@@ -1028,35 +1002,72 @@ ping -n 3 localhost 1>NUL
 ::TeamViewer Host                           TeamViewer.TeamViewer.Host           15.42.9                          winget
 ::TeamViewer                                TeamViewer.TeamViewer                15.42.9                          winget
 ::=======================================================================================================================
-set packageListWithScope=SlackTechnologies.Slack ^
+
+:updateWinget-All
+call :checkCompatibility
+cls
+echo y | winget upgrade -h --all
+call :log "Winget finished upgrading all packages successfully"
+goto :packageManagementMenu
+	
+:installWinget-RemoteSupport
+call :checkCompatibility
+call :installsoft TeamViewer.TeamViewer
+call :installsoft DucFabulous.UltraViewer
+goto :packageManagementMenu
+
+:installChoco-RemoteSupport
+call :checkCompatibility
+choco install -y teamviewer
+choco install -y ultraviewer --ignore-checksums
+goto :packageManagementMenu
+
+:installWinget-Utilities
+Title Install Utilities by Winget
+echo off
+call :checkCompatibility
+setlocal
+call :log "Starting software utilities installation"
+ping -n 3 localhost 1>NUL
+cls
+echo ************************************
+echo  List Software to Install
+echo  7zip, Notepad++,Foxit Reader
+echo  Zalo, Slack, Google Chrome, Firefox
+echo  BulkCrap Uninstaller, Google Drive
+echo ************************************
+ping -n 2 localhost 1>NUL
+setlocal
+pushd %temp%
+echo Install List Software by winget
+set packageList=Notepad++.Notepad++ ^
+Google.Drive ^
+Microsoft.DotNet.Runtime.6 ^
+VNGCorp.Zalo ^
+SlackTechnologies.Slack ^
+Facebook.Messenger ^
+Telegram.TelegramDesktop ^
+Microsoft.Skype ^
+7zip.7zip ^
+Foxit.FoxitReader ^
+Notepad++.Notepad++ ^
 Google.Chrome ^
 Mozilla.Firefox ^
-google.drive ^
-Google.Chrome ^
-Microsoft.PowerToys ^
-Mozilla.Firefox
-set packageListWithoutScope=7zip.7zip ^
-VideoLAN.VLC ^
-Foxit.FoxitReader ^
-Notepad++.Notepad ^
 Klocman.BulkCrapUninstaller ^
-VNGCorp.Zalo
-REM first loop to install software without scope machine
-for %%p in (%packageListWithoutScope%) do (
-call :installSoft %%p ""
-)
-1REM second loop to install software with scope machine
-for %%p in (%packageListWithScope%) do (
-call :installSoft %%p "--scope machine"
+Microsoft.PowerToys ^
+google.drive ^
+VideoLAN.VLC
+
+for %%p in (%packageList%) do (
+    winget install %%p -h --accept-package-agreements --accept-source-agreements
 )
 endlocal
-call :installNotepadplusplusThemes
-goto :EOF
+goto :eof
 
-:installpackageManagement
+:packageManagement
 cls
 call :checkCompatibility
-goto :packageManagement
+goto :packageManagementMenu
 
 REM End of Winget functions
 REM ========================================================================================================================================
@@ -1064,7 +1075,7 @@ REM function update CMD via github
 :updateCMD
 cls
 cd /d %dp%
-copy Helpdesk-Tools.cmd Helpdesk-Tools-old.cmd
+copy Helpdesk-Tools.cmd Helpdesk-Tools-old.cmd /Y
 curl -sO https://raw.githubusercontent.com/tamld/cmdToolForHelpdesk/main/Helpdesk-Tools.cmd
 echo File has been updated. Reopen it again
 echo Check for the version, release date
@@ -1077,7 +1088,7 @@ REM Start of child process that can be reused functions
 
 REM function checkWinget will check if winget is installed or neither. If not, go to installWinget function
 :checkCompatibility
-Title Check Windows version compatibility
+cls
 echo off
 rem Get the Windows version number
 for /f "tokens=4 delims=[] " %%i in ('ver') do set VERSION=%%i
@@ -1088,42 +1099,48 @@ cls
 echo "Current Windows version: %VERSION% is suitable for installing winget and chocolatey"
 call :log "Windows version check: Version %VERSION% is suitable for installing winget and chocolatey"
 ping -n 2 localhost 1>NUL
-cls
 winget -v
 if ERRORLEVEL 1 (
-echo Start to install
-call :installChocolately
+cls
+echo Installing Winget
 call :installWinget
-cls
 ) else (
-echo Package Management software already installed
-call :log "Package Management Software already installed"
 cls
+echo Winget has been installed
+ping -n 2 localhost 1>NUL
+)
+choco -v
+if ERRORLEVEL 1 (
+cls
+echo Installing Chocolately
+call :installChocolately
+) else (
+cls
+echo Chocolately has been installed
+ping -n 2 localhost 1>NUL
 )
 ) else (
 call :log "Windows version check: Version %VERSION% is not suitable for installing"
 echo Your Windows version is not suitable for installing
 ping -n 2 localhost 1>NUL
-)
+) 
+goto :eof
+::=====================================================================
+:installChocolately
+Title Install Chocolately
 cls
-goto :EOF
-
-rem :installChocolately
-rem Title Install Chocolately
-rem echo Installing Chocolately
-rem powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-rem cls
-rem echo Set Chocolately path
-rem set "path=%path%;C:\ProgramData\chocolatey\bin"
-rem call :log "Finished Chocolately installation"
-rem goto: EOF
+echo Installing Chocolately
+powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+cls
+echo Set Chocolately path
+set "path=%path%;C:\ProgramData\chocolatey\bin"
+call :log "Finished Chocolately installation"
+goto: EOF
 
 :installWinget
 Title Install Winget
 pushd %temp%
 cls
-REM Install require packages VCLibs x64 14 and UI.Xaml 2.7
-echo. 
 echo Install require packages VCLibs x64 14 and UI.Xaml 2.7
 ping -n 2 localhost 1>NUL
 curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
@@ -1139,6 +1156,28 @@ cls
 popd
 goto :EOF
 
+:installPackageManagement
+pushd %temp%
+cls
+:: Install chocolately
+echo Installing Chocolately
+powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+cls
+echo Set choco, winget path
+set "path=%path%;C:\ProgramData\chocolatey\bin"
+:: Install winget
+cls
+echo Installing Winget
+curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
+curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
+curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
+start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
+start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
+set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
+popd
+goto:eof
+::=====================================================================
 ::@%1 will inherit parameters from the outside input function
 ::@exit /b will exit function instead of remaining running scripts codes
 :log
