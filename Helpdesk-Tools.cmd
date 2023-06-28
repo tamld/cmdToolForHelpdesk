@@ -1,8 +1,5 @@
-:: Test function update code. Test 1, before upload code
-:: Test function update code. Test 2, after upload code
-:: Test function update code. Test 3, automate update
 echo off
-Title Script Auto install Software v0.1 Jan 16, 2023
+Title Script Auto install Software v0.6 June 28, 2023
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 if '%errorlevel%' NEQ '0' (
     echo  Run CMD as Administrator...
