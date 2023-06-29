@@ -90,25 +90,15 @@ call :installChoco-RemoteSupport
 call :installUnikey
 call :createShortcut
 call :installSupportAssistant
-
 goto :installAIOMenu
 
 REM function install Windows from a backup - has been generated from Winget and reinstalled once
 :installAIO-O2019
 cls
 call :hold
-REM call :settingWindows
-REM call :installWinget
-REM call :installWinget-Utilities
-REM call :installWinget-Remote
-REM call :installUnikey
-REM call :func_InstallOffice19Pro_VL
-REM call :func_CreateShortcut
-REM call :settingPowerPlan
-REM call :func_InstallSupportAssist
 goto :installAIOMenu
 
-installAIO-O2021
+:installAIO-O2021
 cls
 call :hold
 goto :installAIOMenu
@@ -133,13 +123,13 @@ echo        [6] Load SKUS Windows                                : Press 6
 echo        [7] Main Menu                                        : Press 7
 echo        ==============================================================
 Choice /N /C 1234567 /M " Press your choice : "
-if ERRORLEVEL == 7 goto :main
-if ERRORLEVEL == 6 goto :loadSkusMenu
-if ERRORLEVEL == 5 goto :fixNonCore
-if ERRORLEVEL == 4 goto :convertOfficeEddition
-if ERRORLEVEL == 3 goto :removeOfficeKey
-if ERRORLEVEL == 2 goto :uninstallOffice
-if ERRORLEVEL == 1 goto :installOfficeMenu
+if %ERRORLEVEL% == 7 goto :main
+if %ERRORLEVEL% == 6 goto :loadSkusMenu
+if %ERRORLEVEL% == 5 goto :fixNonCore
+if %ERRORLEVEL% == 4 goto :convertOfficeEddition
+if %ERRORLEVEL% == 3 goto :removeOfficeKey
+if %ERRORLEVEL% == 2 goto :uninstallOffice
+if %ERRORLEVEL% == 1 goto :installOfficeMenu
 endlocal
 REM ==============================================================================
 REM Start of Windows Office Utilities functions
@@ -399,6 +389,7 @@ goto :office-windows
 cls
 call :hold
 goto :office-windows
+
 REM ============================================
 REM Start of Remove Office Keys
 :removeOfficeKey
@@ -418,7 +409,7 @@ if ERRORLEVEL == 1 goto :removeOfficeKey-1B1
 
 :removeOfficeKey-1B1
 setlocal 
-cd /d %officePath% 
+pushd %officePath% 
 REM Get input from user
 set /p key=Write down/Paste 5 letters key need to uninstall: 
 REM Loop through the OSPP.VBS file and find the key to uninstall
@@ -428,6 +419,7 @@ echo Key %%b has been removed
 call :log Key %%b has been removed
 )
 endlocal 
+popd
 ping -n 2 localhost 1>NUL
 goto :eof
 
@@ -1228,17 +1220,15 @@ goto :eof
 :installUnikey
 cls
 if exist "C:\Program Files\Unikey" (echo Unikey is exist) else (
-cd /d %temp%
-call :log "Downloading Unikey"
-curl -# -o unikey43RC5-200929-win64.zip -L https://www.unikey.org/assets/release/unikey43RC5-200929-win64.zip
+pushd %temp%
 if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
-if not exist "C:\Program Files\Unikey" ("c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey")
-call :log "Copying Unikey to Startup"
-mklink "c:\Program Files\Unikey\UniKeyNT.exe" "%programDATA%\StartUp" /y
-call :log "Creating Unikey shortcut on desktop"
+curl -# -o unikey43RC5-200929-win64.zip -L https://www.unikey.org/assets/release/unikey43RC5-200929-win64.zip
+"c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey"
+echo "Copying Unikey to Startup"
+mklink "%startProgram%\StartUp" "c:\Program Files\Unikey\UniKeyNT.exe"
+echo "Creating Unikey shortcut on desktop"
 mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
-cd /d %dp%
-call :log "Finishing Unikey installation"
+popd
 )
 goto :EOF
 
@@ -1296,10 +1286,24 @@ goto :EOF
 
 REM function force delete all file created in %temp% folder
 :clean
-del /q /f /s %temp%\*.*
-REM forfiles search files with criteria > 7 days and delete
-REM forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
+::==================================================================
+rem del /q /f /s %temp%\*.*
+rem forfiles search files with criteria > 7 days and delete
+rem forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
+::==================================================================
+echo off
+:: Set the path to the log file to exclude
+set exclude_file=%temp%\Helpdesk-Tools.log
+
+:: Delete all files in the temp directory except for the exclude file
+for %%f in (%temp%\*.*) do (
+if /I not "%%f"=="%exclude_file%" (
+del /F "%%f"
+)
+)
+echo All files in %temp% have been deleted except for %exclude_file%.
 goto :EOF
+
 REM End of child process functions
 REM ========================================================================================================================================
 :hold
@@ -1307,7 +1311,7 @@ REM ============================================================================
 cls
 echo.
 echo Function in developing
-echo Please be patient
+echo Please contact the author for further information via https://github.com/tamld/cmdToolForHelpdesk
 ping -n 3 localhost 1>NUL
 ::exit /b
 goto :main
