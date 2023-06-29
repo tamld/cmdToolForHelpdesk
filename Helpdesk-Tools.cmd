@@ -22,11 +22,11 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================	
 :main
 @echo off
-set "appversion=v0.6 June 28, 2023"
+set "appversion=v0.6.1 June 29, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
-set "officePath=%cd%"
+set officePath=%cd%
 set "startProgram=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
 cd /d "%dp%"
 cls
@@ -44,13 +44,13 @@ echo    [6] Update CMD                                 : Press 6
 echo    [7] Exit                                       : Press 7
 echo    ========================================================
 Choice /N /C 1234567 /M " Your choice is :"
-if ERRORLEVEL == 7 goto end
-if ERRORLEVEL == 6 call :updateCMD & goto main
-if ERRORLEVEL == 5 goto packageManagementMenu
-if ERRORLEVEL == 4 goto utilities
-if ERRORLEVEL == 3 goto activeLicenses
-if ERRORLEVEL == 2 goto office-windows
-if ERRORLEVEL == 1 goto installAIOMenu
+if %ERRORLEVEL% == 7 goto end
+if %ERRORLEVEL% == 6 call :updateCMD & goto main
+if %ERRORLEVEL% == 5 goto packageManagementMenu
+if %ERRORLEVEL% == 4 goto utilities
+if %ERRORLEVEL% == 3 goto activeLicenses
+if %ERRORLEVEL% == 2 goto office-windows
+if %ERRORLEVEL% == 1 goto installAIOMenu
 endlocal
 goto end
 
@@ -63,17 +63,21 @@ setlocal
 cls
 title Install All In One online
 echo.
-echo        =================================================
-echo        [1] Fresh Install without Office        : Press 1
-echo        [2] Fresh Install with Office 2019      : Press 2
-echo        [3] Fresh Install with Office 2021      : Press 3
-echo        [4] Main Menu                           : Press 4
-echo        =================================================
-Choice /N /C 1234 /M " Press your choice : "
-if ERRORLEVEL == 4 goto main
-if ERRORLEVEL == 3 goto installAIO-O2021
-if ERRORLEVEL == 2 goto installAIO-O2019
-if ERRORLEVEL == 1 goto installAIO-Fresh
+echo        ======================================================
+echo        [1] Fresh Install without Office             : Press 1
+echo        [2] Fresh Install with Office 2019           : Press 2
+echo        [3] Fresh Install with Office 2021           : Press 3
+echo        [4] Fresh Install for IT Helpdesk            : Press 4
+echo        [5] Fresh Install for IT System/Network      : Press 5
+echo        [6] Main Menu                                : Press 6
+echo        ======================================================
+Choice /N /C 123456 /M " Press your choice : "
+if %ERRORLEVEL% == 6 goto main
+if %ERRORLEVEL% == 5 goto installAIO-System-Network
+if %ERRORLEVEL% == 4 goto installAIO-Helpdesk
+if %ERRORLEVEL% == 3 goto installAIO-O2021
+if %ERRORLEVEL% == 2 goto installAIO-O2019
+if %ERRORLEVEL% == 1 goto installAIO-Fresh
 endlocal
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities
@@ -94,24 +98,31 @@ goto :installAIOMenu
 
 REM function install Windows from a backup - has been generated from Winget and reinstalled once
 :installAIO-O2019
-cls
 call :hold
 goto :installAIOMenu
 
 :installAIO-O2021
-cls
+call :hold
+goto :installAIOMenu
+
+
+:installAIO-System-Network
+call :hold
+goto :installAIOMenu
+
+:installAIO-Helpdesk
 call :hold
 goto :installAIOMenu
 
 REM End of Install AIO Online
-REM ========================================================================================================================================
-REM ==============================================================================
-REM Start of Windows Office Utilities Menu
+::========================================================================================================================================
+::==============================================================================
+:: Start of Windows Office Utilities Menu
 :office-windows
 setlocal
 cd /d %dp%
 cls
-title Office Main Menu
+title Windows Office Main Menu
 echo.
 echo        ==============================================================
 echo        [1] Install Office Online                            : Press 1
@@ -138,23 +149,25 @@ REM Sub menu Install Office Online
 
 :installOfficeMenu
 Title Select Office Version to Install
+setlocal
 cls
 echo.
-echo                ==========================================================
-echo                [1] Office 365                                   : Press 1
-echo                [2] Office 2021 Proplus Retail                   : Press 2
-echo                [3] Office 2019 Proplus Retail                   : Press 3
-echo                [4] Download ^& install O2019 Proplus Retail      : Press 4
-echo                [5] Download ^& install O2021 Proplus Retail      : Press 5
-echo                [6] Main Menu                                    : Press 6
-echo                ==========================================================
+echo                ================================================================
+echo                [1] Office 365                                         : Press 1
+echo                [2] Office 2021 Proplus Retail (Project ^& Visio)       : Press 2
+echo                [3] Office 2019 Proplus Retail (Project ^& Visio)       : Press 3
+echo                [4] Download ^& install O2019 Proplus Retail            : Press 4
+echo                [5] Download ^& install O2021 Proplus Retail            : Press 5
+echo                [6] Main Menu                                          : Press 6
+echo                ================================================================
 Choice /N /C 123456 /M " Press your choice : "
-if ERRORLEVEL == 6 goto :office-windows
-if ERRORLEVEL == 5 goto :hold
-if ERRORLEVEL == 4 goto :hold
-if ERRORLEVEL == 3 set office=2019& call :defineOffice& goto :office-windows
-if ERRORLEVEL == 2 set office=2021& call :defineOffice& goto :office-windows
-if ERRORLEVEL == 1 set office=365& call :installO365& goto :office-windows
+if %ERRORLEVEL% == 6 goto office-windows
+if %ERRORLEVEL% == 5 goto :hold
+if %ERRORLEVEL% == 4 goto :hold
+if %ERRORLEVEL% == 3 set office=2019& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 2 set office=2021& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 1 set office=365& call :installO365& goto :office-windows
+endlocal
 REM ============================================
 REM Stat of install office  online
 
@@ -228,10 +241,10 @@ GoTo :EOF
 	
 :installOffice
 cls
-echo.
-echo Disabling Microsoft Office %office% Telemetry . . .
-ping -n 2 localhost 1>NUL
-REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
+rem echo.
+rem echo Disabling Microsoft Office %office% Telemetry . . .
+rem ping -n 2 localhost 1>NUL
+rem REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
 if not exist "%ProgramFiles%\7-Zip" call :install7zip
 pushd %temp%
 curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
@@ -266,12 +279,12 @@ if "%optP%"=="%on%"  >>%OCS% echo     ^</Product^>
 					 >>%OCS% echo ^</Configuration^>
 ENDLOCAL
 cls
-echo. 
 echo Installing Microsoft Office %office% ProPlus %CPU%-bit
 call :log Installing Microsoft Office %office% ProPlus %CPU%-bit
 echo Don't close this window until the installation process is completed
 ping -n 3 localhost 1>NUL
-START "" /WAIT /B ".\setup.exe" /configure ".\Office %office% Setup Config.xml"
+rem START "" /WAIT /B ".\setup.exe" /configure ".\Office %office% Setup Config.xml"
+START "" /WAIT /B "setup.exe" /configure "Office %office% Setup Config.xml"
 popd
 call :log Finished Microsoft Office %office% ProPlus %CPU%-bit installation
 cd %dp%
@@ -279,23 +292,19 @@ goto :EOF
 
 :installO365
 cls
-echo.
-echo Disabling Microsoft Office %office% Telemetry . . .
-ping -n 2 localhost 1>NUL
-REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
 if not exist "%ProgramFiles%\7-Zip" call :install7zip
 pushd %temp%
-curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_15928-20216.exe
+curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
 "%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
 IF "%Processor_Architecture%"=="AMD64" Set "CPU=x64"
 IF "%Processor_Architecture%"=="x86" Set "CPU=x32"
 cls
-echo. 
 echo Installing Microsoft Office 365 %CPU%-bit
 call :log Installing Microsoft Office 365 %CPU%-bit
 echo Don't close this window until the installation process is completed
 ping -n 3 localhost 1>NUL
-START "" /WAIT /B ".\setup.exe" /configure configuration-Office365-%CPU%.xml
+rem START "" /WAIT /B ".\setup.exe" /configure configuration-Office365-%CPU%.xml
+START "" /WAIT /B "setup.exe" /configure configuration-Office365-%CPU%.xml
 call :log Finished Microsoft Office 365 %CPU%-bit
 popd
 cd %dp%
@@ -305,9 +314,9 @@ REM End of install office online
 REM ============================================
 :getOfficePath
 cls
-@echo off
-for %%a in (4,5,6) do (if exist "%ProgramFiles%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles%\Microsoft Office\Office1%%a")
-if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles(x86)%\Microsoft Office\Office1%%a"))
+echo off
+for %%a in (4,5,6) do (if exist "%ProgramFiles%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles%\Microsoft Office\Office1%%a"&& set officePath=%cd%)
+if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles(x86)%\Microsoft Office\Office1%%a"&& set officePath=%cd%))
 goto :eof
 
 :loadSkusMenu
@@ -374,7 +383,6 @@ sc config LicenseManager start= auto & net start LicenseManager
 sc config wuauserv start= auto & net start wuauserv
 clipup -v -o -altto c:\
 cls
-echo.
 echo Load skus %typeW% completed
 ping -n 3 localhost 1>NUL
 goto :EOF
@@ -396,47 +404,48 @@ REM Start of Remove Office Keys
 cls
 Title Remove Office Key
 echo.
-echo Which way do you want to remove the office key
+echo How would you like to remove the office key?
 echo            =================================================
 echo            [1] One by one                          : Press 1
-echo            [2] ALL                                 : Press 2
+echo            [2] All                                 : Press 2
 echo            [3] Back to Windows Office Menu         : Press 3
 echo            =================================================
 Choice /N /C 123 /M " Press your choice : "
-if ERRORLEVEL == 3 goto :office-windows
-if ERRORLEVEL == 2 goto :removeOfficeKey-All
-if ERRORLEVEL == 1 goto :removeOfficeKey-1B1
+if %ERRORLEVEL% == 3 goto :office-windows
+if %ERRORLEVEL% == 2 call :removeOfficeKey-All & goto :office-windows
+if %ERRORLEVEL% == 1 call :removeOfficeKey-1B1 & goto :office-windows
 
 :removeOfficeKey-1B1
+cls
 setlocal 
-pushd %officePath% 
-REM Get input from user
+pushd %officePath%
+echo Your office path at: %officePath%
+echo.
+::Get input from user
 set /p key=Write down/Paste 5 letters key need to uninstall: 
-REM Loop through the OSPP.VBS file and find the key to uninstall
+::Loop through the OSPP.VBS file and find the key to uninstall
 for /f "tokens=8" %%b in ('findstr /b /c:"%key%" OSPP.VBS') do (
 cscript //nologo ospp.vbs /unpkey:%%b
-echo Key %%b has been removed
-call :log Key %%b has been removed
-)
 endlocal 
 popd
 ping -n 2 localhost 1>NUL
 goto :eof
 
 :removeOfficeKey-All
-@echo off 
+echo off 
+cls
 setlocal 
-cd /d %officePath% 
-
-REM Loop through the OSPP.VBS file and find the last 5 keys
+rem cd /d %officePath% 
+pushd %officePath%
+echo Your office path at: %officePath%
 for /f "tokens=8" %%b in ('findstr /b /c:"Last 5" OSPP.VBS') do (
 cscript //nologo ospp.vbs /unpkey:%%b
-call :log "Key removed" "%%b"
 echo Key %%b has been removed
 )
 endlocal 
 ping -n 2 localhost 1>NUL
 goto :eof
+
 	
 	
 :uninstallOffice
@@ -445,10 +454,10 @@ cls
 echo off
 pushd %temp%
 if not exist "%ProgramFiles%\7-Zip\7z.exe" call :install7zip
-curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_CommandLineVersionFiles
+::curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_CommandLineVersionFiles
+curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_EnterpriseVersionFiles
 "c:\Program Files\7-Zip\7z.exe" x -y SaRACmd.zip -o"SaRACmd"
 cls
-echo.
 echo Start to uninstall office via SaRACmd
 echo It could took a while, please wait to end
 ping -n 2 localhost 1>NUL
@@ -480,13 +489,13 @@ echo        [6] MAS (Microsoft Activation Scripts)         : Press 6
 echo        [7] Back to Main Menu                          : Press 7
 echo        ========================================================
 Choice /N /C 1234567 /M " Press your choice : "
-if ERRORLEVEL == 7 goto :main
-if ERRORLEVEL == 6 goto :MAS
-if ERRORLEVEL == 5 goto :restoreLicenses
-if ERRORLEVEL == 4 goto :backupLicenses
-if ERRORLEVEL == 3 goto :checkLicense
-if ERRORLEVEL == 2 goto :activeByPhone
-if ERRORLEVEL == 1 goto :activeOnline
+if %ERRORLEVEL% == 7 goto :main
+if %ERRORLEVEL% == 6 goto :MAS
+if %ERRORLEVEL% == 5 goto :restoreLicenses
+if %ERRORLEVEL% == 4 goto :backupLicenses
+if %ERRORLEVEL% == 3 goto :checkLicense
+if %ERRORLEVEL% == 2 goto :activeByPhone
+if %ERRORLEVEL% == 1 goto :activeOnline
 endlocal
 
 REM End of Active Licenses Menu
@@ -496,7 +505,6 @@ REM ============================================================================
 cls
 REM call :hold
 pushd %temp%
-echo.
 echo This will open an external link from Github call Microsoft Activation Script
 echo Refer link https://github.com/massgravel/Microsoft-Activation-Scripts
 echo Do with your own risks, be careful!!!
@@ -524,9 +532,9 @@ echo            [2] BACKUP To NAS STORAGE               : Press 2
 echo            [3] Back to Main Menu                   : Press 3
 echo            =================================================
 Choice /N /C 123 /M " Press your choice : "
-if ERRORLEVEL == 3 goto :activeLicenses
-if ERRORLEVEL == 2 goto :backupToNAS
-if ERRORLEVEL == 1 goto :backupToLocal
+if %ERRORLEVEL% == 3 goto :activeLicenses
+if %ERRORLEVEL% == 2 goto :backupToNAS
+if %ERRORLEVEL% == 1 goto :backupToLocal
 
 :backupToNAS
 call :hold
@@ -571,15 +579,15 @@ echo        [8] Join domain                         : Press 8
 echo        [9] Back to Main Menu                   : Press 9
 echo        =================================================
 Choice /N /C 123456789 /M " Press your choice : "
-if ERRORLEVEL == 9 goto :main
-if ERRORLEVEL == 8 goto :joinDomain
-if ERRORLEVEL == 7 goto :restartPC
-if ERRORLEVEL == 6 goto :installSupportAssistant
-if ERRORLEVEL == 5 goto :addUserToUsers
-if ERRORLEVEL == 4 goto :addUserToAdmins
-if ERRORLEVEL == 3 goto :cleanUpSystem
-if ERRORLEVEL == 2 goto :changeHostName
-if ERRORLEVEL == 1 goto :setHighPerformance
+if %ERRORLEVEL% == 9 goto :main
+if %ERRORLEVEL% == 8 goto :joinDomain
+if %ERRORLEVEL% == 7 goto :restartPC
+if %ERRORLEVEL% == 6 goto :installSupportAssistant
+if %ERRORLEVEL% == 5 goto :addUserToUsers
+if %ERRORLEVEL% == 4 goto :addUserToAdmins
+if %ERRORLEVEL% == 3 goto :cleanUpSystem
+if %ERRORLEVEL% == 2 goto :changeHostName
+if %ERRORLEVEL% == 1 goto :setHighPerformance
 endlocal
 REM End of Utilities Menu
 REM ==============================================================================
@@ -739,7 +747,6 @@ ping -n 5 localhost 1>NUL
 )
 REM input user credential to join domain
 cls
-echo.
 echo Please enter FQDN username instead of username only (abc\1 instead of 1)
 call :inputCredential
 REM return ERROR CODE if success or not
@@ -788,25 +795,21 @@ goto :utilities
 Title Change host name
 setlocal EnableDelayedExpansion
 cls
-echo.
 echo Your new computername is:
 set /p _newComputername=
 cls
-echo.
 echo This will change your computername from: %computername% to: %_newComputername%
 ping -n 2 localhost 1>NUL
 WMIC ComputerSystem where Name="%computername%" call Rename Name="%_newComputername%"
 for /f "skip=1 tokens=2 delims==; " %%i in ('WMIC ComputerSystem where Name^="%computername%" call Rename Name^="%_newComputername%" ^| findstr "ReturnValue ="') do set _statusChangeHostName=%%i
 cls
 if %_statusChangeHostName% == 0 (
-echo.
 echo Your computername will change to %_newComputername%
 echo Restart computer to apply the change
 ping -n 3 localhost 1>NUL
 cls
 )
 if %_statusChangeHostName% NEQ 0 (
-echo.
 echo Your computer name will not change 
 echo Try a name without containing special characters like ^~, ^!, ^@.....
 echo Do you want to change your computer hostname again^?
@@ -970,12 +973,12 @@ echo        [5] Main Menu                              : Press 5
 echo        ====================================================
 
 Choice /N /C 12345 /M " Press your choice : "
-if ERRORLEVEL == 5 goto :main
-if ERRORLEVEL == 4 goto :updateWinget-All
-if ERRORLEVEL == 3 goto :installWinget-RemoteSupport
-if ERRORLEVEL == 2 goto :installWinget-Utilities
-rem if ERRORLEVEL == 1 goto :checkCompatibility
-if ERRORLEVEL == 1 goto :packageManagement
+if %ERRORLEVEL% == 5 goto :main
+if %ERRORLEVEL% == 4 goto :updateWinget-All
+if %ERRORLEVEL% == 3 goto :installWinget-RemoteSupport
+if %ERRORLEVEL% == 2 goto :installWinget-Utilities
+rem if %ERRORLEVEL% == 1 goto :checkCompatibility
+if %ERRORLEVEL% == 1 goto :packageManagement
 REM End of Winget Menu
 REM ==============================================================================
 REM Start of Winget functions
@@ -1304,12 +1307,10 @@ del /F "%%f"
 echo All files in %temp% have been deleted except for %exclude_file%.
 goto :EOF
 
-REM End of child process functions
-REM ========================================================================================================================================
+:: End of child process functions
+:: ========================================================================================================================================
 :hold
-@echo off
 cls
-echo.
 echo Function in developing
 echo Please contact the author for further information via https://github.com/tamld/cmdToolForHelpdesk
 ping -n 3 localhost 1>NUL
