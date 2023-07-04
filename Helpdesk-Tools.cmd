@@ -89,7 +89,7 @@ Echo This will adjust settings, install softwares for fresh computer wihtout Off
 call :settingWindows
 call :setHighPerformance
 call :checkCompatibility
-call :installWinget-Utilities
+call :installWinget-Endusers
 call :installChoco-RemoteSupport
 call :installUnikey
 call :createShortcut
@@ -386,7 +386,6 @@ cls
 echo Load skus %typeW% completed
 ping -n 3 localhost 1>NUL
 goto :EOF
-:office-windows
 
 :fixNonCore
 cls
@@ -394,7 +393,6 @@ call :hold
 goto :office-windows
 
 :convertOfficeEddition
-cls
 call :hold
 goto :office-windows
 
@@ -704,6 +702,7 @@ goto :utilities
 
 :installSupportAssistant
 Title Install Support Assistant
+call :checkCompatibility
 cls
 echo Installing Support Assistant
 ping -n 3 localhost 1>NUL
@@ -966,17 +965,25 @@ title Package Management Software main Menu
 echo.
 echo        ====================================================
 echo        [1] Install Package Management             : Press 1
-echo        [2] Install Utilities online               : Press 2
-echo        [3] Install Remote Support                 : Press 3
-echo        [4] Upgrade online all                     : Press 4
-echo        [5] Main Menu                              : Press 5
+echo        [2] Install End Users applications         : Press 2
+echo        [3] Install Remote applications            : Press 3
+echo        [4] Install Desk jobs applications         : Press 4
+echo        [5] Install Network applications           : Press 5
+echo        [6] Install Chat applications              : Press 6
+echo        [7] Upgrade online all                     : Press 7
+echo        [8] Main Menu                              : Press 8
 echo        ====================================================
 
-Choice /N /C 12345 /M " Press your choice : "
-if %ERRORLEVEL% == 5 goto :main
-if %ERRORLEVEL% == 4 goto :updateWinget-All
-if %ERRORLEVEL% == 3 goto :installWinget-RemoteSupport
-if %ERRORLEVEL% == 2 goto :installWinget-Utilities
+Choice /N /C 12345678 /M " Press your choice : "
+if %ERRORLEVEL% == 8 goto :main
+if %ERRORLEVEL% == 7 goto :updateWinget-All
+if %ERRORLEVEL% == 6 goto :installWinget-Chat
+if %ERRORLEVEL% == 5 goto :installWinget-Network
+if %ERRORLEVEL% == 4 goto :installWinget-Deskjob
+:: Winget install Remote support failed to install / update ultraviewer
+::if %ERRORLEVEL% == 3 goto :installWinget-RemoteSupport
+if %ERRORLEVEL% == 3 goto :installChoco-RemoteSupport
+if %ERRORLEVEL% == 2 goto :installWinget-Endusers
 rem if %ERRORLEVEL% == 1 goto :checkCompatibility
 if %ERRORLEVEL% == 1 goto :packageManagement
 REM End of Winget Menu
@@ -999,13 +1006,50 @@ REM Start of Winget functions
 ::=======================================================================================================================
 
 :updateWinget-All
+Title Update software by Winget
 call :checkCompatibility
 cls
 echo y | winget upgrade -h --all
 call :log "Winget finished upgrading all packages successfully"
 goto :packageManagementMenu
-	
+
+:installWinget-Deskjob
+cls
+call :hold
+goto :packageManagementMenu
+
+:installWinget-Network
+cls
+call :hold
+goto :packageManagementMenu
+
+:installWinget-Chat
+Title Install Chat software by Winget
+echo offs
+call :checkCompatibility
+setlocal
+call :log "Installing Chat software by Winget"
+ping -n 3 localhost 1>NUL
+cls
+echo ************************************
+echo  List Software to Install
+echo  Zalo, Slack, Telegram Desktop, 
+echo ************************************
+ping -n 2 localhost 1>NUL
+setlocal
+pushd %temp%
+echo Install List Software by winget
+set packageList= VNGCorp.Zalo ^
+Desktop.Telegram ^
+Viber.Viber ^
+Microsoft.Skype ^
+Zoom.Zoom
+for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+endlocal
+goto :packageManagementMenu
+
 :installWinget-RemoteSupport
+cls
 call :checkCompatibility
 call :installsoft TeamViewer.TeamViewer
 call :installsoft DucFabulous.UltraViewer
@@ -1013,11 +1057,11 @@ goto :packageManagementMenu
 
 :installChoco-RemoteSupport
 call :checkCompatibility
-choco install -y teamviewer
+choco install -y teamviewer anydesk
 choco install -y ultraviewer --ignore-checksums
 goto :packageManagementMenu
 
-:installWinget-Utilities
+:installWinget-Endusers
 Title Install Utilities by Winget
 echo off
 call :checkCompatibility
@@ -1053,11 +1097,51 @@ Microsoft.PowerToys ^
 google.drive ^
 VideoLAN.VLC
 
+for %%p in (%packageList%) do (winget install %%p -h --accept-package-agreements --accept-source-agreements)
+endlocal
+goto :packageManagementMenu
+
+:installWinget-Helpdesk-Roles
+Title Install Software for Helpdesk using Winget
+echo off
+call :checkCompatibility
+setlocal
+call :log "Starting software for Helpdesk using Winget"
+ping -n 3 localhost 1>NUL
+cls
+echo ************************************
+echo  List Software to Install
+echo  7zip, Notepad++,Foxit Reader
+echo  Zalo, Slack, Google Chrome, Firefox
+echo  BulkCrap Uninstaller, Google Drive
+echo ************************************
+ping -n 2 localhost 1>NUL
+setlocal
+pushd %temp%
+echo Install List Software by winget
+set packageList=Notepad++.Notepad++ ^
+Google.Drive ^
+Microsoft.DotNet.Runtime.6 ^
+VNGCorp.Zalo ^
+SlackTechnologies.Slack ^
+Facebook.Messenger ^
+Telegram.TelegramDesktop ^
+Microsoft.Skype ^
+7zip.7zip ^
+Foxit.FoxitReader ^
+Notepad++.Notepad++ ^
+Google.Chrome ^
+Mozilla.Firefox ^
+Klocman.BulkCrapUninstaller ^
+Microsoft.PowerToys ^
+google.drive ^
+VideoLAN.VLC
+
 for %%p in (%packageList%) do (
     winget install %%p -h --accept-package-agreements --accept-source-agreements
 )
 endlocal
-goto :eof
+goto :packageManagementMenu
 
 :packageManagement
 cls
@@ -1181,8 +1265,8 @@ set timestamp=%date% %time%
 echo %timestamp% %1 >> %logfile%
 goto :EOF
 
-REM function to install soft using Winget utilities
-REM to install winget, call function by using call :installsoft "software id"
+:: Function to install soft using Winget utilities
+:: To install with winget, call function by using call :installsoft "software id". eg: call :installsoft "7zip.7zip"
 :installSoft
 Title Install Software
 REM Set the software name to install
@@ -1206,6 +1290,27 @@ cls
 ) else (
 echo %software% already installed
 timeout 1
+call :log "%software% already installed"
+cls
+)
+goto :EOF
+
+:installSoft_ByChoco
+Title Install Software by Chocolately
+REM Set the software name to install
+set "software=%~1"
+REM Set status software installed or not
+set "installed=0"
+
+REM check if %software has been installed before
+choco list --local-only %software% > nul
+if "%errorlevel%" == "0" (set "installed=1")
+if "%installed%"=="0" (
+choco install %software% -y
+call :log "%software% installed"
+cls
+) else (
+echo %software% already installed
 call :log "%software% already installed"
 cls
 )
@@ -1254,29 +1359,37 @@ goto :EOF
 	
 :installNotepadplusplusThemes
 Title Install Notepad++ Themes
-if not exist "%ProgramFiles(x86)%\Notepad++" (
-call :log "Notepad++ not found, go for it"
+cls
+setlocal
+if exist "%ProgramFiles(x86)%\Notepad++\notepad++.exe" (
+set "nppPath=%ProgramFiles(x86)%\Notepad++"
+) else if exist "%ProgramFiles%\Notepad++\notepad++.exe" (
+set "nppPath=%ProgramFiles%\Notepad++"
+) else (
 call :installSoft notepad++.notepad++
-cd /d %temp%
-echo Notepad++ theme installation started > themes_installation.log
-REM Dracula theme
-call :log "Installing Dracula theme"
+set "nppPath=%ProgramFiles(x86)%\Notepad++"
+)
+pushd %temp%
+echo Installing Notepad++ themes
+:: Dracula theme
 curl https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml -o Dracula.xml
-xcopy Dracula.xml %AppData%\Notepad++\themes\ /E /C /I /Q
-REM Material Theme
-call :log "Installing Material Theme"
+xcopy Dracula.xml "%nppPath%\themes\" /YECIQ
+::/C /I /Q
+:: Material Theme
 curl https://raw.githubusercontent.com/HiSandy/npp-material-theme/master/Material%20Theme.xml -o "Material Theme.xml"
-xcopy "Material Theme.xml" %AppData%\Notepad++\themes\ /E /C /I /Q
-REM Nord theme
-call :log "Installing Nord theme"
+xcopy "Material Theme.xml" "%nppPath%\themes\" /YECIQ
+
+:: Nord theme
 curl https://raw.githubusercontent.com/arcticicestudio/nord-notepadplusplus/develop/src/xml/nord.xml -LJ -o Nord.xml
-xcopy Nord.xml %AppData%\Notepad++\themes\ /E /C /I /Q
-REM Mariana theme
-call :log "Installing Mariana theme"
+xcopy Nord.xml "%nppPath%\themes\" /YECIQ
+
+:: Mariana theme
 curl https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
-xcopy Mariana.xml %AppData%\Notepad++\themes\ /E /C /I /Q
+xcopy Mariana.xml "%nppPath%\themes\" /YECIQ
+
 call :log "Notepad++ themes installation finished"
-cd %dp%
+endlocal
+popd
 goto :EOF
 
 REM function asks the user to input username and password for credential checking
@@ -1295,16 +1408,16 @@ rem forfiles search files with criteria > 7 days and delete
 rem forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
 ::==================================================================
 echo off
+cls
 :: Set the path to the log file to exclude
+setloca
 set exclude_file=%temp%\Helpdesk-Tools.log
-
 :: Delete all files in the temp directory except for the exclude file
 for %%f in (%temp%\*.*) do (
-if /I not "%%f"=="%exclude_file%" (
-del /F "%%f"
-)
+if /I not "%%f"=="%exclude_file%" (del /F "%%f")
 )
 echo All files in %temp% have been deleted except for %exclude_file%.
+endlocal
 goto :EOF
 
 :: End of child process functions
@@ -1314,8 +1427,7 @@ cls
 echo Function in developing
 echo Please contact the author for further information via https://github.com/tamld/cmdToolForHelpdesk
 ping -n 3 localhost 1>NUL
-::exit /b
-goto :main
+goto :EOF
 
 :end
 call :clean
