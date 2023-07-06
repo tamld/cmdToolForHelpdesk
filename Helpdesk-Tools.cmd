@@ -67,14 +67,10 @@ echo        ======================================================
 echo        [1] Fresh Install without Office             : Press 1
 echo        [2] Fresh Install with Office 2019           : Press 2
 echo        [3] Fresh Install with Office 2021           : Press 3
-echo        [4] Fresh Install for IT Helpdesk            : Press 4
-echo        [5] Fresh Install for IT System/Network      : Press 5
-echo        [6] Main Menu                                : Press 6
+echo        [4] Main Menu                                : Press 6
 echo        ======================================================
-Choice /N /C 123456 /M " Press your choice : "
-if %ERRORLEVEL% == 6 goto main
-if %ERRORLEVEL% == 5 goto installAIO-System-Network
-if %ERRORLEVEL% == 4 goto installAIO-Helpdesk
+Choice /N /C 1234 /M " Press your choice : "
+if %ERRORLEVEL% == 4 goto main
 if %ERRORLEVEL% == 3 goto installAIO-O2021
 if %ERRORLEVEL% == 2 goto installAIO-O2019
 if %ERRORLEVEL% == 1 goto installAIO-Fresh
@@ -96,7 +92,6 @@ call :createShortcut
 call :installSupportAssistant
 goto :installAIOMenu
 
-REM function install Windows from a backup - has been generated from Winget and reinstalled once
 :installAIO-O2019
 call :hold
 goto :installAIOMenu
@@ -241,10 +236,12 @@ GoTo :EOF
 	
 :installOffice
 cls
+Title Install Office 
 rem echo.
 rem echo Disabling Microsoft Office %office% Telemetry . . .
 rem ping -n 2 localhost 1>NUL
 rem REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
+rem if not exist "%ProgramFiles%\7-Zip" (call :install7zip) else (echo 7zip has been installed)
 if not exist "%ProgramFiles%\7-Zip" call :install7zip
 pushd %temp%
 curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
@@ -1083,47 +1080,10 @@ set packageList=Notepad++.Notepad++ ^
 Google.Drive ^
 Microsoft.DotNet.Runtime.6 ^
 VNGCorp.Zalo ^
-SlackTechnologies.Slack ^
-Facebook.Messenger ^
-Telegram.TelegramDesktop ^
-Microsoft.Skype ^
-7zip.7zip ^
-Foxit.FoxitReader ^
-Notepad++.Notepad++ ^
-Google.Chrome ^
-Mozilla.Firefox ^
-Klocman.BulkCrapUninstaller ^
-Microsoft.PowerToys ^
-google.drive ^
-VideoLAN.VLC
-
-for %%p in (%packageList%) do (winget install %%p -h --accept-package-agreements --accept-source-agreements)
-endlocal
-goto :packageManagementMenu
-
-:installWinget-Helpdesk-Roles
-Title Install Software for Helpdesk using Winget
-echo off
-call :checkCompatibility
-setlocal
-call :log "Starting software for Helpdesk using Winget"
-ping -n 3 localhost 1>NUL
-cls
-echo ************************************
-echo  List Software to Install
-echo  7zip, Notepad++,Foxit Reader
-echo  Zalo, Slack, Google Chrome, Firefox
-echo  BulkCrap Uninstaller, Google Drive
-echo ************************************
-ping -n 2 localhost 1>NUL
-setlocal
-pushd %temp%
-echo Install List Software by winget
-set packageList=Notepad++.Notepad++ ^
-Google.Drive ^
-Microsoft.DotNet.Runtime.6 ^
-VNGCorp.Zalo ^
-SlackTechnologies.Slack ^
+ShareX.ShareX ^
+voidtools.Everything ^
+QL-Win.QuickLook ^
+IObit.IObitUnlocker ^
 Facebook.Messenger ^
 Telegram.TelegramDesktop ^
 Microsoft.Skype ^
@@ -1138,14 +1098,36 @@ google.drive ^
 VideoLAN.VLC
 
 for %%p in (%packageList%) do (
-    winget install %%p -h --accept-package-agreements --accept-source-agreements
+	rem winget install %%p -h --accept-package-agreements --accept-source-agreements
+	call :installSoft %%p -h --accept-package-agreements --accept-source-agreements
 )
 endlocal
 goto :packageManagementMenu
 
 :packageManagement
+pushd %temp%
 cls
-call :checkCompatibility
+:: Install chocolately
+echo Installing Chocolately
+powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+cls
+echo Set Chocolately PATH
+set "path=%path%;C:\ProgramData\chocolatey\bin"
+if %ERRORLEVEL% EQU 0 (echo Choco PATH add successfully) else (echo Choco PATH add failed)
+ping -n 2 localhost 1>nul
+:: Install winget
+cls
+echo Installing Winget
+curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
+curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
+curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
+start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
+start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
+set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
+if %ERRORLEVEL% EQU 0 (echo Winget PATH add successfully) else (echo Winget PATH add failed)
+ping -n 2 localhost 1>nul
+popd
 goto :packageManagementMenu
 
 REM End of Winget functions
@@ -1211,8 +1193,9 @@ cls
 echo Installing Chocolately
 powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 cls
-echo Set Chocolately path
+echo Set Chocolately PATH
 set "path=%path%;C:\ProgramData\chocolatey\bin"
+if %ERRORLEVEL% EQU 0 (echo Choco PATH add successfully) else (echo Choco PATH add failed)
 call :log "Finished Chocolately installation"
 goto: EOF
 
@@ -1227,36 +1210,17 @@ curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
 curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
-cls
-echo Install winget application
-ping -n 1 localhost 1>NUL
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
 cls
-popd
-goto :EOF
-
-:installPackageManagement
-pushd %temp%
-cls
-:: Install chocolately
-echo Installing Chocolately
-powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-cls
-echo Set choco, winget path
-set "path=%path%;C:\ProgramData\chocolatey\bin"
-:: Install winget
-cls
-echo Installing Winget
-curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
-curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
-curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
+echo Set Winget PATH
 set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
+if %ERRORLEVEL% EQU 0 (echo Winget PATH add successfully) else (echo Winget PATH add failed)
+ping -n 2 localhost 1>nul
+cls
 popd
-goto:eof
-::=====================================================================
+call :log "Finished Winget installation"
+goto :EOF
+:=====================================================================
 ::@%1 will inherit parameters from the outside input function
 ::@exit /b will exit function instead of remaining running scripts codes
 :log
@@ -1288,8 +1252,9 @@ call :log "%software% installed with scope %scope%"
 cls
 )
 ) else (
+cls	
 echo %software% already installed
-timeout 1
+ping -n 2 localhost 1>nul
 call :log "%software% already installed"
 cls
 )
@@ -1310,7 +1275,9 @@ choco install %software% -y
 call :log "%software% installed"
 cls
 ) else (
+cls
 echo %software% already installed
+ping -n 2 localhost 1>nul
 call :log "%software% already installed"
 cls
 )
@@ -1340,21 +1307,22 @@ popd
 )
 goto :EOF
 
-REM function install 7zip by using winget
+:: Function install 7zip by using winget
 :install7zip
 cls
+Title Install 7zip using Winget
 call :checkCompatibility
-call :installsoft 7zip.7zip
-REM associate regular files extension with 7zip
-echo. associate regular files extension with 7zip
-ping -n 2 localhost 1>NUL
-assoc .7z=7-Zip
-assoc .zip=7-Zip
-assoc .rar=7-Zip
-assoc .tar=7-Zip
-assoc .gz=7-Zip
-assoc .bzip2=7-Zip
-assoc .xz=7-Zip
+call :installSoft 7zip.7zip
+:: associate regular files extension with 7zip
+rem echo. associate regular files extension with 7zip
+rem ping -n 2 localhost 1>NUL
+rem assoc .7z=7-Zip
+rem assoc .zip=7-Zip
+rem assoc .rar=7-Zip
+rem assoc .tar=7-Zip
+rem assoc .gz=7-Zip
+rem assoc .bzip2=7-Zip
+rem assoc .xz=7-Zip
 goto :EOF
 	
 :installNotepadplusplusThemes
