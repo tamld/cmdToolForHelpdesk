@@ -4,8 +4,8 @@
 - Cải thiện hiệu quả và năng suất lao động bằng cách sử dụng các scripts hỗ trợ tự động cài đặt các ứng dụng, gói ứng dụng.
 - Fix một số lỗi liên quan đến Office, Windows.
 - Các phần mềm cài đặt sẽ sử dụng Package Management là Chocolately và Winget.
-- Các file cần thiết cho scripts chạy sẽ đặt ở %temp%, khi thoát app sẽ được tự động delete
-Link tham khảo:
+- Các file cần thiết cho scripts chạy sẽ đặt ở %temp%, khi thoát app sẽ được tự động delete.
+- Link tham khảo:
 [Chocolately](https://github.com/chocolatey/choco)
 [Winget](https://github.com/microsoft/winget-cli)
 - Ứng dụng hỗ trợ Windows 10 1809 trở đi
