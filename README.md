@@ -44,6 +44,7 @@ Cài theo các option:
 - Sao lưu License Windows - Office (Backup Licenses)
 - Khôi phục License Windows - Office từ folder Backup (Restore License)
 - Kích hoạt Windows / Office bằng MAS - Microsoft Activation Scripts (MAS)
+  
 :large_blue_diamond::large_blue_diamond::large_blue_diamond:
 **Lưu ý**
 - Hỗ trợ các bước kích hoạt Windows băng CMD. Key active các bạn cần tự chuẩn bị
