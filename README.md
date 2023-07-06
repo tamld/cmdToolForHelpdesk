@@ -6,9 +6,7 @@
 - Các phần mềm cài đặt sẽ sử dụng Package Management là [Chocolately](https://github.com/chocolatey/choco) và [Winget](https://github.com/microsoft/winget-cli).
 - Các file cần thiết cho scripts chạy sẽ đặt ở %temp%, khi thoát app sẽ được tự động delete.
 - Ứng dụng hỗ trợ Windows 10 1809 trở đi
-- Một số chức năng, không hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues) để mình hoàn thiện thêm bộ tool này.
-- Một số tính năng vẫn đang trong giai đoạn phát triển.
-- Add thêm mô tả về tính năng của các function để tường minh hơn.
+- Một số chức năng vẫn đang trong giai đoạn phát triển hoặc hông hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues) để mình hoàn thiện thêm bộ tool này.
 - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó.
 ========================================================================
 
