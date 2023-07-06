@@ -8,7 +8,7 @@
 - Ứng dụng hỗ trợ Windows 10 1809 trở đi
 
 :warning::warning::warning: 
-Lưu ý
+**Lưu ý**
 - Một số chức năng vẫn đang trong giai đoạn phát triển hoặc không hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues) để mình hoàn thiện thêm bộ tool này
 - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó
 - Các scripts trong file CMD được cá nhân hóa theo cá nhân người viết. Mọi người có thể tự do clone / fork / edit lại file này mà không cần yêu cầu bất cứ quyền gì từ tác giả
@@ -45,10 +45,11 @@ Cài theo các option:
 - Khôi phục License Windows - Office từ folder Backup (Restore License)
 - Kích hoạt Windows / Office bằng MAS - Microsoft Activation Scripts (MAS)
   
-:large_blue_diamond::large_blue_diamond::large_blue_diamond:
+:dollar::dollar::dollar:
 **Lưu ý**
-- Hỗ trợ các bước kích hoạt Windows băng CMD. Key active các bạn cần tự chuẩn bị
-- Nguồn key dưới đây miễn phí, mọi người có thể đăng kí tài khoản hoặc mua subscription nếu có điều kiện nhé:
+- File scripts chỉ hỗ trợ các bước kích hoạt Windows băng CMD
+- Key active cần tự chuẩn bị trước
+- Nguồn key miễn phí, mọi người có thể đăng kí tài khoản hoặc mua subscription nếu có điều kiện:
   - Reg account Office 365 Online: [PITVN Community](https://pitvncommunity.com/)
   - Forum: [VNZ](https://vn-z.vn/threads/tong-hop-key-windows-va-office.10945/)
   - FB: [PITVN](https://www.facebook.com/groups/pitvn2023), [3S-Team](https://www.facebook.com/ad.3s.team)
