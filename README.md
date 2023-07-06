@@ -1,13 +1,16 @@
 # InstallAppForHelpDesk
 - Mục tiêu hỗ trợ cho công việc Helpdesk, kĩ thuật viên hàng ngày.
 - Cải thiện hiệu quả và năng suất lao động
-- Có cơ hội lười hơn :X
+- Các phần mềm cài đặt sẽ sử dụng Package Management là Chocolately và Winget
+Link tham khảo:
+https://github.com/chocolatey/choco
+https://github.com/microsoft/winget-cli
 ========================================================================
 Batch script CMD 
 - Ứng dụng hỗ trợ Windows 10 1809 trở đi
 - Test trên Windows Sanbox 11 Enterprise
 - Một số chức năng, không hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại URL:
-https://github.com/tamld/cmdToolForHelpdesk/issues
+<https://github.com/tamld/cmdToolForHelpdesk/issues>
 để mình hoàn thiện thêm bộ tool này,
 - Một số tính năng vẫn đang trong giai đoạn phát triển
 - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM vào câu lệnh đó
