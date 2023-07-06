@@ -3,15 +3,10 @@
 - Mục tiêu hỗ trợ cho công việc Helpdesk, kĩ thuật viên hàng ngày.
 - Cải thiện hiệu quả và năng suất lao động bằng cách sử dụng các scripts hỗ trợ tự động cài đặt các ứng dụng, gói ứng dụng.
 - Fix một số lỗi liên quan đến Office, Windows.
-- Các phần mềm cài đặt sẽ sử dụng Package Management là Chocolately và Winget.
+- Các phần mềm cài đặt sẽ sử dụng Package Management là [Chocolately](https://github.com/chocolatey/choco) và [Winget](https://github.com/microsoft/winget-cli).
 - Các file cần thiết cho scripts chạy sẽ đặt ở %temp%, khi thoát app sẽ được tự động delete.
-- Link tham khảo:
-[Chocolately](https://github.com/chocolatey/choco)
-[Winget](https://github.com/microsoft/winget-cli)
 - Ứng dụng hỗ trợ Windows 10 1809 trở đi
-- Một số chức năng, không hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại URL:
-<https://github.com/tamld/cmdToolForHelpdesk/issues>
-để mình hoàn thiện thêm bộ tool này.
+- Một số chức năng, không hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues) để mình hoàn thiện thêm bộ tool này.
 - Một số tính năng vẫn đang trong giai đoạn phát triển.
 - Add thêm mô tả về tính năng của các function để tường minh hơn.
 - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó.
