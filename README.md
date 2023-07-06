@@ -8,7 +8,6 @@
 - Ứng dụng hỗ trợ Windows 10 1809 trở đi
 - Một số chức năng vẫn đang trong giai đoạn phát triển hoặc hông hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues) để mình hoàn thiện thêm bộ tool này.
 - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó.
-========================================================================
 
 # II. Hướng dẫn
 
@@ -19,9 +18,9 @@
 Cho phép cài đặt, cấu hình tự động các chức năng cơ bản như: múi giờ GMT+7, cài đặt các gói ứng dụng miễn phí, cơ bản như 7zip, Unikey, Chrome, Firefox, Foxit PDF Reader, Ultraview, Teamviewer...v..v..
 Cài theo các option:
 
-- Cài đặt software cho máy mới, không kèm office
-- Cài đặt software cho máy mới, không kèm office 2019
-- Cài đặt software cho máy mới, không kèm office 2021
+- Cài đặt software cho máy mới, không kèm office (Fresh Install without Office)
+- Cài đặt software cho máy mới, không kèm office 2019 (Fresh Install with Office 2019)
+- Cài đặt software cho máy mới, không kèm office 2021 (Fresh Install with Office 2021)
 
 ### **1.2. Cài đặt và xử lý lỗi liên quan đến Office - Windows (Windows Office Utilities)**
 
@@ -49,7 +48,7 @@ Cài theo các option:
   - FB: [PITVN](https://www.facebook.com/groups/pitvn2023), [3S-Team](https://www.facebook.com/ad.3s.team)
   - Get IID, CID: [GetCID](https://getcid.info/), [kichhoat24h](https://kichhoat24h.com/), [khoatoantin](https://khoatoantin.com/pidms)
 
-### **4. Các tiện ích nhỏ (Utilities)**
+### **1.4. Các tiện ích nhỏ (Utilities)**
 
 - Thiết lập High perfomance - Power plan (Set High Performance)
 - Đổi hostname máy tính (Change hostname)
@@ -59,7 +58,7 @@ Cài theo các option:
 - Cài đặt phần mềm Support Assistance các hãng như DELL, HP, Lenovo ... (Install Support Assistance)
 - Hỗ trợ join domain từ CMD (Install Support Assistance)
 
-### **5. Cài đặt phần mềm tự động (Package Management)**
+### **1.5. Cài đặt phần mềm tự động (Package Management)**
 
 - Cài đặt Winget, Chocolately (Install Package Management)
 - Cài đặt các phần mềm cơ bản cho End Users (Install End Users applications)
@@ -69,9 +68,8 @@ Cài theo các option:
 - Cài đặt các ứng dụng Chat, communicate (Install Chat applications)
 - Tự động cập nhật các ứng dụng trên máy
   
-### **6. Cập nhật file CMD online, từ trang chủ (Update CMD)**
+### **1.6. Cập nhật file CMD online, từ trang chủ (Update CMD)**
+
 Tự động download file InstallAPP.cmd trực tiếp từ github. Giúp cập nhật latest version cho file
 
-========================================================================
-Ref:
-[markdown_readme](https://github.com/fefong/markdown_readme)
+### **1.7. Đóng và dọn dẹp file tạm (Exit)**
