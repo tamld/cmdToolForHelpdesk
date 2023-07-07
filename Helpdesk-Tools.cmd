@@ -67,7 +67,7 @@ echo        ======================================================
 echo        [1] Fresh Install without Office             : Press 1
 echo        [2] Fresh Install with Office 2019           : Press 2
 echo        [3] Fresh Install with Office 2021           : Press 3
-echo        [4] Main Menu                                : Press 6
+echo        [4] Main Menu                                : Press 4
 echo        ======================================================
 Choice /N /C 1234 /M " Press your choice : "
 if %ERRORLEVEL% == 4 goto main
