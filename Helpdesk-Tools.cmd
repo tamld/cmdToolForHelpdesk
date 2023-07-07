@@ -166,7 +166,8 @@ endlocal
 REM ============================================
 REM Stat of install office  online
 
-REM REM REF code http://zone94.com/downloads/135-windows-and-office-activation-script
+:: REF code http://zone94.com/downloads/135-windows-and-office-activation-script
+:: Function defines a list of variable representing for Office apps
 :defineOffice
 @echo off
 cls
@@ -190,9 +191,9 @@ REM Dectect version Architecture
 IF "%Processor_Architecture%"=="AMD64" Set "CPU=64"
 IF "%Processor_Architecture%"=="x86" Set "CPU=32"
 	
+:: Function menu select app to install. Default is yes with Yes colored green.
 :selectOfficeApp
 cls
-REM Menu select app to install. Default is yes with Yes colored green.
 echo.
 echo List of components to install Office %office%
 <NUL Set/P=[1] & (if "%opt1%"=="%on%" (Call :setColor "%opt1%" 0a) Else (<NUL Set/P="%opt1%")) & echo  Microsoft Office Word.
@@ -222,6 +223,8 @@ if %ERRORLEVEL% == 4 (if "%opt4%"=="%on%" (Set "opt4=%off%") Else (Set "opt4=%on
 if %ERRORLEVEL% == 3 (if "%opt3%"=="%on%" (Set "opt3=%off%") Else (Set "opt3=%on%")) & goto :selectOfficeApp
 if %ERRORLEVEL% == 2 (if "%opt2%"=="%on%" (Set "opt2=%off%") Else (Set "opt2=%on%")) & goto :selectOfficeApp
 if %ERRORLEVEL% == 1 (if "%opt1%"=="%on%" (Set "opt1=%off%") Else (Set "opt1=%on%")) & goto :selectOfficeApp
+
+:: Function that help colorized selection menu
 :setColor (Text, Color)
 REM Function that will colored text with Green = 0a	
 MkDir "%Temp%\_%1" 1>NUL
@@ -233,7 +236,8 @@ FindStr /s /b /p /a:%2 /C:"_" "%1"
 PopD
 RmDir /s /q "%Temp%\_%1"
 GoTo :EOF
-	
+
+:: Function install Office based on the version and the software selected by user input
 :installOffice
 cls
 Title Install Office 
@@ -287,6 +291,7 @@ call :log Finished Microsoft Office %office% ProPlus %CPU%-bit installation
 cd %dp%
 goto :EOF
 
+:: Function thats help install Office 365
 :installO365
 cls
 if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
@@ -309,6 +314,7 @@ goto :EOF
 REM End of install office online
 
 REM ============================================
+:: Function defines which Office (x64/x86) is installed
 :getOfficePath
 cls
 echo off
@@ -316,6 +322,7 @@ for %%a in (4,5,6) do (if exist "%ProgramFiles%\Microsoft Office\Office1%%a\ospp
 if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%ProgramFiles(x86)%\Microsoft Office\Office1%%a"&& set officePath=%cd%))
 goto :eof
 
+:: Function Menu that selects which edition Windows will convert to
 :loadSkusMenu
 cls
 Title Load Windows Eddition
@@ -359,6 +366,7 @@ if %errorlevel% == 15 set keyW=BT79Q-G7N6G-PGBYW-4YWX6-6F4BT& set typeW=CoreSing
 if %errorlevel% == 16 goto :office-windows
 endlocal
 
+:: Function that helps Windows convert to another edition
 :loadSKUS
 cls
 echo off
