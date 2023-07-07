@@ -753,14 +753,16 @@ call :inputCredential
 echo Joining domain...
 wmic computersystem where name="%computername%" call joindomainorworkgroup name=%server% username=%username% password=%password%
 if %errorlevel% neq 0 (
+cls
 echo Failed to join domain. Error code: %errorlevel%
 call :log "Failed to join domain. Error code: %errorlevel%"
 ping -n 5 localhost 1>NUL
 ) else (
+cls
 echo Successfully joined domain.
 call :log "Successfully joined domain."
-ping -n 5 localhost 1>NUL
 )
+ping -n 5 localhost 1>NUL
 endlocal
 goto :utilities
 
