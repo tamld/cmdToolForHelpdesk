@@ -22,7 +22,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================	
 :main
 @echo off
-set "appversion=v0.6.2 July 6, 2023"
+set "appversion=v0.6.3 July 7, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -743,18 +743,15 @@ if %errorlevel% neq 0 (
 echo Cannot reach server. Exiting...
 call :log "Cannot reach server. Exiting..."
 ping -n 5 localhost 1>NUL
-goto :EOF
 ) else (
 echo %server% is pingable. Proceeding with upgrade...
 call :log "%server% is pingable. Proceeding with upgrade..."
 ping -n 5 localhost 1>NUL
-)
-REM input user credential to join domain
 cls
-echo Please enter FQDN username instead of username only (abc\1 instead of 1)
+echo Please enter FQDN username instead of username only (domain\username instead of username)
 call :inputCredential
-REM return ERROR CODE if success or not
-wmic computersystem where name="%computername%" call joindomainorworkgroup name=%server% user=%username% password=%password%
+echo Joining domain...
+wmic computersystem where name="%computername%" call joindomainorworkgroup name=%server% username=%username% password=%password%
 if %errorlevel% neq 0 (
 echo Failed to join domain. Error code: %errorlevel%
 call :log "Failed to join domain. Error code: %errorlevel%"
@@ -1371,6 +1368,7 @@ goto :EOF
 
 REM function asks the user to input username and password for credential checking
 :inputCredential
+cls
 echo.
 set /p username=Enter the username:
 echo.
