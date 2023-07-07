@@ -44,7 +44,7 @@ echo    [6] Update CMD                                 : Press 6
 echo    [7] Exit                                       : Press 7
 echo    ========================================================
 Choice /N /C 1234567 /M " Your choice is :"
-if %ERRORLEVEL% == 7 goto end
+if %ERRORLEVEL% == 7 call :clean && goto exit
 if %ERRORLEVEL% == 6 call :updateCMD & goto main
 if %ERRORLEVEL% == 5 goto packageManagementMenu
 if %ERRORLEVEL% == 4 goto utilities
@@ -985,6 +985,7 @@ if %ERRORLEVEL% == 8 goto :main
 if %ERRORLEVEL% == 7 call :updateWinget-All && goto :packageManagementMenu
 if %ERRORLEVEL% == 6 call :winget-Chat && goto :packageManagementMenu
 if %ERRORLEVEL% == 5 call :winget-Network && goto :packageManagementMenu
+rem if %ERRORLEVEL% == 5 call :installNetworkApp && goto :packageManagementMenu
 if %ERRORLEVEL% == 4 call :winget-Deskjob && goto :packageManagementMenu
 :: Winget install Remote support failed to install / update ultraviewer
 ::if %ERRORLEVEL% == 3 goto :installWinget-RemoteSupport
@@ -1023,30 +1024,105 @@ cls
 call :hold
 goto :EOF
 
-:winget-Network
+:installNetworkApp
 cls
-call :hold
+call :choco-Network 
+call :winget-Network
+goto :EOF
+
+:choco-Network
+Title Install Network softwares by Chocolately
+cls
+setlocal
+echo List softwares to install
+echo =================================================
+echo virtualbox, processhacker, hardentools, mobaxterm
+echo =================================================
+ping -n 3 localhost 1>NUL
+call :log "Installing Network softwares by Chocolately"
+call :checkCompatibility
+cls
+set packageList=processhacker ^
+mobaxterm ^-^-version=23.2.0 ^
+virtualbox ^
+virtualbox-guest-additions-guest.install ^
+hardentools
+for %%p in (%packageList%) do (choco install -y %%p)
+:: Copy Mobaxterm setting
+cls
+echo Setting for Mobaxterm v23.2
+curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
+call :log "Finished Network softwares by Chocolately"
+endlocal
+goto :EOF
+
+:winget-Network
+Title Install Network softwares by Winget
+setlocal
+call :log "Installing Network softwares by Winget"
+cls
+echo List softwares to install
+echo ========================================================
+echo OpenSSH, rclone, rclone-browser, mobaxterm, VirtualBox
+echo Advanced IP Scanner, JDownloader, VSCode, Notepad++
+echo SSHFS, WinFSP, WinSCP, Putty, Network Manager, Dotnet 6
+echo ========================================================
+ping -n 3 localhost 1>NUL
+cls
+call :winget-Mobaxterm
+::nilesoft.shell
+set packageList=Notepad++.Notepad++ ^
+7zip.7zip ^
+Microsoft.OpenSSH.Beta ^
+Rclone.Rclone ^
+kapitainsky.RcloneBrowser ^
+Famatech.AdvancedIPScanner ^
+AppWork.JDownloader ^
+Microsoft.VisualStudioCode ^
+WinFsp.WinFsp ^
+SSHFS-Win.SSHFS-Win ^
+WinSCP.WinSCP ^
+PuTTY.PuTTY ^
+Microsoft.VCRedist.2015+.x64 ^
+Microsoft.DotNet.Runtime.6 ^
+Microsoft.DotNet.SDK.6 ^
+NETworkManager ^
+Oracle.VirtualBox
+for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+call :log "Finished Network softwares by Winget"
+endlocal
+goto :EOF
+
+:winget-Mobaxterm
+cls
+call :checkCompatibility
+echo Installing Mobaxterm v23.2.0.5082
+winget install Mobatek.MobaXterm --version 23.2.0.5082 --accept-package-agreements --accept-source-agreements
+:: Copy Mobaxterm setting
+curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
+echo Mobaxterm setting complete
+ping -n 2 localhost 1>NUL
 goto :EOF
 
 :winget-Chat
-Title Install Chat software by Winget
-echo offs
+Title Install Chat softwares by Winget
 call :checkCompatibility
 setlocal
-call :log "Installing Chat software by Winget"
+call :log "Installing Chat softwares by Winget"
 ping -n 3 localhost 1>NUL
 cls
-echo ************************************
-echo  List Software to Install
-echo  Zalo, Slack, Telegram Desktop, 
-echo ************************************
-ping -n 2 localhost 1>NUL
-setlocal
+echo List softwares to install
+echo ======================================
+echo  Zalo, Skype, Viber, Zoom
+echo  Telegram Desktop, Facebook Messenger
+echo ======================================
+ping -n 3 localhost 1>NUL
 pushd %temp%
 echo Install List Software by winget
 set packageList= VNGCorp.Zalo ^
 Desktop.Telegram ^
 Viber.Viber ^
+Facebook.Messenger ^
 Microsoft.Skype ^
 Zoom.Zoom
 for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
@@ -1101,6 +1177,8 @@ Google.Chrome ^
 Mozilla.Firefox ^
 Klocman.BulkCrapUninstaller ^
 Microsoft.PowerToys ^
+JosephFinney.Text-Grab ^
+Cyanfish.NAPS2 ^
 google.drive ^
 VideoLAN.VLC
 
@@ -1332,8 +1410,28 @@ rem assoc .gz=7-Zip
 rem assoc .bzip2=7-Zip
 rem assoc .xz=7-Zip
 goto :EOF
+
+:: Ping to host
+:pingHost
+cls
+echo off
+setlocal enabledelayedexpansion
+set host=172.16.11.5
+ping %host% | findstr /i "Reply from" >nul
+if !errorlevel! == 0 (
+    ping %host% | findstr /i "Destination host unreachable" >nul
+    if !errorlevel! == 0 (
+        echo Ping failed
+    ) else (
+        echo Ping succeeded
+    )
+) else (
+    echo Ping failed
+)
+endlocal
+goto :EOF
 	
-:installNotepadplusplusThemes
+:installNotepadThemes
 Title Install Notepad++ Themes
 cls
 setlocal
@@ -1379,21 +1477,17 @@ goto :EOF
 
 REM function force delete all file created in %temp% folder
 :clean
-::==================================================================
-rem del /q /f /s %temp%\*.*
-rem forfiles search files with criteria > 7 days and delete
-rem forfiles /p %temp% /s /m *.* /d -7 /c "cmd /c del /f /q @path"
-::==================================================================
 echo off
 cls
 :: Set the path to the log file to exclude
-setloca
+setlocal
 set exclude_file=%temp%\Helpdesk-Tools.log
 :: Delete all files in the temp directory except for the exclude file
 for %%f in (%temp%\*.*) do (
 if /I not "%%f"=="%exclude_file%" (del /F "%%f")
 )
 echo All files in %temp% have been deleted except for %exclude_file%.
+ping -n 3 localhost 1>nul
 endlocal
 goto :EOF
 
