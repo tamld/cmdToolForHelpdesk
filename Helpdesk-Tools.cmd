@@ -22,7 +22,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================	
 :main
 @echo off
-set "appversion=v0.6.1 June 29, 2023"
+set "appversion=v0.6.2 July 6, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -85,8 +85,8 @@ Echo This will adjust settings, install softwares for fresh computer wihtout Off
 call :settingWindows
 call :setHighPerformance
 call :checkCompatibility
-call :installWinget-Endusers
-call :installChoco-RemoteSupport
+call :winget-Endusers
+call :choco-RemoteSupport
 call :installUnikey
 call :createShortcut
 call :installSupportAssistant
@@ -242,7 +242,7 @@ rem echo Disabling Microsoft Office %office% Telemetry . . .
 rem ping -n 2 localhost 1>NUL
 rem REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
 rem if not exist "%ProgramFiles%\7-Zip" (call :install7zip) else (echo 7zip has been installed)
-if not exist "%ProgramFiles%\7-Zip" call :install7zip
+if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
 pushd %temp%
 curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
 "%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
@@ -289,7 +289,7 @@ goto :EOF
 
 :installO365
 cls
-if not exist "%ProgramFiles%\7-Zip" call :install7zip
+if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
 pushd %temp%
 curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
 "%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
@@ -362,7 +362,7 @@ endlocal
 :loadSKUS
 cls
 echo off
-if not exist "%ProgramFiles%\7-Zip\7z.exe" call :install7zip
+if not exist "%ProgramFiles%\7-Zip\7z.exe" (call :install7zip)
 pushd %temp%
 if not exist Licenses (
 curl -L -o "Licenses.zip" "https://drive.google.com/uc?export=download&id=1Cl7yQ5YPLh8laCfKBrkyVK_PEJN-GjWR"
@@ -817,6 +817,7 @@ endlocal
 
 :settingWindows
 cls
+echo off
 echo Setting OS
 echo Show file extension
 powershell Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name HideFileExt -Value 0
@@ -824,6 +825,7 @@ echo Enable Dark mode
 powershell Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -Value 0
 echo Show this PC view
 powershell Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name LaunchTo -Value 1
+echo Revert classic menu Right click W11
 setlocal
 :: Detect Windows 10 or 11
 for /f "tokens=2,3 delims= " %%a in ('wmic os get name /value ^| findstr /i "name"') do set winver=%%b
@@ -973,16 +975,15 @@ echo        ====================================================
 
 Choice /N /C 12345678 /M " Press your choice : "
 if %ERRORLEVEL% == 8 goto :main
-if %ERRORLEVEL% == 7 goto :updateWinget-All
-if %ERRORLEVEL% == 6 goto :installWinget-Chat
-if %ERRORLEVEL% == 5 goto :installWinget-Network
-if %ERRORLEVEL% == 4 goto :installWinget-Deskjob
+if %ERRORLEVEL% == 7 call :updateWinget-All && goto :packageManagementMenu
+if %ERRORLEVEL% == 6 call :winget-Chat && goto :packageManagementMenu
+if %ERRORLEVEL% == 5 call :winget-Network && goto :packageManagementMenu
+if %ERRORLEVEL% == 4 call :winget-Deskjob && goto :packageManagementMenu
 :: Winget install Remote support failed to install / update ultraviewer
 ::if %ERRORLEVEL% == 3 goto :installWinget-RemoteSupport
-if %ERRORLEVEL% == 3 goto :installChoco-RemoteSupport
-if %ERRORLEVEL% == 2 goto :installWinget-Endusers
-rem if %ERRORLEVEL% == 1 goto :checkCompatibility
-if %ERRORLEVEL% == 1 goto :packageManagement
+if %ERRORLEVEL% == 3 call :choco-RemoteSupport && goto :packageManagementMenu
+if %ERRORLEVEL% == 2 call :winget-Endusers && goto: goto :packageManagementMenu
+if %ERRORLEVEL% == 1 call :packageManagement && goto :packageManagementMenu
 REM End of Winget Menu
 REM ==============================================================================
 REM Start of Winget functions
@@ -1008,19 +1009,19 @@ call :checkCompatibility
 cls
 echo y | winget upgrade -h --all
 call :log "Winget finished upgrading all packages successfully"
-goto :packageManagementMenu
+goto :EOF
 
-:installWinget-Deskjob
+:winget-Deskjob
 cls
 call :hold
-goto :packageManagementMenu
+goto :EOF
 
-:installWinget-Network
+:winget-Network
 cls
 call :hold
-goto :packageManagementMenu
+goto :EOF
 
-:installWinget-Chat
+:winget-Chat
 Title Install Chat software by Winget
 echo offs
 call :checkCompatibility
@@ -1043,22 +1044,24 @@ Microsoft.Skype ^
 Zoom.Zoom
 for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
 endlocal
-goto :packageManagementMenu
+goto :EOF
 
-:installWinget-RemoteSupport
+:winget-RemoteSupport
 cls
 call :checkCompatibility
 call :installsoft TeamViewer.TeamViewer
 call :installsoft DucFabulous.UltraViewer
-goto :packageManagementMenu
+goto :EOF
 
-:installChoco-RemoteSupport
+:choco-RemoteSupport
+Title Install Remote Support Software by Chocolately
+echo off
 call :checkCompatibility
 choco install -y teamviewer anydesk
 choco install -y ultraviewer --ignore-checksums
-goto :packageManagementMenu
+goto :EOF
 
-:installWinget-Endusers
+:winget-Endusers
 Title Install Utilities by Winget
 echo off
 call :checkCompatibility
@@ -1066,12 +1069,9 @@ setlocal
 call :log "Starting software utilities installation"
 ping -n 3 localhost 1>NUL
 cls
-echo ************************************
-echo  List Software to Install
-echo  7zip, Notepad++,Foxit Reader
-echo  Zalo, Slack, Google Chrome, Firefox
-echo  BulkCrap Uninstaller, Google Drive
-echo ************************************
+echo List Software to Install
+echo 7zip, Notepad++,Foxit Reader, Zalo, Google Chrome, Firefox, BulkCrap Uninstaller, Google Drive
+echo DotNet Runtime.6, ShareX, Quicklook, Everything
 ping -n 2 localhost 1>NUL
 setlocal
 pushd %temp%
@@ -1098,11 +1098,12 @@ google.drive ^
 VideoLAN.VLC
 
 for %%p in (%packageList%) do (
-	rem winget install %%p -h --accept-package-agreements --accept-source-agreements
 	call :installSoft %%p -h --accept-package-agreements --accept-source-agreements
 )
 endlocal
-goto :packageManagementMenu
+taskkill /IM ShareX.exe /F
+taskkill /IM IObitUnlocker.exe /F
+goto :EOF
 
 :packageManagement
 pushd %temp%
@@ -1128,7 +1129,7 @@ set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
 if %ERRORLEVEL% EQU 0 (echo Winget PATH add successfully) else (echo Winget PATH add failed)
 ping -n 2 localhost 1>nul
 popd
-goto :packageManagementMenu
+goto :EOF
 
 REM End of Winget functions
 REM ========================================================================================================================================

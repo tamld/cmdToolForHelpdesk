@@ -7,10 +7,12 @@
 - Các file cần thiết cho scripts chạy sẽ đặt ở %temp%, khi thoát app sẽ được tự động delete
 - Ứng dụng hỗ trợ Windows 10 1809 trở đi
 
-:warning::warning::warning: 
+:warning::warning::warning:
 **Lưu ý**
-- Một số chức năng vẫn đang trong giai đoạn phát triển hoặc không hoạt động như mong muốn. Mong mọi người có thể tạo issues giúp mình tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues) để mình hoàn thiện thêm bộ tool này
+
+- Một số chức năng vẫn đang trong giai đoạn phát triển hoặc không hoạt động như mong muốn. Mọi người có thể tạo issues tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues)
 - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó
+- Function List trong Notepad++ giúp quản lý các function trong CMD tiện lợi hơn
 - Các scripts trong file CMD được cá nhân hóa theo cá nhân người viết. Mọi người có thể tự do clone / fork / edit lại file này mà không cần yêu cầu bất cứ quyền gì từ tác giả
 - Hãy test trong môi trường máy ảo trước khi thực hiện ở thực tế
 
