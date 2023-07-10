@@ -4,14 +4,14 @@
 - Cải thiện hiệu quả và năng suất lao động bằng cách sử dụng các scripts hỗ trợ tự động cài đặt các ứng dụng, gói ứng dụng
 - Fix một số lỗi liên quan đến Office, Windows
 - Các phần mềm cài đặt sẽ sử dụng Package Management là [Chocolately](https://github.com/chocolatey/choco) và [Winget](https://github.com/microsoft/winget-cli)
-- Các file cần thiết cho scripts chạy sẽ đặt ở %temp%, khi thoát app sẽ được tự động delete
-- Ứng dụng hỗ trợ Windows 10 1809 trở đi
+- Ứng dụng hỗ trợ Windows 10 1809 trở đi và cần kết nối internet
 
 :warning::warning::warning:
 **Lưu ý**
 
 - Một số chức năng vẫn đang trong giai đoạn phát triển hoặc không hoạt động như mong muốn. Mọi người có thể tạo issues tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues)
 - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó
+- File scripts nếu bị ngừng hoặc thoát đột ngột, hãy chạy lại file scripts và chọn chức năng ***"7. EXIT"*** để dọn các file tạm sinh ra trong quá trình cài đặt
 - Function List trong Notepad++ giúp quản lý các function trong CMD tiện lợi hơn
 - Các scripts trong file CMD được cá nhân hóa theo cá nhân người viết. Mọi người có thể tự do clone / fork / edit lại file này mà không cần yêu cầu bất cứ quyền gì từ tác giả
 - Hãy test trong môi trường máy ảo trước khi thực hiện ở thực tế
@@ -72,7 +72,6 @@ Cài theo các option:
 - Cài đặt Winget, Chocolately (Install Package Management)
 - Cài đặt các phần mềm cơ bản cho End Users (Install End Users applications)
 - Cài đặt các ứng dụng hỗ trợ remote từ xa như Teamviewer, Ultraview (Install Remote applications)
-- Cài đặt các ứng dụng văn phòng (Install Desk jobs applications)
 - Cài đặt các ứng dụng Network (Install Network applications)
 - Cài đặt các ứng dụng Chat, communicate (Install Chat applications)
 - Tự động cập nhật các ứng dụng trên máy

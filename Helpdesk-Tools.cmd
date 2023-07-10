@@ -22,7 +22,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================	
 :main
 @echo off
-set "appversion=v0.6.3 July 7, 2023"
+set "appversion=v0.6.4 July 10, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -44,7 +44,7 @@ echo    [6] Update CMD                                 : Press 6
 echo    [7] Exit                                       : Press 7
 echo    ========================================================
 Choice /N /C 1234567 /M " Your choice is :"
-if %ERRORLEVEL% == 7 call :clean && goto exit
+if %ERRORLEVEL% == 7 call :clean & goto exit
 if %ERRORLEVEL% == 6 call :updateCMD & goto main
 if %ERRORLEVEL% == 5 goto packageManagementMenu
 if %ERRORLEVEL% == 4 goto utilities
@@ -94,19 +94,51 @@ goto :installAIOMenu
 
 :installAIO-O2019
 call :hold
+rem call :settingWindows
+rem call :setHighPerformance
+rem call :checkCompatibility
+rem call :winget-Endusers
+rem call :choco-RemoteSupport
+rem call :installUnikey
+rem call :createShortcut
+rem call :installSupportAssistant
 goto :installAIOMenu
 
 :installAIO-O2021
 call :hold
+rem call :settingWindows
+rem call :setHighPerformance
+rem call :checkCompatibility
+rem call :winget-Endusers
+rem call :choco-RemoteSupport
+rem call :installUnikey
+rem call :createShortcut
+rem call :installSupportAssistant
 goto :installAIOMenu
 
 
-:installAIO-System-Network
+:installAIO-ITwithoutOffice
 call :hold
+rem call :settingWindows
+rem call :setHighPerformance
+rem call :checkCompatibility
+rem call :winget-Endusers
+rem call :choco-RemoteSupport
+rem call :installUnikey
+rem call :createShortcut
+rem call :installSupportAssistant
 goto :installAIOMenu
 
-:installAIO-Helpdesk
+:installAIO-ITwithOffice
 call :hold
+rem call :settingWindows
+rem call :setHighPerformance
+rem call :checkCompatibility
+rem call :winget-Endusers
+rem call :choco-RemoteSupport
+rem call :installUnikey
+rem call :createShortcut
+rem call :installSupportAssistant
 goto :installAIOMenu
 
 REM End of Install AIO Online
@@ -953,10 +985,11 @@ goto :EOF
 cls
 @echo off
 COPY /Y "%startProgram%\*.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\BCUninstaller\BCUninstaller.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
+if exist "%startProgram%\BCUninstaller\BCUninstaller.lnk" (COPY /Y "%startProgram%\BCUninstaller\BCUninstaller.lnk" "%AllUsersProfile%\Desktop")
+if exist "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" (COPY /Y "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" "%AllUsersProfile%\Desktop")
+if exist "%startProgram%\Slack Technologies Inc\*.lnk" (COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop")
+if exist "%startProgram%\UltraViewer\*.lnk" (COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop")
+if exist "%startProgram%\NAPS2\*.lnk" (COPY /Y "%startProgram%\NAPS2\*.lnk" "%AllUsersProfile%\Desktop")
 goto :eof
 
 
@@ -973,25 +1006,21 @@ echo        ====================================================
 echo        [1] Install Package Management             : Press 1
 echo        [2] Install End Users applications         : Press 2
 echo        [3] Install Remote applications            : Press 3
-echo        [4] Install Desk jobs applications         : Press 4
-echo        [5] Install Network applications           : Press 5
-echo        [6] Install Chat applications              : Press 6
-echo        [7] Upgrade online all                     : Press 7
-echo        [8] Main Menu                              : Press 8
+echo        [4] Install Network applications           : Press 4
+echo        [5] Install Chat applications              : Press 5
+echo        [6] Upgrade online all                     : Press 6
+echo        [7] Main Menu                              : Press 7
 echo        ====================================================
 
-Choice /N /C 12345678 /M " Press your choice : "
-if %ERRORLEVEL% == 8 goto :main
-if %ERRORLEVEL% == 7 call :updateWinget-All && goto :packageManagementMenu
-if %ERRORLEVEL% == 6 call :winget-Chat && goto :packageManagementMenu
-if %ERRORLEVEL% == 5 call :winget-Network && goto :packageManagementMenu
-rem if %ERRORLEVEL% == 5 call :installNetworkApp && goto :packageManagementMenu
-if %ERRORLEVEL% == 4 call :winget-Deskjob && goto :packageManagementMenu
+Choice /N /C 1234567 /M " Press your choice : "
+if %ERRORLEVEL% == 7 goto :main
+if %ERRORLEVEL% == 6 call :updateWinget-All & goto :packageManagementMenu
+if %ERRORLEVEL% == 5 call :winget-Chat & goto :packageManagementMenu
+if %ERRORLEVEL% == 4 call :winget-Network & goto :packageManagementMenu
 :: Winget install Remote support failed to install / update ultraviewer
-::if %ERRORLEVEL% == 3 goto :installWinget-RemoteSupport
-if %ERRORLEVEL% == 3 call :choco-RemoteSupport && goto :packageManagementMenu
-if %ERRORLEVEL% == 2 call :winget-Endusers && goto: goto :packageManagementMenu
-if %ERRORLEVEL% == 1 call :packageManagement && goto :packageManagementMenu
+if %ERRORLEVEL% == 3 call :choco-RemoteSupport & goto :packageManagementMenu
+if %ERRORLEVEL% == 2 call :winget-Endusers & goto :packageManagementMenu
+if %ERRORLEVEL% == 1 call :packageManagement & goto :packageManagementMenu
 REM End of Winget Menu
 REM ==============================================================================
 REM Start of Winget functions
@@ -1017,11 +1046,6 @@ call :checkCompatibility
 cls
 echo y | winget upgrade -h --all
 call :log "Winget finished upgrading all packages successfully"
-goto :EOF
-
-:winget-Deskjob
-cls
-call :hold
 goto :EOF
 
 :installNetworkApp
@@ -1069,8 +1093,7 @@ echo SSHFS, WinFSP, WinSCP, Putty, Network Manager, Dotnet 6
 echo ========================================================
 ping -n 3 localhost 1>NUL
 cls
-call :winget-Mobaxterm
-::nilesoft.shell
+call :checkCompatibility
 set packageList=Notepad++.Notepad++ ^
 7zip.7zip ^
 Microsoft.OpenSSH.Beta ^
@@ -1089,19 +1112,14 @@ Microsoft.DotNet.SDK.6 ^
 NETworkManager ^
 Oracle.VirtualBox
 for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+call :installSoft "Mobatek.MobaXterm --version 23.2.0.5082"
+:: Copy Mobaxterm setting
+if not exist "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" (curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82")
+echo Mobaxterm setting completed
+ping -n 2 localhost 1>NUL
+taskkill /IM advanced_ip_scanner.exe /F
 call :log "Finished Network softwares by Winget"
 endlocal
-goto :EOF
-
-:winget-Mobaxterm
-cls
-call :checkCompatibility
-echo Installing Mobaxterm v23.2.0.5082
-winget install Mobatek.MobaXterm --version 23.2.0.5082 --accept-package-agreements --accept-source-agreements
-:: Copy Mobaxterm setting
-curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
-echo Mobaxterm setting complete
-ping -n 2 localhost 1>NUL
 goto :EOF
 
 :winget-Chat
@@ -1152,9 +1170,11 @@ setlocal
 call :log "Starting software utilities installation"
 ping -n 3 localhost 1>NUL
 cls
+echo =======================================================================
 echo List Software to Install
-echo 7zip, Notepad++,Foxit Reader, Zalo, Google Chrome, Firefox, BulkCrap Uninstaller, Google Drive
-echo DotNet Runtime.6, ShareX, Quicklook, Everything
+echo 7zip, Notepad++,Foxit Reader, Zalo, BulkCrap Uninstaller, Google Drive
+echo DotNet Runtime.6, ShareX, Quicklook, Everything, Google Chrome, Firefox
+echo =======================================================================
 ping -n 2 localhost 1>NUL
 setlocal
 pushd %temp%
@@ -1162,24 +1182,23 @@ echo Install List Software by winget
 set packageList=Notepad++.Notepad++ ^
 Google.Drive ^
 Microsoft.DotNet.Runtime.6 ^
-VNGCorp.Zalo ^
+NAPVNGCorp.Zalo ^
+Facebook.Messenger ^
+Telegram.TelegramDesktop ^
+Microsoft.Skype ^
 ShareX.ShareX ^
 voidtools.Everything ^
 QL-Win.QuickLook ^
 IObit.IObitUnlocker ^
-Facebook.Messenger ^
-Telegram.TelegramDesktop ^
-Microsoft.Skype ^
 7zip.7zip ^
 Foxit.FoxitReader ^
 Notepad++.Notepad++ ^
 Google.Chrome ^
 Mozilla.Firefox ^
 Klocman.BulkCrapUninstaller ^
-Microsoft.PowerToys ^
 JosephFinney.Text-Grab ^
 Cyanfish.NAPS2 ^
-google.drive ^
+Microsoft.PowerToys ^
 VideoLAN.VLC
 
 for %%p in (%packageList%) do (
@@ -1188,6 +1207,7 @@ for %%p in (%packageList%) do (
 endlocal
 taskkill /IM ShareX.exe /F
 taskkill /IM IObitUnlocker.exe /F
+taskkill /IM PowerToys.exe /F
 goto :EOF
 
 :packageManagement
