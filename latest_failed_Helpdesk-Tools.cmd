@@ -19,10 +19,10 @@ REM Go UAC to get Admin privileges
 :goADMIN
     pushd "%CD%"
     CD /D "%~dp0"
-REM ========================================================================================================================================    
+REM ========================================================================================================================================	
 :main
 @echo off
-set "appversion=v0.6.3 July 17, 2023"
+set "appversion=v0.6.4 July 10, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -45,7 +45,7 @@ echo    [7] Exit                                       : Press 7
 echo    ========================================================
 Choice /N /C 1234567 /M " Your choice is :"
 if %ERRORLEVEL% == 7 call :clean && goto exit
-if %ERRORLEVEL% == 6 call :updateCMD & goto main
+if %ERRORLEVEL% == 6 call :updateCMD && goto main
 if %ERRORLEVEL% == 5 goto packageManagementMenu
 if %ERRORLEVEL% == 4 goto utilities
 if %ERRORLEVEL% == 3 goto activeLicenses
@@ -70,10 +70,10 @@ echo        [3] Fresh Install with Office 2021           : Press 3
 echo        [4] Main Menu                                : Press 4
 echo        ======================================================
 Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 4 goto main
-if %ERRORLEVEL% == 3 goto installAIO-O2021
-if %ERRORLEVEL% == 2 goto installAIO-O2019
-if %ERRORLEVEL% == 1 goto installAIO-Fresh
+if %ERRORLEVEL% == 4 goto :main
+if %ERRORLEVEL% == 3 goto :installAIO-O2021
+if %ERRORLEVEL% == 2 goto :installAIO-O2019
+if %ERRORLEVEL% == 1 goto :installAIO-Fresh
 endlocal
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities
@@ -94,19 +94,51 @@ goto :installAIOMenu
 
 :installAIO-O2019
 call :hold
+rem call :settingWindows
+rem call :setHighPerformance
+rem call :checkCompatibility
+rem call :winget-Endusers
+rem call :choco-RemoteSupport
+rem call :installUnikey
+rem call :createShortcut
+rem call :installSupportAssistant
 goto :installAIOMenu
 
 :installAIO-O2021
 call :hold
+rem call :settingWindows
+rem call :setHighPerformance
+rem call :checkCompatibility
+rem call :winget-Endusers
+rem call :choco-RemoteSupport
+rem call :installUnikey
+rem call :createShortcut
+rem call :installSupportAssistant
 goto :installAIOMenu
 
 
-:installAIO-System-Network
+:installAIO-ITwithoutOffice
 call :hold
+rem call :settingWindows
+rem call :setHighPerformance
+rem call :checkCompatibility
+rem call :winget-Endusers
+rem call :choco-RemoteSupport
+rem call :installUnikey
+rem call :createShortcut
+rem call :installSupportAssistant
 goto :installAIOMenu
 
-:installAIO-Helpdesk
+:installAIO-ITwithOffice
 call :hold
+rem call :settingWindows
+rem call :setHighPerformance
+rem call :checkCompatibility
+rem call :winget-Endusers
+rem call :choco-RemoteSupport
+rem call :installUnikey
+rem call :createShortcut
+rem call :installSupportAssistant
 goto :installAIOMenu
 
 REM End of Install AIO Online
@@ -151,13 +183,13 @@ echo                ============================================================
 echo                [1] Office 365                                         : Press 1
 echo                [2] Office 2021 Proplus Retail (Project ^& Visio)       : Press 2
 echo                [3] Office 2019 Proplus Retail (Project ^& Visio)       : Press 3
-echo                [4] Main Menu                                          : Press 4
+echo                [4] Main Menu                                          : Press 6
 echo                ================================================================
 Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 6 goto office-windows
-if %ERRORLEVEL% == 3 set office=2019& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 2 set office=2021& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 1 set office=365& call :installO365& goto :office-windows
+if %ERRORLEVEL% == 4 goto office-windows
+if %ERRORLEVEL% == 3 set office=2019&& call :defineOffice&& goto :office-windows
+if %ERRORLEVEL% == 2 set office=2021&& call :defineOffice&& goto :office-windows
+if %ERRORLEVEL% == 1 set office=365&& call :installO365&& goto :office-windows
 endlocal
 REM ============================================
 REM Stat of install office  online
@@ -186,7 +218,7 @@ Set "optD=%on%" ::ProofingTools
 REM Dectect version Architecture 
 IF "%Processor_Architecture%"=="AMD64" Set "CPU=64"
 IF "%Processor_Architecture%"=="x86" Set "CPU=32"
-    
+	
 :: Function menu select app to install. Default is yes with Yes colored green.
 :selectOfficeApp
 cls
@@ -222,7 +254,7 @@ if %ERRORLEVEL% == 1 (if "%opt1%"=="%on%" (Set "opt1=%off%") Else (Set "opt1=%on
 
 :: Function that help colorized selection menu
 :setColor (Text, Color)
-REM Function that will colored text with Green = 0a 
+REM Function that will colored text with Green = 0a	
 MkDir "%Temp%\_%1" 1>NUL
 PushD "%Temp%\_%1"
 For /f %%a in ('Echo PROMPT $H ^| "CMD.exe"') do Set "bs=%%a"
@@ -244,18 +276,16 @@ rem REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableT
 rem if not exist "%ProgramFiles%\7-Zip" (call :install7zip) else (echo 7zip has been installed)
 if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
 pushd %temp%
-:: Office Deployment Tools
-rem curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
-curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/officedeploymenttool.exe
+curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
 "%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
 SETLOCAL
 REM REM Deploy template via link: https://config.office.com/deploymentsettings
 Set "OCS="%temp%\Office %office% Setup Config.xml""
-                      >%OCS% echo ^<Configuration^>
-                     >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly"^>                    
+					  >%OCS% echo ^<Configuration^>
+					 >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly"^>					 
 if "%office%"=="O365" >>%OCS% echo     ^<Product ID="%office%ProPlusRetail"^> else (
-                     >>%OCS% echo     ^<Product ID="ProPlus%office%Retail"^>    )
-                     >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
+					 >>%OCS% echo     ^<Product ID="ProPlus%office%Retail"^>	)
+					 >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
 if "%opt1%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Word" /^>
 if "%opt2%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Excel" /^>
 if "%opt3%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="PowerPoint" /^>
@@ -264,7 +294,7 @@ if "%opt5%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="OneNote" /^>
 if "%opt6%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Publisher" /^>
 if "%opt7%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Access" /^>
 if "%optD%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="OneDrive" /^>
-                     >>%OCS% echo     ^</Product^>
+					 >>%OCS% echo     ^</Product^>
 if "%opt8%"=="%on%"  >>%OCS% echo     ^<Product ID="VisioPro%office%Retail"^>
 if "%opt8%"=="%on%"  >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
 if "%opt8%"=="%on%"  >>%OCS% echo     ^</Product^>
@@ -274,14 +304,15 @@ if "%opt9%"=="%on%"  >>%OCS% echo     ^</Product^>
 if "%optP%"=="%on%"  >>%OCS% echo     ^<Product ID="ProofingTools"^>
 if "%optP%"=="%on%"  >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
 if "%optP%"=="%on%"  >>%OCS% echo     ^</Product^>
-                     >>%OCS% echo   ^</Add^>
-                     >>%OCS% echo ^</Configuration^>
+					 >>%OCS% echo   ^</Add^>
+					 >>%OCS% echo ^</Configuration^>
 ENDLOCAL
 cls
 echo Installing Microsoft Office %office% ProPlus %CPU%-bit
 call :log Installing Microsoft Office %office% ProPlus %CPU%-bit
 echo Don't close this window until the installation process is completed
 ping -n 3 localhost 1>NUL
+rem START "" /WAIT /B ".\setup.exe" /configure ".\Office %office% Setup Config.xml"
 START "" /WAIT /B "setup.exe" /configure "Office %office% Setup Config.xml"
 popd
 call :log Finished Microsoft Office %office% ProPlus %CPU%-bit installation
@@ -293,9 +324,7 @@ goto :EOF
 cls
 if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
 pushd %temp%
-:: Fix URL download Office Deployment Tools
-rem curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
-curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/officedeploymenttool.exe
+curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
 "%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
 IF "%Processor_Architecture%"=="AMD64" Set "CPU=x64"
 IF "%Processor_Architecture%"=="x86" Set "CPU=x32"
@@ -329,22 +358,22 @@ echo.
 echo Select Windows Skus edition to convert
 echo.
 echo        ==================================================
-echo        [1] Professional                        : PRESS A
-echo        [2] ProfessionalEducation               : PRESS B
-echo        [3] ProfessionalN                       : PRESS C
-echo        [4] ProfessionalWorkstation             : PRESS D
-echo        [5] ProfessionalWorkstationN            : PRESS E
-echo        [6] Enterprise                          : PRESS F
-echo        [7] EnterpriseS                         : PRESS G
-echo        [8] IoTEnterprise                       : PRESS H
-echo        [9] Education                           : PRESS I
-echo        [10] EducationN                         : PRESS J
-echo        [11] LTSB 2015                          : PRESS K
-echo        [12] LTSB 2016                          : PRESS L
-echo        [13] LTSC 2019                          : PRESS M
-echo        [14] CoreN                              : PRESS N
-echo        [15] CoreSingleLanguage                 : PRESS O
-echo        [16] Menu Active Office                 : PRESS P
+echo		[1] Professional                        : PRESS A
+echo		[2] ProfessionalEducation               : PRESS B
+echo		[3] ProfessionalN                       : PRESS C
+echo		[4] ProfessionalWorkstation             : PRESS D
+echo		[5] ProfessionalWorkstationN            : PRESS E
+echo		[6] Enterprise                          : PRESS F
+echo		[7] EnterpriseS                         : PRESS G
+echo		[8] IoTEnterprise                       : PRESS H
+echo		[9] Education                           : PRESS I
+echo		[10] EducationN                         : PRESS J
+echo		[11] LTSB 2015                          : PRESS K
+echo		[12] LTSB 2016                          : PRESS L
+echo		[13] LTSC 2019                          : PRESS M
+echo		[14] CoreN                              : PRESS N
+echo		[15] CoreSingleLanguage                 : PRESS O
+echo		[16] Menu Active Office                 : PRESS P
 echo        ==================================================
 Choice /N /C ABCDEFGHIJKLMNOP /M " Press your choice : "
 if %errorlevel% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T& set typeW=Professional& goto :loadSKUS
@@ -448,47 +477,10 @@ endlocal
 ping -n 2 localhost 1>NUL
 goto :eof
 
-    
-    
+	
+	
 :uninstallOffice
-cls
-Title Uninstall Office all versions
-echo.
-echo            ====================================================
-echo            [1] Using SaraCMD (silent)                 : Press 1
-echo            [2] Using Sara UI (interactive)            : Press 2
-echo            [3] Using BCUninstaller                    : Press 3
-echo            [4] Back to Windows Office Menu            : Press 4
-echo            ====================================================
-Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 4 goto :office-windows
-if %ERRORLEVEL% == 3 goto :removeOffice-BCUninstaller
-if %ERRORLEVEL% == 2 goto :removeOffice-saraUI
-if %ERRORLEVEL% == 1 goto :removeOffice-saraCmd
-
-:removeOffice-BCUninstaller
-cls
-Title Uninstall Office Using BulkCrapUninstaller
-echo This will install BCUninstaller into your computer
-call :checkCompatibility
-call :installSoft Klocman.BulkCrapUninstaller
-call :bcuninstaller-Settings
-goto :office-windows
-
-:removeOffice-saraUI
-cls
-Title Uninstall Office Using Sara UI
-echo This will download and install Sara UI for uninstalling Office steps
-echo You must install it manually and follow the wizard guide 
-ping -n 4 localhost 1>NUL
-rem start https://support.microsoft.com/en-au/office/uninstall-office-from-a-pc-9dd49b83-264a-477a-8fcc-2fdf5dbf61d8
-start https://aka.ms/SaRA-officeUninstallFromPC
-goto :office-windows
-
-:removeOffice-saraCmd
-Title Uninstall office completely using Sara Cmd
-echo This will download and remove office without interactive
-ping -n 2 localhost 1>NUL
+Title Uninstall office completely
 cls
 echo off
 pushd %temp%
@@ -688,7 +680,7 @@ echo User %user% was added to users group.
 ping -n 2 localhost 1>NUL
 cls
 goto :utilities
-    
+	
 
 REM REM Add local admin user 
 REM :addLocalUserAdmin
@@ -905,9 +897,9 @@ rem reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server
 rem echo Allow Remote Desktop from Specified IPs
 rem netsh advfirewall firewall add rule name="Allow from specific IP addresses" dir=in action=allow protocol=TCP localport=3389 remoteip=A.A.A.A,B.B.B.B
 REM echo ==================================================
-REM echo                Don't Allow Remote Desktop
+REM echo				Don't Allow Remote Desktop
 REM reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 1 /f
-REM echo                Turn on NLA Remote Setting
+REM echo 				Turn on NLA Remote Setting
 REM reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-TCP" /v UserAuthentication /t REG_DWORD /d "1" /f
 echo Restart the computer to apply all settings
 ping -n 2 localhost 1>NUL
@@ -989,10 +981,11 @@ goto :EOF
 cls
 @echo off
 COPY /Y "%startProgram%\*.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\BCUninstaller\BCUninstaller.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
+if exist "%startProgram%\BCUninstaller\BCUninstaller.lnk" (COPY /Y "%startProgram%\BCUninstaller\BCUninstaller.lnk" "%AllUsersProfile%\Desktop")
+if exist "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" (COPY /Y "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" "%AllUsersProfile%\Desktop")
+if exist "%startProgram%\Slack Technologies Inc\*.lnk" (COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop")
+if exist "%startProgram%\UltraViewer\*.lnk" (COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop")
+if exist "%startProgram%\NAPS2\*.lnk" (COPY /Y "%startProgram%\NAPS2\*.lnk" "%AllUsersProfile%\Desktop")
 goto :eof
 
 
@@ -1020,6 +1013,7 @@ if %ERRORLEVEL% == 7 goto :main
 if %ERRORLEVEL% == 6 call :updateWinget-All && goto :packageManagementMenu
 if %ERRORLEVEL% == 5 call :winget-Chat && goto :packageManagementMenu
 if %ERRORLEVEL% == 4 call :winget-Network && goto :packageManagementMenu
+:: Winget install Remote support failed to install / update ultraviewer
 if %ERRORLEVEL% == 3 call :choco-RemoteSupport && goto :packageManagementMenu
 if %ERRORLEVEL% == 2 call :winget-Endusers && goto :packageManagementMenu
 if %ERRORLEVEL% == 1 call :packageManagement && goto :packageManagementMenu
@@ -1050,11 +1044,6 @@ echo y | winget upgrade -h --all
 call :log "Winget finished upgrading all packages successfully"
 goto :EOF
 
-:winget-Deskjob
-cls
-call :hold
-goto :EOF
-
 :installNetworkApp
 cls
 call :choco-Network 
@@ -1070,7 +1059,6 @@ echo =================================================
 echo virtualbox, processhacker, hardentools, mobaxterm
 echo =================================================
 ping -n 3 localhost 1>NUL
-cls
 call :log "Installing Network softwares by Chocolately"
 call :checkCompatibility
 cls
@@ -1101,8 +1089,7 @@ echo SSHFS, WinFSP, WinSCP, Putty, Network Manager, Dotnet 6
 echo ========================================================
 ping -n 3 localhost 1>NUL
 cls
-call :winget-Mobaxterm
-::nilesoft.shell
+call :checkCompatibility
 set packageList=Notepad++.Notepad++ ^
 7zip.7zip ^
 Microsoft.OpenSSH.Beta ^
@@ -1121,19 +1108,14 @@ Microsoft.DotNet.SDK.6 ^
 NETworkManager ^
 Oracle.VirtualBox
 for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+call :installSoft "Mobatek.MobaXterm --version 23.2.0.5082"
+:: Copy Mobaxterm setting
+if not exist "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" (curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82")
+echo Mobaxterm setting completed
+ping -n 2 localhost 1>NUL
+taskkill /IM advanced_ip_scanner.exe /F
 call :log "Finished Network softwares by Winget"
 endlocal
-goto :EOF
-
-:winget-Mobaxterm
-cls
-call :checkCompatibility
-echo Installing Mobaxterm v23.2.0.5082
-winget install Mobatek.MobaXterm --version 23.2.0.5082 --accept-package-agreements --accept-source-agreements
-:: Copy Mobaxterm setting
-curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
-echo Mobaxterm setting complete
-ping -n 2 localhost 1>NUL
 goto :EOF
 
 :winget-Chat
@@ -1149,7 +1131,6 @@ echo  Zalo, Skype, Viber, Zoom
 echo  Telegram Desktop, Facebook Messenger
 echo ======================================
 ping -n 3 localhost 1>NUL
-cls
 pushd %temp%
 echo Install List Software by winget
 set packageList= VNGCorp.Zalo ^
@@ -1185,46 +1166,44 @@ setlocal
 call :log "Starting software utilities installation"
 ping -n 3 localhost 1>NUL
 cls
-echo List Softwares to Install
-echo ========================================================================
+echo =======================================================================
+echo List Software to Install
 echo 7zip, Notepad++,Foxit Reader, Zalo, BulkCrap Uninstaller, Google Drive
 echo DotNet Runtime.6, ShareX, Quicklook, Everything, Google Chrome, Firefox
-echo ========================================================================
-ping -n 3 localhost 1>NUL
-cls
+echo =======================================================================
+ping -n 2 localhost 1>NUL
 setlocal
 pushd %temp%
 echo Install List Software by winget
 set packageList=Notepad++.Notepad++ ^
 Google.Drive ^
 Microsoft.DotNet.Runtime.6 ^
-VNGCorp.Zalo ^
+NAPVNGCorp.Zalo ^
+Facebook.Messenger ^
+Telegram.TelegramDesktop ^
+Microsoft.Skype ^
 ShareX.ShareX ^
 voidtools.Everything ^
 QL-Win.QuickLook ^
 IObit.IObitUnlocker ^
-Facebook.Messenger ^
-Telegram.TelegramDesktop ^
-Microsoft.Skype ^
 7zip.7zip ^
 Foxit.FoxitReader ^
 Notepad++.Notepad++ ^
 Google.Chrome ^
 Mozilla.Firefox ^
 Klocman.BulkCrapUninstaller ^
-Microsoft.PowerToys ^
 JosephFinney.Text-Grab ^
 Cyanfish.NAPS2 ^
-google.drive ^
+Microsoft.PowerToys ^
 VideoLAN.VLC
 
 for %%p in (%packageList%) do (
-    call :installSoft %%p -h --accept-package-agreements --accept-source-agreements
+	call :installSoft %%p -h --accept-package-agreements --accept-source-agreements
 )
 endlocal
-taskkill /IM ShareX.exe /F >NUL
+taskkill /IM ShareX.exe /F
 taskkill /IM IObitUnlocker.exe /F
-cls
+taskkill /IM PowerToys.exe /F
 goto :EOF
 
 :packageManagement
@@ -1293,7 +1272,6 @@ cls
 echo Winget has been installed
 ping -n 2 localhost 1>NUL
 )
-cls
 choco -v
 if ERRORLEVEL 1 (
 cls
@@ -1309,7 +1287,6 @@ call :log "Windows version check: Version %VERSION% is not suitable for installi
 echo Your Windows version is not suitable for installing
 ping -n 2 localhost 1>NUL
 ) 
-cls
 goto :eof
 ::=====================================================================
 :installChocolately
@@ -1377,7 +1354,7 @@ call :log "%software% installed with scope %scope%"
 cls
 )
 ) else (
-cls 
+cls	
 echo %software% already installed
 ping -n 2 localhost 1>nul
 call :log "%software% already installed"
@@ -1435,8 +1412,14 @@ goto :EOF
 :: Function install 7zip by using winget
 :install7zip
 cls
-Title Install 7zip using Winget
+Title Install 7zip
+rem setlocal
+rem pushd %temp%
+rem IF "%Processor_Architecture%"=="AMD64" Set "CPU=64" (curl -O https://www.7-zip.org/a/7z2301-x64.msi)
+rem IF "%Processor_Architecture%"=="x86" Set "CPU=32" (curl -O https://www.7-zip.org/a/7z2301.msi)
+rem popd
 call :checkCompatibility
+cls
 call :installSoft 7zip.7zip
 :: associate regular files extension with 7zip
 echo. associate regular files extension with 7zip
@@ -1448,6 +1431,7 @@ assoc .tar=7-Zip
 assoc .gz=7-Zip
 assoc .bzip2=7-Zip
 assoc .xz=7-Zip
+endlocal
 goto :EOF
 
 :: Ping to host
@@ -1469,7 +1453,7 @@ if !errorlevel! == 0 (
 )
 endlocal
 goto :EOF
-    
+	
 :installNotepadThemes
 Title Install Notepad++ Themes
 cls
@@ -1527,105 +1511,6 @@ if /I not "%%f"=="%exclude_file%" (del /F "%%f")
 )
 echo All files in %temp% have been deleted except for %exclude_file%.
 ping -n 3 localhost 1>nul
-endlocal
-goto :EOF
-
-:bcuninstaller-Settings
-cls
-setlocal
-if not exist "C:\Program Files\BCUninstaller" (echo App not found) else (
-    taskkill /IM BCUninstaller.exe /F >NUL
-    set "settings=C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo ^<?xml version="1.0" encoding="utf-8"?^> > "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo ^<Settings^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallerListSortColumn^>0^</UninstallerListSortColumn^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallerListSortOrder^>Ascending^</UninstallerListSortOrder^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscAutoLoadDefaultList^>True^</MiscAutoLoadDefaultList^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FilterShowSystemComponents^>True^</FilterShowSystemComponents^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo      ^<UninstallerListShowLegend^>True^</UninstallerListShowLegend^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<W10-HOME^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo     ^<BackupLeftoversDirectory^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo     ^</BackupLeftoversDirectory^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo     ^<WindowSize^>916, 601^</WindowSize^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo     ^<WindowPosition^>52, 52^</WindowPosition^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo     ^<WindowState^>Normal^</WindowState^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo     ^<_CacheUpdateRate^>10.00:00:00^</_CacheUpdateRate^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^</W10-HOME^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ExternalEnable^>False^</ExternalEnable^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanWinUpdates^>False^</ScanWinUpdates^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo       ^<ExternalPreCommands^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^</ExternalPreCommands^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<AdvancedHighlightSpecial^>True^</AdvancedHighlightSpecial^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallConcurrentMaxCount^>2^</UninstallConcurrentMaxCount^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscFeedbackNagShown^>False^</MiscFeedbackNagShown^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscColorblind^>False^</MiscColorblind^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FilterShowUpdates^>False^</FilterShowUpdates^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallConcurrentOneLoud^>False^</UninstallConcurrentOneLoud^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ShowTreeMap^>True^</ShowTreeMap^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanRegistry^>True^</ScanRegistry^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FoldersScanRemovable^>False^</FoldersScanRemovable^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanChocolatey^>True^</ScanChocolatey^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallConcurrentDisableManualCollisionProtection^>False^</UninstallConcurrentDisableManualCollisionProtection^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ToolbarsShowToolbar^>True^</ToolbarsShowToolbar^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscUserId^>12656455291938626621^</MiscUserId^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<Debug^>False^</Debug^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<WindowUseSystemTheme^>False^</WindowUseSystemTheme^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanSteam^>True^</ScanSteam^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FilterShowWinFeatures^>False^</FilterShowWinFeatures^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanStoreApps^>True^</ScanStoreApps^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<QuietUseDaemon^>True^</QuietUseDaemon^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallerListViewState^>AAEAAAD/////AQAAAAAAAAAMAgAAAEZPYmplY3RMaXN0VmlldywgVmVyc2lvbj0yLjEwLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1udWxsDAMAAABXU3lzdGVtLldpbmRvd3MuRm9ybXMsIFZlcnNpb249Ni4wLjIuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5BQEAAAA2QnJpZ2h0SWRlYXNTb2Z0d2FyZS5PYmplY3RMaXN0VmlldytPYmplY3RMaXN0Vmlld1N0YXRlCQAAAA1WZXJzaW9uTnVtYmVyD051bWJlck9mQ29sdW1ucwtDdXJyZW50VmlldwpTb3J0Q29sdW1uD0lzU2hvd2luZ0dyb3Vwcw1MYXN0U29ydE9yZGVyD0NvbHVtbklzVmlzaWJsZRVDb2x1bW5EaXNwbGF5SW5kaWNpZXMMQ29sdW1uV2lkdGhzAAAEAAAEAwMDCAgZU3lzdGVtLldpbmRvd3MuRm9ybXMuVmlldwMAAAAIAR5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5Tb3J0T3JkZXIDAAAAHFN5c3RlbS5Db2xsZWN0aW9ucy5BcnJheUxpc3QcU3lzdGVtLkNvbGxlY3Rpb25zLkFycmF5TGlzdBxTeXN0ZW0uQ29sbGVjdGlvbnMuQXJyYXlMaXN0AgAAAAEAAAASAAAABfz///8ZU3lzdGVtLldpbmRvd3MuRm9ybXMuVmlldwEAAAAHdmFsdWVfXwAIAwAAAAEAAAAAAAAAAQX7////HlN5c3RlbS5XaW5kb3dzLkZvcm1zLlNvcnRPcmRlcgEAAAAHdmFsdWVfXwAIAwAAAAEAAAAJBgAAAAkHAAAACQgAAAAEBgAAABxTeXN0ZW0uQ29sbGVjdGlvbnMuQXJyYXlMaXN0AwAAAAZfaXRlbXMFX3NpemUIX3ZlcnNpb24FAAAICAkJAAAAEgAAABIAAAABBwAAAAYAAAAJCgAAABIAAAASAAAAAQgAAAAGAAAACQsAAAASAAAAEgAAABAJAAAAIAAAAAgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQgBAQ0OEAoAAAAgAAAACAgAAAAACAgBAAAACAgCAAAACAgDAAAACAgEAAAACAgFAAAACAgGAAAACAgHAAAACAgIAAAACAgJAAAACAgKAAAACAgLAAAACAgMAAAACAgNAAAACAgOAAAACAgPAAAACAgQAAAACAgRAAAADQ4QCwAAACAAAAAICPkAAAAICKAAAAAICFAAAAAICDwAAAAICEYAAAAICEEAAAAICDQAAAAICCgAAAAICKAAAAAICKAAAAAICKAAAAAICKAAAAAICDwAAAAICCgAAAAICCgAAAAICKAAAAAICAQBAAAICKAAAAANDgs=^</UninstallerListViewState^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MessagesShowAllBadJunk^>True^</MessagesShowAllBadJunk^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MessagesRestorePoints^>No^</MessagesRestorePoints^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallerListUseGroups^>True^</UninstallerListUseGroups^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<QuietRetryFailedOnce^>True^</QuietRetryFailedOnce^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscVersion^>5.6.0.0^</MiscVersion^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscFeedbackNagNeverShow^>True^</MiscFeedbackNagNeverShow^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<Language^>en-US^</Language^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscFirstRun^>False^</MiscFirstRun^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FilterHideMicrosoft^>False^</FilterHideMicrosoft^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<AdvancedTestCertificates^>True^</AdvancedTestCertificates^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<CacheCertificates^>True^</CacheCertificates^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscCheckForUpdates^>False^</MiscCheckForUpdates^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<QuietAutomatization^>True^</QuietAutomatization^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<AdvancedDisableProtection^>True^</AdvancedDisableProtection^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallerListUseCheckboxes^>True^</UninstallerListUseCheckboxes^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<WindowDpiAware^>True^</WindowDpiAware^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MessagesAskRemoveLoudItems^>True^</MessagesAskRemoveLoudItems^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanDrives^>True^</ScanDrives^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanWinFeatures^>False^</ScanWinFeatures^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscRatingCacheDate^>07/17/2023 14:46:12^</MiscRatingCacheDate^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscUserRatings^>True^</MiscUserRatings^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ExternalPostCommands^>../BleachBit/bleachbit_console.exe --clean system.tmp system.logs system.memory_dump system.muicache system.prefetch system.recycle_bin^</ExternalPostCommands^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ToolbarsShowSettings^>True^</ToolbarsShowSettings^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<BackupLeftovers^>No^</BackupLeftovers^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallerListDoubleClickAction^>OpenProperties^</UninstallerListDoubleClickAction^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FilterShowTweaks^>True^</FilterShowTweaks^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<AdvancedTestInvalid^>True^</AdvancedTestInvalid^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanPreDefined^>True^</ScanPreDefined^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanScoop^>True^</ScanScoop^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FilterShowStoreApps^>True^</FilterShowStoreApps^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<AdvancedIntelligentUninstallerSorting^>True^</AdvancedIntelligentUninstallerSorting^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<AdvancedSimulate^>False^</AdvancedSimulate^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MessagesRemoveJunk^>Yes^</MessagesRemoveJunk^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FoldersCustomProgramDirs^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^</FoldersCustomProgramDirs^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallPreventShutdown^>True^</UninstallPreventShutdown^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<QuietAutomatizationKillStuck^>True^</QuietAutomatizationKillStuck^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<AdvancedDisplayOrphans^>True^</AdvancedDisplayOrphans^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<QuietAutoKillStuck^>True^</QuietAutoKillStuck^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FoldersAutoDetect^>True^</FoldersAutoDetect^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<MiscSendStatistics^>False^</MiscSendStatistics^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ScanOculus^>True^</ScanOculus^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<CreateRestorePoint^>False^</CreateRestorePoint^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<ToolbarsShowStatusbar^>True^</ToolbarsShowStatusbar^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<FilterShowProtected^>True^</FilterShowProtected^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<UninstallConcurrency^>False^</UninstallConcurrency^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo   ^<CacheAppInfo^>True^</CacheAppInfo^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    echo ^</Settings^> >> "C:\Program Files\BCUninstaller\BCUninstaller.settings"
-    "C:\Program Files\BCUninstaller\BCUninstaller.exe"
-)
-ping -n 2 localhost 1>NUL
 endlocal
 goto :EOF
 
