@@ -22,7 +22,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================    
 :main
 @echo off
-set "appversion=v0.6.3 July 17, 2023"
+set "appversion=v0.6.5 July 18, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -478,23 +478,23 @@ goto :office-windows
 :removeOffice-saraUI
 cls
 Title Uninstall Office Using Sara UI
-echo This will download and install Sara UI for uninstalling Office steps
+echo This will download (browser download) and install Sara UI for uninstalling Office steps
 echo You must install it manually and follow the wizard guide 
 ping -n 4 localhost 1>NUL
-rem start https://support.microsoft.com/en-au/office/uninstall-office-from-a-pc-9dd49b83-264a-477a-8fcc-2fdf5dbf61d8
 start https://aka.ms/SaRA-officeUninstallFromPC
 goto :office-windows
 
 :removeOffice-saraCmd
 Title Uninstall office completely using Sara Cmd
+cls
 echo This will download and remove office without interactive
 ping -n 2 localhost 1>NUL
 cls
 echo off
 pushd %temp%
 if not exist "%ProgramFiles%\7-Zip\7z.exe" call :install7zip
-::curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_CommandLineVersionFiles
-curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_EnterpriseVersionFiles
+curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_CommandLineVersionFiles
+::curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_EnterpriseVersionFiles
 "c:\Program Files\7-Zip\7z.exe" x -y SaRACmd.zip -o"SaRACmd"
 cls
 echo Start to uninstall office via SaRACmd
@@ -765,6 +765,26 @@ endlocal
 goto :eof
 cd %dp%
 goto :utilities
+
+:: Ping to host
+:pingHost
+cls
+echo off
+setlocal enabledelayedexpansion
+set host=172.16.11.5
+ping %host% | findstr /i "Reply from" >nul
+if !errorlevel! == 0 (
+    ping %host% | findstr /i "Destination host unreachable" >nul
+    if !errorlevel! == 0 (
+        echo Ping failed
+    ) else (
+        echo Ping succeeded
+    )
+) else (
+    echo Ping failed
+)
+endlocal
+goto :EOF
 
 :joinDomain
 cls
@@ -1055,11 +1075,11 @@ cls
 call :hold
 goto :EOF
 
-:installNetworkApp
-cls
-call :choco-Network 
-call :winget-Network
-goto :EOF
+rem :installNetworkApp
+rem cls
+rem call :choco-Network 
+rem call :winget-Network
+rem goto :EOF
 
 :choco-Network
 Title Install Network softwares by Chocolately
@@ -1101,8 +1121,15 @@ echo SSHFS, WinFSP, WinSCP, Putty, Network Manager, Dotnet 6
 echo ========================================================
 ping -n 3 localhost 1>NUL
 cls
-call :winget-Mobaxterm
-::nilesoft.shell
+rem call :winget-Mobaxterm
+call :installSoft "Mobatek.MobaXterm --version 23.2.0.5082"
+:: Copy Mobaxterm setting
+if not exist "C:\Program Files (x86)\Mobatek\MobaXterm" (echo Mobaxterm is not installed) else (
+curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
+echo Mobaxterm setting complete
+)
+ping -n 2 localhost 1>NUL
+cls
 set packageList=Notepad++.Notepad++ ^
 7zip.7zip ^
 Microsoft.OpenSSH.Beta ^
@@ -1120,7 +1147,9 @@ Microsoft.DotNet.Runtime.6 ^
 Microsoft.DotNet.SDK.6 ^
 NETworkManager ^
 Oracle.VirtualBox
-for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+rem for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+for %%p in (%packageList%) do (call :installSoft %%p)
+taskkill /IM advanced_ip_scanner.exe /F
 call :log "Finished Network softwares by Winget"
 endlocal
 goto :EOF
@@ -1131,8 +1160,10 @@ call :checkCompatibility
 echo Installing Mobaxterm v23.2.0.5082
 winget install Mobatek.MobaXterm --version 23.2.0.5082 --accept-package-agreements --accept-source-agreements
 :: Copy Mobaxterm setting
+if not exist "C:\Program Files (x86)\Mobatek\MobaXterm" (echo Mobaxterm is not installed) else (
 curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
 echo Mobaxterm setting complete
+)
 ping -n 2 localhost 1>NUL
 goto :EOF
 
