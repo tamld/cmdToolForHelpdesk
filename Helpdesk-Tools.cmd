@@ -22,7 +22,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================    
 :main
 @echo off
-set "appversion=v0.6.5 July 18, 2023"
+set "appversion=v0.6.6 July 26, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -130,7 +130,7 @@ echo        [7] Main Menu                                        : Press 7
 echo        ==============================================================
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :main
-if %ERRORLEVEL% == 6 goto :loadSkusMenu
+if %ERRORLEVEL% == 6 call :loadSkusMenu & goto :office-windows
 if %ERRORLEVEL% == 5 goto :fixNonCore
 if %ERRORLEVEL% == 4 goto :convertOfficeEddition
 if %ERRORLEVEL% == 3 goto :removeOfficeKey
@@ -329,65 +329,54 @@ echo.
 echo Select Windows Skus edition to convert
 echo.
 echo        ==================================================
-echo        [1] Professional                        : PRESS A
-echo        [2] ProfessionalEducation               : PRESS B
-echo        [3] ProfessionalN                       : PRESS C
-echo        [4] ProfessionalWorkstation             : PRESS D
-echo        [5] ProfessionalWorkstationN            : PRESS E
-echo        [6] Enterprise                          : PRESS F
-echo        [7] EnterpriseS                         : PRESS G
-echo        [8] IoTEnterprise                       : PRESS H
-echo        [9] Education                           : PRESS I
-echo        [10] EducationN                         : PRESS J
-echo        [11] LTSB 2015                          : PRESS K
-echo        [12] LTSB 2016                          : PRESS L
-echo        [13] LTSC 2019                          : PRESS M
-echo        [14] CoreN                              : PRESS N
-echo        [15] CoreSingleLanguage                 : PRESS O
-echo        [16] Menu Active Office                 : PRESS P
+echo        [1] Professional                        : PRESS 1
+echo        [2] ProfessionalWorkstation             : PRESS 2
+echo        [3] Enterprise                          : PRESS 3
+echo        [4] EnterpriseS                         : PRESS 4
+echo        [5] IoTEnterprise                       : PRESS 5
+echo        [6] Education                           : PRESS 6
+echo        [7] LTSB 2016                           : PRESS 7
+echo        [8] LTSC 2019                           : PRESS 8
+echo        [9] Menu Active Office                  : PRESS 9
 echo        ==================================================
-Choice /N /C ABCDEFGHIJKLMNOP /M " Press your choice : "
-if %errorlevel% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T& set typeW=Professional& goto :loadSKUS
-if %errorlevel% == 2 set keyW=8PTT6-RNW4C-6V7J2-C2D3X-MHBPB& set typeW=ProfessionalEducation& goto :loadSKUS
-if %errorlevel% == 3 set keyW=2B87N-8KFHP-DKV6R-Y2C8J-PKCKT& set typeW=ProfessionalN& goto :loadSKUS
-if %errorlevel% == 4 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77& set typeW=ProfessionalWorkstation& goto :loadSKUS
-if %errorlevel% == 5 set keyW=WYPNQ-8C467-V2W6J-TX4WX-WT2RQ& set typeW=ProfessionalWorkstationN& goto :loadSKUS
-if %errorlevel% == 6 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C& set typeW=Enterprise& goto :loadSKUS
-if %errorlevel% == 7 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX& set typeW=EnterpriseS& goto :loadSKUS
-if %errorlevel% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D& set typeW=IoTEnterprise& goto :loadSKUS
-if %errorlevel% == 9 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY& set typeW=Education& goto :loadSKUS
-if %errorlevel% == 10 set keyW=84NGF-MHBT6-FXBX8-QWJK7-DRR8H& set typeW=EducationN& goto :loadSKUS
-if %errorlevel% == 11 set keyW=WNMTR-4C88C-JK8YV-HQ7T2-76DF9& set typeW=wdLTSB2015&goto :loadSKUS
-if %errorlevel% == 12 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK& set typeW=wdLTSB2016& goto :loadSKUS
-if %errorlevel% == 13 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D& set typeW=wdLTSC2019& goto :loadSKUS
-if %errorlevel% == 14 set keyW=4CPRK-NM3K3-X6XXQ-RXX86-WXCHW& set typeW=CoreN& goto :loadSKUS
-if %errorlevel% == 15 set keyW=BT79Q-G7N6G-PGBYW-4YWX6-6F4BT& set typeW=CoreSingleLanguage& goto :loadSKUS
-if %errorlevel% == 16 goto :office-windows
-endlocal
+Choice /N /C 123456789 /M " Press your choice : "
+if %errorlevel% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSKUS
+if %errorlevel% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSKUS
+if %errorlevel% == 3 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set typeW=Enterprise&& goto :loadSKUS
+if %errorlevel% == 4 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set typeW=EnterpriseS&& goto :loadSKUS
+if %errorlevel% == 5 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=IoTEnterprise&& goto :loadSKUS
+if %errorlevel% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Education&& goto :loadSKUS
+if %errorlevel% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSKUS
+if %errorlevel% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSKUS
+if %errorlevel% == 9 goto :office-windows
 
 :: Function that helps Windows convert to another edition
 :loadSKUS
 cls
 echo off
-if not exist "%ProgramFiles%\7-Zip\7z.exe" (call :install7zip)
+if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
 pushd %temp%
+echo.
+echo Generic Windows %typeW% key: %keyW%
+echo Activating...
 if not exist Licenses (
-curl -L -o "Licenses.zip" "https://drive.google.com/uc?export=download&id=1Cl7yQ5YPLh8laCfKBrkyVK_PEJN-GjWR"
-"%ProgramFiles%\7-Zip\7z.exe" x -y Licenses.zip -o"Licenses")
-xcopy "Licenses\Licenses\Skus Windows"\%typeW% C:\Windows\system32\spp\tokens\skus\%typeW% /IS /Y
-REM echo Generic Windows %typeW% key is %keyW%
+    curl -L -o "Licenses.zip" "https://drive.google.com/uc?export=download&id=1Cl7yQ5YPLh8laCfKBrkyVK_PEJN-GjWR" >nul 2>&1
+    "%ProgramFiles%\7-Zip\7z.exe" x -y Licenses.zip >nul 2>&1
+)
+xcopy "Licenses\Skus Windows"\%typeW% C:\Windows\system32\spp\tokens\skus\%typeW% /IS /Y >nul 2>&1
+ping -n 3 localhost > NUL
 popd
 pushd c:\Windows\system32
 cscript.exe slmgr.vbs /rilc
 cscript.exe slmgr.vbs /upk >nul 2>&1
 cscript.exe slmgr.vbs /ckms >nul 2>&1
 cscript.exe slmgr.vbs /cpky >nul 2>&1
-cscript.exe slmgr.vbs /ipk %keyW%
-sc config LicenseManager start= auto & net start LicenseManager
-sc config wuauserv start= auto & net start wuauserv
+cscript.exe slmgr.vbs /ipk %keyW% >nul 2>&1
+sc config LicenseManager start= auto & net start LicenseManager >nul 2>&1
+sc config wuauserv start= auto & net start wuauserv >nul 2>&1
 clipup -v -o -altto c:\
 cls
-echo Load skus %typeW% completed
+echo Load Windows eddition %typeW% completed
 ping -n 3 localhost 1>NUL
 goto :EOF
 
@@ -1245,6 +1234,7 @@ Mozilla.Firefox ^
 Klocman.BulkCrapUninstaller ^
 Microsoft.PowerToys ^
 JosephFinney.Text-Grab ^
+FxSoundLLC.FxSound ^
 Cyanfish.NAPS2 ^
 google.drive ^
 VideoLAN.VLC
@@ -1553,8 +1543,11 @@ cls
 setlocal
 set exclude_file=%temp%\Helpdesk-Tools.log
 :: Delete all files in the temp directory except for the exclude file
+for /F "delims=" %%f in ('dir /B /A:D "%temp%"') do (
+    if /I not "%%f"=="%exclude_file%" (rd /S /Q "%temp%\%%f" >nul 2>&1)
+)
 for %%f in (%temp%\*.*) do (
-if /I not "%%f"=="%exclude_file%" (del /F "%%f")
+if /I not "%%f"=="%exclude_file%" (del /F "%%f" >nul 2>&1)
 )
 echo All files in %temp% have been deleted except for %exclude_file%.
 ping -n 3 localhost 1>nul
