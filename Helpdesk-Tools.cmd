@@ -22,7 +22,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================    
 :main
 @echo off
-set "appversion=v0.6.6 July 26, 2023"
+set "appversion=v0.6.74 July 26, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -154,7 +154,7 @@ echo                [3] Office 2019 Proplus Retail (Project ^& Visio)       : Pr
 echo                [4] Main Menu                                          : Press 4
 echo                ================================================================
 Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 6 goto office-windows
+if %ERRORLEVEL% == 4 goto office-windows
 if %ERRORLEVEL% == 3 set office=2019& call :defineOffice& goto :office-windows
 if %ERRORLEVEL% == 2 set office=2021& call :defineOffice& goto :office-windows
 if %ERRORLEVEL% == 1 set office=365& call :installO365& goto :office-windows
@@ -323,6 +323,7 @@ goto :eof
 
 :: Function Menu that selects which edition Windows will convert to
 :loadSkusMenu
+setlocal
 cls
 Title Load Windows Eddition
 echo.
@@ -349,9 +350,11 @@ if %errorlevel% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Educatio
 if %errorlevel% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSKUS
 if %errorlevel% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSKUS
 if %errorlevel% == 9 goto :office-windows
+endlocal
 
 :: Function that helps Windows convert to another edition
 :loadSKUS
+setlocal
 cls
 echo off
 if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
@@ -378,6 +381,7 @@ clipup -v -o -altto c:\
 cls
 echo Load Windows eddition %typeW% completed
 ping -n 3 localhost 1>NUL
+endlocal
 goto :EOF
 
 :fixNonCore
@@ -602,14 +606,14 @@ echo        [3] Clean up system                     : Press 3
 echo        [4] Add user to Admin group             : Press 4
 echo        [5] Add user to Users group             : Press 5
 echo        [6] Install Support Assistance          : Press 6
-echo        [7] Restart Windows                     : Press 7
+echo        [7] Active IDM                          : Press 7
 echo        [8] Join domain                         : Press 8
 echo        [9] Back to Main Menu                   : Press 9
 echo        =================================================
 Choice /N /C 123456789 /M " Press your choice : "
 if %ERRORLEVEL% == 9 goto :main
 if %ERRORLEVEL% == 8 goto :joinDomain
-if %ERRORLEVEL% == 7 goto :restartPC
+if %ERRORLEVEL% == 7 call :activeIDM & goto :utilities
 if %ERRORLEVEL% == 6 goto :installSupportAssistant
 if %ERRORLEVEL% == 5 goto :addUserToUsers
 if %ERRORLEVEL% == 4 goto :addUserToAdmins
@@ -814,6 +818,11 @@ goto :utilities
 REM This function will use Windows Disk Cleanup to remove unnecessary files
 :cleanUpSystem
 Title Clean Up System
+cls
+echo This will cleanup temp folder and add preset for Windows Cleanup Utilities
+echo You can execute the command cleanmgr /sagerun:1 afterward
+call :clean > NUL
+ping -n 3 localhost > NUL
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Active Setup Temp Folders" /v StateFlags0001 /t REG_DWORD /d 00000002 /f
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\BranchCache" /v StateFlags0001 /t REG_DWORD /d 00000002 /f
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\D3D Shader Cache" /v StateFlags0001 /t REG_DWORD /d 00000002 /f
@@ -1026,12 +1035,12 @@ echo        ====================================================
 
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :main
-if %ERRORLEVEL% == 6 call :updateWinget-All && goto :packageManagementMenu
-if %ERRORLEVEL% == 5 call :winget-Chat && goto :packageManagementMenu
-if %ERRORLEVEL% == 4 call :winget-Network && goto :packageManagementMenu
-if %ERRORLEVEL% == 3 call :choco-RemoteSupport && goto :packageManagementMenu
-if %ERRORLEVEL% == 2 call :winget-Endusers && goto :packageManagementMenu
-if %ERRORLEVEL% == 1 call :packageManagement && goto :packageManagementMenu
+if %ERRORLEVEL% == 6 call :updateWinget-All & goto :packageManagementMenu
+if %ERRORLEVEL% == 5 call :winget-Chat & goto :packageManagementMenu
+if %ERRORLEVEL% == 4 call :winget-Network & goto :packageManagementMenu
+if %ERRORLEVEL% == 3 call :choco-RemoteSupport & goto :packageManagementMenu
+if %ERRORLEVEL% == 2 call :winget-Endusers & goto :packageManagementMenu
+if %ERRORLEVEL% == 1 call :packageManagement & goto :packageManagementMenu
 REM End of Winget Menu
 REM ==============================================================================
 REM Start of Winget functions
@@ -1093,6 +1102,7 @@ for %%p in (%packageList%) do (choco install -y %%p)
 cls
 echo Setting for Mobaxterm v23.2
 curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
+call :killtasks
 call :log "Finished Network softwares by Chocolately"
 endlocal
 goto :EOF
@@ -1110,7 +1120,7 @@ echo SSHFS, WinFSP, WinSCP, Putty, Network Manager, Dotnet 6
 echo ========================================================
 ping -n 3 localhost 1>NUL
 cls
-rem call :winget-Mobaxterm
+call :checkCompatibility
 call :installSoft "Mobatek.MobaXterm --version 23.2.0.5082"
 :: Copy Mobaxterm setting
 if not exist "C:\Program Files (x86)\Mobatek\MobaXterm" (echo Mobaxterm is not installed) else (
@@ -1138,7 +1148,7 @@ NETworkManager ^
 Oracle.VirtualBox
 rem for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
 for %%p in (%packageList%) do (call :installSoft %%p)
-taskkill /IM advanced_ip_scanner.exe /F
+call :killtasks
 call :log "Finished Network softwares by Winget"
 endlocal
 goto :EOF
@@ -1233,18 +1243,14 @@ Google.Chrome ^
 Mozilla.Firefox ^
 Klocman.BulkCrapUninstaller ^
 Microsoft.PowerToys ^
-JosephFinney.Text-Grab ^
 FxSoundLLC.FxSound ^
-Cyanfish.NAPS2 ^
 google.drive ^
 VideoLAN.VLC
 
-for %%p in (%packageList%) do (
-    call :installSoft %%p -h --accept-package-agreements --accept-source-agreements
-)
+for %%p in (%packageList%) do (call :installSoft %%p -h --accept-package-agreements --accept-source-agreements --ignore-security-hash --force)
 endlocal
-taskkill /IM ShareX.exe /F >NUL
-taskkill /IM IObitUnlocker.exe /F
+call :bcuninstaller-Settings
+call :killtasks
 cls
 goto :EOF
 
@@ -1342,6 +1348,7 @@ cls
 echo Set Chocolately PATH
 set "path=%path%;C:\ProgramData\chocolatey\bin"
 if %ERRORLEVEL% EQU 0 (echo Choco PATH add successfully) else (echo Choco PATH add failed)
+cls
 call :log "Finished Chocolately installation"
 goto: EOF
 
@@ -1373,11 +1380,12 @@ goto :EOF
 set logfile=%temp%\Helpdesk-Tools.log
 set timestamp=%date% %time%
 echo %timestamp% %1 >> %logfile%
+cls
 goto :EOF
 
 :: Function to install soft using Winget utilities
 :: To install with winget, call function by using call :installsoft "software id". eg: call :installsoft "7zip.7zip"
-:installSoft
+:installsoft
 Title Install Software
 REM Set the software name to install
 set "software=%~1"
@@ -1535,7 +1543,7 @@ echo.
 set /p password=Enter the password:
 goto :EOF
 
-REM function force delete all file created in %temp% folder
+:: function force delete all file created in %temp% folder
 :clean
 echo off
 cls
@@ -1650,6 +1658,42 @@ if not exist "C:\Program Files\BCUninstaller" (echo App not found) else (
     "C:\Program Files\BCUninstaller\BCUninstaller.exe"
 )
 ping -n 2 localhost 1>NUL
+endlocal
+goto :EOF
+
+:activeIDM
+Title Active IDM
+cls
+if not exist "C:\Program Files (x86)\Internet Download Manager" (
+echo IDM is not installed
+echo Installing..
+ping -n 2 localhost 1>NUL
+call :checkCompatibility
+call :installSoft Tonec.InternetDownloadManager
+) else (
+echo IDM is installed, go to activation
+)
+ping -n 4 localhost 1>NUL
+cls
+echo This will open an external link from Github call IDM Activation Script
+echo Refer link https://github.com/lstprjct/IDM-Activation-Script/tree/main
+echo Do with your own risks, be careful!!!
+ping -n 4 localhost 1>NUL
+start powershell.exe -command iwr -useb https://raw.githubusercontent.com/lstprjct/IDM-Activation-Script/main/IAS.ps1 ^| iex
+ping -n 2 localhost 1>NUL
+goto :EOF
+
+::Kill all the app running
+:killtasks
+cls
+setlocal
+set applist=IObitUnlocker.exe ^
+ShareX.exe ^
+BCUninstaller.exe ^
+advanced_ip_scanner.exe ^
+PowerToys.exe ^
+FxSound.exe
+for %%p in (%applist%) do (taskkill /IM %%p /F >NUL)
 endlocal
 goto :EOF
 
