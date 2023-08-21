@@ -57,7 +57,7 @@ goto end
 REM ========================================================================================================================================
 REM ==============================================================================
 REM Start of installAIOMenu
-REM Install Software Online using Winget or Chocolately
+REM Install Software Online using Winget or Chocolatey
 :installAIOMenu
 setlocal
 cls
@@ -1080,7 +1080,7 @@ rem call :winget-Network
 rem goto :EOF
 
 :choco-Network
-Title Install Network softwares by Chocolately
+Title Install Network softwares by Chocolatey
 cls
 setlocal
 echo List softwares to install
@@ -1089,7 +1089,7 @@ echo virtualbox, processhacker, hardentools, mobaxterm
 echo =================================================
 ping -n 3 localhost 1>NUL
 cls
-call :log "Installing Network softwares by Chocolately"
+call :log "Installing Network softwares by Chocolatey"
 call :checkCompatibility
 cls
 set packageList=processhacker ^
@@ -1100,10 +1100,10 @@ hardentools
 for %%p in (%packageList%) do (choco install -y %%p)
 :: Copy Mobaxterm setting
 cls
-echo Setting for Mobaxterm v23.2
-curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
+::Setting for Mobaxterm v23.2
+dir /b "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" > NUL 2>&1 || curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
 call :killtasks
-call :log "Finished Network softwares by Chocolately"
+call :log "Finished Network softwares by Chocolatey"
 endlocal
 goto :EOF
 
@@ -1200,7 +1200,7 @@ call :installsoft DucFabulous.UltraViewer
 goto :EOF
 
 :choco-RemoteSupport
-Title Install Remote Support Software by Chocolately
+Title Install Remote Support Software by Chocolatey
 echo off
 call :checkCompatibility
 choco install -y teamviewer anydesk
@@ -1257,11 +1257,11 @@ goto :EOF
 :packageManagement
 pushd %temp%
 cls
-:: Install chocolately
-echo Installing Chocolately
+:: Install Chocolatey
+echo Installing Chocolatey
 powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 cls
-echo Set Chocolately PATH
+echo Set Chocolatey PATH
 set "path=%path%;C:\ProgramData\chocolatey\bin"
 if %ERRORLEVEL% EQU 0 (echo Choco PATH add successfully) else (echo Choco PATH add failed)
 ping -n 2 localhost 1>nul
@@ -1324,11 +1324,11 @@ cls
 choco -v
 if ERRORLEVEL 1 (
 cls
-echo Installing Chocolately
-call :installChocolately
+echo Installing Chocolatey
+call :installChocolatey
 ) else (
 cls
-echo Chocolately has been installed
+echo Chocolatey has been installed
 ping -n 2 localhost 1>NUL
 )
 ) else (
@@ -1339,17 +1339,17 @@ ping -n 2 localhost 1>NUL
 cls
 goto :eof
 ::=====================================================================
-:installChocolately
-Title Install Chocolately
+:installChocolatey
+Title Install Chocolatey
 cls
-echo Installing Chocolately
+echo Installing Chocolatey
 powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 cls
-echo Set Chocolately PATH
+echo Set Chocolatey PATH
 set "path=%path%;C:\ProgramData\chocolatey\bin"
 if %ERRORLEVEL% EQU 0 (echo Choco PATH add successfully) else (echo Choco PATH add failed)
 cls
-call :log "Finished Chocolately installation"
+call :log "Finished Chocolatey installation"
 goto: EOF
 
 :installWinget
@@ -1415,7 +1415,7 @@ cls
 goto :EOF
 
 :installSoft_ByChoco
-Title Install Software by Chocolately
+Title Install Software by Chocolatey
 REM Set the software name to install
 set "software=%~1"
 REM Set status software installed or not
@@ -1454,7 +1454,7 @@ if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
 curl -# -o unikey43RC5-200929-win64.zip -L https://www.unikey.org/assets/release/unikey43RC5-200929-win64.zip
 "c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey"
 echo "Copying Unikey to Startup"
-mklink "%startProgram%\StartUp" "c:\Program Files\Unikey\UniKeyNT.exe"
+mklink "%startProgram%\StartUp\UniKeyNT.lnk" "c:\Program Files\Unikey\UniKeyNT.exe"
 echo "Creating Unikey shortcut on desktop"
 mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
 popd
