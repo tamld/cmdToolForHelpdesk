@@ -153,33 +153,49 @@ REM ============================================================================
 REM Sub menu Install Office Online
 
 :installOfficeMenu
-Title Select Office Version to Install
+Title Install Office Online
 setlocal
 cls
 echo.
+echo Select Office Version to Install
 echo                ================================================================
 echo                [1] Office 365                                         : Press 1
-echo                [2] Office 2021 Proplus Retail (Project ^& Visio)       : Press 2
-echo                [3] Office 2019 Proplus Retail (Project ^& Visio)       : Press 3
-echo                [4] Main Menu                                          : Press 4
+echo                [2] Office 2021                                        : Press 2
+echo                [3] Office 2019                                        : Press 3
+echo                [4] Office 2016                                        : Press 4
+echo                [5] Install Manually using Office Deploy Tool          : Press 5
+echo                [6] Main Menu                                          : Press 6
 echo                ================================================================
-Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 4 goto office-windows
-if %ERRORLEVEL% == 3 set office=2019& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 2 set office=2021& call :defineOffice& goto :office-windows
+Choice /N /C 123456 /M " Press your choice : "
+if %ERRORLEVEL% == 6 goto :office-windows
+if %ERRORLEVEL% == 5 call :downloadOffice && "Office Tool\Office Tool Plus.exe" && goto office-windows
+if %ERRORLEVEL% == 4 set office=2016& set office_type=Volume& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 3 set office=2019& set office_type=Volume& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 2 set office=2021& set office_type=Volume& call :defineOffice& goto :office-windows
 if %ERRORLEVEL% == 1 set office=365& call :installO365& goto :office-windows
 endlocal
 REM ============================================
 REM Stat of install office  online
 
+:downloadOffice
+cls
+pushd %temp%
+dir /b "C:\Program Files\7-Zip" > nul || call :install7zip
+aria2c -x 16 -c -V -o Office-Tool.zip https://otp.landian.vip/redirect/download.php?type=runtime&arch=x64&site=github
+cls
+"C:\Program Files\7-Zip\7z.exe" x -y Office-Tool.zip
+popd
+goto :EOF
+
 :: REF code http://zone94.com/downloads/135-windows-and-office-activation-script
 :: Function defines a list of variable representing for Office apps
 :defineOffice
-@echo off
 cls
 TITLE Microsoft Office ProPlus - Online Installer
 REM Define value default for install
-cd /d "%dp%"
+echo.
+echo Install Office %office%:
+::cd /d "%dp%"
 Set "on=(YES)"
 Set "off=(NO)"
 Set "opt1=%on%" ::Word
@@ -216,7 +232,7 @@ echo List of components to install Office %office%
 <NUL Set/P=[Q] & echo Quit to Office Menu
 echo.
 CHOICE /c 123456789PDXQ /n /m "--> Select option(s) and then press [X] to start the installation: "
-if %ERRORLEVEL% == 13 goto ::installOfficeMenu
+::if %ERRORLEVEL% == 13 goto :installOfficeMenu
 if %ERRORLEVEL% == 12 goto :installOffice
 if %ERRORLEVEL% == 11 (if "%optD%"=="%on%" (Set "optD=%off%") Else (Set "optD=%on%")) & goto :selectOfficeApp
 if %ERRORLEVEL% == 10 (if "%optP%"=="%on%" (Set "optP=%off%") Else (Set "optP=%on%")) & goto :selectOfficeApp
@@ -243,60 +259,34 @@ PopD
 RmDir /s /q "%Temp%\_%1"
 GoTo :EOF
 
-:: Function install Office based on the version and the software selected by user input
+:: New function install office using OT
 :installOffice
-cls
-Title Install Office 
-rem echo.
-rem echo Disabling Microsoft Office %office% Telemetry . . .
-rem ping -n 2 localhost 1>NUL
-rem REG ADD "HKLM\SOFTWARE\Microsoft\Office\Common\ClientTelemetry" /v "DisableTelemetry" /t REG_DWORD /d "00000001" /f 1>NUL
-rem if not exist "%ProgramFiles%\7-Zip" (call :install7zip) else (echo 7zip has been installed)
-if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
+::https://github.com/YerongAI/Office-Tool
+Title Install Office by Office-Tool
 pushd %temp%
-:: Office Deployment Tools
-rem curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
-curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/officedeploymenttool.exe
-"%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
-SETLOCAL
-REM REM Deploy template via link: https://config.office.com/deploymentsettings
-Set "OCS="%temp%\Office %office% Setup Config.xml""
-                      >%OCS% echo ^<Configuration^>
-                     >>%OCS% echo   ^<Add OfficeClientEdition="%CPU%" Channel="Monthly"^>                    
-if "%office%"=="O365" >>%OCS% echo     ^<Product ID="%office%ProPlusRetail"^> else (
-                     >>%OCS% echo     ^<Product ID="ProPlus%office%Retail"^>    )
-                     >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
-if "%opt1%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Word" /^>
-if "%opt2%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Excel" /^>
-if "%opt3%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="PowerPoint" /^>
-if "%opt4%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Outlook" /^>
-if "%opt5%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="OneNote" /^>
-if "%opt6%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Publisher" /^>
-if "%opt7%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="Access" /^>
-if "%optD%"=="%off%" >>%OCS% echo       ^<ExcludeApp ID="OneDrive" /^>
-                     >>%OCS% echo     ^</Product^>
-if "%opt8%"=="%on%"  >>%OCS% echo     ^<Product ID="VisioPro%office%Retail"^>
-if "%opt8%"=="%on%"  >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
-if "%opt8%"=="%on%"  >>%OCS% echo     ^</Product^>
-if "%opt9%"=="%on%"  >>%OCS% echo     ^<Product ID="ProjectPro%office%Retail"^>
-if "%opt9%"=="%on%"  >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
-if "%opt9%"=="%on%"  >>%OCS% echo     ^</Product^>
-if "%optP%"=="%on%"  >>%OCS% echo     ^<Product ID="ProofingTools"^>
-if "%optP%"=="%on%"  >>%OCS% echo       ^<Language ID="MatchOS" Fallback="en-US" /^>
-if "%optP%"=="%on%"  >>%OCS% echo     ^</Product^>
-                     >>%OCS% echo   ^</Add^>
-                     >>%OCS% echo ^</Configuration^>
-ENDLOCAL
+::dir /b "C:\Program Files\7-Zip" > nul || call :install7zip
+::aria2c -x 16 -c -V -o Office-Tool.zip https://otp.landian.vip/redirect/download.php?type=runtime&arch=x64&site=github
+::"C:\Program Files\7-Zip\7z.exe" x -y Office-Tool.zip
+call :downloadOffice
+:: define exclude apps list
+Set "exclapps="
+if "%opt1%"=="off" (if not defined exclapps (Set "exclapps=Word") else (Set "exclapps=%exclapps%,Word"))
+if "%opt2%"=="off" (if not defined exclapps (Set "exclapps=Excel") else (Set "exclapps=%exclapps%,Excel"))
+if "%opt3%"=="off" (if not defined exclapps (Set "exclapps=PowerPoint") else (Set "exclapps=%exclapps%,PowerPoint"))
+if "%opt4%"=="off" (if not defined exclapps (Set "exclapps=Outlook") else (Set "exclapps=%exclapps%,Outlook"))
+if "%opt5%"=="off" (if not defined exclapps (Set "exclapps=OneNote") else (Set "exclapps=%exclapps%,OneNote"))
+if "%opt6%"=="off" (if not defined exclapps (Set "exclapps=Publisher") else (Set "exclapps=%exclapps%,Publisher"))
+if "%opt7%"=="off" (if not defined exclapps (Set "exclapps=Access") else (Set "exclapps=%exclapps%,Access"))
+if "%opt8%"=="off" (if not defined exclapps (Set "exclapps=Visio") else (Set "exclapps=%exclapps%,Visio"))
+if "%opt9%"=="off" (if not defined exclapps (Set "exclapps=Project") else (Set "exclapps=%exclapps%,Project"))
+if "%optP%"=="off" (if not defined exclapps (Set "exclapps=ProofingTools") else (Set "exclapps=%exclapps%,ProofingTools"))
+if "%optD%"=="off" (if not defined exclapps (Set "exclapps=OneDrive") else (Set "exclapps=%exclapps%,OneDrive"))
 cls
-echo Installing Microsoft Office %office% ProPlus %CPU%-bit
-call :log Installing Microsoft Office %office% ProPlus %CPU%-bit
-echo Don't close this window until the installation process is completed
-ping -n 3 localhost 1>NUL
-START "" /WAIT /B "setup.exe" /configure "Office %office% Setup Config.xml"
+echo %exclapps%
+"Office Tool\Office Tool Plus.Console.exe" deploy /add ProPlus%office%%office_type%_en-us /ProPlus%office%%office_type%.exclapps %exclapps% /edition %CPU%
 popd
-call :log Finished Microsoft Office %office% ProPlus %CPU%-bit installation
-cd %dp%
 goto :EOF
+
 
 :: Function thats help install Office 365
 :installO365
@@ -311,12 +301,9 @@ IF "%Processor_Architecture%"=="AMD64" Set "CPU=x64"
 IF "%Processor_Architecture%"=="x86" Set "CPU=x32"
 cls
 echo Installing Microsoft Office 365 %CPU%-bit
-call :log Installing Microsoft Office 365 %CPU%-bit
 echo Don't close this window until the installation process is completed
-ping -n 3 localhost 1>NUL
-rem START "" /WAIT /B ".\setup.exe" /configure configuration-Office365-%CPU%.xml
+ping -n 2 localhost 1>NUL
 START "" /WAIT /B "setup.exe" /configure configuration-Office365-%CPU%.xml
-call :log Finished Microsoft Office 365 %CPU%-bit
 popd
 cd %dp%
 goto :EOF
@@ -1441,7 +1428,7 @@ cls
 echo Installing Chocolatey ...
 choco -v > nul 2>&1 || powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')) > nul 2>&1
 set "path=%path%;C:\ProgramData\chocolatey\bin" > nul
-choco install -y aria2 microsoft-ui-xaml-2-7 7zip jq > nul
+choco install -y aria2 7zip jq > nul
 assoc .zip=7-Zip >nul
 assoc .rar=7-Zip >nul
 assoc .tar=7-Zip >nul
@@ -1454,7 +1441,8 @@ Title Install Winget
 cls
 echo Installing Winget ...
 pushd %temp%
-aria2c -c https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
+:: https://learn.microsoft.com/en-us/windows/package-manager/winget/
+aria2c -x 16 -c -V -o Microsoft.UI.Xaml.2.7.appx https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx
 aria2c -x 16 -c -V -o Microsoft.DesktopAppInstaller.msixbundle https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 aria2c -x 16 -c -V https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
