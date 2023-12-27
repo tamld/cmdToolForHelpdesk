@@ -22,7 +22,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================    
 :main
 @echo off
-set "appversion=v0.6.75 Dec 22, 2023"
+set "appversion=v0.6.76 Dec 27, 2023"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -1786,25 +1786,27 @@ endlocal
 goto :EOF
 
 :activeIDM
-Title Active IDM
 cls
-if not exist "C:\Program Files (x86)\Internet Download Manager" (
-echo IDM is not installed
-echo Installing..
-ping -n 2 localhost 1>NUL
-call :checkCompatibility
-call :installSoft Tonec.InternetDownloadManager
-) else (
-echo IDM is installed, go to activation
+pushd %temp%
+dir /b "C:\Program Files (x86)\Internet Download Manager" > nul 2>&1 || (
+	call :checkCompatibility
+	choco install -y internet-download-manager > nul 2>&1
 )
-ping -n 4 localhost 1>NUL
 cls
 echo This will open an external link from Github call IDM Activation Script
 echo Refer link https://github.com/lstprjct/IDM-Activation-Script/tree/main
 echo Do with your own risks, be careful!!!
-ping -n 4 localhost 1>NUL
-start powershell.exe -command iwr -useb https://raw.githubusercontent.com/lstprjct/IDM-Activation-Script/main/IAS.ps1 ^| iex
-ping -n 2 localhost 1>NUL
+ping -n 3 localhost 1>NUL
+::start powershell.exe -command iwr -useb https://raw.githubusercontent.com/lstprjct/IDM-Activation-Script/main/IAS.ps1 ^| iex
+cls
+
+powershell -Command "iex(irm is.gd/idm_reset)"
+REM aria2c https://raw.githubusercontent.com/lstprjct/IDM-Activation-Script/main/IAS_0.8.cmd
+REM powershell -Command "(Get-Content $env:TEMP\IAS_0.8.cmd) -replace 'name=', 'name=PC' | Set-Content $env:TEMP\IAS_0.8.cmd"
+REM powershell -Command "(Get-Content $env:TEMP\IAS_0.8.cmd) -replace "set /p name="What is the name to be registered?"", 'set name=PC' | Set-Content $env:TEMP\IAS_0.8.cmd"
+REM powershell -Command "Start-Process -FilePath "$env:TEMP\IAS_0.8.cmd" -ArgumentList "/act""
+popd
+call :clean
 goto :EOF
 
 ::Kill all the app running
