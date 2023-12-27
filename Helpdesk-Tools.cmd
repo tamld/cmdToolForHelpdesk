@@ -68,14 +68,14 @@ title Install All In One online
 echo.
 echo        ======================================================
 echo        [1] Fresh Install without Office             : Press 1
-echo        [2] Fresh Install with Office 2019           : Press 2
-echo        [3] Fresh Install with Office 2021           : Press 3
+echo        [2] Fresh Install with Office 2021           : Press 2
+echo        [3] Fresh Install with Office 2019           : Press 3
 echo        [4] Main Menu                                : Press 4
 echo        ======================================================
 Choice /N /C 1234 /M " Press your choice : "
 if %ERRORLEVEL% == 4 goto main
-if %ERRORLEVEL% == 3 goto installAIO-O2021
-if %ERRORLEVEL% == 2 goto installAIO-O2019
+if %ERRORLEVEL% == 3 goto installAIO-O2019
+if %ERRORLEVEL% == 2 goto installAIO-O2021
 if %ERRORLEVEL% == 1 goto installAIO-Fresh
 endlocal
 REM ========================================================================================================================================
@@ -88,26 +88,67 @@ call :settingWindows
 call :setHighPerformance
 call :choco-Endusers
 call :choco-RemoteSupport
-call :choco-
+call :choco-Chat
 call :installUnikey
 call :createShortcut
 call :installSupportAssistant
 call :debloat
-call :clean
 goto :EOF
 
 
 :installAIO-Fresh
-Title Install All in one from fresh Windows 
+Title Install All in One from fresh Windows without Office
 call :installAIO
+call :Clean
 goto :installAIOMenu
 
 :installAIO-O2019
-call :hold
+Title Install All in One with Office 2019
+::call :hold
+call :installAIO
+:: set office values
+REM set opt1
+REM set opt2
+REM set opt3
+REM set opt4
+set opt5=(NO)
+set opt6=(NO)
+set opt7=(NO)
+set opt8=(NO)
+set opt9=(NO)
+set optP=(NO)
+set optD=(NO)
+set optS=(NO)
+set office=2019
+set office_type=Volume
+::
+call :installOffice
+call :Clean
 goto :installAIOMenu
 
 :installAIO-O2021
-call :hold
+::call :hold
+Title Install All in One with Office 2021
+::call :hold
+call :installAIO
+:: set office values
+REM set opt1
+REM set opt2
+REM set opt3
+REM set opt4
+set opt5=(NO)
+set opt6=(NO)
+set opt7=(NO)
+set opt8=(NO)
+set opt9=(NO)
+set optP=(NO)
+set optD=(NO)
+set optS=(NO)
+set office=2021
+set office_type=Volume
+::
+call :installOffice
+call :Clean
 goto :installAIOMenu
 
 
@@ -162,21 +203,20 @@ echo                ============================================================
 echo                [1] Office 365                                         : Press 1
 echo                [2] Office 2021                                        : Press 2
 echo                [3] Office 2019                                        : Press 3
-echo                [4] Office 2016                                        : Press 4
-echo                [5] Install Manually using Office Deploy Tool          : Press 5
-echo                [6] Main Menu                                          : Press 6
+echo                [4] Install Manually using Office Deploy Tool          : Press 5
+echo                [5] Main Menu                                          : Press 6
 echo                ================================================================
-Choice /N /C 123456 /M " Press your choice : "
-if %ERRORLEVEL% == 6 goto :office-windows
-if %ERRORLEVEL% == 5 call :downloadOffice && "Office Tool\Office Tool Plus.exe" && goto office-windows
-if %ERRORLEVEL% == 4 set office=2016& set office_type=Volume& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 3 set office=2019& set office_type=Volume& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 2 set office=2021& set office_type=Volume& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 1 set office=365& call :installO365& goto :office-windows
+Choice /N /C 12345 /M " Press your choice : "
+if %ERRORLEVEL% == 5 goto :office-windows
+if %ERRORLEVEL% == 4 call :downloadOffice & "Office Tool\Office Tool Plus.exe" & goto office-windows
+if %ERRORLEVEL% == 3 set "office=2019"& set "office_type=Volume"& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 2 set "office=2021"& set "office_type=Volume"& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 1 set "office=365"& call :installO365& goto :office-windows
 endlocal
 REM ============================================
 REM Stat of install office  online
 
+:: Download Office Tool and extract into destination folder
 :downloadOffice
 cls
 pushd %temp%
@@ -191,11 +231,9 @@ goto :EOF
 :: Function defines a list of variable representing for Office apps
 :defineOffice
 cls
-TITLE Microsoft Office ProPlus - Online Installer
-REM Define value default for install
-echo.
-echo Install Office %office%:
-::cd /d "%dp%"
+@echo off
+cd /d "%dp%"
+:: set app id
 Set "on=(YES)"
 Set "off=(NO)"
 Set "opt1=%on%" ::Word
@@ -209,13 +247,13 @@ Set "opt8=%on%" ::OneDrive
 Set "opt9=%on%" ::VisioPro2021Retail
 Set "optP=%on%" ::ProjectPro2021Retail
 Set "optD=%on%" ::ProofingTools
-REM Dectect version Architecture 
-IF "%Processor_Architecture%"=="AMD64" Set "CPU=64"
-IF "%Processor_Architecture%"=="x86" Set "CPU=32"
-    
+Set "optS=%on%" ::Skype
+goto :selectOfficeApp
+     
 :: Function menu select app to install. Default is yes with Yes colored green.
 :selectOfficeApp
 cls
+@echo off
 echo.
 echo List of components to install Office %office%
 <NUL Set/P=[1] & (if "%opt1%"=="%on%" (Call :setColor "%opt1%" 0a) Else (<NUL Set/P="%opt1%")) & echo  Microsoft Office Word.
@@ -229,12 +267,14 @@ echo List of components to install Office %office%
 <NUL Set/P=[9] & (if "%opt9%"=="%on%" (Call :setColor "%opt9%" 0a) Else (<NUL Set/P="%opt9%")) & echo  Microsoft Office Project.
 <NUL Set/P=[P] & (if "%optP%"=="%on%" (Call :setColor "%optP%" 0a) Else (<NUL Set/P="%optP%")) & echo  Microsoft Office Proofing Tools.
 <NUL Set/P=[D] & (if "%optD%"=="%on%" (Call :setColor "%optD%" 0a) Else (<NUL Set/P="%optD%")) & echo  Microsoft OneDrive Desktop.
+<NUL Set/P=[S] & (if "%optS%"=="%on%" (Call :setColor "%optS%" 0a) Else (<NUL Set/P="%optS%")) & echo  Microsoft Skype.
 <NUL Set/P=[Q] & echo Quit to Office Menu
 echo.
-CHOICE /c 123456789PDXQ /n /m "--> Select option(s) and then press [X] to start the installation: "
-::if %ERRORLEVEL% == 13 goto :installOfficeMenu
-if %ERRORLEVEL% == 12 goto :installOffice
-if %ERRORLEVEL% == 11 (if "%optD%"=="%on%" (Set "optD=%off%") Else (Set "optD=%on%")) & goto :selectOfficeApp
+CHOICE /c 123456789PDSXQ /n /m "--> Select option(s) and then press [X] to start the installation: "
+if %ERRORLEVEL% == 14 goto :installOfficeMenu
+if %ERRORLEVEL% == 13 goto :installOffice
+if %ERRORLEVEL% == 12 (if "%optS%"=="%off%" (Set "optS=%on%") Else (Set "optS=%off%")) & goto :selectOfficeApp
+if %ERRORLEVEL% == 11 (if "%optD%"=="%off%" (Set "optD=%on%") Else (Set "optD=%off%")) & goto :selectOfficeApp
 if %ERRORLEVEL% == 10 (if "%optP%"=="%on%" (Set "optP=%off%") Else (Set "optP=%on%")) & goto :selectOfficeApp
 if %ERRORLEVEL% == 9 (if "%opt9%"=="%on%" (Set "opt9=%off%") Else (Set "opt9=%on%")) & goto :selectOfficeApp
 if %ERRORLEVEL% == 8 (if "%opt8%"=="%on%" (Set "opt8=%off%") Else (Set "opt8=%on%")) & goto :selectOfficeApp
@@ -246,6 +286,7 @@ if %ERRORLEVEL% == 3 (if "%opt3%"=="%on%" (Set "opt3=%off%") Else (Set "opt3=%on
 if %ERRORLEVEL% == 2 (if "%opt2%"=="%on%" (Set "opt2=%off%") Else (Set "opt2=%on%")) & goto :selectOfficeApp
 if %ERRORLEVEL% == 1 (if "%opt1%"=="%on%" (Set "opt1=%off%") Else (Set "opt1=%on%")) & goto :selectOfficeApp
 
+::
 :: Function that help colorized selection menu
 :setColor (Text, Color)
 REM Function that will colored text with Green = 0a 
@@ -263,30 +304,39 @@ GoTo :EOF
 :installOffice
 ::https://github.com/YerongAI/Office-Tool
 Title Install Office by Office-Tool
+@echo off
 pushd %temp%
-::dir /b "C:\Program Files\7-Zip" > nul || call :install7zip
-::aria2c -x 16 -c -V -o Office-Tool.zip https://otp.landian.vip/redirect/download.php?type=runtime&arch=x64&site=github
-::"C:\Program Files\7-Zip\7z.exe" x -y Office-Tool.zip
 call :downloadOffice
+SETLOCAL
+:: define channel
+set "channel=Current"
+if %office% == 2019 (set "channel=PerpetualVL2019")
+if %office% == 2021 (set "channel=PerpetualVL2021")
+:: set version Architecture 
+IF "%Processor_Architecture%"=="AMD64" Set "CPU=64"
+IF "%Processor_Architecture%"=="x86" Set "CPU=32"
+
 :: define exclude apps list
 Set "exclapps="
-if "%opt1%"=="off" (if not defined exclapps (Set "exclapps=Word") else (Set "exclapps=%exclapps%,Word"))
-if "%opt2%"=="off" (if not defined exclapps (Set "exclapps=Excel") else (Set "exclapps=%exclapps%,Excel"))
-if "%opt3%"=="off" (if not defined exclapps (Set "exclapps=PowerPoint") else (Set "exclapps=%exclapps%,PowerPoint"))
-if "%opt4%"=="off" (if not defined exclapps (Set "exclapps=Outlook") else (Set "exclapps=%exclapps%,Outlook"))
-if "%opt5%"=="off" (if not defined exclapps (Set "exclapps=OneNote") else (Set "exclapps=%exclapps%,OneNote"))
-if "%opt6%"=="off" (if not defined exclapps (Set "exclapps=Publisher") else (Set "exclapps=%exclapps%,Publisher"))
-if "%opt7%"=="off" (if not defined exclapps (Set "exclapps=Access") else (Set "exclapps=%exclapps%,Access"))
-if "%opt8%"=="off" (if not defined exclapps (Set "exclapps=Visio") else (Set "exclapps=%exclapps%,Visio"))
-if "%opt9%"=="off" (if not defined exclapps (Set "exclapps=Project") else (Set "exclapps=%exclapps%,Project"))
-if "%optP%"=="off" (if not defined exclapps (Set "exclapps=ProofingTools") else (Set "exclapps=%exclapps%,ProofingTools"))
-if "%optD%"=="off" (if not defined exclapps (Set "exclapps=OneDrive") else (Set "exclapps=%exclapps%,OneDrive"))
+if "%opt1%"=="(NO)" (if not defined exclapps (Set "exclapps=Word") else (Set "exclapps=%exclapps%,Word"))
+if "%opt2%"=="(NO)" (if not defined exclapps (Set "exclapps=Excel") else (Set "exclapps=%exclapps%,Excel"))
+if "%opt3%"=="(NO)" (if not defined exclapps (Set "exclapps=PowerPoint") else (Set "exclapps=%exclapps%,PowerPoint"))
+if "%opt4%"=="(NO)" (if not defined exclapps (Set "exclapps=Outlook") else (Set "exclapps=%exclapps%,Outlook"))
+if "%opt5%"=="(NO)" (if not defined exclapps (Set "exclapps=OneNote") else (Set "exclapps=%exclapps%,OneNote"))
+if "%opt6%"=="(NO)" (if not defined exclapps (Set "exclapps=Publisher") else (Set "exclapps=%exclapps%,Publisher"))
+if "%opt7%"=="(NO)" (if not defined exclapps (Set "exclapps=Access") else (Set "exclapps=%exclapps%,Access"))
+if "%opt8%"=="(NO)" (if not defined exclapps (Set "exclapps=Visio") else (Set "exclapps=%exclapps%,Visio"))
+if "%opt9%"=="(NO)" (if not defined exclapps (Set "exclapps=Project") else (Set "exclapps=%exclapps%,Project"))
+if "%optP%"=="(NO)" (if not defined exclapps (Set "exclapps=ProofingTools") else (Set "exclapps=%exclapps%,ProofingTools"))
+if "%optD%"=="(NO)" (if not defined exclapps (Set "exclapps=OneDrive,Groove") else (Set "exclapps=%exclapps%,OneDrive,Groove"))
+if "%optS%"=="(NO)" (if not defined exclapps (Set "exclapps=Skype,Lync") else (Set "exclapps=%exclapps%,Skype,Lync"))
 cls
-echo %exclapps%
-"Office Tool\Office Tool Plus.Console.exe" deploy /add ProPlus%office%%office_type%_en-us /ProPlus%office%%office_type%.exclapps %exclapps% /edition %CPU%
+::"Office Tool\Office Tool Plus.Console.exe" deploy /add ProPlus%office%%office_type%_en-us /ProPlus%office%%office_type%.exclapps %exclapps% /edition %CPU% /acpteula
+"Office Tool\Office Tool Plus.Console.exe" deploy /add ProPlus%office%%office_type%_en-us /ProPlus%office%%office_type%.exclapps %exclapps% /edition %CPU% /channel %channel% /acpteula
+ENDLOCAL
+call :clean
 popd
 goto :EOF
-
 
 :: Function thats help install Office 365
 :installO365
@@ -446,14 +496,14 @@ Title Uninstall Office all versions
 echo.
 echo            ====================================================
 echo            [1] Using SaraCMD (silent)                 : Press 1
-echo            [2] Using Sara UI (interactive)            : Press 2
+echo            [2] Using Office Tool Plus                 : Press 2
 echo            [3] Using BCUninstaller                    : Press 3
 echo            [4] Back to Windows Office Menu            : Press 4
 echo            ====================================================
 Choice /N /C 1234 /M " Press your choice : "
 if %ERRORLEVEL% == 4 goto :office-windows
 if %ERRORLEVEL% == 3 goto :removeOffice-BCUninstaller
-if %ERRORLEVEL% == 2 goto :removeOffice-saraUI
+if %ERRORLEVEL% == 2 goto :removeOffice-OfficeTool
 if %ERRORLEVEL% == 1 goto :removeOffice-saraCmd
 
 :removeOffice-BCUninstaller
@@ -465,7 +515,21 @@ call :installSoft Klocman.BulkCrapUninstaller
 call :bcuninstaller-Settings
 goto :office-windows
 
+:removeOffice-OfficeTool
+Title Uninstall Office Using Office Tool
+cls
+pushd %temp%
+call :downloadOffice
+cls
+echo This script will uninstall your Office installation using the Office Tool. 
+echo Please wait until the wizard has completed the uninstallation process
+ping -n 3 localhost > nul
+"Office Tool\Office Tool Plus.Console.exe" deploy /rmall /acpteula
+call :clean
+goto :office-windows
+
 :removeOffice-saraUI
+Title Uninstall Office Using Office Tool
 cls
 Title Uninstall Office Using Sara UI
 echo This will download (browser download) and install Sara UI for uninstalling Office steps
@@ -492,7 +556,6 @@ echo It could took a while, please wait to end
 ping -n 2 localhost 1>NUL
 cls
 SaRACmd\SaRAcmd.exe -S OfficeScrubScenario -AcceptEula
-call :log "Office uninstalled successfully"
 popd
 cd /d %dp%
 cls
