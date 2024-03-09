@@ -1,3 +1,6 @@
+:: Fix main menu 4th select not working
+:: Change URL download SKUS to Github
+
 echo off
 Title Script Auto install Software
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
@@ -22,7 +25,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================    
 :main
 @echo off
-set "appversion=v0.6.76 Dec 27, 2023"
+set "appversion=v0.6.77 Mar 8, 2024"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -410,7 +413,7 @@ echo.
 echo Generic Windows %typeW% key: %keyW%
 echo Activating...
 if not exist Licenses (
-    curl -L -o "Licenses.zip" "https://drive.google.com/uc?export=download&id=1Cl7yQ5YPLh8laCfKBrkyVK_PEJN-GjWR" >nul 2>&1
+    curl -L -o Licenses.zip https://github.com/tamld/cmdToolForHelpdesk/blob/main/Licenses.zip?raw=true >nul 2>&1
     "%ProgramFiles%\7-Zip\7z.exe" x -y Licenses.zip >nul 2>&1
 )
 xcopy "Licenses\Skus Windows"\%typeW% C:\Windows\system32\spp\tokens\skus\%typeW% /IS /Y >nul 2>&1
@@ -597,10 +600,6 @@ REM ============================================================================
 cls
 REM call :hold
 pushd %temp%
-echo This will open an external link from Github call Microsoft Activation Script
-echo Refer link https://github.com/massgravel/Microsoft-Activation-Scripts
-echo Do with your own risks, be careful!!!
-ping -n 5 localhost 1>NUL
 start powershell.exe -command "irm https://massgrave.dev/get | iex"
 popd
 cd %dp%
@@ -1337,10 +1336,7 @@ dotnet-runtime-6 ^
 zalo ^
 sharex ^
 everything ^
-quicklook ^
 iobit-unlocker ^
-messenger-for-desktop ^
-telegram-desktop ^
 7zip ^
 foxitreader ^
 googlechrome ^
@@ -1374,25 +1370,16 @@ setlocal
 pushd %temp%
 echo Install List Software by winget
 set packageList=Notepad++.Notepad++ ^
-Google.Drive ^
 Microsoft.DotNet.Runtime.6 ^
-VNGCorp.Zalo ^
 ShareX.ShareX ^
 voidtools.Everything ^
-QL-Win.QuickLook ^
 IObit.IObitUnlocker ^
-Facebook.Messenger ^
-Telegram.TelegramDesktop ^
-Microsoft.Skype ^
 7zip.7zip ^
 Foxit.FoxitReader ^
 Notepad++.Notepad++ ^
 Google.Chrome ^
 Mozilla.Firefox ^
 Klocman.BulkCrapUninstaller ^
-Microsoft.PowerToys ^
-FxSoundLLC.FxSound ^
-google.drive ^
 VideoLAN.VLC
 
 for %%p in (%packageList%) do (call :installSoft %%p -h --accept-package-agreements --accept-source-agreements --ignore-security-hash --force)
@@ -1451,7 +1438,6 @@ REM function checkWinget will check if winget is installed or neither. If not, g
 Title Check Windows Compatibility
 cls
 :: Check Chocolatey
-:: choco-latest = 0 mean not up to date meanwhile choco-latest = 1 is up to date
 choco -v >nul 2>&1 && (
 	jq -v >nul 2>&1 || choco install -y jq > nul
 	for /f "delims=" %%p in ('curl -s https://api.github.com/repos/chocolatey/choco/releases/latest ^| jq -r ".tag_name"') do set "choco_latest_release=%%p"
