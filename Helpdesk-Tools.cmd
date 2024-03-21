@@ -126,7 +126,6 @@ set office=2019
 set office_type=Volume
 ::
 call :installOffice
-call :Clean
 goto :installAIOMenu
 
 :installAIO-O2021
@@ -151,7 +150,6 @@ set office=2021
 set office_type=Volume
 ::
 call :installOffice
-call :Clean
 goto :installAIOMenu
 
 
@@ -337,7 +335,6 @@ cls
 ::"Office Tool\Office Tool Plus.Console.exe" deploy /add ProPlus%office%%office_type%_en-us /ProPlus%office%%office_type%.exclapps %exclapps% /edition %CPU% /acpteula
 "Office Tool\Office Tool Plus.Console.exe" deploy /add ProPlus%office%%office_type%_en-us /ProPlus%office%%office_type%.exclapps %exclapps% /edition %CPU% /channel %channel% /acpteula
 ENDLOCAL
-call :clean
 popd
 goto :EOF
 
@@ -528,7 +525,6 @@ echo This script will uninstall your Office installation using the Office Tool.
 echo Please wait until the wizard has completed the uninstallation process
 ping -n 3 localhost > nul
 "Office Tool\Office Tool Plus.Console.exe" deploy /rmall /acpteula
-call :clean
 goto :office-windows
 
 :removeOffice-saraUI
@@ -1491,10 +1487,12 @@ cls
 echo Installing Winget ...
 pushd %temp%
 :: https://learn.microsoft.com/en-us/windows/package-manager/winget/
-aria2c -x 16 -c -V -o Microsoft.UI.Xaml.2.7.appx https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx
+::aria2c -x 16 -c -V -o Microsoft.UI.Xaml.2.7.appx https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx
+aria2c -x 16 -c -V -o Microsoft.UI.Xaml.appx https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx
 aria2c -x 16 -c -V -o Microsoft.DesktopAppInstaller.msixbundle https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 aria2c -x 16 -c -V https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
+::start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
+start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.appx
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
 start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
 set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
