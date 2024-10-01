@@ -1,6 +1,4 @@
-:: Fix main menu 4th select not working
-:: Change URL download SKUS to Github
-:: Fix download Microsoft.UI.XAML, fetch from Nuget API and download latest version.
+:: Fix download Microsoft.UI.XAML, fetch from Nuget API and download latest version
 echo off
 Title Script Auto install Software
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
@@ -25,7 +23,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================    
 :main
 @echo off
-set "appversion=v0.6.78 Oct 2, 2024"
+set "appversion=v0.6.79 Oct 2, 2024"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -1389,7 +1387,7 @@ goto :EOF
 pushd %temp%
 cls
 echo Install Chocolatey
-choco -v > NUL 2>&1 || powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')) && set "path=%path%;C:\ProgramData\chocolatey\bin"
+choco -v > NUL 2>&1 || powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))&&set "path=%path%;C:\ProgramData\chocolatey\bin"
 cls
 choco -v > NUL 2>&1 && (echo Chocolatey is installed) || (echo Chocolatey is not installed)
 ping -n 2 localhost 1>nul
