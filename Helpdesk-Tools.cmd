@@ -1,6 +1,6 @@
 :: Fix main menu 4th select not working
 :: Change URL download SKUS to Github
-
+:: Fix download Microsoft.UI.XAML, fetch from Nuget API and download latest version.
 echo off
 Title Script Auto install Software
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
@@ -25,7 +25,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================    
 :main
 @echo off
-set "appversion=v0.6.77 Mar 8, 2024"
+set "appversion=v0.6.78 Oct 2, 2024"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -1388,26 +1388,40 @@ goto :EOF
 :packageManagement
 pushd %temp%
 cls
-:: Install Chocolatey
-echo Installing Chocolatey
-powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+echo Install Chocolatey
+choco -v > NUL 2>&1 || powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')) && set "path=%path%;C:\ProgramData\chocolatey\bin"
 cls
-echo Set Chocolatey PATH
-set "path=%path%;C:\ProgramData\chocolatey\bin"
-if %ERRORLEVEL% EQU 0 (echo Choco PATH add successfully) else (echo Choco PATH add failed)
+choco -v > NUL 2>&1 && (echo Chocolatey is installed) || (echo Chocolatey is not installed)
 ping -n 2 localhost 1>nul
-:: Install winget
 cls
-echo Installing Winget
-curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/Microsoft.UI.Xaml.2.7.appx
-curl -O -#fsSL https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
-curl -o Microsoft.DesktopAppInstaller.msixbundle -#fsSL https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
-set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
-if %ERRORLEVEL% EQU 0 (echo Winget PATH add successfully) else (echo Winget PATH add failed)
+echo Installing aria2, 7zip, jq
 ping -n 2 localhost 1>nul
+choco install -y aria2 7zip jq
+:: intergrate 7z with extensions
+assoc .zip=7-Zip >nul
+assoc .rar=7-Zip >nul
+assoc .tar=7-Zip >nul
+cls
+SETLOCAL EnableDelayedExpansion
+winget -v > nul 2>&1 || (
+    echo Install Winget
+    for /f "delims=" %%i in ('powershell -Command "(Invoke-RestMethod 'https://api.nuget.org/v3-flatcontainer/microsoft.ui.xaml/index.json').versions[-1]"') do (
+        set LATEST_VERSION=%%i
+        echo Fetching UI.XAML latest version !LATEST_VERSION!
+        aria2c -x 16 -c -V https://api.nuget.org/v3-flatcontainer/microsoft.ui.xaml/!LATEST_VERSION!/microsoft.ui.xaml.!LATEST_VERSION!.nupkg
+        "c:\Program Files\7-Zip\7z.exe" x -y microsoft.ui.xaml.!LATEST_VERSION!.nupkg -oUI.XAML
+    )
+    move UI.XAML\tools\AppX\x64\Release\*.appx %temp%\Microsoft.UI.XAML.appx
+    aria2c -x 16 -c -V -o Microsoft.DesktopAppInstaller.msixbundle -c https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+    aria2c -x 16 -c -V https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
+    start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.XAML.appx
+    start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
+    start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
+    set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
+    if %ERRORLEVEL% EQU 0 (echo Winget PATH add successfully) else (echo Winget PATH add failed)
+    ping -n 2 localhost 1>nul
+)
+ENDLOCAL
 popd
 goto :EOF
 
