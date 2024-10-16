@@ -7,14 +7,14 @@
 - Ứng dụng hỗ trợ Windows 10 1809 trở đi và cần kết nối internet
 
 :warning::warning::warning:
-**Lưu ý**
 
-- Một số chức năng vẫn đang trong giai đoạn phát triển hoặc không hoạt động như mong muốn. Mọi người có thể tạo issues tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues)
-- Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó
-- File scripts nếu bị ngừng hoặc thoát đột ngột, hãy chạy lại file scripts và chọn chức năng ***"7. EXIT"*** để dọn các file tạm sinh ra trong quá trình cài đặt
-- Function List trong Notepad++ giúp quản lý các function trong CMD tiện lợi hơn
-- Các scripts trong file CMD được cá nhân hóa theo cá nhân người viết. Mọi người có thể tự do clone / fork / edit lại file này mà không cần yêu cầu bất cứ quyền gì từ tác giả
-- Hãy test trong môi trường máy ảo trước khi thực hiện ở thực tế
+> [!NOTE]**Lưu ý**
+> - Một số chức năng vẫn đang trong giai đoạn phát triển hoặc không hoạt động như mong muốn. Mọi người có thể tạo issues tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues).
+> - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó.
+> - File scripts nếu bị ngừng hoặc thoát đột ngột, hãy chạy lại file scripts và chọn chức năng ***"7. EXIT"*** để dọn các file tạm sinh ra trong quá trình cài đặt.
+> - Function List trong Notepad++ giúp quản lý các label trong CMD tiện lợi hơn.
+> - Các scripts trong file CMD được cá nhân hóa theo cá nhân người viết. Mọi người có thể tự do clone / fork / edit lại file này mà không cần yêu cầu bất cứ quyền gì từ tác giả.
+> - Hãy test trong môi trường máy ảo trước khi thực hiện ở thực tế.
 
 # II. Hướng dẫn
 
@@ -28,7 +28,9 @@ Cài theo các option:
 - Cài đặt software cho máy mới, không kèm office (Fresh Install without Office)
 - Cài đặt software cho máy mới, không kèm office 2019 (Fresh Install with Office 2019)
 - Cài đặt software cho máy mới, không kèm office 2021 (Fresh Install with Office 2021)
-
+- Cài đặt software cho máy mới, không kèm office 2019 (Fresh Install with Office 2021)
+- Cài đặt software cho máy mới, không kèm office 2021 (Fresh Install with Office 2024)
+![Menu 1.1](pictures/1.png)
 ### **1.2. Cài đặt và xử lý lỗi liên quan đến Office - Windows (Windows Office Utilities)**
 
 - Tạo bộ cài đăt office online 2019 - 2021 - 365 (Install Office Online)
@@ -37,7 +39,7 @@ Cài theo các option:
 - Chuyển đổi các version từ Retail sang Volume lincense và ngược lại (Convert Office Retail <==> Volume License)
 - Fix tình trạng Noncore khi nhập Key Windows (Fix Noncore Windows)
 - Nạp SKUS giúp Windows chuyển sang các eddition khác nhau - Home - Pro - Enterprise - LTSB - LTSC... (Load SKUS Windows)
-  
+![Menu 1.2](pictures/2.png)
 ### **1.3. Hỗ trợ kích hoạt Windows / Office online (Active Licenses)**
 
 - Kích hoạt Windows - Office online - Key Online (Online)

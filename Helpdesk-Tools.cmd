@@ -69,14 +69,16 @@ title Install All In One online
 echo.
 echo        ======================================================
 echo        [1] Fresh Install without Office             : Press 1
-echo        [2] Fresh Install with Office 2021           : Press 2
-echo        [3] Fresh Install with Office 2019           : Press 3
-echo        [4] Main Menu                                : Press 4
+echo        [2] Fresh Install with Office 2024           : Press 2
+echo        [2] Fresh Install with Office 2021           : Press 3
+echo        [3] Fresh Install with Office 2019           : Press 4
+echo        [4] Main Menu                                : Press 5
 echo        ======================================================
-Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 4 goto main
-if %ERRORLEVEL% == 3 goto installAIO-O2019
-if %ERRORLEVEL% == 2 goto installAIO-O2021
+Choice /N /C 12345 /M " Press your choice : "
+if %ERRORLEVEL% == 5 goto main
+if %ERRORLEVEL% == 4 goto installAIO-O2019
+if %ERRORLEVEL% == 3 goto installAIO-O2021
+if %ERRORLEVEL% == 2 goto installAIO-O2024
 if %ERRORLEVEL% == 1 goto installAIO-Fresh
 endlocal
 REM ========================================================================================================================================
@@ -105,13 +107,7 @@ goto :installAIOMenu
 
 :installAIO-O2019
 Title Install All in One with Office 2019
-::call :hold
 call :installAIO
-:: set office values
-REM set opt1
-REM set opt2
-REM set opt3
-REM set opt4
 set opt5=(NO)
 set opt6=(NO)
 set opt7=(NO)
@@ -122,20 +118,12 @@ set optD=(NO)
 set optS=(NO)
 set office=2019
 set office_type=Volume
-::
 call :installOffice
 goto :installAIOMenu
 
 :installAIO-O2021
-::call :hold
 Title Install All in One with Office 2021
-::call :hold
 call :installAIO
-:: set office values
-REM set opt1
-REM set opt2
-REM set opt3
-REM set opt4
 set opt5=(NO)
 set opt6=(NO)
 set opt7=(NO)
@@ -146,10 +134,24 @@ set optD=(NO)
 set optS=(NO)
 set office=2021
 set office_type=Volume
-::
 call :installOffice
 goto :installAIOMenu
 
+:installAIO-O2024
+Title Install All in One with Office 2024
+call :installAIO
+set opt5=(NO)
+set opt6=(NO)
+set opt7=(NO)
+set opt8=(NO)
+set opt9=(NO)
+set optP=(NO)
+set optD=(NO)
+set optS=(NO)
+set office=2024
+set office_type=Volume
+call :installOffice
+goto :installAIOMenu
 
 :installAIO-System-Network
 call :hold
@@ -200,16 +202,18 @@ echo.
 echo Select Office Version to Install
 echo                ================================================================
 echo                [1] Office 365                                         : Press 1
-echo                [2] Office 2021                                        : Press 2
-echo                [3] Office 2019                                        : Press 3
-echo                [4] Install Manually using Office Deploy Tool          : Press 5
-echo                [5] Main Menu                                          : Press 6
+echo                [2] Office 2024 (PerpetualVL)                          : Press 2
+echo                [3] Office 2021 (PerpetualVL)                          : Press 3
+echo                [4] Office 2019 (PerpetualVL)                          : Press 4
+echo                [5] Install Manually using Office Deploy Tool          : Press 5
+echo                [6] Main Menu                                          : Press 6
 echo                ================================================================
 Choice /N /C 12345 /M " Press your choice : "
-if %ERRORLEVEL% == 5 goto :office-windows
-if %ERRORLEVEL% == 4 call :downloadOffice & "Office Tool\Office Tool Plus.exe" & goto office-windows
-if %ERRORLEVEL% == 3 set "office=2019"& set "office_type=Volume"& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 2 set "office=2021"& set "office_type=Volume"& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 6 goto :office-windows
+if %ERRORLEVEL% == 5 call :downloadOffice & "%temp%\Office Tool\Office Tool Plus.exe" & goto office-windows
+if %ERRORLEVEL% == 4 set "office=2019"& set "office_type=Volume"& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 3 set "office=2021"& set "office_type=Volume"& call :defineOffice& goto :office-windows
+if %ERRORLEVEL% == 2 set "office=2024"& set "office_type=Volume"& call :defineOffice& goto :office-windows
 if %ERRORLEVEL% == 1 set "office=365"& call :installO365& goto :office-windows
 endlocal
 REM ============================================
@@ -311,6 +315,7 @@ SETLOCAL
 set "channel=Current"
 if %office% == 2019 (set "channel=PerpetualVL2019")
 if %office% == 2021 (set "channel=PerpetualVL2021")
+if %office% == 2024 (set "channel=PerpetualVL2024")
 :: set version Architecture 
 IF "%Processor_Architecture%"=="AMD64" Set "CPU=64"
 IF "%Processor_Architecture%"=="x86" Set "CPU=32"
@@ -594,7 +599,7 @@ REM ============================================================================
 cls
 REM call :hold
 pushd %temp%
-start powershell.exe -command "irm https://massgrave.dev/get | iex"
+start powershell.exe -command "irm https://get.activated.win | iex"
 popd
 cd %dp%
 cls
@@ -1823,9 +1828,10 @@ goto :EOF
 :: ========================================================================================================================================
 :hold
 cls
-echo Function in developing
-echo Please contact the author for further information via https://github.com/tamld/cmdToolForHelpdesk
-ping -n 3 localhost 1>NUL
+echo This function is not fully implemented yet.
+echo Please open a request or contact the developer to expedite the development of this feature.
+echo For more information, visit: https://github.com/tamld/cmdToolForHelpdesk
+ping -n 3 localhost >NUL
 goto :EOF
 
 :end
