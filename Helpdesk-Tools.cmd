@@ -661,22 +661,18 @@ echo        =================================================
 echo        [1] Set High Performance                : Press 1
 echo        [2] Change hostname                     : Press 2
 echo        [3] Clean up system                     : Press 3
-echo        [4] Add user to Admin group             : Press 4
-echo        [5] Add user to Users group             : Press 5
-echo        [6] Install Support Assistance          : Press 6
-echo        [7] Active IDM                          : Press 7
-echo        [8] Windows Debloat                     : Press 8
-::echo        [8] Join domain                         : Press 8
-echo        [9] Back to Main Menu                   : Press 9
+echo        [4] ChrisTitusTech/winutil              : Press 4
+echo        [5] Install Support Assistance          : Press 6
+echo        [6] Active IDM                          : Press 7
+echo        [7] Windows Debloat                     : Press 8
+echo        [8] Back to Main Menu                   : Press 9
 echo        =================================================
 Choice /N /C 123456789 /M " Press your choice : "
-if %ERRORLEVEL% == 9 goto :main
-::if %ERRORLEVEL% == 8 goto :joinDomain
-if %ERRORLEVEL% == 8 goto :debloat & goto :utilities
-if %ERRORLEVEL% == 7 call :activeIDM & goto :utilities
-if %ERRORLEVEL% == 6 goto :installSupportAssistant
-if %ERRORLEVEL% == 5 goto :addUserToUsers
-if %ERRORLEVEL% == 4 goto :addUserToAdmins
+if %ERRORLEVEL% == 8 goto :main
+if %ERRORLEVEL% == 7 goto :debloat & goto :utilities
+if %ERRORLEVEL% == 6 call :activeIDM & goto :utilities
+if %ERRORLEVEL% == 5 goto :installSupportAssistant
+if %ERRORLEVEL% == 4 call :winutil & goto :utilities
 if %ERRORLEVEL% == 3 goto :cleanUpSystem
 if %ERRORLEVEL% == 2 goto :changeHostName
 if %ERRORLEVEL% == 1 goto :setHighPerformance
@@ -684,6 +680,12 @@ endlocal
 REM End of Utilities Menu
 REM ==============================================================================
 REM Start of Utilities functions
+:winutil  
+:: call https://github.com/ChrisTitusTech/winutil Powershell
+start powershell -command "irm "https://christitus.com/win" | iex"
+goto :EOF
+
+
 :debloat
 TITLE Windows Debloat
 echo Remove Unused Packages, Bloatwares
