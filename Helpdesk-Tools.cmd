@@ -70,9 +70,9 @@ echo.
 echo        ======================================================
 echo        [1] Fresh Install without Office             : Press 1
 echo        [2] Fresh Install with Office 2024           : Press 2
-echo        [2] Fresh Install with Office 2021           : Press 3
-echo        [3] Fresh Install with Office 2019           : Press 4
-echo        [4] Main Menu                                : Press 5
+echo        [3] Fresh Install with Office 2021           : Press 3
+echo        [4] Fresh Install with Office 2019           : Press 4
+echo        [5] Main Menu                                : Press 5
 echo        ======================================================
 Choice /N /C 12345 /M " Press your choice : "
 if %ERRORLEVEL% == 5 goto main
@@ -208,7 +208,7 @@ echo                [4] Office 2019 (PerpetualVL)                          : Pre
 echo                [5] Install Manually using Office Deploy Tool          : Press 5
 echo                [6] Main Menu                                          : Press 6
 echo                ================================================================
-Choice /N /C 12345 /M " Press your choice : "
+Choice /N /C 123456 /M " Press your choice : "
 if %ERRORLEVEL% == 6 goto :office-windows
 if %ERRORLEVEL% == 5 call :downloadOffice & "%temp%\Office Tool\Office Tool Plus.exe" & goto office-windows
 if %ERRORLEVEL% == 4 set "office=2019"& set "office_type=Volume"& call :defineOffice& goto :office-windows
@@ -224,6 +224,7 @@ REM Stat of install office  online
 cls
 pushd %temp%
 dir /b "C:\Program Files\7-Zip" > nul || call :install7zip
+where aria2c 1>NUL || call :installAria2c
 aria2c -x 16 -c -V -o Office-Tool.zip https://otp.landian.vip/redirect/download.php?type=runtime&arch=x64&site=github
 cls
 "C:\Program Files\7-Zip\7z.exe" x -y Office-Tool.zip
@@ -662,12 +663,12 @@ echo        [1] Set High Performance                : Press 1
 echo        [2] Change hostname                     : Press 2
 echo        [3] Clean up system                     : Press 3
 echo        [4] ChrisTitusTech/winutil              : Press 4
-echo        [5] Install Support Assistance          : Press 6
-echo        [6] Active IDM                          : Press 7
-echo        [7] Windows Debloat                     : Press 8
-echo        [8] Back to Main Menu                   : Press 9
+echo        [5] Install Support Assistance          : Press 5
+echo        [6] Active IDM                          : Press 6
+echo        [7] Windows Debloat                     : Press 7
+echo        [8] Back to Main Menu                   : Press 8
 echo        =================================================
-Choice /N /C 123456789 /M " Press your choice : "
+Choice /N /C 12345678 /M " Press your choice : "
 if %ERRORLEVEL% == 8 goto :main
 if %ERRORLEVEL% == 7 goto :debloat & goto :utilities
 if %ERRORLEVEL% == 6 call :activeIDM & goto :utilities
@@ -1506,7 +1507,8 @@ cls
 echo Installing Winget ...
 pushd %temp%
 :: https://learn.microsoft.com/en-us/windows/package-manager/winget/
-::aria2c -x 16 -c -V -o Microsoft.UI.Xaml.2.7.appx https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.7.3/Microsoft.UI.Xaml.2.7.x64.appx
+:: check aria2c package installed
+where aria2c 1>NUL || call :installAria2c
 aria2c -x 16 -c -V -o Microsoft.UI.Xaml.appx https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx
 aria2c -x 16 -c -V -o Microsoft.DesktopAppInstaller.msixbundle https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 aria2c -x 16 -c -V https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
@@ -2587,3 +2589,33 @@ PowerShell -ExecutionPolicy Unrestricted -Command "$key = 'HKLM:SYSTEM\CurrentCo
 :: Restore previous environment settings
 endlocal
 goto :EOF
+
+:installAria2c
+@echo off
+setlocal
+
+:: Check if aria2c is already installed
+where aria2c >nul 2>&1 && goto EOF
+
+:: Check for winget
+where winget >nul 2>&1 && goto INSTALL_WITH_WINGET
+
+:: Check for Chocolatey
+where choco >nul 2>&1 && goto INSTALL_WITH_CHOCOLATEY
+
+:: Call package management setup if neither winget nor Chocolatey is available
+call :packageManagement
+goto INSTALL_WITH_WINGET
+
+:INSTALL_WITH_WINGET
+:: Install aria2c using winget if available
+winget install aria2.aria2 --silent --accept-package-agreements --accept-source-agreements && goto EOF
+
+:INSTALL_WITH_CHOCOLATEY
+:: Install aria2c using Chocolatey if winget fails or is unavailable
+choco install aria2 -y && goto EOF
+
+:: If everything fails
+echo Failed to install aria2c. Please check your package managers or network settings.
+endlocal
+goto EOF
