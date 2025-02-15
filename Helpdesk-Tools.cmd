@@ -219,36 +219,34 @@ endlocal
 REM ============================================
 REM Stat of install office  online
 
-:: Download Office Tool and extract into destination folder
+:: Downloads the Office Tool Plus runtime and extracts it.
+:: Uses aria2c for download if available, otherwise falls back to curl.
 :downloadOffice
 cls
 pushd %temp%
 
-:: Ensure 7-Zip is installed; if not, call the install7zip function
-dir /b "C:\Program Files\7-Zip" >nul || call :install7zip
-
-:: Determine system architecture
+:: Determine system architecture.
 set "arch=x64"
 if /I "%PROCESSOR_ARCHITECTURE%"=="x86" set "arch=x86"
 if /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" set "arch=x64"
 if /I "%PROCESSOR_ARCHITECTURE%"=="ARM64" set "arch=arm64"
 echo [*] Detected Architecture: %arch%
 
-:: Construct the download URL with the detected architecture
+:: Construct the download URL.
 set "downloadURL=https://otp.landian.vip/redirect/download.php?type=runtime&arch=%arch%&site=github"
 
-:: Check if aria2c exists; if found, use it; otherwise, fallback to curl
+:: Download using aria2c if available, otherwise use curl.
 where aria2c >nul 2>&1
 if %ERRORLEVEL%==0 (
     echo [*] Using aria2c for download...
     aria2c -x 16 -c -V -o Office-Tool.zip "%downloadURL%"
 ) else (
     echo [*] aria2c not found. Using curl for download...
-    curl -L -o Office-Tool.zip "%downloadURL%"
+    curl -fsSL -o Office-Tool.zip "%downloadURL%"
 )
 
 cls
-"C:\Program Files\7-Zip\7z.exe" x -y Office-Tool.zip
+call :extractZip "Office-Tool.zip" "%temp%"  :: Use :extractZip
 popd
 goto :EOF
 
@@ -364,14 +362,15 @@ popd
 goto :EOF
 
 :: Function thats help install Office 365
+:: Installs Office 365 using the Office Deployment Tool.
 :installO365
 cls
-if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
+call :checkCompatibility  :: Ensure 7-Zip is available
 pushd %temp%
 :: Fix URL download Office Deployment Tools
 rem curl -o "officedeploymenttool.exe" -fsSL https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16501-20196.exe
 curl -O -fsSL https://github.com/tamld/cmdToolForHelpdesk/raw/main/officedeploymenttool.exe
-"%ProgramFiles%\7-Zip\7z.exe" e "officedeploymenttool.exe" -y
+call :extractZip "officedeploymenttool.exe" "%temp%"
 IF "%Processor_Architecture%"=="AMD64" Set "CPU=x64"
 IF "%Processor_Architecture%"=="x86" Set "CPU=x32"
 cls
@@ -382,7 +381,6 @@ START "" /WAIT /B "setup.exe" /configure configuration-Office365-%CPU%.xml
 popd
 cd %dp%
 goto :EOF
-REM End of install office online
 
 REM ============================================
 :: Function defines which Office (x64/x86) is installed
@@ -424,19 +422,18 @@ if %errorlevel% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC20
 if %errorlevel% == 9 goto :office-windows
 endlocal
 
-:: Function that helps Windows convert to another edition
+:: Loads a specified Windows SKU (edition) using downloaded license files.
 :loadSKUS
 setlocal
 cls
 echo off
-if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
 pushd %temp%
 echo.
 echo Generic Windows %typeW% key: %keyW%
 echo Activating...
 if not exist Licenses (
     curl -L -o Licenses.zip https://github.com/tamld/cmdToolForHelpdesk/blob/main/Licenses.zip?raw=true >nul 2>&1
-    "%ProgramFiles%\7-Zip\7z.exe" x -y Licenses.zip >nul 2>&1
+    call :extractZip "Licenses.zip" "%temp%"  :: Use :extractZip
 )
 xcopy "Licenses\Skus Windows"\%typeW% C:\Windows\system32\spp\tokens\skus\%typeW% /IS /Y >nul 2>&1
 ping -n 3 localhost > NUL
@@ -562,6 +559,7 @@ ping -n 4 localhost 1>NUL
 start https://aka.ms/SaRA-officeUninstallFromPC
 goto :office-windows
 
+:: Uninstalls Office completely using the SaRA command-line tool.
 :removeOffice-saraCmd
 Title Uninstall office completely using Sara Cmd
 cls
@@ -570,10 +568,8 @@ ping -n 2 localhost 1>NUL
 cls
 echo off
 pushd %temp%
-if not exist "%ProgramFiles%\7-Zip\7z.exe" call :install7zip
 curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_CommandLineVersionFiles
-::curl -# -o SaRACmd.zip -fsL https://aka.ms/SaRA_EnterpriseVersionFiles
-"c:\Program Files\7-Zip\7z.exe" x -y SaRACmd.zip -o"SaRACmd"
+call :extractZip "SaRACmd.zip" "SaRACmd"  :: Use :extractZip
 cls
 echo Start to uninstall office via SaRACmd
 echo It could took a while, please wait to end
@@ -1441,9 +1437,13 @@ ping -n 2 localhost 1>NUL
 echo [*] Installing aria2c, jq, yq, 7zip...
 call :log "[INFO] Installing aria2c, jq, yq, 7zip...
 choco install -y aria2 7zip jq yq
-assoc .zip=7-Zip >nul
-assoc .rar=7-Zip >nul
-assoc .tar=7-Zip >nul
+assoc .7z=7-Zip
+assoc .zip=7-Zip
+assoc .rar=7-Zip
+assoc .tar=7-Zip
+assoc .gz=7-Zip
+assoc .bzip2=7-Zip
+assoc .xz=7-Zip
 ping -n 2 localhost 1>NUL
 echo.
 :: ============================================================
@@ -1536,44 +1536,59 @@ goto :EOF
 REM ========================================================================================================================================
 REM Start of child process that can be reused functions
 
-REM function checkWinget will check if winget is installed or neither. If not, go to installWinget function
+:: Checks for required tools (Chocolatey, 7-Zip, Winget) and installs them if missing.
 :checkCompatibility
 @echo off
 Title Check Windows Compatibility
 cls
-:: Check Chocolatey
-choco -v >nul 2>&1 && (
-	jq -v >nul 2>&1 || choco install -y jq > nul
-	for /f "delims=" %%p in ('curl -s https://api.github.com/repos/chocolatey/choco/releases/latest ^| jq -r ".tag_name"') do set "choco_latest_release=%%p"
-	for /f "delims=" %%k in ('winget -v') do set "choco_current_version=%%k"
-	if "%choco_latest_release%" EQU "%choco_current_version%" (
-		echo You are using latest Chocolatey version
-		ping -n 1 localhost 1>nul
-	) else (
-		choco upgrade chocolatey -y > nul 2>&1
-	)
-) || call :installChocolatey
 
-:: Check Winget
-:: winget-latest = 0 mean not up to date meanwhile winget-latest = up to date
-:: Winget require version W10 1809 or later
-for /f "tokens=4 delims=[] " %%i in ('ver') do set VERSION=%%i
+::-----------------------------
+:: Check & update Chocolatey
+::-----------------------------
+:: Ensure Chocolatey is installed; if missing, call packageManagement.
+choco -v >nul 2>&1 || call :packageManagement
+
+:: Fetch latest Chocolatey version using PowerShell
+for /f "delims=" %%p in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/chocolatey/choco/releases/latest').tag_name"') do set "choco_latest_release=%%p"
+:: Get current Chocolatey version.
+for /f "delims=" %%p in ('choco -v') do set "choco_current_version=%%p"
+echo [*] Chocolatey - Current: %choco_current_version%, Latest: %choco_latest_release%
+if not "%choco_latest_release%"=="%choco_current_version%" (
+    echo [*] Chocolatey is not up-to-date. Calling packageManagement...
+    call :packageManagement
+)
+
+::-----------------------------
+:: Check for 7-Zip
+::-----------------------------
+if not exist "%ProgramFiles%\7-Zip\7z.exe" (
+    echo [*] Installing 7-Zip...
+    choco install -y 7zip.install >nul 2>&1
+)
+
+::-----------------------------
+:: Check & update Winget (requires Windows 10 build 19041+)
+::-----------------------------
+for /f "tokens=4 delims=[] " %%i in ('ver') do set "VERSION=%%i"
 if "%VERSION%" GEQ "10.0.19041" (
-	:: If windows version meet
-	winget -v >nul 2>&1 && (
-		jq -v >nul 2>&1 || choco install -y jq > nul
-		:: Check if the current version math with the latest version in github
-		for /f "delims=" %%a in ('curl -s https://api.github.com/repos/microsoft/winget-cli/releases/latest ^| jq -r ".tag_name"') do set "winget_latest_release=%%a"
-		for /f "delims=" %%b in ('winget -v') do set "winget_current_version=%%b"
-		if "%winget_latest_release%" EQU "%winget_current_version%" (
-			echo You are using latest Winget version
-			ping -n 1 localhost 1>nul
-			set _winget_latest=1
-			) else (call :installWinget)
-		) || call :installWinget
-	) else (echo Winget is not support version %VERSION%)
-ping -n 2 localhost > nul	
+    winget -v >nul 2>&1 || call :packageManagement
+    for /f "delims=" %%a in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest').tag_name"') do set "winget_latest_release=%%a"
+    for /f "delims=" %%b in ('winget -v') do set "winget_current_version=%%b"
+    echo [*] Winget - Current: %winget_current_version%, Latest: %winget_latest_release%
+    if not "%winget_latest_release%"=="%winget_current_version%" (
+        echo [*] Winget is not up-to-date. Calling packageManagement...
+        call :packageManagement
+    ) else (
+        echo [*] Winget is up-to-date.
+    )
+) else (
+    echo [*] Winget is not supported on this version: %VERSION%
+)
+
+ping -n 2 localhost >nul
 goto :EOF
+
+
 ::=====================================================================
 :installChocolatey
 Title Install Chocolatey
@@ -1681,20 +1696,17 @@ REM schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc 
 schtasks /create /tn "Winget Upgrade" /tr "winget upgrade -h --all" /sc onlogon /ru %username% /f
 goto :eof
 
-::@ Function download Unikey from unikey.org, extract to C:\Program Files\Unikey and add to start up
+:: Downloads and installs UniKey (Vietnamese keyboard input).
 :installUnikey
 cls
-if exist "C:\Program Files\Unikey" (echo Unikey is exist) else (
 pushd %temp%
-if not exist "%ProgramFiles%\7-Zip" (call :install7zip)
 curl -# -o unikey43RC5-200929-win64.zip -L https://www.unikey.org/assets/release/unikey46RC2-230919-win64.zip
-"c:\Program Files\7-Zip\7z.exe" x -y unikey43RC5-200929-win64.zip -o"C:\Program Files\Unikey"
+call :extractZip "unikey43RC5-200929-win64.zip" "C:\Program Files\Unikey"  :: Use :extractZip
 echo "Copying Unikey to Startup"
 mklink "%startProgram%\StartUp\UniKeyNT.lnk" "c:\Program Files\Unikey\UniKeyNT.exe"
 echo "Creating Unikey shortcut on desktop"
 mklink "%public%\Desktop\UnikeyNT.exe" "C:\Program Files\Unikey\UniKeyNT.exe"
 popd
-)
 goto :EOF
 
 :: Function install 7zip by using winget
@@ -2702,8 +2714,35 @@ winget install aria2.aria2 --silent --accept-package-agreements --accept-source-
 :INSTALL_WITH_CHOCOLATEY
 :: Install aria2c using Chocolatey if winget fails or is unavailable
 choco install aria2 -y && goto EOF
-
 :: If everything fails
 echo Failed to install aria2c. Please check your package managers or network settings.
 endlocal
 goto EOF
+
+:extractZip
+:: Usage: call :extractZip "path\to\zipfile.zip" "destination\folder"
+if "%~1"=="" (
+    echo [ERROR] No ZIP file specified.
+    exit /B 1
+)
+if "%~2"=="" (
+    echo [ERROR] No destination folder specified.
+    exit /B 1
+)
+if not exist "%~1" (
+    echo [ERROR] ZIP file "%~1" not found.
+    exit /B 1
+)
+if not exist "%~2" (
+    echo [*] Destination folder "%~2" not found. Creating...
+    mkdir "%~2"
+)
+
+echo [*] Extracting "%~1" to "%~2" using PowerShell...
+powershell -NoProfile -Command "try { Expand-Archive -Path '%~1' -DestinationPath '%~2' -Force } catch { Write-Error $_; exit 1 }"
+if errorlevel 1 (
+    echo [ERROR] Extraction failed.
+    exit /B 1
+)
+echo [*] Extraction completed successfully.
+goto :EOF
