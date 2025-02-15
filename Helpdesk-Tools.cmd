@@ -223,9 +223,30 @@ REM Stat of install office  online
 :downloadOffice
 cls
 pushd %temp%
-dir /b "C:\Program Files\7-Zip" > nul || call :install7zip
-where aria2c 1>NUL || call :installAria2c
-aria2c -x 16 -c -V -o Office-Tool.zip https://otp.landian.vip/redirect/download.php?type=runtime&arch=x64&site=github
+
+:: Ensure 7-Zip is installed; if not, call the install7zip function
+dir /b "C:\Program Files\7-Zip" >nul || call :install7zip
+
+:: Determine system architecture
+set "arch=x64"
+if /I "%PROCESSOR_ARCHITECTURE%"=="x86" set "arch=x86"
+if /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" set "arch=x64"
+if /I "%PROCESSOR_ARCHITECTURE%"=="ARM64" set "arch=arm64"
+echo [*] Detected Architecture: %arch%
+
+:: Construct the download URL with the detected architecture
+set "downloadURL=https://otp.landian.vip/redirect/download.php?type=runtime&arch=%arch%&site=github"
+
+:: Check if aria2c exists; if found, use it; otherwise, fallback to curl
+where aria2c >nul 2>&1
+if %ERRORLEVEL%==0 (
+    echo [*] Using aria2c for download...
+    aria2c -x 16 -c -V -o Office-Tool.zip "%downloadURL%"
+) else (
+    echo [*] aria2c not found. Using curl for download...
+    curl -L -o Office-Tool.zip "%downloadURL%"
+)
+
 cls
 "C:\Program Files\7-Zip\7z.exe" x -y Office-Tool.zip
 popd
