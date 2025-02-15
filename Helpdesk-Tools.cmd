@@ -23,7 +23,7 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================    
 :main
 @echo off
-set "appversion=v0.6.79 Oct 2, 2024"
+set "appversion=v0.6.80 Feb 15, 2025"
 set "dp=%~dp0"
 set "sys32=%windir%\system32"
 call :getOfficePath
@@ -1343,10 +1343,10 @@ iobit-unlocker ^
 foxitreader ^
 googlechrome ^
 firefox ^
-bulkcraрuninstaller ^
+bulkcra?uninstaller ^
 fxsound ^
 vlc
-::choco install -y notepadplusplus googledrivesync dotnet-runtime-6 zalo sharex everything quicklook iobit-unlocker messenger-for-desktop telegram-desktop skype 7zip foxitreader googlechrome firefox bulkcraрунinstaller powertoys fxsound vlc
+::choco install -y notepadplusplus googledrivesync dotnet-runtime-6 zalo sharex everything quicklook iobit-unlocker messenger-for-desktop telegram-desktop skype 7zip foxitreader googlechrome firefox bulkcra???installer powertoys fxsound vlc
 for %%p in (%packageList%) do (choco install -y %%p > nul)
 call :bcuninstaller-Settings
 call :installUnikey
@@ -1394,42 +1394,109 @@ goto :EOF
 :packageManagement
 pushd %temp%
 cls
-echo Install Chocolatey
-choco -v > NUL 2>&1 || powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))&&set "path=%path%;C:\ProgramData\chocolatey\bin"
-cls
-choco -v > NUL 2>&1 && (echo Chocolatey is installed) || (echo Chocolatey is not installed)
-ping -n 2 localhost 1>nul
-cls
-echo Installing aria2, 7zip, jq
-ping -n 2 localhost 1>nul
-choco install -y aria2 7zip jq
-:: intergrate 7z with extensions
+
+:: ============================================================
+:: Install Chocolatey
+:: ============================================================
+echo [*] Checking if Chocolatey is installed...
+call :log "[INFO] Checking if Chocolatey is installed"
+if exist "C:\ProgramData\chocolatey\bin\choco.exe" (
+    echo [*] Chocolatey is already installed. Skipping installation.
+    call :log "[INFO] Chocolatey is already installed. Skipping installation."
+) else (
+    echo [*] Installing Chocolatey...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
+    if exist "C:\ProgramData\chocolatey\bin\choco.exe" (
+        echo [*] Chocolatey installation completed successfully.
+        call :log "[INFO] Chocolatey installation completed successfully."
+        set "PATH=%PATH%;C:\ProgramData\chocolatey\bin"
+    ) else (
+        echo [Warning] Chocolatey installation failed.
+        call :log "[WARNING] Chocolatey installation failed."
+        exit /B 1
+    )
+)
+ping -n 2 localhost 1>NUL
+echo [*] Installing aria2c, jq, yq, 7zip...
+call :log "[INFO] Installing aria2c, jq, yq, 7zip...
+choco install -y aria2 7zip jq yq
 assoc .zip=7-Zip >nul
 assoc .rar=7-Zip >nul
 assoc .tar=7-Zip >nul
-cls
-SETLOCAL EnableDelayedExpansion
-winget -v > nul 2>&1 || (
-    echo Install Winget
-    for /f "delims=" %%i in ('powershell -Command "(Invoke-RestMethod 'https://api.nuget.org/v3-flatcontainer/microsoft.ui.xaml/index.json').versions[-1]"') do (
-        set LATEST_VERSION=%%i
-        echo Fetching UI.XAML latest version !LATEST_VERSION!
-        aria2c -x 16 -c -V https://api.nuget.org/v3-flatcontainer/microsoft.ui.xaml/!LATEST_VERSION!/microsoft.ui.xaml.!LATEST_VERSION!.nupkg
-        "c:\Program Files\7-Zip\7z.exe" x -y microsoft.ui.xaml.!LATEST_VERSION!.nupkg -oUI.XAML
-    )
-    move UI.XAML\tools\AppX\x64\Release\*.appx %temp%\Microsoft.UI.XAML.appx
-    aria2c -x 16 -c -V -o Microsoft.DesktopAppInstaller.msixbundle -c https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
-    aria2c -x 16 -c -V https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
-    start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.XAML.appx
-    start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
-    start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
-    set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
-    if %ERRORLEVEL% EQU 0 (echo Winget PATH add successfully) else (echo Winget PATH add failed)
-    ping -n 2 localhost 1>nul
+ping -n 2 localhost 1>NUL
+echo.
+:: ============================================================
+:: Install Winget (Dependencies & Core) from GitHub using aria2c
+:: ============================================================
+echo [*] Fetching latest Winget release information from GitHub...
+call :log "[INFO] Fetching latest Winget release information from GitHub"
+set "GITHUB_API_URL=https://api.github.com/repos/microsoft/winget-cli/releases/latest"
+
+:: Retrieve the MSIXBUNDLE file URL
+for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command " (Invoke-RestMethod -Uri '%GITHUB_API_URL%' -Headers @{ 'User-Agent'='winget-installer' }).assets | Where-Object { $_.name -like 'Microsoft.DesktopAppInstaller_*.msixbundle' } | Select-Object -First 1 -ExpandProperty browser_download_url"`) do (
+    set "MSIXBUNDLE_URL=%%i"
 )
-ENDLOCAL
+
+:: Retrieve the DesktopAppInstaller_Dependencies.zip file URL
+for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command " (Invoke-RestMethod -Uri '%GITHUB_API_URL%' -Headers @{ 'User-Agent'='winget-installer' }).assets | Where-Object { $_.name -eq 'DesktopAppInstaller_Dependencies.zip' } | Select-Object -First 1 -ExpandProperty browser_download_url"`) do (
+    set "DEP_ZIP_URL=%%i"
+)
+
+echo.
+echo [*] Detected Assets:
+echo     Dependencies ZIP: %DEP_ZIP_URL%
+echo     Main Package: %MSIXBUNDLE_URL%
+echo.
+call :log "[INFO] Detected Winget assets: Main Package: %MSIXBUNDLE_URL%, Dependencies: %DEP_ZIP_URL%"
+
+:: Define local filenames & folders in %temp%
+set "MSIXBUNDLE_FILE=%temp%\Microsoft.DesktopAppInstaller.msixbundle"
+set "DEP_ZIP_FILE=%temp%\DesktopAppInstaller_Dependencies.zip"
+set "DEP_FOLDER=%temp%\DesktopAppInstaller_Dependencies"
+
+:: Download files using aria2c
+echo [*] Downloading Winget package with aria2c...
+call :log "[INFO] Downloading Winget package with aria2c..."
+aria2c -x 16 -c -d "%temp%" -o "Microsoft.DesktopAppInstaller.msixbundle" "%MSIXBUNDLE_URL%"
+
+echo [*] Downloading dependencies ZIP file with aria2c...
+call :log "[INFO] Downloading dependencies ZIP file with aria2c..."
+aria2c -x 16 -c -d "%temp%" -o "DesktopAppInstaller_Dependencies.zip" "%DEP_ZIP_URL%"
+
+:: Extract the dependencies ZIP file
+echo [*] Extracting dependencies...
+call :log "[INFO] Extracting dependencies..."
+powershell -NoProfile -Command "Expand-Archive -Path '%DEP_ZIP_FILE%' -DestinationPath '%DEP_FOLDER%' -Force"
+
+:: Determine system architecture
+set "arch=x64"
+if /I "%PROCESSOR_ARCHITECTURE%"=="x86" set "arch=x86"
+if /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" set "arch=x64"
+if /I "%PROCESSOR_ARCHITECTURE%"=="ARM64" set "arch=arm64"
+echo [*] Detected Architecture: %arch%
+call :log "[INFO] Detected architecture: %arch%"
+
+:: Install dependency packages (.appx files)
+echo [*] Installing dependency packages...
+for /r "%DEP_FOLDER%\%arch%" %%f in (*.appx) do (
+    echo  Installing: %%f
+    powershell -NoProfile -Command "Add-AppxPackage -Path '%%~f'"
+)
+
+:: Install the main Winget package
+echo [*] Installing Winget package...
+powershell -NoProfile -Command "Add-AppxPackage -Path '%MSIXBUNDLE_FILE%'"
+
+:: Cleanup downloaded files & folders from %temp%
+echo [*] Cleaning up Winget installer files...
+if exist "%MSIXBUNDLE_FILE%" del /f /q "%MSIXBUNDLE_FILE%"
+if exist "%DEP_ZIP_FILE%" del /f /q "%DEP_ZIP_FILE%"
+if exist "%DEP_FOLDER%" rd /s /q "%DEP_FOLDER%"
+call :log "[INFO] Winget installation completed"
+
 popd
 goto :EOF
+
 
 REM End of Winget functions
 REM ========================================================================================================================================
