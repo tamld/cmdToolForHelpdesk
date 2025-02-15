@@ -65,7 +65,7 @@ REM Install Software Online using Winget or Chocolatey
 :installAIOMenu
 setlocal
 cls
-title Install All In One online
+title Install All In One Online
 echo.
 echo        ======================================================
 echo        [1] Fresh Install without Office             : Press 1
@@ -74,13 +74,19 @@ echo        [3] Fresh Install with Office 2021           : Press 3
 echo        [4] Fresh Install with Office 2019           : Press 4
 echo        [5] Main Menu                                : Press 5
 echo        ======================================================
-Choice /N /C 12345 /M " Press your choice : "
-if %ERRORLEVEL% == 5 goto main
-if %ERRORLEVEL% == 4 goto installAIO-O2019
-if %ERRORLEVEL% == 3 goto installAIO-O2021
-if %ERRORLEVEL% == 2 goto installAIO-O2024
-if %ERRORLEVEL% == 1 goto installAIO-Fresh
+choice /n /c 12345 /M "Press your choice: "
+
+if errorlevel 5 goto main
+if errorlevel 4 goto installAIO-O2019
+if errorlevel 3 goto installAIO-O2021
+if errorlevel 2 goto installAIO-O2024
+if errorlevel 1 goto installAIO-Fresh
+
+echo Invalid selection. Please try again.
+pause >nul
 endlocal
+goto installAIOMenu
+
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities
 :installAIO
@@ -89,9 +95,9 @@ cls
 call :checkCompatibility
 call :settingWindows
 call :setHighPerformance
-call :choco-Endusers
-call :choco-RemoteSupport
-call :choco-Chat
+call :installEndusers
+call :installChatApps
+call :installRemoteApps
 call :installUnikey
 call :createShortcut
 call :installSupportAssistant
@@ -1098,50 +1104,52 @@ REM End of Utilities functions
 REM ========================================================================================================================================
 :packageManagementMenu
 setlocal
-REM Start of Winget Menu
+REM Start of Package Management Software Main Menu
 cd /d %dp%
 cls
-title Package Management Software main Menu
+title Package Management Software Main Menu
 echo.
 echo        ====================================================
 echo        [1] Install Package Management             : Press 1
-echo        [2] Install End Users applications         : Press 2
-echo        [3] Install Remote applications            : Press 3
-echo        [4] Install Network applications           : Press 4
-echo        [5] Install Chat applications              : Press 5
-echo        [6] Upgrade online all                     : Press 6
+echo        [2] Install End Users Applications         : Press 2
+echo        [3] Install Remote Applications            : Press 3
+echo        [4] Install Network Applications           : Press 4
+echo        [5] Install Chat Applications              : Press 5
+echo        [6] Upgrade All Software Online            : Press 6
 echo        [7] Main Menu                              : Press 7
 echo        ====================================================
 
-Choice /N /C 1234567 /M " Press your choice : "
-if %ERRORLEVEL% == 7 goto :main
-if %ERRORLEVEL% == 6 call :update-All & goto :packageManagementMenu
-::if %ERRORLEVEL% == 5 call :winget-Chat & goto :packageManagementMenu
-if %ERRORLEVEL% == 5 call :choco-Chat & goto :packageManagementMenu
-::if %ERRORLEVEL% == 4 call :winget-Network & goto :packageManagementMenu
-if %ERRORLEVEL% == 4 call :choco-Network & goto :packageManagementMenu
-if %ERRORLEVEL% == 3 call :choco-RemoteSupport & goto :packageManagementMenu
-::if %ERRORLEVEL% == 2 call :winget-Endusers & goto :packageManagementMenu
-if %ERRORLEVEL% == 2 call :choco-Endusers & goto :packageManagementMenu
-if %ERRORLEVEL% == 1 call :packageManagement & goto :packageManagementMenu
-REM End of Winget Menu
-REM ==============================================================================
-REM Start of Winget functions
-::=======================================================================================================================
-:: Note
-:: Without Scope Machine, the software will be installed with the current user profile instead of the system profile
-:: Package list can be search with command: 
-::            *winget search [software name]* eg: winget search teamviewer
-::TeamViewer: Remote Control 9WZDNCRFJ0RH               Unknown msstore
-::TeamViewer                 TeamViewer.TeamViewer      15.42.9 winget
-::TeamViewer Host            TeamViewer.TeamViewer.Host 15.42.9 winget
-::=============================================
-:: Advanced searching with findstr /i that help filtering with condition(s)
-::            *winget search [software] eg: winget search team | findstr /i "teamviewer"
-::Result
-::TeamViewer Host                           TeamViewer.TeamViewer.Host           15.42.9                          winget
-::TeamViewer                                TeamViewer.TeamViewer                15.42.9                          winget
-::=======================================================================================================================
+Choice /N /C 1234567 /M "Press your choice: "
+if errorlevel 7 goto :main
+if errorlevel 6 (
+    call :update-All 
+    goto :packageManagementMenu
+)
+if errorlevel 5 (
+    call :installChatApps 
+    goto :packageManagementMenu
+)
+if errorlevel 4 (
+    call :installNetworkApps 
+    goto :packageManagementMenu
+)
+if errorlevel 3 (
+    call :installRemoteApps 
+    goto :packageManagementMenu
+)
+if errorlevel 2 (
+    call :installEndusers 
+    goto :packageManagementMenu
+)
+if errorlevel 1 (
+    call :packageManagement 
+    goto :packageManagementMenu
+)
+
+echo Invalid selection. Please try again.
+pause
+goto :packageManagementMenu
+
 
 :update-All
 Title Update Softwares
@@ -1163,14 +1171,58 @@ cls
 call :hold
 goto :EOF
 
-rem :installNetworkApp
-rem cls
-rem call :choco-Network 
-rem call :winget-Network
-rem goto :EOF
+:installEndusers
+cls
+Title Install End User Softwares
+where winget >nul 2>&1
+if %errorlevel%==0 (
+    echo [*] Using Winget to install End Users Applications...
+    call :winget-Endusers
+) else (
+    echo [*] Winget not found. Switching to Chocolatey...
+    call :choco-Endusers
+)
+goto :EOF
 
-::Setting for Mobaxterm v23.2
-::dir /b "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" > NUL 2>&1 || curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
+:installRemoteApps
+cls
+Title Install Remote Apps
+where winget >nul 2>&1
+if %errorlevel%==0 (
+    echo [*] Using Winget to install Remote Applications...
+    call :winget-RemoteSupport
+) else (
+    echo [*] Winget not found. Switching to Chocolatey for Remote Applications...
+    call :choco-RemoteSupport
+)
+goto :EOF
+
+:installNetworkApps
+cls
+Title Install Network Apps
+where winget >nul 2>&1
+if %errorlevel%==0 (
+    echo [*] Using Winget to install Network Applications...
+    call :winget-Network
+) else (
+    echo [*] Winget not found. Switching to Chocolatey for Network Applications...
+    call :choco-Network
+)
+goto :EOF
+
+:installChatApps
+cls
+Title Install Chat Apps
+where winget >nul 2>&1
+if %errorlevel%==0 (
+    echo [*] Using Winget to install Chat Applications...
+    call :winget-Chat
+) else (
+    echo [*] Winget not found. Switching to Chocolatey for Chat Applications...
+    call :choco-Chat
+)
+goto :EOF
+
 :choco-Network
 cls
 Title Install Network softwares by Chocolatey
@@ -1244,7 +1296,6 @@ Microsoft.OpenSSH.Beta ^
 Rclone.Rclone ^
 kapitainsky.RcloneBrowser ^
 Famatech.AdvancedIPScanner ^
-AppWork.JDownloader ^
 Microsoft.VisualStudioCode ^
 WinFsp.WinFsp ^
 SSHFS-Win.SSHFS-Win ^
@@ -1254,8 +1305,11 @@ Microsoft.VCRedist.2015+.x64 ^
 Microsoft.DotNet.Runtime.6 ^
 Microsoft.DotNet.SDK.6 ^
 NETworkManager ^
-Oracle.VirtualBox
-rem for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+Oracle.VirtualBox ^
+xpipe-io.xpipe ^
+LocalSend.LocalSend 
+
+:: for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
 for %%p in (%packageList%) do (call :installSoft %%p)
 call :killtasks
 call :log "Finished Network softwares by Winget"
@@ -1324,6 +1378,7 @@ Microsoft.Skype ^
 Zoom.Zoom
 for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
 endlocal
+call :killtasks
 goto :EOF
 
 :winget-RemoteSupport
@@ -1331,6 +1386,7 @@ cls
 call :checkCompatibility
 call :installsoft TeamViewer.TeamViewer
 call :installsoft DucFabulous.UltraViewer
+call :killtasks
 goto :EOF
 
 :choco-RemoteSupport
@@ -1360,7 +1416,6 @@ iobit-unlocker ^
 foxitreader ^
 googlechrome ^
 firefox ^
-bulkcra?uninstaller ^
 fxsound ^
 vlc
 ::choco install -y notepadplusplus googledrivesync dotnet-runtime-6 zalo sharex everything quicklook iobit-unlocker messenger-for-desktop telegram-desktop skype 7zip foxitreader googlechrome firefox bulkcra???installer powertoys fxsound vlc
@@ -1392,18 +1447,28 @@ set packageList=Notepad++.Notepad++ ^
 Microsoft.DotNet.Runtime.6 ^
 ShareX.ShareX ^
 voidtools.Everything ^
-IObit.IObitUnlocker ^
+Microsoft.WindowsTerminal ^
 7zip.7zip ^
 Foxit.FoxitReader ^
-Notepad++.Notepad++ ^
 Google.Chrome ^
 Mozilla.Firefox ^
-Klocman.BulkCrapUninstaller ^
-VideoLAN.VLC
+VideoLAN.VLC ^
+PrestonN.FreeTube ^
+CrystalRich.LockHunter ^
+PDFgear.PDFgear ^
+FxSound.FxSound ^
+CodeSector.TeraCopy ^
+Microsoft.VisualStudioCode ^
+Starship.Starship ^
+chrisant996.Clink ^
+th-ch.YouTubeMusic ^
+hluk.CopyQ ^
+LocalSend.LocalSend ^
+HiBitSoftware.HiBitUninstaller
 
 for %%p in (%packageList%) do (call :installSoft %%p -h --accept-package-agreements --accept-source-agreements --ignore-security-hash --force)
 endlocal
-call :bcuninstaller-Settings
+::call :bcuninstaller-Settings
 call :killtasks
 cls
 goto :EOF
@@ -1539,54 +1604,31 @@ REM Start of child process that can be reused functions
 :: Checks for required tools (Chocolatey, 7-Zip, Winget) and installs them if missing.
 :checkCompatibility
 @echo off
-Title Check Windows Compatibility
 cls
 
-::-----------------------------
-:: Check & update Chocolatey
-::-----------------------------
-:: Ensure Chocolatey is installed; if missing, call packageManagement.
+REM --- Check Chocolatey ---
 choco -v >nul 2>&1 || call :packageManagement
-
-:: Fetch latest Chocolatey version using PowerShell
 for /f "delims=" %%p in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/chocolatey/choco/releases/latest').tag_name"') do set "choco_latest_release=%%p"
-:: Get current Chocolatey version.
 for /f "delims=" %%p in ('choco -v') do set "choco_current_version=%%p"
-echo [*] Chocolatey - Current: %choco_current_version%, Latest: %choco_latest_release%
-if not "%choco_latest_release%"=="%choco_current_version%" (
-    echo [*] Chocolatey is not up-to-date. Calling packageManagement...
+if not "%choco_current_version%"=="%choco_latest_release%" (
     call :packageManagement
-)
-
-::-----------------------------
-:: Check for 7-Zip
-::-----------------------------
-if not exist "%ProgramFiles%\7-Zip\7z.exe" (
-    echo [*] Installing 7-Zip...
-    choco install -y 7zip.install >nul 2>&1
-)
-
-::-----------------------------
-:: Check & update Winget (requires Windows 10 build 19041+)
-::-----------------------------
-for /f "tokens=4 delims=[] " %%i in ('ver') do set "VERSION=%%i"
-if "%VERSION%" GEQ "10.0.19041" (
-    winget -v >nul 2>&1 || call :packageManagement
-    for /f "delims=" %%a in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest').tag_name"') do set "winget_latest_release=%%a"
-    for /f "delims=" %%b in ('winget -v') do set "winget_current_version=%%b"
-    echo [*] Winget - Current: %winget_current_version%, Latest: %winget_latest_release%
-    if not "%winget_latest_release%"=="%winget_current_version%" (
-        echo [*] Winget is not up-to-date. Calling packageManagement...
-        call :packageManagement
-    ) else (
-        echo [*] Winget is up-to-date.
-    )
 ) else (
-    echo [*] Winget is not supported on this version: %VERSION%
+    echo [*] Chocolatey is up-to-date: %choco_current_version%
 )
 
-ping -n 2 localhost >nul
-goto :EOF
+REM --- Check Winget ---
+for /f "tokens=4 delims=[]" %%i in ('ver') do set "VERSION=%%i"
+if not "%VERSION%" GEQ "10.0.19041" exit /b 0
+winget -v >nul 2>&1 || call :packageManagement
+for /f "delims=" %%a in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest').tag_name"') do set "winget_latest_release=%%a"
+for /f "delims=" %%b in ('winget -v') do set "winget_current_version=%%b"
+if not "%winget_current_version%"=="%winget_latest_release%" (
+    call :packageManagement
+) else (
+    echo [*] Winget is up-to-date: %winget_current_version%
+)
+ping -n 2 localhost 1>NUL
+exit /b 0
 
 
 ::=====================================================================
@@ -1897,19 +1939,7 @@ dir /b "C:\Program Files (x86)\Internet Download Manager" > nul 2>&1 || (
 	call :checkCompatibility
 	choco install -y internet-download-manager > nul 2>&1
 )
-cls
-echo This will open an external link from Github call IDM Activation Script
-echo Refer link https://github.com/lstprjct/IDM-Activation-Script/tree/main
-echo Do with your own risks, be careful!!!
-ping -n 3 localhost 1>NUL
-::start powershell.exe -command iwr -useb https://raw.githubusercontent.com/lstprjct/IDM-Activation-Script/main/IAS.ps1 ^| iex
-cls
-
 powershell -Command "iex(irm is.gd/idm_reset)"
-REM aria2c https://raw.githubusercontent.com/lstprjct/IDM-Activation-Script/main/IAS_0.8.cmd
-REM powershell -Command "(Get-Content $env:TEMP\IAS_0.8.cmd) -replace 'name=', 'name=PC' | Set-Content $env:TEMP\IAS_0.8.cmd"
-REM powershell -Command "(Get-Content $env:TEMP\IAS_0.8.cmd) -replace "set /p name="What is the name to be registered?"", 'set name=PC' | Set-Content $env:TEMP\IAS_0.8.cmd"
-REM powershell -Command "Start-Process -FilePath "$env:TEMP\IAS_0.8.cmd" -ArgumentList "/act""
 popd
 call :clean
 goto :EOF
@@ -1917,16 +1947,38 @@ goto :EOF
 ::Kill all the app running
 :killtasks
 cls
-setlocal
-set applist=IObitUnlocker.exe ^
-ShareX.exe ^
-BCUninstaller.exe ^
-advanced_ip_scanner.exe ^
-PowerToys.exe ^
-FxSound.exe
-for %%p in (%applist%) do (taskkill /IM %%p /F >NUL)
+setlocal EnableDelayedExpansion
+echo [*] Terminating running application processes...
+
+REM List of executables to terminate (space-separated).
+REM For processes with spaces in the name, include the name in quotes.
+set "appList=notepad++.exe chrome.exe firefox.exe FoxitPDFReader.exe vlc.exe ShareX.exe Everything.exe IObitUnlocker.exe FxSound.exe Telegram.exe Skype.exe Zoom.exe Viber.exe Messenger.exe MobaXterm.exe WinSCP.exe putty.exe VirtualBox.exe rclone.exe RcloneBrowser.exe Advanced_IP_Scanner.exe JDownloader2.exe Code.exe sshfs-win.exe NetworkManager.exe TeamViewer.exe UltraViewer_Desktop.exe AnyDesk.exe UnikeyNT.exe xpipe.exe LocalSend.exe TeraCopy.exe WindowsTerminal.exe LockHunter.exe PDFgear.exe CopyQ.exe HiBitUninstaller.exe Zalo.exe FreeTube.exe VirtualBox-7.1.6-167084-W.exe TeamViewer_Service.exe UltraViewer_Service.exe TeraCopyService.exe msedge.exe "YouTube Music.exe" "PDFLauncher.exe""
+
+REM Comma-separated list of essential processes to exclude.
+set "excludeList=explorer.exe,svchost.exe,taskmgr.exe,cmd.exe,conhost.exe,winlogon.exe,csrss.exe,lsass.exe,services.exe,wininit.exe,smss.exe"
+
+for %%a in (%appList%) do (
+    REM Remove any surrounding quotes from the token.
+    set "proc=%%~a"
+    echo [*] Checking for process: !proc!...
+    echo %excludeList% | findstr /i "\<!proc!\>" >nul
+    if !errorlevel! equ 0 (
+        echo [!] Skipping essential process: !proc!
+    ) else (
+        taskkill /F /IM "!proc!" /FI "STATUS eq RUNNING" >nul 2>&1
+        if !errorlevel! equ 0 (
+            echo [*] Terminated: !proc!
+        ) else (
+            echo [*] !proc! not running or not found.
+        )
+    )
+)
+
 endlocal
+echo [*] Task killing process completed.
+ping -n 2 localhost >nul
 goto :EOF
+
 
 :: End of child process functions
 :: ========================================================================================================================================
