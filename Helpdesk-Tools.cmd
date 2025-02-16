@@ -45,8 +45,7 @@ echo    [6] Update CMD                                 : Press 6
 echo    [7] Exit                                       : Press 7
 ::echo    [8] Test                                       : Press 8
 echo    ========================================================
-::Choice /N /C 12345678 /M " Your choice is :"
-Choice /N /C 1234567 /M " Your choice is :"
+Choice /N /C 1234567 /M " Press your choice :"
 ::if %ERRORLEVEL% == 8 call :checkCompatibility & goto main
 if %ERRORLEVEL% == 7 call :clean && goto exit
 if %ERRORLEVEL% == 6 call :updateCMD & goto main

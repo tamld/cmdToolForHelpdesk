@@ -1,85 +1,97 @@
-# I. Giới thiệu
 
-- Mục tiêu hỗ trợ cho công việc Helpdesk, kĩ thuật viên hàng ngày
-- Cải thiện hiệu quả và năng suất lao động bằng cách sử dụng các scripts hỗ trợ tự động cài đặt các ứng dụng, gói ứng dụng
-- Fix một số lỗi liên quan đến Office, Windows
-- Các phần mềm cài đặt sẽ sử dụng Package Management là [Chocolately](https://github.com/chocolatey/choco) và [Winget](https://github.com/microsoft/winget-cli)
-- Ứng dụng hỗ trợ Windows 10 1809 trở đi và cần kết nối internet
+<h1 align="center">🚀 Helpdesk Tool - Công cụ hỗ trợ IT</h1>
+<p align="center">
+  <img src="https://img.shields.io/badge/status-active-brightgreen" alt="Status">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
+  <img src="https://img.shields.io/github/downloads/tamld/tao-repo-tren-github/total.svg">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/github/forks/tamld/tao-repo-tren-github.svg">
+  <img src="https://img.shields.io/github/stars/tamld/tao-repo-tren-github.svg">
+  <img src="https://img.shields.io/github/followers/tamld.svg?style=social&label=Follow&maxAge=2592000">
+</p>
 
-:warning::warning::warning:
+**Tác giả:** [tamld](https://github.com/tamld)  
+**Yêu cầu:** Windows 10 (1809+) & kết nối internet  
 
-> [!NOTE]**Lưu ý**
-> - Một số chức năng vẫn đang trong giai đoạn phát triển hoặc không hoạt động như mong muốn. Mọi người có thể tạo issues tại [đây](https://github.com/tamld/cmdToolForHelpdesk/issues).
-> - Các ứng dụng, tính năng, thiết lập có thể tắt bằng cách thên REM hoặc :: vào phía trước câu lệnh đó.
-> - File scripts nếu bị ngừng hoặc thoát đột ngột, hãy chạy lại file scripts và chọn chức năng ***"7. EXIT"*** để dọn các file tạm sinh ra trong quá trình cài đặt.
-> - Function List trong Notepad++ giúp quản lý các label trong CMD tiện lợi hơn.
-> - Các scripts trong file CMD được cá nhân hóa theo cá nhân người viết. Mọi người có thể tự do clone / fork / edit lại file này mà không cần yêu cầu bất cứ quyền gì từ tác giả.
-> - Hãy test trong môi trường máy ảo trước khi thực hiện ở thực tế.
+---
 
-# II. Hướng dẫn
+## 📖 Mục lục
+- [📖 Mục lục](#-mục-lục)
+- [🔹 Giới thiệu](#-giới-thiệu)
+- [⚙ Chức năng chính](#-chức-năng-chính)
+- [📌 Giao diện](#-giao-diện)
+- [📌 Hướng dẫn sử dụng](#-hướng-dẫn-sử-dụng)
+  - [1. **Chạy script với quyền Administrator**](#1-chạy-script-với-quyền-administrator)
+  - [2. **Chọn chức năng cần thực hiện:**](#2-chọn-chức-năng-cần-thực-hiện)
+  - [3. **Cập nhật script (nếu cần)**](#3-cập-nhật-script-nếu-cần)
+  - [4. **Cài đặt phần mềm tự động**](#4-cài-đặt-phần-mềm-tự-động)
 
-## 1. Menu chức năng
+---
 
-### **1.1. Cài đặt tất cả app, bằng scripts (Install All In One Online)**
+## 🔹 Giới thiệu
 
-Cho phép cài đặt, cấu hình tự động các chức năng cơ bản như: múi giờ GMT+7, cài đặt các gói ứng dụng miễn phí, cơ bản như 7zip, Unikey, Chrome, Firefox, Foxit PDF Reader, Ultraview, Teamviewer...v..v..
-Cài theo các option:
+**Helpdesk Tool** là công cụ hỗ trợ IT, giúp tự động hóa cài đặt phần mềm, xử lý lỗi hệ thống và tối ưu Windows.  
+**Mục tiêu chính**:
+✔ Giảm thời gian xử lý lỗi cho kỹ thuật viên IT.  
+✔ Cài đặt phần mềm tự động qua **Chocolatey & Winget**.  
+✔ Khắc phục lỗi Windows, Office, kích hoạt bản quyền.  
 
-- Cài đặt software cho máy mới, không kèm office (Fresh Install without Office)
-- Cài đặt software cho máy mới, không kèm office 2019 (Fresh Install with Office 2019)
-- Cài đặt software cho máy mới, không kèm office 2021 (Fresh Install with Office 2021)
-- Cài đặt software cho máy mới, không kèm office 2019 (Fresh Install with Office 2021)
-- Cài đặt software cho máy mới, không kèm office 2021 (Fresh Install with Office 2024)
-![Menu 1.1](pictures/1.png)
-### **1.2. Cài đặt và xử lý lỗi liên quan đến Office - Windows (Windows Office Utilities)**
+📌 **Lưu ý quan trọng**:
+- Một số chức năng vẫn đang phát triển. Nếu gặp lỗi, hãy báo cáo tại [GitHub Issues](https://github.com/tamld/cmdToolForHelpdesk/issues).
+- Trước khi chạy, nên thử trên **máy ảo** để tránh lỗi hệ thống.
 
-- Tạo bộ cài đăt office online 2019 - 2021 - 365 (Install Office Online)
-- Gỡ cài đặt Office (Uninstall Office)
-- Gỡ key Office đã cài đặt - thường dùng để nạp key mới, đổi phiên bản Office (Remove Office Key)
-- Chuyển đổi các version từ Retail sang Volume lincense và ngược lại (Convert Office Retail <==> Volume License)
-- Fix tình trạng Noncore khi nhập Key Windows (Fix Noncore Windows)
-- Nạp SKUS giúp Windows chuyển sang các eddition khác nhau - Home - Pro - Enterprise - LTSB - LTSC... (Load SKUS Windows)
-![Menu 1.2](pictures/2.png)
-### **1.3. Hỗ trợ kích hoạt Windows / Office online (Active Licenses)**
+---
 
-- Kích hoạt Windows - Office online - Key Online (Online)
-- Kích hoạt Windows - Office by phone - Key Error code 08 (By Phone)
-- Kiểm tra tình trạng kích hoạt Windows - Office (Check Licenses)
-- Sao lưu License Windows - Office (Backup Licenses)
-- Khôi phục License Windows - Office từ folder Backup (Restore License)
-- Kích hoạt Windows / Office bằng MAS - Microsoft Activation Scripts (MAS)
-  
-:dollar::dollar::dollar:
-**Lưu ý**
-- File scripts chỉ hỗ trợ các bước kích hoạt Windows băng CMD
-- Key active cần tự chuẩn bị trước
-- Nguồn key miễn phí, mọi người có thể đăng kí tài khoản hoặc mua subscription nếu có điều kiện:
-  - Reg account Office 365 Online: [PITVN Community](https://pitvncommunity.com/)
-  - Forum: [VNZ](https://vn-z.vn/threads/tong-hop-key-windows-va-office.10945/)
-  - FB: [PITVN](https://www.facebook.com/groups/pitvn2023), [3S-Team](https://www.facebook.com/ad.3s.team)
-  - Get IID, CID: [GetCID](https://getcid.info/), [kichhoat24h](https://kichhoat24h.com/), [khoatoantin](https://khoatoantin.com/pidms)
+## ⚙ Chức năng chính
 
-### **1.4. Các tiện ích nhỏ (Utilities)**
+| Chức năng | Mô tả |
+|-----------|-------|
+| **📦 Cài đặt phần mềm** | Tự động cài đặt Chrome, Unikey, TeamViewer... |
+| **🔄 Sửa lỗi Windows** | Khắc phục lỗi update, xóa cache, tối ưu registry |
+| **🖥️ Quản lý Office** | Gỡ cài đặt, chuyển đổi phiên bản, sửa lỗi kích hoạt |
+| **🔑 Kích hoạt Windows & Office** | Kiểm tra, sao lưu, phục hồi key bản quyền |
+| **💾 Dọn dẹp hệ thống** | Xóa file rác, tối ưu hiệu suất |
+| **🔌 Tùy chỉnh Windows** | Chỉnh Power Plan, đổi hostname, disable service thừa |
+| **📂 Quản lý package** | Hỗ trợ cài đặt & cập nhật phần mềm bằng `Chocolatey` & `Winget` |
 
-- Thiết lập High perfomance - Power plan (Set High Performance)
-- Đổi hostname máy tính (Change hostname)
-- Dọn dẹp rác hệ thống bằng Cleanmgr (Clean up system)
-- Thêm user vào admin group (Add user to Admin group)
-- Thêm user vào user group (Add user to Users group)
-- Cài đặt phần mềm Support Assistance các hãng như DELL, HP, Lenovo ... (Install Support Assistance)
-- Hỗ trợ join domain từ CMD (Install Support Assistance)
+---
+## 📌 Giao diện
 
-### **1.5. Cài đặt phần mềm tự động (Package Management)**
+![Main menu](pictures/1.png)
+![AIO](pictures/1-1.png)
+![Office](pictures/1-2.png)
+![License](pictures/1-3.png)
+![Utilities](pictures/1-4.png)
+![Package Management](pictures/1-5.png)
 
-- Cài đặt Winget, Chocolately (Install Package Management)
-- Cài đặt các phần mềm cơ bản cho End Users (Install End Users applications)
-- Cài đặt các ứng dụng hỗ trợ remote từ xa như Teamviewer, Ultraview (Install Remote applications)
-- Cài đặt các ứng dụng Network (Install Network applications)
-- Cài đặt các ứng dụng Chat, communicate (Install Chat applications)
-- Tự động cập nhật các ứng dụng trên máy
-  
-### **1.6. Cập nhật file CMD online, từ trang chủ (Update CMD)**
+## 📌 Hướng dẫn sử dụng
 
-Tự động download file InstallAPP.cmd trực tiếp từ github. Giúp cập nhật latest version cho file
 
-### **1.7. Đóng và dọn dẹp file tạm (Exit)**
+### 1. **Chạy script với quyền Administrator**  
+
+### 2. **Chọn chức năng cần thực hiện:**
++ Nhập số tương ứng với chức năng (1, 2, 3...).
++ Làm theo hướng dẫn hiển thị trên màn hình.
+
+### 3. **Cập nhật script (nếu cần)**
+
+### 4. **Cài đặt phần mềm tự động**
+Có thể chọn cài đặt theo từng nhóm phần mềm hoặc tất cả cùng lúc:
+
+
+|**Chế độ**|Ứng dụng được cài|Menu|
+|-----------|-------|-------|
+|**Tất cả**|Cài toàn bộ phần mềm tự động|**1**|
+|**Cơ bản**|Chrome, 7-Zip, Unikey, Foxit PDF|**5-2**|
+|**Hỗ trợ IT**|Zalo, Facebook Messenger, Telegram|**5-3**|
+|**Tools Network**|Xpipe, Rclone, OpenSSH, mobaxterm,Putty|**5-4**|
+|**Công cụ chat**|Microsoft Office, Teams, Zoom|**5-5**|
+|**Upgrade all**| Tự động cập nhật danh sách quản lí bằng Winget hoặc chocolatey |**5-6**|
+
+---
+
+🔗 Nguồn tài nguyên tham khảo:
+Chocolatey
+Winget CLI
+Microsoft Docs
