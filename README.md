@@ -26,6 +26,8 @@
   - [2. **Chọn chức năng cần thực hiện:**](#2-chọn-chức-năng-cần-thực-hiện)
   - [3. **Cập nhật script (nếu cần)**](#3-cập-nhật-script-nếu-cần)
   - [4. **Cài đặt phần mềm tự động**](#4-cài-đặt-phần-mềm-tự-động)
+- [📜 Giấy phép](#-giấy-phép)
+- [💡 Đóng góp \& Phát triển](#-đóng-góp--phát-triển)
 - [🔗 Nguồn tài nguyên tham khảo](#-nguồn-tài-nguyên-tham-khảo)
 
 ---
@@ -67,7 +69,7 @@ Dưới đây là giao diện chính và một số tính năng quan trọng:
 - **Tùy chọn cài đặt phần mềm AIO (All-in-One)**
   ![AIO](pictures/1-1.png)
 
-- **Công cụ quản lý Office**
+- **Công cụ quản lý Windows & Office**
   ![Office](pictures/1-2.png)
 
 - **Kích hoạt Windows & Office**
@@ -105,6 +107,25 @@ Có thể chọn cài đặt theo từng nhóm phần mềm hoặc tất cả c�
 |**🔄 Upgrade all**| Tự động cập nhật danh sách quản lí bằng Winget hoặc chocolatey |**5-6**|
 
 ---
+
+## 📜 Giấy phép
+Dự án này được cấp phép theo **MIT License** - xem chi tiết tại [LICENSE](LICENSE).
+
+## 💡 Đóng góp & Phát triển
+Chúng tôi hoan nghênh mọi đóng góp từ cộng đồng! 🚀  
+
+Bạn có thể:
+- 📌 **Fork dự án** và phát triển thêm tính năng mới.
+- 🔧 **Chỉnh sửa và tối ưu mã nguồn** để cải thiện hiệu suất.
+- 🛠 **Gửi Pull Request (PR) trên GitHub** nếu bạn có cải tiến.
+- 🐞 **Báo lỗi & đề xuất tính năng mới** trong [GitHub Issues](https://github.com/tamld/cmdToolForHelpdesk/issues).
+
+📌 **Cách tham gia**:
+1. **Fork repo này** bằng cách nhấn nút "Fork" trên GitHub.
+2. **Clone repo về máy**:
+```cmd
+git clone https://github.com/tamld/cmdToolForHelpdesk.git
+```
 
 ## 🔗 Nguồn tài nguyên tham khảo
 
