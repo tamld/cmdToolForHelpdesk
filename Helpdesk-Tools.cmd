@@ -1369,8 +1369,8 @@ goto :EOF
 :winget-RemoteSupport
 cls
 call :checkCompatibility
-call :installsoft TeamViewer.TeamViewer
-call :installsoft DucFabulous.UltraViewer
+call :installSoft_ByWinget TeamViewer.TeamViewer
+call :installSoft_ByWinget DucFabulous.UltraViewer
 call :killtasks
 goto :EOF
 
@@ -1625,7 +1625,7 @@ echo %timestamp% %1 >> %logfile%
 cls
 goto :EOF
 
-:installsoft
+:installSoft_ByWinget
 Title Install Software
 REM Set the software name to install
 set "software=%~1"
