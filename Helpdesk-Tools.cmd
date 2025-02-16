@@ -539,7 +539,7 @@ cls
 Title Uninstall Office Using BulkCrapUninstaller
 echo This will install BCUninstaller into your computer
 call :checkCompatibility
-call :installSoft Klocman.BulkCrapUninstaller
+call :installSoft_ByWinget Klocman.BulkCrapUninstaller
 call :bcuninstaller-Settings
 goto :office-windows
 
@@ -1258,7 +1258,8 @@ virtualbox ^
 VBoxGuestAdditions.install ^
 virtualbox-guest-additions-guest.install ^
 "Mobatek.MobaXterm --version 23.5.5182"
-rem for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+
+
 for %%p in (%packageList%) do (
 	cls
 	echo Installing %%p
@@ -1279,15 +1280,7 @@ echo OpenSSH, rclone, rclone-browser, mobaxterm, VirtualBox
 echo Advanced IP Scanner, JDownloader, VSCode, Notepad++
 echo SSHFS, WinFSP, WinSCP, Putty, Network Manager, Dotnet 6
 echo ========================================================
-ping -n 3 localhost 1>NUL
-cls
 call :checkCompatibility
-call :installSoft "Mobatek.MobaXterm --version 23.2.0.5082"
-:: Copy Mobaxterm setting
-if not exist "C:\Program Files (x86)\Mobatek\MobaXterm" (echo Mobaxterm is not installed) else (
-curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
-echo Mobaxterm setting complete
-)
 ping -n 2 localhost 1>NUL
 cls
 set packageList=Notepad++.Notepad++ ^
@@ -1309,24 +1302,16 @@ Oracle.VirtualBox ^
 xpipe-io.xpipe ^
 LocalSend.LocalSend 
 
-:: for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
-for %%p in (%packageList%) do (call :installSoft %%p)
-call :killtasks
-call :log "Finished Network softwares by Winget"
-endlocal
-goto :EOF
-
-:winget-Mobaxterm
-cls
-call :checkCompatibility
-echo Installing Mobaxterm v23.2.0.5082
-winget install Mobatek.MobaXterm --version 23.2.0.5082 --accept-package-agreements --accept-source-agreements
+:: for %%p in (%packageList%) do (call :installSoft_ByWinget %%p --accept-package-agreements --accept-source-agreements)
+for %%p in (%packageList%) do (call :installSoft_ByWinget %%p)
 :: Copy Mobaxterm setting
 if not exist "C:\Program Files (x86)\Mobatek\MobaXterm" (echo Mobaxterm is not installed) else (
 curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://drive.google.com/uc?export=download&id=1cO4GAkbdvbOKju9QVH0OXjN48_gS0D82"
 echo Mobaxterm setting complete
 )
-ping -n 2 localhost 1>NUL
+call :killtasks
+call :log "Finished Network softwares by Winget"
+endlocal
 goto :EOF
 
 :choco-Chat
@@ -1376,7 +1361,7 @@ Viber.Viber ^
 Facebook.Messenger ^
 Microsoft.Skype ^
 Zoom.Zoom
-for %%p in (%packageList%) do (call :installSoft %%p --accept-package-agreements --accept-source-agreements)
+for %%p in (%packageList%) do (call :installSoft_ByWinget %%p --accept-package-agreements --accept-source-agreements)
 endlocal
 call :killtasks
 goto :EOF
@@ -1466,7 +1451,7 @@ hluk.CopyQ ^
 LocalSend.LocalSend ^
 HiBitSoftware.HiBitUninstaller
 
-for %%p in (%packageList%) do (call :installSoft %%p -h --accept-package-agreements --accept-source-agreements --ignore-security-hash --force)
+for %%p in (%packageList%) do (call :installSoft_ByWinget %%p -h --accept-package-agreements --accept-source-agreements --ignore-security-hash --force)
 endlocal
 ::call :bcuninstaller-Settings
 call :killtasks
@@ -1630,42 +1615,6 @@ if not "%winget_current_version%"=="%winget_latest_release%" (
 ping -n 2 localhost 1>NUL
 exit /b 0
 
-
-::=====================================================================
-:installChocolatey
-Title Install Chocolatey
-cls
-echo Installing Chocolatey ...
-choco -v > nul 2>&1 || powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')) > nul 2>&1
-set "path=%path%;C:\ProgramData\chocolatey\bin" > nul
-choco install -y aria2 7zip jq > nul
-assoc .zip=7-Zip >nul
-assoc .rar=7-Zip >nul
-assoc .tar=7-Zip >nul
-cls
-ping -n 2 localhost 1>nul
-goto :EOF
-
-:installWinget
-Title Install Winget
-cls
-echo Installing Winget ...
-pushd %temp%
-:: https://learn.microsoft.com/en-us/windows/package-manager/winget/
-:: check aria2c package installed
-where aria2c 1>NUL || call :installAria2c
-aria2c -x 16 -c -V -o Microsoft.UI.Xaml.appx https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx
-aria2c -x 16 -c -V -o Microsoft.DesktopAppInstaller.msixbundle https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
-aria2c -x 16 -c -V https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
-::start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.2.7.appx
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.UI.Xaml.appx
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.VCLibs.x64.14.00.Desktop.appx
-start /wait powershell Add-AppPackage -ForceUpdateFromAnyVersion ./Microsoft.DesktopAppInstaller.msixbundle
-set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WindowsApps"
-ping -n 2 localhost 1>nul
-cls
-popd
-goto :EOF
 ::=====================================================================
 ::@%1 will inherit parameters from the outside input function
 ::@exit /b will exit function instead of remaining running scripts codes
@@ -1676,8 +1625,6 @@ echo %timestamp% %1 >> %logfile%
 cls
 goto :EOF
 
-:: Function to install soft using Winget utilities
-:: To install with winget, call function by using call :installsoft "software id". eg: call :installsoft "7zip.7zip"
 :installsoft
 Title Install Software
 REM Set the software name to install
@@ -1769,41 +1716,6 @@ assoc .bzip2=7-Zip
 assoc .xz=7-Zip
 goto :EOF
 
-    
-:installNotepadThemes
-Title Install Notepad++ Themes
-cls
-setlocal
-if exist "%ProgramFiles(x86)%\Notepad++\notepad++.exe" (
-set "nppPath=%ProgramFiles(x86)%\Notepad++"
-) else if exist "%ProgramFiles%\Notepad++\notepad++.exe" (
-set "nppPath=%ProgramFiles%\Notepad++"
-) else (
-call :installSoft notepad++.notepad++
-set "nppPath=%ProgramFiles(x86)%\Notepad++"
-)
-pushd %temp%
-echo Installing Notepad++ themes
-:: Dracula theme
-curl https://raw.githubusercontent.com/dracula/notepad-plus-plus/master/Dracula.xml -o Dracula.xml
-xcopy Dracula.xml "%nppPath%\themes\" /YECIQ
-::/C /I /Q
-:: Material Theme
-curl https://raw.githubusercontent.com/HiSandy/npp-material-theme/master/Material%20Theme.xml -o "Material Theme.xml"
-xcopy "Material Theme.xml" "%nppPath%\themes\" /YECIQ
-
-:: Nord theme
-curl https://raw.githubusercontent.com/arcticicestudio/nord-notepadplusplus/develop/src/xml/nord.xml -LJ -o Nord.xml
-xcopy Nord.xml "%nppPath%\themes\" /YECIQ
-
-:: Mariana theme
-curl https://raw.githubusercontent.com/Codextor/npp-mariana-theme/master/Mariana.xml -o Mariana.xml
-xcopy Mariana.xml "%nppPath%\themes\" /YECIQ
-
-call :log "Notepad++ themes installation finished"
-endlocal
-popd
-goto :EOF
 
 REM function asks the user to input username and password for credential checking
 :inputCredential
@@ -2742,35 +2654,6 @@ PowerShell -ExecutionPolicy Unrestricted -Command "$key = 'HKLM:SYSTEM\CurrentCo
 endlocal
 goto :EOF
 
-:installAria2c
-@echo off
-setlocal
-
-:: Check if aria2c is already installed
-where aria2c >nul 2>&1 && goto EOF
-
-:: Check for winget
-where winget >nul 2>&1 && goto INSTALL_WITH_WINGET
-
-:: Check for Chocolatey
-where choco >nul 2>&1 && goto INSTALL_WITH_CHOCOLATEY
-
-:: Call package management setup if neither winget nor Chocolatey is available
-call :packageManagement
-goto INSTALL_WITH_WINGET
-
-:INSTALL_WITH_WINGET
-:: Install aria2c using winget if available
-winget install aria2.aria2 --silent --accept-package-agreements --accept-source-agreements && goto EOF
-
-:INSTALL_WITH_CHOCOLATEY
-:: Install aria2c using Chocolatey if winget fails or is unavailable
-choco install aria2 -y && goto EOF
-:: If everything fails
-echo Failed to install aria2c. Please check your package managers or network settings.
-endlocal
-goto EOF
-
 :extractZip
 :: Usage: call :extractZip "path\to\zipfile.zip" "destination\folder"
 if "%~1"=="" (
@@ -2798,3 +2681,34 @@ if errorlevel 1 (
 )
 echo [*] Extraction completed successfully.
 goto :EOF
+
+:downloadFile
+:: Function to download files using aria2c, curl, or PowerShell
+:: Usage: call :downloadFile "URL" "OUTPUT_PATH"
+
+setlocal
+set "downloadUrl=%~1"
+set "outputFile=%~2"
+
+:: Check if aria2c is available
+where aria2c >nul 2>&1
+if %errorlevel%==0 (
+    aria2c -x 16 -s 16 -j 5 -o "%outputFile%" "%downloadUrl%" && endlocal & exit /b 0
+)
+
+:: Check if curl is available
+where curl >nul 2>&1
+if %errorlevel%==0 (
+    curl -L -o "%outputFile%" "%downloadUrl%" && endlocal & exit /b 0
+)
+
+:: Use PowerShell as a last resort
+powershell -Command "& {
+    try {
+        Invoke-WebRequest -Uri '%downloadUrl%' -OutFile '%outputFile%'
+    } catch {
+        exit 1
+    }
+}"
+endlocal
+exit /b 0

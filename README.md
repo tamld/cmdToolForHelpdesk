@@ -11,9 +11,6 @@
   <img src="https://img.shields.io/github/followers/tamld.svg?style=social&label=Follow&maxAge=2592000">
 </p>
 
-**Tác giả:** [tamld](https://github.com/tamld)  
-**Yêu cầu:** Windows 10 (1809+) & kết nối internet  
-
 ---
 
 ## 📖 Mục lục
