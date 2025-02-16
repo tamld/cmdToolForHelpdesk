@@ -1,0 +1,44 @@
+name: Check Empty PR (Ubuntu)
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check_empty_pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Fetch PR changes
+        run: git fetch origin main --depth=1
+
+      - name: Check for deleted or empty files
+        run: |
+          # Get the list of changed files
+          CHANGED_FILES=$(git diff --name-status origin/main | awk '{print $1}')
+          
+          # If no files have changed, fail the workflow
+          if [[ -z "$CHANGED_FILES" ]]; then
+            echo "❌ No changes detected in PR!"
+            exit 1
+          fi
+          
+          # Check if any files were deleted
+          if echo "$CHANGED_FILES" | grep -q "^D"; then
+            echo "⚠ Warning: Some files were deleted."
+          fi
+
+          # Check if there are empty files (0-byte files)
+          EMPTY_FILES=$(git diff --numstat origin/main | awk '$1==0 && $2==0 {print $3}')
+          
+          if [[ ! -z "$EMPTY_FILES" ]]; then
+            echo "❌ Found empty files in PR: $EMPTY_FILES"
+            exit 1
+          fi
+
+          echo "✅ PR is valid."
+        shell: bash
