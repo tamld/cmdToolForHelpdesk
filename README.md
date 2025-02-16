@@ -26,6 +26,7 @@
   - [2. **Chọn chức năng cần thực hiện:**](#2-chọn-chức-năng-cần-thực-hiện)
   - [3. **Cập nhật script (nếu cần)**](#3-cập-nhật-script-nếu-cần)
   - [4. **Cài đặt phần mềm tự động**](#4-cài-đặt-phần-mềm-tự-động)
+- [🔗 Nguồn tài nguyên tham khảo](#-nguồn-tài-nguyên-tham-khảo)
 
 ---
 
@@ -58,12 +59,26 @@
 ---
 ## 📌 Giao diện
 
-![Main menu](pictures/1.png)
-![AIO](pictures/1-1.png)
-![Office](pictures/1-2.png)
-![License](pictures/1-3.png)
-![Utilities](pictures/1-4.png)
-![Package Management](pictures/1-5.png)
+Dưới đây là giao diện chính và một số tính năng quan trọng:
+
+- **Menu chính của Helpdesk Tool**
+  ![Main menu](pictures/1.png)
+
+- **Tùy chọn cài đặt phần mềm AIO (All-in-One)**
+  ![AIO](pictures/1-1.png)
+
+- **Công cụ quản lý Office**
+  ![Office](pictures/1-2.png)
+
+- **Kích hoạt Windows & Office**
+  ![License](pictures/1-3.png)
+
+- **Các tiện ích hệ thống**
+  ![Utilities](pictures/1-4.png)
+
+- **Quản lý Package (Winget & Chocolatey)**
+  ![Package Management](pictures/1-5.png)
+
 
 ## 📌 Hướng dẫn sử dụng
 
@@ -82,16 +97,17 @@ Có thể chọn cài đặt theo từng nhóm phần mềm hoặc tất cả c�
 
 |**Chế độ**|Ứng dụng được cài|Menu|
 |-----------|-------|-------|
-|**Tất cả**|Cài toàn bộ phần mềm tự động|**1**|
-|**Cơ bản**|Chrome, 7-Zip, Unikey, Foxit PDF|**5-2**|
-|**Hỗ trợ IT**|Zalo, Facebook Messenger, Telegram|**5-3**|
-|**Tools Network**|Xpipe, Rclone, OpenSSH, mobaxterm,Putty|**5-4**|
-|**Công cụ chat**|Microsoft Office, Teams, Zoom|**5-5**|
-|**Upgrade all**| Tự động cập nhật danh sách quản lí bằng Winget hoặc chocolatey |**5-6**|
+|**📦 Tất cả**|Cài toàn bộ phần mềm tự động|**1**|
+|**🌐 Cơ bảnn**|Chrome, 7-Zip, Unikey, Foxit PDF|**5-2**|
+|**🛠 Hỗ trợ IT**|Zalo, Facebook Messenger, Telegram|**5-3**|
+|**🖥 Tools Network**|Xpipe, Rclone, OpenSSH, mobaxterm,Putty|**5-4**|
+|**💬 Công cụ chat**|Microsoft Office, Teams, Zoom|**5-5**|
+|**🔄 Upgrade all**| Tự động cập nhật danh sách quản lí bằng Winget hoặc chocolatey |**5-6**|
 
 ---
 
-🔗 Nguồn tài nguyên tham khảo:
-Chocolatey
-Winget CLI
-Microsoft Docs
+## 🔗 Nguồn tài nguyên tham khảo
+
+- [📦 Chocolatey - Package Manager](https://chocolatey.org/)
+- [🛠 Winget CLI - Microsoft Official](https://github.com/microsoft/winget-cli)
+- [📖 Microsoft Docs - Windows Administration](https://docs.microsoft.com/en-us/windows/)
