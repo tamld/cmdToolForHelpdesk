@@ -437,7 +437,8 @@ echo.
 echo Generic Windows %typeW% key: %keyW%
 echo Activating...
 if not exist Licenses (
-    curl -L -o Licenses.zip https://github.com/tamld/cmdToolForHelpdesk/blob/main/Licenses.zip?raw=true >nul 2>&1
+    ::curl -L -o Licenses.zip https://github.com/tamld/cmdToolForHelpdesk/blob/main/Licenses.zip?raw=true >nul 2>&1
+	curl -L -o Licenses.zip https://github.com/tamld/cmdToolForHelpdesk/blob/main/packages/Licenses.zip?raw=true >nul 2>&1
     call :extractZip "Licenses.zip" "%temp%"  :: Use :extractZip
 )
 xcopy "Licenses\Skus Windows"\%typeW% C:\Windows\system32\spp\tokens\skus\%typeW% /IS /Y >nul 2>&1
