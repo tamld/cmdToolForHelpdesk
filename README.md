@@ -33,9 +33,9 @@
 
 **Helpdesk Tool** là công cụ hỗ trợ IT, giúp tự động hóa cài đặt phần mềm, xử lý lỗi hệ thống và tối ưu Windows.  
 **Mục tiêu chính**:
-✔ Giảm thời gian xử lý lỗi cho kỹ thuật viên IT.  
-✔ Cài đặt phần mềm tự động qua **Chocolatey & Winget**.  
-✔ Khắc phục lỗi Windows, Office, kích hoạt bản quyền.  
+- Giảm thời gian xử lý lỗi cho kỹ thuật viên IT.  
+- Cài đặt phần mềm tự động qua **Chocolatey & Winget**.  
+- Khắc phục lỗi Windows, Office, kích hoạt bản quyền.  
 
 📌 **Lưu ý quan trọng**:
 - Một số chức năng vẫn đang phát triển. Nếu gặp lỗi, hãy báo cáo tại [GitHub Issues](https://github.com/tamld/cmdToolForHelpdesk/issues).
@@ -97,7 +97,7 @@ Có thể chọn cài đặt theo từng nhóm phần mềm hoặc tất cả c�
 |**Chế độ**|Ứng dụng được cài|Menu|
 |-----------|-------|-------|
 |**📦 Tất cả**|Cài toàn bộ phần mềm tự động|**1**|
-|**🌐 Cơ bảnn**|Chrome, 7-Zip, Unikey, Foxit PDF|**5-2**|
+|**🌐 Cơ bản**|Chrome, 7-Zip, Unikey, Foxit PDF|**5-2**|
 |**🛠 Hỗ trợ IT**|Zalo, Facebook Messenger, Telegram|**5-3**|
 |**🖥 Tools Network**|Xpipe, Rclone, OpenSSH, mobaxterm,Putty|**5-4**|
 |**💬 Công cụ chat**|Microsoft Office, Teams, Zoom|**5-5**|
