@@ -19,7 +19,7 @@
 - [⚙ Chức năng chính](#-chức-năng-chính)
 - [📌 Giao diện](#-giao-diện)
 - [📌 Hướng dẫn sử dụng](#-hướng-dẫn-sử-dụng)
-  - [1. **Chạy script với quyền Administrator**](#1-chạy-script-với-quyền-administrator)
+  - [1. **Chạy offline file hoặc chạy từ CMD**](#1-chạy-offline-file-hoặc-chạy-từ-cmd)
   - [2. **Chọn chức năng cần thực hiện:**](#2-chọn-chức-năng-cần-thực-hiện)
   - [3. **Cập nhật script (nếu cần)**](#3-cập-nhật-script-nếu-cần)
   - [4. **Cài đặt phần mềm tự động**](#4-cài-đặt-phần-mềm-tự-động)
@@ -82,7 +82,15 @@ Dưới đây là giao diện chính và một số tính năng quan trọng:
 ## 📌 Hướng dẫn sử dụng
 
 
-### 1. **Chạy script với quyền Administrator**  
+### 1. **Chạy offline file hoặc chạy từ CMD**  
+
+**Cách 1: Tải xuống Repo và chạy file CMD offline**
+![Download](pictures/0.png)
+**Cách 2 Chạy trực tiếp bằng command line**
+
+```cmd
+cd /d %temp% && curl -fsSL -o helpdesk-tools.cmd https://tinyurl.com/tamld-cmd && start helpdesk-tools.cmd
+```
 
 ### 2. **Chọn chức năng cần thực hiện:**
 + Nhập số tương ứng với chức năng (1, 2, 3...).
