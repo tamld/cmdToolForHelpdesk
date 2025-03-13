@@ -1,4 +1,3 @@
-:: Fix download Microsoft.UI.XAML, fetch from Nuget API and download latest version
 echo off
 Title Script Auto install Software
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
@@ -697,9 +696,9 @@ if %ERRORLEVEL% == 7 goto :debloat & goto :utilities
 if %ERRORLEVEL% == 6 call :activeIDM & goto :utilities
 if %ERRORLEVEL% == 5 goto :installSupportAssistant
 if %ERRORLEVEL% == 4 call :winutil & goto :utilities
-if %ERRORLEVEL% == 3 goto :cleanUpSystem
-if %ERRORLEVEL% == 2 goto :changeHostName
-if %ERRORLEVEL% == 1 goto :setHighPerformance
+if %ERRORLEVEL% == 3 goto :cleanUpSystem & goto :utilities
+if %ERRORLEVEL% == 2 goto :changeHostName & goto :utilities
+if %ERRORLEVEL% == 1 goto :setHighPerformance & goto :utilities
 endlocal
 REM End of Utilities Menu
 REM ==============================================================================
@@ -723,7 +722,7 @@ echo Disabled the unnecessary services
 call :disable_os_services
 goto :EOF	
 
-:GetUserInformation
+:getUserInformation
 Title Get User Information
 REM Prompt user for new username
 echo Enter new username that you'd like to add:
@@ -1019,12 +1018,11 @@ ping -n 2 localhost 1>NUL
 goto :EOF
 
 :setHighPerformance
-Title "Set Windows Powerplan - High performance"
 cls
-REM Turn off hibernation feature
 REM Powerplan ref can be found at https://www.windowsafg.com/power10.html
 powercfg -h off
 powercfg -setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+powercfg -h off
 powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c fea3413e-7e05-4911-9a71-700331f1c294 0e796bdb-100d-47d6-a2d5-f7d2daa51f51 0
 powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c fea3413e-7e05-4911-9a71-700331f1c294 0e796bdb-100d-47d6-a2d5-f7d2daa51f51 0
 powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 0012ee47-9041-4b5d-9b77-535fba8b1442 6738e2c4-e8a5-4a42-b16a-e040e769756e 0
@@ -1045,9 +1043,9 @@ powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 238c9fa8-0aad-41e
 powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 238c9fa8-0aad-41ed-83f4-97be242c8f20 bd3b718a-0680-4d9d-8ab2-e1d2b4ac806d 1
 powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 2a737441-1930-4402-8d77-b2bebba308a3 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 1
 powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 2a737441-1930-4402-8d77-b2bebba308a3 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 1
-powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
+powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 1
 powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 1
-powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 3
+powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 1
 powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 1
 powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 96996bc0-ad50-47ec-923b-6f41874dd9eb 1
 powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 96996bc0-ad50-47ec-923b-6f41874dd9eb 1
@@ -1616,14 +1614,28 @@ ping -n 2 localhost 1>NUL
 exit /b 0
 
 ::=====================================================================
-::@%1 will inherit parameters from the outside input function
-::@exit /b will exit function instead of remaining running scripts codes
 :log
-set logfile=%temp%\Helpdesk-Tools.log
-set timestamp=%date% %time%
-echo %timestamp% %1 >> %logfile%
-cls
+setlocal
+
+set "logfile=%TEMP%\Helpdesk-Tools.log"
+
+for /f "tokens=2 delims==" %%I in ('wmic os get LocalDateTime /value ^| find "="') do set "dt=%%I"  :: Get current datetime from WMIC
+set "timestamp=%dt:~0,4%-%dt:~4,2%-%dt:~6,2% %dt:~8,2%:%dt:~10,2%:%dt:~12,2%"  :: Format datetime to readable format
+
+set "msg=%~1"
+
+if /I "%LOG_LEVEL%"=="DEBUG" (
+    echo %timestamp% %msg% >> "%logfile%"
+) else (
+    echo %msg% | findstr /I "ERROR WARNING" >nul  :: Check if message contains ERROR or WARNING
+    if %errorlevel% equ 0 (
+        echo %timestamp% %msg% >> "%logfile%"
+    )
+)
+
+endlocal
 goto :EOF
+
 
 :installSoft_ByWinget
 Title Install Software
