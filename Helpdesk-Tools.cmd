@@ -1868,32 +1868,38 @@ popd
 call :clean
 goto :EOF
 
-::Kill all the app running
+:: Kill all non-essential applications gracefully
 :killtasks
 cls
 setlocal EnableDelayedExpansion
+
 echo [*] Terminating running application processes...
 
-REM List of executables to terminate (space-separated).
-REM For processes with spaces in the name, include the name in quotes.
+:: List of process names (space-separated)
 set "appList=notepad++.exe chrome.exe firefox.exe FoxitPDFReader.exe vlc.exe ShareX.exe Everything.exe IObitUnlocker.exe FxSound.exe Telegram.exe Skype.exe Zoom.exe Viber.exe Messenger.exe MobaXterm.exe WinSCP.exe putty.exe VirtualBox.exe rclone.exe RcloneBrowser.exe Advanced_IP_Scanner.exe JDownloader2.exe Code.exe sshfs-win.exe NetworkManager.exe TeamViewer.exe UltraViewer_Desktop.exe AnyDesk.exe UnikeyNT.exe xpipe.exe LocalSend.exe TeraCopy.exe WindowsTerminal.exe LockHunter.exe PDFgear.exe CopyQ.exe HiBitUninstaller.exe Zalo.exe FreeTube.exe VirtualBox-7.1.6-167084-W.exe TeamViewer_Service.exe UltraViewer_Service.exe TeraCopyService.exe msedge.exe "YouTube Music.exe" "PDFLauncher.exe""
 
-REM Comma-separated list of essential processes to exclude.
-set "excludeList=explorer.exe,svchost.exe,taskmgr.exe,cmd.exe,conhost.exe,winlogon.exe,csrss.exe,lsass.exe,services.exe,wininit.exe,smss.exe"
+:: List of essential processes to exclude
+set "excludeList=explorer.exe svchost.exe taskmgr.exe cmd.exe conhost.exe winlogon.exe csrss.exe lsass.exe services.exe wininit.exe smss.exe"
 
 for %%a in (%appList%) do (
-    REM Remove any surrounding quotes from the token.
     set "proc=%%~a"
-    echo [*] Checking for process: !proc!...
-    echo %excludeList% | findstr /i "\<!proc!\>" >nul
+    echo [*] Checking process: !proc!...
+
+    echo !excludeList! | find /i "!proc!" >nul
     if !errorlevel! equ 0 (
         echo [!] Skipping essential process: !proc!
     ) else (
-        taskkill /F /IM "!proc!" /FI "STATUS eq RUNNING" >nul 2>&1
+        tasklist /fi "imagename eq !proc!" | find /i "!proc!" >nul
         if !errorlevel! equ 0 (
-            echo [*] Terminated: !proc!
+            echo [*] Attempting to terminate: !proc!
+            taskkill /F /IM "!proc!" >nul 2>&1
+            if !errorlevel! equ 0 (
+                echo [+] Terminated: !proc!
+            ) else (
+                echo [!] Failed to terminate: !proc!
+            )
         ) else (
-            echo [*] !proc! not running or not found.
+            echo [-] Process not found or not running: !proc!
         )
     )
 )
@@ -1902,7 +1908,6 @@ endlocal
 echo [*] Task killing process completed.
 ping -n 2 localhost >nul
 goto :EOF
-
 
 :: End of child process functions
 :: ========================================================================================================================================
