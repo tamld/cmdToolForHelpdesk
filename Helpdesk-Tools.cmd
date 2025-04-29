@@ -1097,57 +1097,40 @@ COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop
 COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
 goto :eof
 
-
-REM End of Utilities functions
-REM ========================================================================================================================================
 :packageManagementMenu
-setlocal
-REM Start of Package Management Software Main Menu
-cd /d %dp%
-cls
-title Package Management Software Main Menu
-echo.
-echo        ====================================================
-echo        [1] Install Package Management             : Press 1
-echo        [2] Install End Users Applications         : Press 2
-echo        [3] Install Remote Applications            : Press 3
-echo        [4] Install Network Applications           : Press 4
-echo        [5] Install Chat Applications              : Press 5
-echo        [6] Upgrade All Software Online            : Press 6
-echo        [7] Main Menu                              : Press 7
-echo        ====================================================
+    setlocal EnableDelayedExpansion
+    cls
+    title Package Management Software Main Menu
 
-Choice /N /C 1234567 /M "Press your choice: "
-if errorlevel 7 goto :main
-if errorlevel 6 (
-    call :update-All 
-    goto :packageManagementMenu
-)
-if errorlevel 5 (
-    call :installChatApps 
-    goto :packageManagementMenu
-)
-if errorlevel 4 (
-    call :installNetworkApps 
-    goto :packageManagementMenu
-)
-if errorlevel 3 (
-    call :installRemoteApps 
-    goto :packageManagementMenu
-)
-if errorlevel 2 (
-    call :installEndusers 
-    goto :packageManagementMenu
-)
-if errorlevel 1 (
-    call :packageManagement 
-    goto :packageManagementMenu
-)
+    echo.
+    echo        ====================================================
+    echo        [1] Install Package Management             : Press 1
+    echo        [2] Install End Users Applications         : Press 2
+    echo        [3] Install Remote Applications            : Press 3
+    echo        [4] Install Network Applications           : Press 4
+    echo        [5] Install Chat Applications              : Press 5
+    echo        [6] Upgrade All Software Online            : Press 6
+    echo        [7] Main Menu                              : Press 7
+    echo        ====================================================
+    choice /n /c 1234567 /m "Press your choice (1-7):"
+    set "userChoice=%errorlevel%"
 
-echo Invalid selection. Please try again.
-pause
-goto :packageManagementMenu
-
+    if %userChoice%==1 (
+        call :packageManagement
+    ) else if %userChoice%==2 (
+        call :installEndusers
+    ) else if %userChoice%==3 (
+        call :installRemoteApps
+    ) else if %userChoice%==4 (
+        call :installNetworkApps
+    ) else if %userChoice%==5 (
+        call :installChatApps
+    ) else if %userChoice%==6 (
+        call :update-All
+    ) else if %userChoice%==7 (
+        goto :main
+    )
+    goto :packageManagementMenu
 
 :update-All
 Title Update Softwares
