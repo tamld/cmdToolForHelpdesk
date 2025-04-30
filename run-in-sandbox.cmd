@@ -45,6 +45,16 @@ set "CURRENT_DIR=%CURRENT_DIR:~0,-1%"
 :: Define the temporary .wsb file path
 set "WSB_FILE=%temp%\_sandbox_runner.wsb"
 
+:: Check if Sandbox is already running and force-close it
+echo [*] Checking if Sandbox is already running...
+tasklist | find /i "WindowsSandbox.exe" >nul
+if not errorlevel 1 (
+    echo [*] Sandbox is currently running. Closing it...
+    taskkill /f /im WindowsSandbox.exe >nul 2>&1
+    taskkill /f /im WindowsSandboxClient.exe >nul 2>&1
+    timeout /t 2 /nobreak >nul
+)
+
 :: Generate Windows Sandbox configuration file (.wsb)
 > "%WSB_FILE%" (
     echo ^<Configuration^>
@@ -58,6 +68,7 @@ set "WSB_FILE=%temp%\_sandbox_runner.wsb"
     echo   ^<LogonCommand^>
     echo     ^<Command^>
     echo       cmd /c copy "C:\Users\WDAGUtilityAccount\Documents\%CMD_FILE%" "%%UserProfile%%\Desktop\%CMD_FILE%"
+    echo       start cmd /c "%%UserProfile%%\Desktop\%CMD_FILE%"
     echo     ^</Command^>
     echo   ^</LogonCommand^>
     echo ^</Configuration^>
