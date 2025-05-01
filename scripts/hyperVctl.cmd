@@ -5,10 +5,8 @@ setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 set VMNAME=Windows 10 MSIX packaging environment
 :: ===================================================
 
-if "%~1"=="" (
-    echo Usage: %~nx0 [start^|stop^|force-off^|snapshot [name]^|revert [index]^|delete-snapshot [index]^|list-snapshots^|list-vms^|force-close-hyperv]
-    goto :eof
-)
+:: Handle no parameter case
+if "%~1"=="" call :usage & goto :eof
 
 set ACTION=%~1
 set PARAM=%~2
@@ -45,7 +43,7 @@ if /i "%ACTION%"=="list-vms" (
 
 :: ---------------- LIST SNAPSHOTS ----------------
 if /i "%ACTION%"=="list-snapshots" (
-    echo [>] Snapshots for VM "%VMNAME%":
+    echo [^>] Snapshots for VM %VMNAME%:
     powershell -Command ^
         "$snaps = Get-VMSnapshot -VMName '%VMNAME%' | Sort-Object CreationTime;" ^
         "$i = 1; $snaps | ForEach-Object { Write-Host ($i.ToString('00'))':' $_.Name ' - ' $_.CreationTime; $i++ }"
@@ -74,6 +72,28 @@ if /i "%ACTION%"=="delete-snapshot" (
 echo [!] Unknown command: %ACTION%
 goto :eof
 
+:: ================ USAGE ============================
+:usage
+echo.
+echo === Hyper-V Orchestrator ===
+echo Usage: %~nx0 ^<command^> [optional-argument]
+echo.
+echo Available commands:
+echo   start                    - Start the virtual machine
+echo   stop                     - Gracefully shut down the VM
+echo   force-off                - Force power off the VM
+echo   snapshot [name]          - Create a new snapshot (name optional)
+echo   list-snapshots           - List all snapshots with numbered index
+echo   revert [index]           - Revert VM to a specific snapshot
+echo   delete-snapshot [index]  - Delete a specific snapshot (with confirm)
+echo   list-vms                 - List all virtual machines
+echo   force-close-hyperv       - Force close Hyper-V VM connection window
+echo.
+echo Example:
+echo   %~nx0 snapshot 01_Baseline
+echo   %~nx0 revert 2
+goto :eof
+
 :: ================ SNAPSHOT CREATION ================
 :doSnapshot
 set SNAPNAME=%~1
@@ -96,11 +116,11 @@ goto :eof
 set INDEX=%~1
 
 if "%INDEX%"=="" (
-    echo [>] Available Snapshots for VM "%VMNAME%":
+    echo [^>] Available Snapshots for VM "%VMNAME%":
     powershell -Command ^
         "$snaps = Get-VMSnapshot -VMName '%VMNAME%' | Sort-Object CreationTime;" ^
         "$i = 1; $snaps | ForEach-Object { Write-Host ($i.ToString('00'))':' $_.Name ' - ' $_.CreationTime; $i++ }"
-    set /p INDEX=Enter snapshot index to revert to: 
+    set /p INDEX=Enter snapshot index to revert to:
 )
 
 set /a ACTUAL_INDEX=%INDEX%-1
@@ -116,10 +136,12 @@ if %ACTUAL_INDEX% LSS 0 (
 echo [+] Reverting to snapshot #%INDEX%...
 
 set PSFILE=%TEMP%\revert_vm.ps1
-echo $snaps = Get-VMSnapshot -VMName '%VMNAME%' ^| Sort-Object CreationTime; > "%PSFILE%"
-echo $target = $snaps[%ACTUAL_INDEX%]; >> "%PSFILE%"
-echo if ($null -eq $target) { Write-Host "Invalid snapshot index!" -ForegroundColor Red; exit 1 } >> "%PSFILE%"
-echo Restore-VMSnapshot -VMName '%VMNAME%' -Name $target.Name -Confirm:$false >> "%PSFILE%"
+(
+    echo $snaps = Get-VMSnapshot -VMName '%VMNAME%' ^| Sort-Object CreationTime;
+    echo $target = $snaps[%ACTUAL_INDEX%];
+    echo if ($null -eq $target^) { Write-Host "Invalid snapshot index!" -ForegroundColor Red; exit 1 }
+    echo Restore-VMSnapshot -VMName '%VMNAME%' -Name $target.Name -Confirm:$false
+) > "%PSFILE%"
 
 powershell -ExecutionPolicy Bypass -File "%PSFILE%"
 del "%PSFILE%" >nul 2>&1
@@ -131,7 +153,7 @@ goto :eof
 set INDEX=%~1
 
 if "%INDEX%"=="" (
-    echo [>] Available Snapshots for VM "%VMNAME%":
+    echo [^>] Available Snapshots for VM "%VMNAME%":
     powershell -Command ^
         "$snaps = Get-VMSnapshot -VMName '%VMNAME%' | Sort-Object CreationTime;" ^
         "$i = 1; $snaps | ForEach-Object { Write-Host ($i.ToString('00'))':' $_.Name ' - ' $_.CreationTime; $i++ }"
@@ -157,10 +179,12 @@ if /i not "%CONFIRM%"=="y" (
 echo [+] Deleting snapshot #%INDEX%...
 
 set PSFILE=%TEMP%\delete_vm.ps1
-echo $snaps = Get-VMSnapshot -VMName '%VMNAME%' ^| Sort-Object CreationTime; > "%PSFILE%"
-echo $target = $snaps[%ACTUAL_INDEX%]; >> "%PSFILE%"
-echo if ($null -eq $target) { Write-Host "Invalid snapshot index!" -ForegroundColor Red; exit 1 } >> "%PSFILE%"
-echo Remove-VMSnapshot -VMName '%VMNAME%' -Name $target.Name -Confirm:$false >> "%PSFILE%"
+(
+    echo $snaps = Get-VMSnapshot -VMName '%VMNAME%' ^| Sort-Object CreationTime;
+    echo $target = $snaps[%ACTUAL_INDEX%];
+    echo if ($null -eq $target^) { Write-Host "Invalid snapshot index!" -ForegroundColor Red; exit 1 }
+    echo Remove-VMSnapshot -VMName '%VMNAME%' -Name $target.Name -Confirm:$false
+) > "%PSFILE%"
 
 powershell -ExecutionPolicy Bypass -File "%PSFILE%"
 del "%PSFILE%" >nul 2>&1
