@@ -5,7 +5,6 @@ setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 set VMNAME=Windows 10 MSIX packaging environment
 :: ===================================================
 
-:: Handle no parameter case
 if "%~1"=="" call :usage & goto :eof
 
 set ACTION=%~1
@@ -23,15 +22,30 @@ if /i "%ACTION%"=="stop" (
     goto :eof
 )
 
-:: ---------------- FORCE STOP VM ----------------
-if /i "%ACTION%"=="force-off" (
+:: ---------------- FORCE STOP + CLOSE UI ----------------
+if /i "%ACTION%"=="force-close" (
+    echo [+] Forcing VM shutdown and closing Hyper-V window...
     powershell -Command "Stop-VM -Name '%VMNAME%' -Force"
+    taskkill /f /im vmconnect.exe >nul 2>&1
     goto :eof
 )
 
-:: ---------------- FORCE CLOSE VM WINDOW ----------------
+:: ---------------- CLOSE VM WINDOW ONLY ----------------
 if /i "%ACTION%"=="force-close-hyperv" (
+    echo [+] Closing Hyper-V VM window only...
     taskkill /f /im vmconnect.exe >nul 2>&1
+    goto :eof
+)
+
+:: ---------------- RESTART VM ----------------
+if /i "%ACTION%"=="restart" (
+    powershell -Command "Restart-VM -Name '%VMNAME%'"
+    goto :eof
+)
+
+:: ---------------- FORCE RESTART VM ----------------
+if /i "%ACTION%"=="force-restart" (
+    powershell -Command "Stop-VM -Name '%VMNAME%' -Force; Start-VM -Name '%VMNAME%'"
     goto :eof
 )
 
@@ -43,7 +57,7 @@ if /i "%ACTION%"=="list-vms" (
 
 :: ---------------- LIST SNAPSHOTS ----------------
 if /i "%ACTION%"=="list-snapshots" (
-    echo [^>] Snapshots for VM %VMNAME%:
+    echo [^>] Snapshots for VM "%VMNAME%":
     powershell -Command ^
         "$snaps = Get-VMSnapshot -VMName '%VMNAME%' | Sort-Object CreationTime;" ^
         "$i = 1; $snaps | ForEach-Object { Write-Host ($i.ToString('00'))':' $_.Name ' - ' $_.CreationTime; $i++ }"
@@ -68,6 +82,12 @@ if /i "%ACTION%"=="delete-snapshot" (
     goto :eof
 )
 
+:: ---------------- PUSH ONLY .CMD FILES ----------------
+if /i "%ACTION%"=="push" (
+    call :handle_push
+    goto :eof
+)
+
 :: ---------------- UNKNOWN ----------------
 echo [!] Unknown command: %ACTION%
 goto :eof
@@ -81,13 +101,16 @@ echo.
 echo Available commands:
 echo   start                    - Start the virtual machine
 echo   stop                     - Gracefully shut down the VM
-echo   force-off                - Force power off the VM
+echo   force-close              - Force power off VM and close console window
+echo   force-close-hyperv       - Close VM window only (no shutdown)
+echo   restart                  - Restart the VM gracefully
+echo   force-restart            - Stop (force) and start the VM
 echo   snapshot [name]          - Create a new snapshot (name optional)
 echo   list-snapshots           - List all snapshots with numbered index
 echo   revert [index]           - Revert VM to a specific snapshot
 echo   delete-snapshot [index]  - Delete a specific snapshot (with confirm)
+echo   push                     - Copy all .cmd files to VM desktop
 echo   list-vms                 - List all virtual machines
-echo   force-close-hyperv       - Force close Hyper-V VM connection window
 echo.
 echo Example:
 echo   %~nx0 snapshot 01_Baseline
@@ -188,5 +211,21 @@ set PSFILE=%TEMP%\delete_vm.ps1
 
 powershell -ExecutionPolicy Bypass -File "%PSFILE%"
 del "%PSFILE%" >nul 2>&1
+
+goto :eof
+
+:: ================ PUSH ONLY .CMD FILES ==================
+:handle_push
+set SOURCE_DIR=%~dp0
+set DEST_DIR=C:\Users\Public\Desktop
+
+echo [+] Copying all .cmd scripts to guest VM desktop...
+
+powershell -Command ^
+    "$files = Get-ChildItem -Path '%SOURCE_DIR%' -Filter '*.cmd';" ^
+    "foreach ($file in $files) {" ^
+    "   $dest = Join-Path '%DEST_DIR%' $file.Name;" ^
+    "   Copy-VMFile -Name '%VMNAME%' -SourcePath $file.FullName -DestinationPath $dest -FileSource Host -CreateFullPath:$true" ^
+    "}"
 
 goto :eof
