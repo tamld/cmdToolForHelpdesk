@@ -216,16 +216,7 @@ goto :eof
 
 :: ================ PUSH ONLY .CMD FILES ==================
 :handle_push
-set SOURCE_DIR=%~dp0
-set DEST_DIR=C:\Users\Public\Desktop
-
-echo [+] Copying all .cmd scripts to guest VM desktop...
-
-powershell -Command ^
-    "$files = Get-ChildItem -Path '%SOURCE_DIR%' -Filter '*.cmd';" ^
-    "foreach ($file in $files) {" ^
-    "   $dest = Join-Path '%DEST_DIR%' $file.Name;" ^
-    "   Copy-VMFile -Name '%VMNAME%' -SourcePath $file.FullName -DestinationPath $dest -FileSource Host -CreateFullPath:$true" ^
-    "}"
-
+REM [TEMPORARILY DISABLED] This function is under revision.
+echo [INFO] Push functionality is currently disabled.
+echo        See GitHub or local notes for future update plan.
 goto :eof
