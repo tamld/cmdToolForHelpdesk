@@ -169,29 +169,47 @@ snapshot_cmd() {
   done
 
   # Load existing snapshots
+  local -a snapshots=()
+  local -A names=()
+  local -A uuids=()
+  local -A descs=()
+  local -a order=()
+  
   mapfile -t snapshot_data < <(VBoxManage snapshot "$VM_NAME" list --machinereadable)
+  
+  # First process snapshot names and UUIDs
   for line in "${snapshot_data[@]}"; do
-    if [[ "$line" == SnapshotName* ]]; then
-      snap_name=$(echo "$line" | cut -d= -f2 | tr -d '"')
-      snap_names+=("$snap_name")
-    elif [[ "$line" == SnapshotUUID* ]]; then
-      snap_uuid=$(echo "$line" | cut -d= -f2 | tr -d '"')
-      snap_uuids+=("$snap_uuid")
-    elif [[ "$line" == SnapshotDescription* ]]; then
-      snap_desc=$(echo "$line" | cut -d= -f2 | tr -d '"')
-      snap_descs+=("$snap_desc")
+    if [[ "$line" =~ ^SnapshotName(-[0-9-]+)?=\"(.*)\"$ ]]; then
+      local id="${BASH_REMATCH[1]:-root}"
+      names[$id]="${BASH_REMATCH[2]}"
+      # Track order of snapshots
+      order+=("$id")
+    elif [[ "$line" =~ ^SnapshotUUID(-[0-9-]+)?=\"(.*)\"$ ]]; then
+      local id="${BASH_REMATCH[1]:-root}"
+      uuids[$id]="${BASH_REMATCH[2]}"
+    elif [[ "$line" =~ ^SnapshotDescription(-[0-9-]+)?=\"(.*)\"$ ]]; then
+      local id="${BASH_REMATCH[1]:-root}"
+      descs[$id]="${BASH_REMATCH[2]}"
+    fi
+  done
+  
+  # Build ordered list of complete snapshot entries
+  for id in "${order[@]}"; do
+    if [[ -n "${names[$id]:-}" && -n "${uuids[$id]:-}" ]]; then
+      snapshots+=("${names[$id]}|${uuids[$id]}|${descs[$id]:-}")
     fi
   done
   
   case "$action" in
     list)
       echo "[INFO] VM '$VM_NAME' Snapshots:"
-      for i in "${!snap_names[@]}"; do
+      for i in "${!snapshots[@]}"; do
+        IFS='|' read -r name uuid desc <<< "${snapshots[$i]}"
         printf "%d) %s (UUID: %s) - %s\n" \
           "$i" \
-          "${snap_names[i]}" \
-          "${snap_uuids[i]}" \
-          "${snap_descs[i]:-No description}"
+          "$name" \
+          "$uuid" \
+          "${desc:-No description}"
       done
       ;;
 
@@ -209,22 +227,23 @@ snapshot_cmd() {
     restore)
       if [ -z "$idx" ]; then
         echo "[WARN] No index provided for restore. Listing snapshots instead..."
-        for i in "${!snap_names[@]}"; do
-          printf "%d) %s (UUID: %s) - %s\n" \
-            "$i" \
-            "${snap_names[i]}" \
-            "${snap_uuids[i]}" \
-            "${snap_descs[i]:-No description}"
-        done
+        ${FUNCNAME[0]} --list
         return
       fi
-      if ! [[ "$idx" =~ ^[0-9]+$ ]] || [ "$idx" -ge ${#snap_names[@]} ]; then
+      if ! [[ "$idx" =~ ^[0-9]+$ ]] || [ "$idx" -ge ${#snapshots[@]} ]; then
         echo "[ERROR] Invalid index: $idx" >&2; exit 1
       fi
       
+      # Get snapshot details
+      IFS='|' read -r name uuid desc <<< "${snapshots[$idx]}"
+      
       # Check VM state
       local vm_state
+      local was_running=false
       vm_state=$(VBoxManage showvminfo "$VM_NAME" --machinereadable | grep '^VMState=' | cut -d'=' -f2 | tr -d '"')
+      
+      # Track if the VM was running before restore
+      [ "$vm_state" == "running" ] && was_running=true
       
       # Power off VM if it's running
       if [ "$vm_state" == "running" ]; then
@@ -236,33 +255,40 @@ snapshot_cmd() {
         }
       fi
       
-      echo "[INFO] Restoring snapshot '${snap_names[idx]}' (UUID: ${snap_uuids[idx]})..."
-      $dry_run && { echo "[DRY-RUN] Skipped restore"; return; }
-      VBoxManage snapshot "$VM_NAME" restore "${snap_uuids[idx]}"
+      echo "[INFO] Restoring snapshot '$name' (UUID: $uuid)..."
+      $dry_run && { echo "[DRY-RUN] Skipped restore"; } || {
+        VBoxManage snapshot "$VM_NAME" restore "$uuid"
+        
+        # Start VM again after restore (always start regardless of previous state)
+        echo "[INFO] Starting VM after snapshot restore..."
+        if $HEADLESS; then
+          VBoxManage startvm "$VM_NAME" --type headless
+        else
+          VBoxManage startvm "$VM_NAME"
+        fi
+      }
       ;;
 
     delete)
       if [ -z "$idx" ]; then
         echo "[WARN] No index provided for delete. Listing snapshots instead..."
-        for i in "${!snap_names[@]}"; do
-          printf "%d) %s (UUID: %s) - %s\n" \
-            "$i" \
-            "${snap_names[i]}" \
-            "${snap_uuids[i]}" \
-            "${snap_descs[i]:-No description}"
-        done
+        ${FUNCNAME[0]} --list
         return
       fi
-      if ! [[ "$idx" =~ ^[0-9]+$ ]] || [ "$idx" -ge ${#snap_names[@]} ]; then
+      if ! [[ "$idx" =~ ^[0-9]+$ ]] || [ "$idx" -ge ${#snapshots[@]} ]; then
         echo "[ERROR] Invalid index: $idx" >&2; exit 1
       fi
+      
+      # Get snapshot details
+      IFS='|' read -r name uuid desc <<< "${snapshots[$idx]}"
+      
       if ! $confirm; then
-        read -rp "[CONFIRM] Delete snapshot '${snap_names[idx]}'? (y/N): " ans
+        read -rp "[CONFIRM] Delete snapshot '$name'? (y/N): " ans
         [[ ! "$ans" =~ ^[Yy]$ ]] && { echo "Aborted."; return; }
       fi
-      echo "[INFO] Deleting snapshot '${snap_names[idx]}' (UUID: ${snap_uuids[idx]})..."
+      echo "[INFO] Deleting snapshot '$name' (UUID: $uuid)..."
       $dry_run && { echo "[DRY-RUN] Skipped delete"; return; }
-      VBoxManage snapshot "$VM_NAME" delete "${snap_uuids[idx]}"
+      VBoxManage snapshot "$VM_NAME" delete "$uuid"
       ;;
 
     *)
