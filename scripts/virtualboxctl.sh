@@ -302,12 +302,93 @@ sync_folder() {
   check_vm_exists
   local src="${1:-$PROJECT_ROOT}"
   [ ! -e "$src" ] && { echo "[ERROR] '$src' not found" >&2; exit 1; }
+  
+  # Check VM state first
   local state
   state=$(VBoxManage showvminfo "$VM_NAME" --machinereadable | grep '^VMState=' | cut -d'=' -f2 | tr -d '"')
   [ "$state" != "running" ] && { echo "[ERROR] VM not running" >&2; exit 1; }
-  VBoxManage sharedfolder remove "$VM_NAME" --name public &>/dev/null || true
-  echo "[INFO] Sharing public -> $src"
-  VBoxManage sharedfolder add "$VM_NAME" --name public --hostpath "$src" --automount
+
+  # Detect OS type of VM
+  local ostype
+  ostype=$(VBoxManage showvminfo "$VM_NAME" --machinereadable | grep '^ostype=' | cut -d'=' -f2 | tr -d '"')
+  echo "[INFO] Detected VM OS type: $ostype"
+  
+  # Get project folder name to use as share name
+  local share_name
+  share_name=$(basename "$src")
+  echo "[INFO] Using share name: $share_name"
+  
+  # Set appropriate mount point based on OS type
+  local guest_mount_point=""
+  local mount_command=""
+  
+  if [[ "$ostype" =~ Windows ]]; then
+    # Windows path - note the escaped backslashes
+    #guest_mount_point="C:\\Users\\Public\\Desktop\\$share_name"
+    mount_command="net use P: \\\\vboxsvr\\$share_name"
+    echo "[INFO] Using Windows path style: $guest_mount_point"
+  else
+    # Linux path - using /mnt instead of /home/vagrant/Desktop
+    guest_mount_point="/mnt/$share_name"
+    mount_command="sudo mkdir -p $guest_mount_point && sudo mount -t vboxsf $share_name $guest_mount_point"
+    echo "[INFO] Using Linux path style: $guest_mount_point"
+  fi
+  
+  echo "[INFO] Sharing path '$src' with VM '$VM_NAME' as '$share_name'"
+  
+  # First check if there are any existing shared folders and remove them
+  echo "[INFO] Checking for existing shared folders..."
+  local existing_shares
+  if existing_shares=$(VBoxManage showvminfo "$VM_NAME" | grep "Name:"); then
+    echo "[INFO] Found existing shared folders, removing them first..."
+    echo "$existing_shares" | while read -r line; do
+      if [[ "$line" =~ Name:\ \'([^\']+)\' ]]; then
+        local existing_name="${BASH_REMATCH[1]}"
+        echo "[INFO] Removing shared folder '$existing_name'..."
+        VBoxManage sharedfolder remove "$VM_NAME" --name "$existing_name" &>/dev/null || true
+      fi
+    done
+  fi
+  
+  # Try to add the shared folder - using the transient flag only
+  echo "[INFO] Adding new shared folder as read-only with transient flag..."
+  if ! VBoxManage sharedfolder add "$VM_NAME" --name "$share_name" --hostpath "$src" --automount --readonly --transient; then
+    echo "[WARN] Failed with standard method, trying alternative approach..."
+    
+    # Try a second attempt with a short delay
+    sleep 1
+    echo "[INFO] Retrying with delay..."
+    if ! VBoxManage sharedfolder add "$VM_NAME" --name "$share_name" --hostpath "$src" --automount --readonly --transient; then
+      echo "[ERROR] Failed to add shared folder"
+      echo "[INFO] You may need to manually add the shared folder with these commands:"
+      echo "       VBoxManage sharedfolder remove \"$VM_NAME\" --name \"$share_name\" 2>/dev/null || true"
+      echo "       VBoxManage sharedfolder add \"$VM_NAME\" --name \"$share_name\" --hostpath \"$src\" --readonly --automount --transient"
+      return 1
+    fi
+  fi
+  
+  # Verify the share was created successfully
+  if VBoxManage showvminfo "$VM_NAME" | grep -q "Name: '$share_name'"; then
+    echo "[SUCCESS] Shared folder '$share_name' created successfully"
+    
+    # Provide OS-specific instructions for manual mounting
+    if [[ "$ostype" =~ Windows ]]; then
+      echo "[INFO] To access in Windows VM:"
+      echo "       1. Open File Explorer"
+      echo "       2. Look for '$share_name' under Network Drives"
+      echo "       3. Or map network drive: $mount_command"
+      echo "       4. Alternatively, you can create a shortcut at: $guest_mount_point"
+    else
+      echo "[INFO] To access in Linux VM:"
+      echo "       Run this command in the VM: $mount_command"
+      echo "       Files will be accessible at: $guest_mount_point"
+    fi
+    
+    echo "[INFO] NOTE: The shared folder is READ-ONLY"
+  else
+    echo "[WARN] Could not verify that the shared folder was created"
+    echo "[INFO] Please check VirtualBox settings to confirm the status of shared folders"
+  fi
 }
 
 main() {
