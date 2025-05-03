@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# vbctl.sh - VirtualBox VM Orchestrator
+# virtualboxctl.sh - VirtualBox VM Orchestrator
 # Description: Manage VM lifecycle, unified snapshot commands, and folder sync
 
 set -euo pipefail
@@ -221,6 +221,21 @@ snapshot_cmd() {
       if ! [[ "$idx" =~ ^[0-9]+$ ]] || [ "$idx" -ge ${#snap_names[@]} ]; then
         echo "[ERROR] Invalid index: $idx" >&2; exit 1
       fi
+      
+      # Check VM state
+      local vm_state
+      vm_state=$(VBoxManage showvminfo "$VM_NAME" --machinereadable | grep '^VMState=' | cut -d'=' -f2 | tr -d '"')
+      
+      # Power off VM if it's running
+      if [ "$vm_state" == "running" ]; then
+        echo "[INFO] Powering off $VM_NAME before snapshot restore..."
+        $dry_run && { echo "[DRY-RUN] Would power off VM"; } || {
+          VBoxManage controlvm "$VM_NAME" poweroff
+          # Give the VM time to shut down
+          sleep 2
+        }
+      fi
+      
       echo "[INFO] Restoring snapshot '${snap_names[idx]}' (UUID: ${snap_uuids[idx]})..."
       $dry_run && { echo "[DRY-RUN] Skipped restore"; return; }
       VBoxManage snapshot "$VM_NAME" restore "${snap_uuids[idx]}"
