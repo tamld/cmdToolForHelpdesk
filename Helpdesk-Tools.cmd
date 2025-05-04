@@ -1098,39 +1098,35 @@ COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
 goto :eof
 
 :packageManagementMenu
-    setlocal EnableDelayedExpansion
-    cls
-    title Package Management Software Main Menu
+cls
+title Package Management Software Main Menu
 
-    echo.
-    echo        ====================================================
-    echo        [1] Install Package Management             : Press 1
-    echo        [2] Install End Users Applications         : Press 2
-    echo        [3] Install Remote Applications            : Press 3
-    echo        [4] Install Network Applications           : Press 4
-    echo        [5] Install Chat Applications              : Press 5
-    echo        [6] Upgrade All Software Online            : Press 6
-    echo        [7] Main Menu                              : Press 7
-    echo        ====================================================
-    choice /n /c 1234567 /m "Press your choice (1-7):"
-    set "userChoice=%errorlevel%"
+:: Define menu mapping
+set "pkg_menu[1]=packageManagement"
+set "pkg_menu[2]=installEndusers"
+set "pkg_menu[3]=installRemoteApps"
+set "pkg_menu[4]=installNetworkApps"
+set "pkg_menu[5]=installChatApps"
+set "pkg_menu[6]=update-All"
+set "pkg_menu[7]=main"
 
-    if %userChoice%==1 (
-        call :packageManagement
-    ) else if %userChoice%==2 (
-        call :installEndusers
-    ) else if %userChoice%==3 (
-        call :installRemoteApps
-    ) else if %userChoice%==4 (
-        call :installNetworkApps
-    ) else if %userChoice%==5 (
-        call :installChatApps
-    ) else if %userChoice%==6 (
-        call :update-All
-    ) else if %userChoice%==7 (
-        goto :main
-    )
-    goto :packageManagementMenu
+:: Display menu
+echo.
+echo        ====================================================
+echo        [1] Install Package Management             : Press 1
+echo        [2] Install End Users Applications         : Press 2
+echo        [3] Install Remote Applications            : Press 3
+echo        [4] Install Network Applications           : Press 4
+echo        [5] Install Chat Applications              : Press 5
+echo        [6] Upgrade All Software Online            : Press 6
+echo        [7] Main Menu                              : Press 7
+echo        ====================================================
+choice /n /c 1234567 /m "Press your choice (1-7):"
+
+set "USER_CHOICE=%errorlevel%"
+call :dispatch_menu pkg_menu USER_CHOICE
+goto :packageManagementMenu
+
 
 :update-All
 Title Update Softwares
@@ -1610,15 +1606,20 @@ set "msg=%~1"
 if /I "%LOG_LEVEL%"=="DEBUG" (
     echo %timestamp% %msg% >> "%logfile%"
 ) else (
-    echo %msg% | findstr /I "ERROR WARNING" >nul  :: Check if message contains ERROR or WARNING
+    echo %msg% | find /i "ERROR" > nul
+    if %errorlevel% equ 0 (
+        echo %timestamp% %msg% >> "%logfile%"
+        goto :logend
+    )
+    echo %msg% | find /i "WARNING" > nul
     if %errorlevel% equ 0 (
         echo %timestamp% %msg% >> "%logfile%"
     )
 )
 
+:logend
 endlocal
 goto :EOF
-
 
 :installSoft_ByWinget
 Title Install Software
@@ -2712,3 +2713,26 @@ powershell -Command "& {
 }"
 endlocal
 exit /b 0
+
+:dispatch_menu
+:: Usage: call :dispatch_menu <array_prefix> <choice_var>
+setlocal EnableDelayedExpansion
+set "prefix=%~1"
+set "varName=%~2"
+set "sel=!%varName%!"
+
+:: Get the actual label from the menu array
+for /f "tokens=2 delims==" %%A in ('set %prefix%[%sel%] 2^>nul') do (
+    set "target=%%A"
+)
+
+if defined target (
+    endlocal & goto :%target%
+) else (
+    echo.
+    echo [ERROR] Invalid selection: !sel!
+    timeout /t 1 >nul
+)
+
+endlocal
+goto :eof
