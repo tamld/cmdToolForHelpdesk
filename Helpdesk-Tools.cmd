@@ -738,12 +738,12 @@ if /i "%setpass%" == "Y" (
 echo %user%'s password is:
 set /p _pass=
 net user %user% %_pass% /add 2>nul
-call :log "User %user% added with password successfully."
+
 ping -n 2 localhost 1>NUL
 cls
 ) else if /i "%setpass%" == "N" (
 net user %user% "" /add 2>nul
-call :log "User %user% added without password successfully."
+
 cls
 ) else (
 echo Invalid input. Please try again.
@@ -758,12 +758,12 @@ Title Add User to Administrators Group
 call :GetUserInformation
 net localgroup administrators %user% /add
 if %errorlevel% == 0 (
-call :log "User %user% was added to administrators group"
+
 echo User %user% was added to administrators group.
 ping -n 2 localhost 1>NUL
 cls
 ) else (
-call :log "Failed to add user %user% to administrators group"
+
 echo Failed to add user %user% to administrators group.
 )
 cls
@@ -773,58 +773,11 @@ goto :utilities
 REM This function adds the user to the Users group.
 Title Add User to Users Group
 call :GetUserInformation
-call :log "User %user% was added to Users group"
+
 echo User %user% was added to users group.
 ping -n 2 localhost 1>NUL
 cls
 goto :utilities
-
-   
-
-REM REM Add local admin user 
-REM :addLocalUserAdmin
-REM REM Add local user with administrator privilege
-REM setLocal EnableDelayedExpansion
-REM REM Prompt user for new username
-REM echo Enter new username with administrator privilege to add:
-REM set /p user=
-
-REM REM Prompt user to set password or not
-REM :input_pass
-REM echo Do you want to set a password for %user%? [Y/N]
-REM set /p setpass=
-
-REM REM Add user with or without password
-REM if /i "%setpass%" == "Y" (
-REM echo %user%'s password is:
-REM set /p _pass=
-REM net user %user% %_pass% /add 2>nul
-REM call :log "User %user% added with password successfully."
-REM ping -n 2 localhost 1>NUL
-REM cls
-REM ) else if /i "%setpass%" == "N" (
-REM net user %user% "" /add 2>nul
-REM call :log "User %user% added without password successfully."
-REM cls
-REM ) else (
-REM echo Invalid input. Please try again.
-REM goto :input_pass
-REM cls
-REM )
-REM REM Add user to local administrators group
-REM if %errorlevel% equ 0 (
-REM net localgroup administrators %user% /add
-REM call :log "User %user% added to local administrators group successfully."
-REM echo User "%user%" with admin privileges added successfully.
-REM ping -n 2 localhost 1>NUL
-REM ) else (
-REM call :log "Failed to add user %user%."
-REM echo Failed to add user.
-REM ping -n 2 localhost 1>NUL
-REM )
-REM endlocal
-REM cls
-REM goto :utilities
 
 :restartPC
 cls
@@ -863,17 +816,17 @@ cls
 setlocal
 REM input Fully Qualified Domain Name
 set /p server=Enter the Domain Name: 
-call :log "Joining domain %server%..."
+
 REM check if host can reach the AD with FQDN
 ping %server%
 REM ping -n 4 %server% 1>NUL
 if %errorlevel% neq 0 (
 echo Cannot reach server. Exiting...
-call :log "Cannot reach server. Exiting..."
+
 ping -n 5 localhost 1>NUL
 ) else (
 echo %server% is pingable. Proceeding with upgrade...
-call :log "%server% is pingable. Proceeding with upgrade..."
+
 ping -n 5 localhost 1>NUL
 cls
 echo Please enter FQDN username instead of username only (domain\username instead of username)
@@ -883,12 +836,12 @@ wmic computersystem where name="%computername%" call joindomainorworkgroup name=
 if %errorlevel% neq 0 (
 cls
 echo Failed to join domain. Error code: %errorlevel%
-call :log "Failed to join domain. Error code: %errorlevel%"
+
 ping -n 5 localhost 1>NUL
 ) else (
 cls
 echo Successfully joined domain.
-call :log "Successfully joined domain."
+
 )
 ping -n 5 localhost 1>NUL
 endlocal
@@ -1182,7 +1135,7 @@ goto :EOF
 :winget-Network
 Title Install Network softwares by Winget
 setlocal
-call :log "Installing Network softwares by Winget"
+
 cls
 echo List softwares to install
 echo ========================================================
@@ -1220,7 +1173,7 @@ curl -L -o "c:\Program Files (x86)\Mobatek\MobaXterm\Custom.mxtpro" "https://dri
 echo Mobaxterm setting complete
 )
 call :killtasks
-call :log "Finished Network softwares by Winget"
+
 endlocal
 goto :EOF
 
@@ -1253,7 +1206,7 @@ goto :EOF
 Title Install Chat softwares by Winget
 call :checkCompatibility
 setlocal
-call :log "Installing Chat softwares by Winget"
+
 ping -n 3 localhost 1>NUL
 cls
 echo List softwares to install
@@ -1376,26 +1329,26 @@ cls
 :: Install Chocolatey
 :: ============================================================
 echo [*] Checking if Chocolatey is installed...
-call :log "[INFO] Checking if Chocolatey is installed"
+
 if exist "C:\ProgramData\chocolatey\bin\choco.exe" (
     echo [*] Chocolatey is already installed. Skipping installation.
-    call :log "[INFO] Chocolatey is already installed. Skipping installation."
+
 ) else (
     echo [*] Installing Chocolatey...
     powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
     if exist "C:\ProgramData\chocolatey\bin\choco.exe" (
         echo [*] Chocolatey installation completed successfully.
-        call :log "[INFO] Chocolatey installation completed successfully."
+
         set "PATH=%PATH%;C:\ProgramData\chocolatey\bin"
     ) else (
         echo [Warning] Chocolatey installation failed.
-        call :log "[WARNING] Chocolatey installation failed."
+
         exit /B 1
     )
 )
 ping -n 2 localhost 1>NUL
 echo [*] Installing aria2c, jq, yq, 7zip...
-call :log "[INFO] Installing aria2c, jq, yq, 7zip...
+
 choco install -y aria2 7zip jq yq
 assoc .7z=7-Zip
 assoc .zip=7-Zip
@@ -1410,7 +1363,7 @@ echo.
 :: Install Winget (Dependencies & Core) from GitHub using aria2c
 :: ============================================================
 echo [*] Fetching latest Winget release information from GitHub...
-call :log "[INFO] Fetching latest Winget release information from GitHub"
+
 set "GITHUB_API_URL=https://api.github.com/repos/microsoft/winget-cli/releases/latest"
 
 :: Retrieve the MSIXBUNDLE file URL
@@ -1428,7 +1381,7 @@ echo [*] Detected Assets:
 echo     Dependencies ZIP: %DEP_ZIP_URL%
 echo     Main Package: %MSIXBUNDLE_URL%
 echo.
-call :log "[INFO] Detected Winget assets: Main Package: %MSIXBUNDLE_URL%, Dependencies: %DEP_ZIP_URL%"
+
 
 :: Define local filenames & folders in %temp%
 set "MSIXBUNDLE_FILE=%temp%\Microsoft.DesktopAppInstaller.msixbundle"
@@ -1437,16 +1390,16 @@ set "DEP_FOLDER=%temp%\DesktopAppInstaller_Dependencies"
 
 :: Download files using aria2c
 echo [*] Downloading Winget package with aria2c...
-call :log "[INFO] Downloading Winget package with aria2c..."
+
 aria2c -x 16 -c -d "%temp%" -o "Microsoft.DesktopAppInstaller.msixbundle" "%MSIXBUNDLE_URL%"
 
 echo [*] Downloading dependencies ZIP file with aria2c...
-call :log "[INFO] Downloading dependencies ZIP file with aria2c..."
+
 aria2c -x 16 -c -d "%temp%" -o "DesktopAppInstaller_Dependencies.zip" "%DEP_ZIP_URL%"
 
 :: Extract the dependencies ZIP file
 echo [*] Extracting dependencies...
-call :log "[INFO] Extracting dependencies..."
+
 powershell -NoProfile -Command "Expand-Archive -Path '%DEP_ZIP_FILE%' -DestinationPath '%DEP_FOLDER%' -Force"
 
 :: Determine system architecture
@@ -1455,7 +1408,7 @@ if /I "%PROCESSOR_ARCHITECTURE%"=="x86" set "arch=x86"
 if /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" set "arch=x64"
 if /I "%PROCESSOR_ARCHITECTURE%"=="ARM64" set "arch=arm64"
 echo [*] Detected Architecture: %arch%
-call :log "[INFO] Detected architecture: %arch%"
+
 
 :: Install dependency packages (.appx files)
 echo [*] Installing dependency packages...
@@ -1473,7 +1426,7 @@ echo [*] Cleaning up Winget installer files...
 if exist "%MSIXBUNDLE_FILE%" del /f /q "%MSIXBUNDLE_FILE%"
 if exist "%DEP_ZIP_FILE%" del /f /q "%DEP_ZIP_FILE%"
 if exist "%DEP_FOLDER%" rd /s /q "%DEP_FOLDER%"
-call :log "[INFO] Winget installation completed"
+
 
 popd
 goto :EOF
@@ -1525,35 +1478,6 @@ if not "%winget_current_version%"=="%winget_latest_release%" (
 ping -n 2 localhost 1>NUL
 exit /b 0
 
-::=====================================================================
-:log
-setlocal
-
-set "logfile=%TEMP%\Helpdesk-Tools.log"
-
-for /f "tokens=2 delims==" %%I in ('wmic os get LocalDateTime /value ^| find "="') do set "dt=%%I"  :: Get current datetime from WMIC
-set "timestamp=%dt:~0,4%-%dt:~4,2%-%dt:~6,2% %dt:~8,2%:%dt:~10,2%:%dt:~12,2%"  :: Format datetime to readable format
-
-set "msg=%~1"
-
-if /I "%LOG_LEVEL%"=="DEBUG" (
-    echo %timestamp% %msg% >> "%logfile%"
-) else (
-    echo %msg% | find /i "ERROR" > nul
-    if %errorlevel% equ 0 (
-        echo %timestamp% %msg% >> "%logfile%"
-        goto :logend
-    )
-    echo %msg% | find /i "WARNING" > nul
-    if %errorlevel% equ 0 (
-        echo %timestamp% %msg% >> "%logfile%"
-    )
-)
-
-:logend
-endlocal
-goto :EOF
-
 :installSoft_ByWinget
 Title Install Software
 REM Set the software name to install
@@ -1568,17 +1492,17 @@ echo y | winget list %software% > nul
 if "%errorlevel%" == "0" (set "installed=1")
 if "%installed%"=="0" (if "%scope%"=="" (
 echo y | winget install %software%
-call :log "%software% installed without scope"
+
 cls
 ) else (echo y | winget install %software% %scope%
-call :log "%software% installed with scope %scope%"
+
 cls
 )
 ) else (
 cls 
 echo %software% already installed
 ping -n 2 localhost 1>nul
-call :log "%software% already installed"
+
 cls
 )
 goto :EOF
@@ -1595,13 +1519,13 @@ choco list --local-only %software% > nul
 if "%errorlevel%" == "0" (set "installed=1")
 if "%installed%"=="0" (
 choco install %software% -y
-call :log "%software% installed"
+
 cls
 ) else (
 cls
 echo %software% already installed
 ping -n 2 localhost 1>nul
-call :log "%software% already installed"
+
 cls
 )
 goto :EOF
@@ -1645,8 +1569,6 @@ assoc .bzip2=7-Zip
 assoc .xz=7-Zip
 goto :EOF
 
-
-REM function asks the user to input username and password for credential checking
 :inputCredential
 cls
 echo.
@@ -1659,9 +1581,7 @@ goto :EOF
 :clean
 echo off
 cls
-:: Set the path to the log file to exclude
 setlocal
-set exclude_file=%temp%\Helpdesk-Tools.log
 :: Delete all files in the temp directory except for the exclude file
 for /F "delims=" %%f in ('dir /B /A:D "%temp%"') do (
     if /I not "%%f"=="%exclude_file%" (rd /S /Q "%temp%\%%f" >nul 2>&1)
@@ -1669,7 +1589,7 @@ for /F "delims=" %%f in ('dir /B /A:D "%temp%"') do (
 for %%f in (%temp%\*.*) do (
 if /I not "%%f"=="%exclude_file%" (del /F "%%f" >nul 2>&1)
 )
-echo All files in %temp% have been deleted except for %exclude_file%.
+echo All files in %temp% have been deleted.
 ping -n 3 localhost 1>nul
 endlocal
 goto :EOF
