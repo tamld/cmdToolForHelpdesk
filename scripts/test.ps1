@@ -51,7 +51,9 @@ function Test-Smoke {
   $env:SAFE_MODE = '1'; $env:DRY_RUN = '1'; $env:CI = '1'
   $psi = New-Object System.Diagnostics.ProcessStartInfo
   $psi.FileName = 'cmd.exe'
-  $psi.Arguments = "/c echo 7| \"$cmdFile\""
+  # Build arguments safely with quoted path
+  $quoted = '"' + $cmdFile + '"'
+  $psi.Arguments = "/c echo 7| $quoted"
   $psi.RedirectStandardOutput = $true
   $psi.RedirectStandardError = $true
   $psi.UseShellExecute = $false
