@@ -20,19 +20,29 @@ function Test-Static {
   Write-Host "== Static checks =="
   $content = Get-Content -Raw -Path $cmdFile
 
-  # Collect labels
-  $labels = Select-String -InputObject $content -Pattern '^[ \t]*:([A-Za-z0-9_\-]+)' -AllMatches -Multiline | ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups[1].Value }
+  # Also collect labels from auxiliary .cmd files referenced (e.g., packages/windows_debloat.cmd)
+  $auxFiles = @()
+  $debloat = Join-Path $repo 'packages/windows_debloat.cmd'
+  if (Test-Path $debloat) { $auxFiles += $debloat }
+  $auxContent = ($auxFiles | ForEach-Object { Get-Content -Raw -Path $_ }) -join "`n"
+
+  # Collect labels (Regex multiline via (?m))
+  $labels = [regex]::Matches($content, '(?m)^\s*:([A-Za-z0-9_\-]+)') | ForEach-Object { $_.Groups[1].Value }
+  if ($auxContent) {
+    $labels += ([regex]::Matches($auxContent, '(?m)^\s*:([A-Za-z0-9_\-]+)') | ForEach-Object { $_.Groups[1].Value })
+  }
   $dup = $labels | Group-Object | Where-Object { $_.Count -gt 1 }
   if($dup){ $dup | ForEach-Object { Write-Warn ("Duplicate label: {0} x{1}" -f $_.Name, $_.Count) } }
   else { Write-Ok "No duplicate labels" }
 
-  # Collect gotos/calls
+  # Collect gotos/calls (Regex with inline options)
   $calls = @()
-  $calls += (Select-String -InputObject $content -Pattern '(?mi)\bcall\s*:\s*([A-Za-z0-9_\-]+)' | ForEach-Object { $_.Matches.Groups[1].Value })
-  $calls += (Select-String -InputObject $content -Pattern '(?mi)\bgoto\s*:?(\S+)' | ForEach-Object { $_.Matches.Groups[1].Value })
-  $labelsSet = [Collections.Generic.HashSet[string]]::new()
+  $calls += ([regex]::Matches($content, '(?mi)\bcall\s*:\s*([A-Za-z0-9_\-]+)') | ForEach-Object { $_.Groups[1].Value })
+  $calls += ([regex]::Matches($content, '(?mi)\bgoto\s*:?\s*([A-Za-z0-9_\-]+)') | ForEach-Object { $_.Groups[1].Value })
+  $labelsSet = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
   $null = $labels | ForEach-Object { [void]$labelsSet.Add($_) }
-  $unresolved = $calls | Where-Object { -not $labelsSet.Contains($_) } | Select-Object -Unique
+  $special = @('eof','exit')
+  $unresolved = $calls | Where-Object { $_ -and ($special -notcontains $_.ToLower()) -and -not $labelsSet.Contains($_) } | Select-Object -Unique
   if($unresolved){ $unresolved | ForEach-Object { Write-Warn "Unresolved target: $_" } } else { Write-Ok "All goto/call targets resolvable" }
 
   # Banned/risky patterns (warn only for initial setup)
