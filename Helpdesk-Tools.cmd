@@ -49,7 +49,7 @@ echo    [7] Exit                                       : Press 7
 echo    ========================================================
 Choice /N /C 1234567 /M " Press your choice :"
 ::if %ERRORLEVEL% == 8 call :checkCompatibility & goto main
-if %ERRORLEVEL% == 7 call :clean && goto exit
+if %ERRORLEVEL% == 7 call :clean && goto end
 if %ERRORLEVEL% == 6 call :updateCMD & goto main
 if %ERRORLEVEL% == 5 goto packageManagementMenu
 if %ERRORLEVEL% == 4 goto utilities
