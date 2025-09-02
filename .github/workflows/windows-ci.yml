@@ -15,7 +15,11 @@ jobs:
       - name: Static checks
         shell: pwsh
         run: |
-          ./cmdToolForHelpdesk/scripts/test.ps1 -Stage static -Offline
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          $ws = "$env:GITHUB_WORKSPACE"
+          $script = Join-Path $ws 'scripts\test.ps1'
+          if (!(Test-Path $script)) { Write-Error "Missing script: $script"; exit 1 }
+          & $script -Stage static -Offline
 
   smoke:
     runs-on: windows-latest
@@ -26,7 +30,11 @@ jobs:
       - name: Setup shims
         shell: pwsh
         run: |
-          ./cmdToolForHelpdesk/scripts/setup-shims.ps1
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          $ws = "$env:GITHUB_WORKSPACE"
+          $shim = Join-Path $ws 'scripts\setup-shims.ps1'
+          if (!(Test-Path $shim)) { Write-Error "Missing script: $shim"; exit 1 }
+          & $shim
       - name: Smoke test (dry-run)
         shell: pwsh
         env:
@@ -34,7 +42,11 @@ jobs:
           DRY_RUN: '1'
           CI: '1'
         run: |
-          ./cmdToolForHelpdesk/scripts/test.ps1 -Stage smoke -Offline
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          $ws = "$env:GITHUB_WORKSPACE"
+          $script = Join-Path $ws 'scripts\test.ps1'
+          if (!(Test-Path $script)) { Write-Error "Missing script: $script"; exit 1 }
+          & $script -Stage smoke -Offline
 
   unattend:
     runs-on: windows-latest
@@ -45,4 +57,8 @@ jobs:
       - name: Validate unattend XML
         shell: pwsh
         run: |
-          ./cmdToolForHelpdesk/scripts/test.ps1 -Stage unattend -Offline
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          $ws = "$env:GITHUB_WORKSPACE"
+          $script = Join-Path $ws 'scripts\test.ps1'
+          if (!(Test-Path $script)) { Write-Error "Missing script: $script"; exit 1 }
+          & $script -Stage unattend -Offline
