@@ -597,22 +597,18 @@ Title Active Licenses Menu
 cls
 echo.
 echo        ========================================================
-echo        [1] Online                                     : Press 1
-echo        [2] By Phone                                   : Press 2
-echo        [3] Check Licenses                             : Press 3
-echo        [4] Backup Licenses                            : Press 4
-echo        [5] Restore License                            : Press 5
+echo        [1] Online (Coming soon)                       : Press 1
+echo        [2] By Phone (Coming soon)                     : Press 2
+echo        [3] Check Licenses (Coming soon)               : Press 3
+echo        [4] Backup Licenses (Coming soon)              : Press 4
+echo        [5] Restore License (Coming soon)              : Press 5
 echo        [6] MAS (Microsoft Activation Scripts)         : Press 6
 echo        [7] Back to Main Menu                          : Press 7
 echo        ========================================================
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :main
 if %ERRORLEVEL% == 6 goto :MAS
-if %ERRORLEVEL% == 5 goto :restoreLicenses
-if %ERRORLEVEL% == 4 goto :backupLicenses
-if %ERRORLEVEL% == 3 goto :checkLicense
-if %ERRORLEVEL% == 2 goto :activeByPhone
-if %ERRORLEVEL% == 1 goto :activeOnline
+if %ERRORLEVEL% LEQ 5 (echo This function is not available yet. & ping -n 2 localhost >nul & goto :activeLicenses)
 endlocal
 
 REM End of Active Licenses Menu
@@ -711,6 +707,10 @@ goto :EOF
 
 :debloat
 TITLE Windows Debloat
+if "%DRY_RUN%"=="1" (
+echo [DRY_RUN] Skipping debloat operations
+goto :EOF
+)
 echo Remove Unused Packages, Bloatwares
 echo Winget uninstall debloat packages
 call :winget_debloat
@@ -789,6 +789,10 @@ goto :utilities
 Title Install Support Assistant
 call :checkCompatibility
 cls
+if "%DRY_RUN%"=="1" (
+echo [DRY_RUN] Skipping Support Assistant installation
+goto :eof
+)
 echo Installing Support Assistant
 ping -n 3 localhost 1>NUL
 setlocal
@@ -851,6 +855,10 @@ REM This function will use Windows Disk Cleanup to remove unnecessary files
 :cleanUpSystem
 Title Clean Up System
 cls
+if "%DRY_RUN%"=="1" (
+echo [DRY_RUN] Skipping system cleanup (registry/cleanmgr)
+goto :utilities
+)
 echo This will cleanup temp folder and add preset for Windows Cleanup Utilities
 echo You can execute the command cleanmgr /sagerun:1 afterward
 call :clean > NUL
@@ -976,11 +984,11 @@ goto :EOF
 :createShortcut
 cls
 @echo off
-COPY /Y "%startProgram%\*.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\BCUninstaller\BCUninstaller.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop"
-COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
+if exist "%startProgram%\*.lnk" COPY /Y "%startProgram%\*.lnk" "%AllUsersProfile%\Desktop"
+if exist "%startProgram%\BCUninstaller\BCUninstaller.lnk" COPY /Y "%startProgram%\BCUninstaller\BCUninstaller.lnk" "%AllUsersProfile%\Desktop"
+if exist "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" COPY /Y "%startProgram%\Foxit PDF Reader\Foxit PDF Reader.lnk" "%AllUsersProfile%\Desktop"
+if exist "%startProgram%\Slack Technologies Inc\*.lnk" COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop"
+if exist "%startProgram%\UltraViewer\*.lnk" COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
 goto :eof
 
 :packageManagementMenu
@@ -1535,6 +1543,10 @@ Title Add Winget Shedule Upgrade
 REM Create schedule task auto upgrade all software with hidden option
 REM Schedule task run onlogon with current user running
 REM schtasks /create /tn "Winget Upgrade" /tr "winget.exe upgrade -h --all" /sc onlogon
+if "%DRY_RUN%"=="1" (
+echo [DRY_RUN] Skipping schedule task creation
+goto :eof
+)
 schtasks /create /tn "Winget Upgrade" /tr "winget upgrade -h --all" /sc onlogon /ru %username% /f
 goto :eof
 
