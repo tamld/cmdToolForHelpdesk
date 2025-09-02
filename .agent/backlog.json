@@ -1,0 +1,106 @@
+{
+  "generated": "2025-09-02",
+  "todos": [
+    {
+      "id": "A-001",
+      "title": "Fix Windows 11 detection logic in :settingWindows",
+      "component": "Helpdesk-Tools.cmd",
+      "path": "Helpdesk-Tools.cmd",
+      "labels": ["bug", "compat"],
+      "priority": "p0",
+      "status": "open",
+      "acceptance": ["Detects Win10/11 via build or registry", "No false positives on Win10"]
+    },
+    {
+      "id": "A-002",
+      "title": "Consolidate duplicate helpers (winget/choco/installUnikey/addScheduleUpgrade/clean)",
+      "component": "core-helpers",
+      "path": "Helpdesk-Tools.cmd",
+      "labels": ["refactor"],
+      "priority": "p0",
+      "status": "open",
+      "acceptance": ["Single definition per helper", "All call sites updated", "No behavior change"]
+    },
+    {
+      "id": "A-003",
+      "title": "Replace hard-coded OfficeTool/ODT download with pinned source + checksum",
+      "component": "office",
+      "path": "Helpdesk-Tools.cmd",
+      "labels": ["security", "stability"],
+      "priority": "p0",
+      "status": "open",
+      "acceptance": ["Pinned version", "Checksum validated or signed source"]
+    },
+    {
+      "id": "A-004",
+      "title": "Implement Active Licenses actions (check/backup/restore/online/phone)",
+      "component": "licenses",
+      "path": "Helpdesk-Tools.cmd",
+      "labels": ["feature"],
+      "priority": "p1",
+      "status": "open",
+      "acceptance": ["No 'hold' calls in menu", "Clear user guidance"]
+    },
+    {
+      "id": "A-005",
+      "title": "Implement AIO System-Network/Helpdesk flows or hide until ready",
+      "component": "AIO",
+      "path": "Helpdesk-Tools.cmd",
+      "labels": ["feature", "ux"],
+      "priority": "p1",
+      "status": "open",
+      "acceptance": ["No dead-end placeholders", "Consistent messaging"]
+    },
+    {
+      "id": "A-006",
+      "title": "Harden Support Assistant installs (remove --ignore-checksums, verify source)",
+      "component": "utilities",
+      "path": "Helpdesk-Tools.cmd",
+      "labels": ["security"],
+      "priority": "p1",
+      "status": "open",
+      "acceptance": ["Installs succeed without ignoring checksums"]
+    },
+    {
+      "id": "A-007",
+      "title": "Guard createShortcut with if exist checks",
+      "component": "utilities",
+      "path": "Helpdesk-Tools.cmd",
+      "labels": ["bug"],
+      "priority": "p2",
+      "status": "open",
+      "acceptance": ["No errors when targets are missing"]
+    },
+    {
+      "id": "A-008",
+      "title": "Fix run-in-sandbox mapped folder copy and launcher",
+      "component": "sandbox",
+      "path": "scripts/run-in-sandbox.cmd",
+      "labels": ["bug", "ux"],
+      "priority": "p1",
+      "status": "open",
+      "acceptance": ["CMD files reliably appear on sandbox desktop and launch"]
+    },
+    {
+      "id": "A-009",
+      "title": "Refactor refactor.cmd to implement basic actions for menus",
+      "component": "refactor",
+      "path": "refactor.cmd",
+      "labels": ["feature", "refactor"],
+      "priority": "p2",
+      "status": "open",
+      "acceptance": ["Menu items 1–3 functional without placeholders"]
+    },
+    {
+      "id": "A-010",
+      "title": "Add fallback/no-network handling for GitHub API in packageManagement/checkCompatibility",
+      "component": "packageManagement",
+      "path": "Helpdesk-Tools.cmd",
+      "labels": ["stability"],
+      "priority": "p2",
+      "status": "open",
+      "acceptance": ["Graceful behavior without network", "Skips or uses cached versions"]
+    }
+  ]
+}
+

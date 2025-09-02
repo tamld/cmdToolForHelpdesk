@@ -1,0 +1,20 @@
+{
+  "key_files": [
+    {"path": "Helpdesk-Tools.cmd", "notes": "Main menu, installers, utilities"},
+    {"path": "refactor.cmd", "notes": "Refactor playground; many placeholders"},
+    {"path": "scripts/run-in-sandbox.cmd", "notes": "Windows Sandbox runner"},
+    {"path": "packages/windows_debloat.cmd", "notes": "Debloat routines"}
+  ],
+  "known_gaps": [
+    "Placeholders calling :hold() in several menus",
+    "Windows 11 detection logic using WMIC name parsing",
+    "Duplicate helper functions defined multiple times",
+    "Unpinned/unchecked external downloads"
+  ],
+  "docs": [
+    {"path": "docs/spec-cmdtool.md", "desc": "Human-readable technical spec"},
+    {"path": "docs/roadmap.md", "desc": "Narrative roadmap"},
+    {"path": "docs/rpm.md", "desc": "Roles, Process, Metrics"}
+  ]
+}
+

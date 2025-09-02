@@ -1,0 +1,24 @@
+{
+  "language": {
+    "default": ["batch"],
+    "preferred_for_complex_logic": "powershell",
+    "rationale": "Batch is ubiquitous for menus/launchers; PowerShell handles complex flows."
+  },
+  "mvp": {
+    "use_when": ["end-to-end slice is possible", "uncertain scope"],
+    "exit": ["happy path complete", "rollback documented", "basic logs present"]
+  },
+  "hardening": {
+    "triggers": ["increased usage", "security finding", "perf constraints"],
+    "checklists": ["security_baseline", "observability", "resilience", "release_engineering"],
+    "templates": "/Users/tamld/Documents/MCP-Server/memory/templates/decision_framework.json"
+  },
+  "prioritization": {
+    "method": "RICE",
+    "anti_patterns": ["feature_chasing", "premature_optimization", "unbounded_refactors"]
+  },
+  "advice_policy": {
+    "defaults": ["suggest simplest viable 1–2 options", "state trade-offs", "ask for constraints if missing"]
+  }
+}
+

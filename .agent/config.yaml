@@ -1,0 +1,14 @@
+project:
+  name: cmdToolForHelpdesk
+  repo_path: "."  # make portable
+
+workspace:
+  agent_dir: ".agent"
+  context_dir: ".agent/context"
+  prompts_dir: ".agent/prompts"
+  workflows_dir: ".agent/workflows"
+
+conventions:
+  allow_secrets_in_repo: false
+  default_editor: "code"
+  max_agent_file_bytes: 32768  # keep agent-facing files compact

@@ -1,0 +1,8 @@
+{
+  "adrs": [
+    {"id": "0001", "title": "Language and Shell", "path": "docs/adr/0001-language-and-shell.md"},
+    {"id": "0002", "title": "Package Managers", "path": "docs/adr/0002-package-managers.md"},
+    {"id": "0003", "title": "Download Security", "path": "docs/adr/0003-download-security.md"},
+    {"id": "0004", "title": "Versioning and Release", "path": "docs/adr/0004-versioning-and-release.md"}
+  ]
+}

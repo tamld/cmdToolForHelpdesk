@@ -1,0 +1,12 @@
+{
+  "name": "feature_intake",
+  "steps": [
+    "clarify problem and user",
+    "define acceptance criteria",
+    "estimate RICE score",
+    "decide MVP vs hardening",
+    "create backlog items and ADR if needed"
+  ],
+  "prioritization": "/Users/tamld/Documents/MCP-Server/memory/templates/prioritization.md"
+}
+

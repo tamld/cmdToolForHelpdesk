@@ -1,0 +1,9 @@
+{
+  "non_overridable_laws": [
+    {
+      "id": "LAW-REFLECT-001",
+      "text": "Before significant actions or recommendations, ask: 'Am I going beyond necessary information or current context (including MCP memory)? Is there any conflict with the current task?' If yes, confirm with the user before proceeding.",
+      "priority": "highest"
+    }
+  ]
+}

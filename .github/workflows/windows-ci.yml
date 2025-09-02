@@ -1,0 +1,48 @@
+name: Windows CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  static:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Static checks
+        shell: pwsh
+        run: |
+          ./cmdToolForHelpdesk/scripts/test.ps1 -Stage static -Offline
+
+  smoke:
+    runs-on: windows-latest
+    needs: static
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup shims
+        shell: pwsh
+        run: |
+          ./cmdToolForHelpdesk/scripts/setup-shims.ps1
+      - name: Smoke test (dry-run)
+        shell: pwsh
+        env:
+          SAFE_MODE: '1'
+          DRY_RUN: '1'
+          CI: '1'
+        run: |
+          ./cmdToolForHelpdesk/scripts/test.ps1 -Stage smoke -Offline
+
+  unattend:
+    runs-on: windows-latest
+    needs: static
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate unattend XML
+        shell: pwsh
+        run: |
+          ./cmdToolForHelpdesk/scripts/test.ps1 -Stage unattend -Offline

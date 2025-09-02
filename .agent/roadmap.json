@@ -1,0 +1,23 @@
+{
+  "milestones": [
+    {
+      "id": "M-0.7.0",
+      "name": "Stabilize core & security hardening",
+      "targets": ["A-001", "A-002", "A-003", "A-006", "A-010"],
+      "eta": "2025-09-15"
+    },
+    {
+      "id": "M-0.8.0",
+      "name": "Feature completeness in Licenses & AIO",
+      "targets": ["A-004", "A-005", "A-007", "A-008"],
+      "eta": "2025-09-30"
+    },
+    {
+      "id": "M-0.9.0",
+      "name": "Refactor menu & developer ergonomics",
+      "targets": ["A-009"],
+      "eta": "2025-10-15"
+    }
+  ]
+}
+

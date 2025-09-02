@@ -1,0 +1,27 @@
+{
+  "project": "cmdToolForHelpdesk",
+  "mission": "Automate Windows helpdesk tasks: install, fix, optimize, and manage packages safely and repeatably.",
+  "objectives": [
+    "Stabilize core menus and remove placeholder holds",
+    "Unify duplicate install helpers for winget/choco",
+    "Harden downloads with version pinning and checksums",
+    "Improve Windows version detection (10/11) logic",
+    "Provide sandbox/test flows and clear rollback"
+  ],
+  "constraints": [
+    "Run on Windows 10 19041+ and Windows 11",
+    "No secrets in repo",
+    "Token-efficient agent files (<32KB each)"
+  ],
+  "success_metrics": [
+    ">90% functions non-placeholder",
+    "Zero critical failures in install/update paths",
+    "Winget/Choco checks pass and self-heal",
+    "Reduced code duplication in core helpers"
+  ],
+  "out_of_scope": [
+    "Adding unrelated tools not used by helpdesk",
+    "OS images or proprietary binaries storage"
+  ]
+}
+

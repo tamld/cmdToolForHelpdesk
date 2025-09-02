@@ -1,0 +1,28 @@
+{
+  "name": "engineering_flow",
+  "phases": [
+    "discovery",
+    "scoping",
+    "reflection_gate",
+    "spike_optional",
+    "build",
+    "validate",
+    "harden",
+    "release",
+    "learn"
+  ],
+  "gates": {
+    "reflection_gate": {
+      "law": "LAW-REFLECT-001",
+      "question": "Am I going beyond necessary information/context or conflicting with the current task?",
+      "action_if_yes": "pause_and_confirm_with_user"
+    }
+  },
+  "gateways": {
+    "to_mvp": ["core flow understood"],
+    "to_hardening": ["usage/risk triggers"],
+    "to_release": ["acceptance criteria met"]
+  },
+  "checklists_templates": "/Users/tamld/Documents/MCP-Server/memory/templates/decision_framework.json",
+  "readiness": "/Users/tamld/Documents/MCP-Server/memory/templates/product_readiness_checklist.md"
+}

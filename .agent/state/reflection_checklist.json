@@ -1,0 +1,8 @@
+{
+  "law": "LAW-REFLECT-001",
+  "questions": [
+    "Am I going beyond necessary information or current context (incl. MCP memory)?",
+    "Is there any conflict with the current task or user request?"
+  ],
+  "action_if_yes": "Pause and ask the user to confirm before proceeding."
+}

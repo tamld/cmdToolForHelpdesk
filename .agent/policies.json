@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "non_overridable": {
+    "reflection_law": {
+      "id": "LAW-REFLECT-001",
+      "description": "Before significant actions or recommendations, the agent must reflect: 'Am I going beyond necessary information or current context (including MCP memory)? Is there any conflict with the current task?' If yes, the agent MUST confirm with the user before proceeding.",
+      "priority": "highest",
+      "override": "forbidden"
+    }
+  },
+  "scope": {
+    "allowed": [
+      "Edit repo files within cmdToolForHelpdesk",
+      "Add/update .agent JSON/YAML prompts, configs, workflows",
+      "Add human-readable specs under docs/",
+      "Refactor scripts minimally without breaking existing flows"
+    ],
+    "disallowed": [
+      "Storing secrets/keys in repo",
+      "Making destructive changes without backups",
+      "Network calls that violate licensing or TOU"
+    ]
+  },
+  "coding": {
+    "style": "Keep changes small, focused, and consistent with existing batch/shell style.",
+    "duplication": "Consolidate duplicate functions; do not introduce new duplicates.",
+    "compat": "Preserve Windows 10/11 support; guard features by version checks.",
+    "downloads": "Pin versions and verify checksums when feasible.",
+    "safety": "Fail fast with clear messages; add prompts for destructive ops.",
+    "comments": "Use English comments; prefer :: over REM in batch.",
+    "labels": "Batch labels lowerCamelCase; verbs first; menu labels end with 'Menu'; avoid hyphens.",
+    "variables": "Env vars UPPER_CASE; local vars descriptive lower_snake_case.",
+    "reference": "docs/coding-standards.md"
+  },
+  "validation": {
+    "phase": [
+      "Sanity-check syntax",
+      "Run most-specific test first",
+      "Then broader validations",
+      "Document manual steps if automation is not possible"
+    ]
+  },
+  "planning": {
+    "backlog_source": ".agent/backlog.json",
+    "roadmap_source": ".agent/roadmap.json",
+    "priority_order": [
+      "p0",
+      "p1",
+      "p2"
+    ]
+  },
+  "security": {
+    "privilege": "Elevate only when required. Explain why.",
+    "downloads": "Prefer official sources. Avoid --ignore-checksums unless justified.",
+    "logging": "Avoid printing sensitive data (e.g., credentials)."
+  },
+  "docs": {
+    "long_form": "Place human-readable technical detail in docs/",
+    "agent_form": "Keep .agent files concise and machine-readable"
+  },
+  "assets": {
+    "images_dir": "pictures",
+    "docs_dir": "docs"
+  },
+  "roles_source": "/Users/tamld/Documents/MCP-Server/memory/core/roles.json",
+  "role_selection": {
+    "coaching": "Use when editing MCP memory or before selecting a repo",
+    "engineering": "Use when working inside a repo with .agent present"
+  },
+  "reflection": {
+    "policy": "/Users/tamld/Documents/MCP-Server/memory/core/reflection/policy.json",
+    "cref": "/Users/tamld/Documents/MCP-Server/memory/core/reflection/cref.json",
+    "required_fields_l3_l4": [
+      "scope",
+      "belief_core",
+      "decay_factor",
+      "review_at_epoch",
+      "derived_from",
+      "variant_of"
+    ]
+  },
+  "vcs": {
+    "large_changes": "Open PR for review before merging.",
+    "small_changes": "Commit directly for low-risk tweaks (docs/minor fixes).",
+    "major_issues": "Open Issue for major bugs/refactors or release planning.",
+    "versioning": "Use SemVer for big updates; include date in script header.",
+    "contributing": "CONTRIBUTING.md"
+  }
+}

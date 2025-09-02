@@ -1,0 +1,14 @@
+{
+  "artifacts": [
+    {
+      "name": "officedeploymenttool.exe",
+      "path": "packages/officedeploymenttool.exe",
+      "sha256": ""
+    },
+    {
+      "name": "Licenses.zip",
+      "path": "packages/Licenses.zip",
+      "sha256": ""
+    }
+  ]
+}

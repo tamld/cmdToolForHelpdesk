@@ -1,0 +1,10 @@
+{
+  "session": "default",
+  "items": [
+    {"id": "A-001", "task": "Fix Win11 detection logic", "status": "todo"},
+    {"id": "A-002", "task": "Consolidate duplicate helpers", "status": "todo"},
+    {"id": "A-003", "task": "Pin+checksum Office/OTP/ODT downloads", "status": "todo"}
+  ],
+  "updated_at": "2025-09-02T12:40:00Z"
+}
+

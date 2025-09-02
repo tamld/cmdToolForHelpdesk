@@ -1,0 +1,16 @@
+{
+  "name": "release_cut",
+  "goal": "Produce a tagged release with verified scripts",
+  "prereq": [
+    "All milestone items closed or deferred",
+    "Sanity tests pass"
+  ],
+  "steps": [
+    "Bump version and date in Helpdesk-Tools.cmd header",
+    "Smoke-test menus: install, utilities, package management",
+    "Verify winget/choco checks, no placeholder holds",
+    "Update docs/roadmap.md and changelog section",
+    "Post-deployment learning: append lesson to project learning/lessons.jsonl and update learning/summary.json per schema",
+    "Tag release and attach artifacts if needed"
+  ]
+}

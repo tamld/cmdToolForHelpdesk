@@ -1,0 +1,32 @@
+{
+  "name": "reflection_flow",
+  "levels": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "core_policy": "/Users/tamld/Documents/MCP-Server/memory/core/reflection/policy.json",
+  "cref": "/Users/tamld/Documents/MCP-Server/memory/core/reflection/cref.json",
+  "project_trace": "/Users/tamld/Documents/MCP-Server/memory/projects/cmdToolForHelpdesk/reflection/trace.jsonl",
+  "project_anchors": "/Users/tamld/Documents/MCP-Server/memory/projects/cmdToolForHelpdesk/reflection/anchors.json",
+  "required_fields_l3_l4": [
+    "scope",
+    "belief_core",
+    "decay_factor",
+    "review_at_epoch",
+    "lineage"
+  ],
+  "notes": "Write Level-1 per step; Level-2 on deviation; Level-3 only with high confidence and alignment; Level-4 requires explicit approval. Compute S_core and S_adaptive; resolve per decision_rules; log conflicts.",
+  "adaptive": {
+    "meta_state_registry": "/Users/tamld/Documents/MCP-Server/memory/core/reflection/meta_state_registry.json",
+    "adaptive_state": "/Users/tamld/Documents/MCP-Server/memory/projects/cmdToolForHelpdesk/reflection/adaptive_state.json",
+    "conflict_log": "/Users/tamld/Documents/MCP-Server/memory/projects/cmdToolForHelpdesk/reflection/conflict_resolution.jsonl",
+    "decision_rules": {
+      "use_core_if_delta_lt": 0.2,
+      "use_adaptive_if_better_by": 0.3,
+      "fallback_to_core_when_adaptive_worse": true,
+      "escalate_on_major_conflict": true
+    }
+  }
+}
