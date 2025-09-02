@@ -29,6 +29,9 @@ call :getOfficePath
 set officePath=%cd%
 set "startProgram=%ProgramData%\Microsoft\Windows\Start Menu\Programs"
 cd /d "%dp%"
+REM Prefer PowerShell Core (pwsh) when available
+set "PWSH=powershell"
+where pwsh >nul 2>&1 && set "PWSH=pwsh"
 cls
 setlocal
 title Main Menu
@@ -618,7 +621,7 @@ REM ============================================================================
 cls
 REM call :hold
 pushd %temp%
-start powershell.exe -command "irm https://get.activated.win | iex"
+start "" %PWSH% -NoProfile -Command "irm https://get.activated.win | iex"
 popd
 cd %dp%
 cls
@@ -700,8 +703,8 @@ REM End of Utilities Menu
 REM ==============================================================================
 REM Start of Utilities functions
 :winutil  
-:: call https://github.com/ChrisTitusTech/winutil Powershell
-start powershell -command "irm "https://christitus.com/win" | iex"
+:: call https://github.com/ChrisTitusTech/winutil with PowerShell (prefer pwsh)
+start "" %PWSH% -NoProfile -Command "irm 'https://christitus.com/win' | iex"
 goto :EOF
 
 
@@ -929,11 +932,11 @@ reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Feeds" /v "ShellFeedsTas
 :: Replace Command Prompt with PowerShell in the Menu
 ::reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "DontUsePowerShellOnWinX" /t REG_DWORD /d 0 /f >nul
 echo Show file extension
-powershell Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name HideFileExt -Value 0
+%PWSH% -NoProfile -Command "Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name HideFileExt -Value 0"
 echo Enable Dark mode
-powershell Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -Value 0
+%PWSH% -NoProfile -Command "Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -Value 0"
 echo Show this PC view
-powershell Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name LaunchTo -Value 1
+%PWSH% -NoProfile -Command "Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name LaunchTo -Value 1"
 echo Revert classic menu Right click W11
 setlocal
 :: Detect Windows 10 or 11
@@ -1343,7 +1346,7 @@ if exist "C:\ProgramData\chocolatey\bin\choco.exe" (
 
 ) else (
     echo [*] Installing Chocolatey...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
+    %PWSH% -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
     if exist "C:\ProgramData\chocolatey\bin\choco.exe" (
         echo [*] Chocolatey installation completed successfully.
 
@@ -1464,7 +1467,7 @@ cls
 
 REM --- Check Chocolatey ---
 choco -v >nul 2>&1 || call :packageManagement
-for /f "delims=" %%p in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/chocolatey/choco/releases/latest').tag_name"') do set "choco_latest_release=%%p"
+for /f "delims=" %%p in ('%PWSH% -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/chocolatey/choco/releases/latest').tag_name"') do set "choco_latest_release=%%p"
 for /f "delims=" %%p in ('choco -v') do set "choco_current_version=%%p"
 if not "%choco_current_version%"=="%choco_latest_release%" (
     call :packageManagement
@@ -1476,7 +1479,7 @@ REM --- Check Winget ---
 for /f "tokens=4 delims=[]" %%i in ('ver') do set "VERSION=%%i"
 if not "%VERSION%" GEQ "10.0.19041" exit /b 0
 winget -v >nul 2>&1 || call :packageManagement
-for /f "delims=" %%a in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest').tag_name"') do set "winget_latest_release=%%a"
+for /f "delims=" %%a in ('%PWSH% -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest').tag_name"') do set "winget_latest_release=%%a"
 for /f "delims=" %%b in ('winget -v') do set "winget_current_version=%%b"
 if not "%winget_current_version%"=="%winget_latest_release%" (
     call :packageManagement
@@ -1613,7 +1616,7 @@ dir /b "C:\Program Files (x86)\Internet Download Manager" > nul 2>&1 || (
 	call :checkCompatibility
 	choco install -y internet-download-manager > nul 2>&1
 )
-powershell -Command "iex(irm is.gd/idm_reset)"
+%PWSH% -NoProfile -Command "iex(irm is.gd/idm_reset)"
 popd
 call :clean
 goto :EOF
@@ -1695,7 +1698,7 @@ if not exist "%~2" (
 )
 
 echo [*] Extracting "%~1" to "%~2" using PowerShell...
-powershell -NoProfile -Command "try { Expand-Archive -Path '%~1' -DestinationPath '%~2' -Force } catch { Write-Error $_; exit 1 }"
+%PWSH% -NoProfile -Command "try { Expand-Archive -Path '%~1' -DestinationPath '%~2' -Force } catch { Write-Error $_; exit 1 }"
 if errorlevel 1 (
     echo [ERROR] Extraction failed.
     exit /B 1
@@ -1724,7 +1727,7 @@ if %errorlevel%==0 (
 )
 
 :: Use PowerShell as a last resort
-powershell -Command "& {
+%PWSH% -NoProfile -Command "& {
     try {
         Invoke-WebRequest -Uri '%downloadUrl%' -OutFile '%outputFile%'
     } catch {
