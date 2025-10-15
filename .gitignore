@@ -1,2 +1,42 @@
-.gitattributes
+# OS metadata
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor backups and temps
+*.bak
+*.tmp
+*.log
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+
+# IDE settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Local caches
+logs/
+tmp/
+temp/
+.cache/
+__pycache__/
+
+# Virtualisation artefacts
+*.vhdx
+*.vdi
+*.vmdk
+*.ova
+*.ovf
+.vagrant/
+VirtualBox VMs/
+
+# Packaging outputs
+*.iso
+dist/
+release/
+
+.agents/
