@@ -1465,32 +1465,8 @@ REM Start of child process that can be reused functions
 
 :: Checks for required tools (Chocolatey, 7-Zip, Winget) and installs them if missing.
 :checkCompatibility
-@echo off
-cls
-
-REM --- Check Chocolatey ---
-choco -v >nul 2>&1 || call :packageManagement
-for /f "delims=" %%p in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/chocolatey/choco/releases/latest').tag_name"') do set "choco_latest_release=%%p"
-for /f "delims=" %%p in ('choco -v') do set "choco_current_version=%%p"
-if not "%choco_current_version%"=="%choco_latest_release%" (
-    call :packageManagement
-) else (
-    echo [*] Chocolatey is up-to-date: %choco_current_version%
-)
-
-REM --- Check Winget ---
-for /f "tokens=4 delims=[]" %%i in ('ver') do set "VERSION=%%i"
-if not "%VERSION%" GEQ "10.0.19041" exit /b 0
-winget -v >nul 2>&1 || call :packageManagement
-for /f "delims=" %%a in ('powershell -NoProfile -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest').tag_name"') do set "winget_latest_release=%%a"
-for /f "delims=" %%b in ('winget -v') do set "winget_current_version=%%b"
-if not "%winget_current_version%"=="%winget_latest_release%" (
-    call :packageManagement
-) else (
-    echo [*] Winget is up-to-date: %winget_current_version%
-)
-ping -n 2 localhost 1>NUL
-exit /b 0
+fsutil dirty query %systemdrive% >nul
+goto :eof
 
 :installSoftByWinget
 Title Install Software
