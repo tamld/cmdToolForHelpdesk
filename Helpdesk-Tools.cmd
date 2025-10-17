@@ -6,6 +6,7 @@ if /i "%~1"=="displayMainMenu" goto :displayMainMenu
 if /i "%~1"=="displayWindowsOfficeMenu" goto :displayWindowsOfficeMenu
 if /i "%~1"=="displayUtilitiesMenu" goto :displayUtilitiesMenu
 if /i "%~1"=="displayLicenseMenu" goto :displayLicenseMenu
+if /i "%~1"=="displayPackageManagerMenu" goto :displayPackageManagerMenu
 if not "%~1"=="" goto :eof
 set "baseDirectory=%~dp0"
 cd /d "%baseDirectory%"
@@ -1017,6 +1018,19 @@ COPY /Y "%ProgramFiles%\Kaspersky Lab\Kaspersky Virus Removal Tool\KVRT.exe" "%A
 COPY /Y "%ProgramFiles%\McAfee\Stinger\stinger.exe" "%AllUsersProfile%\McAfee Stinger.lnk"
 goto :eof
 
+:displayPackageManagerMenu
+echo.
+echo        ====================================================
+echo        [1] Install Package Management             : Press 1
+echo        [2] Install End Users Applications         : Press 2
+echo        [3] Install Remote Applications            : Press 3
+echo        [4] Install Network Applications           : Press 4
+echo        [5] Install Chat Applications              : Press 5
+echo        [6] Update All                             : Press 6
+echo        [7] Back to Main Menu                      : Press 7
+echo        ====================================================
+goto :eof
+
 :PackageManagerMenu
 cls
 title Package Management Software Main Menu
@@ -1031,16 +1045,7 @@ set "pkg_menu[6]=updateAll"
 set "pkg_menu[7]=MainMenuLoop"
 
 :: Display menu
-echo.
-echo        ====================================================
-echo        [1] Install Package Management             : Press 1
-echo        [2] Install End Users Applications         : Press 2
-echo        [3] Install Remote Applications            : Press 3
-echo        [4] Install Network Applications           : Press 4
-echo        [5] Install Chat Applications              : Press 5
-echo        [6] Update All                             : Press 6
-echo        [7] Back to Main Menu                      : Press 7
-echo        ====================================================
+call :displayPackageManagerMenu
 choice /n /c 1234567 /m "Press your choice (1-7):"
 
 set "USER_CHOICE=%errorlevel%"

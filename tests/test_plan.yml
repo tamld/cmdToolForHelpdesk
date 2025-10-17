@@ -38,9 +38,9 @@ test_cases:
     category: "Integration (Menu)"
     target: ":displayLicenseMenu"
     script: "(to be created)"
-    status: "TO DO"
-    ci_run_id: null
-    notes: ""
+    status: "PASS"
+    ci_run_id: 18596858744
+    notes: "Verifies license menu display integrity."
   - id: INT-006
     category: "Integration (Menu)"
     target: ":displayPackageManagerMenu"

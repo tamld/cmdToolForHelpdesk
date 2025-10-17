@@ -8,6 +8,7 @@ FOR %%m IN (
     displayWindowsOfficeMenu
     displayUtilitiesMenu
     displayLicenseMenu
+    displayPackageManagerMenu
 ) DO (
     echo.
     echo [TEST] Calling function: %%m
