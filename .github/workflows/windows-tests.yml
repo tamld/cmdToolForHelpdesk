@@ -17,8 +17,11 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
 
-    - name: Simple Echo Test
-      run: echo Hello from Unit Tests!
+    - name: Create and Run Unit Echo Test
+      run: |
+        echo @echo off > run_unit_echo.cmd
+        echo echo Hello from Unit Tests! >> run_unit_echo.cmd
+        call run_unit_echo.cmd
       shell: cmd
 
   integration-tests:
@@ -29,6 +32,9 @@ jobs:
     - name: Check out repository
       uses: actions:checkout@v3
 
-    - name: Simple Echo Test
-      run: echo Hello from Integration Tests!
+    - name: Create and Run Integration Echo Test
+      run: |
+        echo @echo off > run_integration_echo.cmd
+        echo echo Hello from Integration Tests! >> run_integration_echo.cmd
+        call run_integration_echo.cmd
       shell: cmd
