@@ -10,6 +10,7 @@ on:
 
 jobs:
   test:
+    timeout-minutes: 2
     # This is the most important part: specify a Windows runner
     runs-on: windows-latest
 

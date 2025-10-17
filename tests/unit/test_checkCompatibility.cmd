@@ -1,16 +1,21 @@
-@echo off
+@echo on
 setlocal
 
-:: Change to the test file's directory
+echo [DEBUG] Current directory: %cd%
+echo [DEBUG] Changing directory to: %~dp0
 cd /d "%~dp0"
+echo [DEBUG] New directory: %cd%
 
-:: Call the function to be tested from the main script.
-:: We expect this to succeed in a CI/admin environment.
+echo [DEBUG] --- START TEST ---
+
+echo [DEBUG] Calling Helpdesk-Tools.cmd...
 call ..\..\Helpdesk-Tools.cmd checkCompatibility
+echo [DEBUG] ERRORLEVEL after Helpdesk-Tools.cmd: %ERRORLEVEL%
 
-:: Use an assertion from the utils script to check the result.
-:: We expect ERRORLEVEL 0 for success.
+echo [DEBUG] Calling test_utils.cmd...
 call ..\test_utils.cmd assertSuccess
+echo [DEBUG] ERRORLEVEL after test_utils.cmd: %ERRORLEVEL%
 
-:: If the assertion passes, the test is successful.
+echo [DEBUG] --- TEST FINISHED ---
+
 exit /b 0
