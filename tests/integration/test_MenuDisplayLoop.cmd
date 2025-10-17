@@ -3,12 +3,11 @@ setlocal enabledelayedexpansion
 
 echo --- Running Menu Display Loop Test ---
 
-set "menuList=^
-displayMainMenu ^
-displayWindowsOfficeMenu ^
-displayUtilitiesMenu"
-
-for %%m in (%menuList%) do (
+FOR %%m IN (
+    displayMainMenu
+    displayWindowsOfficeMenu
+    displayUtilitiesMenu
+) DO (
     echo.
     echo [TEST] Calling function: %%m
     call ..\Helpdesk-Tools.cmd %%m
