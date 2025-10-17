@@ -3,6 +3,7 @@
 :: TEST DISPATCHER: Check if a specific function is being called for testing
 if /i "%~1"=="checkCompatibility" goto :checkCompatibility
 if /i "%~1"=="displayMainMenu" goto :displayMainMenu
+if /i "%~1"=="displayWindowsOfficeMenu" goto :displayWindowsOfficeMenu
 if not "%~1"=="" goto :eof
 set "baseDirectory=%~dp0"
 cd /d "%baseDirectory%"
@@ -122,9 +123,7 @@ REM End of Install AIO Online
 ================
 ::==============================================================================
 :: Start of Windows Office Utilities Menu
-:WindowsOfficeMenu
-setlocal
-cd /d %baseDirectory%
+:displayWindowsOfficeMenu
 cls
 title Windows Office Main Menu
 echo.
@@ -137,6 +136,12 @@ echo        [5] Fix non-Core                                 : Press 5
 echo        [6] Load SKUS Windows                            : Press 6
 echo        [7] Main Menu                                    : Press 7
 echo        ==============================================================
+goto :eof
+
+:WindowsOfficeMenu
+setlocal
+cd /d %baseDirectory%
+call :displayWindowsOfficeMenu
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :MainMenuLoop
 if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :WindowsOfficeMenu
