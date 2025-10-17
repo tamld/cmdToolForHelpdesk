@@ -1,2 +1,9 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Explicitly declare text files we want to always have CRLF line endings on checkout.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Declare files that will always have LF line endings
+*.sh text eol=lf
