@@ -1,4 +1,10 @@
 @echo off
+
+:: TEST UTILS DISPATCHER
+if /i "%~1"=="assertSuccess" goto :assertSuccess
+if /i "%~1"=="assertEqual" goto :assertEqual
+goto :eof
+
 setlocal
 
 ::

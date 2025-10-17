@@ -10,7 +10,7 @@ call ..\..\Helpdesk-Tools.cmd checkCompatibility
 
 :: Use an assertion from the utils script to check the result.
 :: We expect ERRORLEVEL 0 for success.
-call ..\test_utils.cmd :assertSuccess
+call ..\test_utils.cmd assertSuccess
 
 :: If the assertion passes, the test is successful.
 exit /b 0
