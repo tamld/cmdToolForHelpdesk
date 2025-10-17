@@ -1,25 +1,73 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
-:: The GITHUB_WORKSPACE variable provides the absolute path to the project root.
-set "PROJECT_ROOT=%GITHUB_WORKSPACE%"
+:: =============================================================================
+:: test_runner.cmd
+:: Master test runner for the Helpdesk-Tools project.
+:: It discovers and executes all test cases.
+:: =============================================================================
 
-echo =================================
-echo         RUNNING SANITY CHECK
-echo =================================
+:: Change to the script's own directory to ensure consistent paths
+cd /d "%~dp0"
 
+set "TESTS_PASSED=0"
+set "TESTS_FAILED=0"
+
+:: --- Run Unit Tests ---
 echo.
-echo --- Testing: Direct call from runner with absolute path ---
-echo Project Root is: %PROJECT_ROOT%
-echo Script to call is: %PROJECT_ROOT%\Helpdesk-Tools.cmd
+echo =================================
+echo         RUNNING UNIT TESTS
+echo =================================
 
-call "%PROJECT_ROOT%\Helpdesk-Tools.cmd" checkCompatibility
+for %%f in (unit\*.cmd) do (
+    echo.
+    echo --- Testing: %%f ---
+    call %%f
+    if !ERRORLEVEL! EQU 0 (
+        echo [PASS] %%f
+        set /a TESTS_PASSED+=1
+    ) else (
+        echo [FAIL] %%f
+        set /a TESTS_FAILED+=1
+    )
+    echo -------------------------
+)
 
-if %ERRORLEVEL% EQU 0 (
-    echo [PASS] Absolute path call seems to work.
+:: --- Run Integration Tests ---
+echo.
+echo =================================
+echo      RUNNING INTEGRATION TESTS
+echo =================================
+
+for %%f in (integration\*.cmd) do (
+    echo.
+    echo --- Testing: %%f ---
+    call %%f
+    if !ERRORLEVEL! EQU 0 (
+        echo [PASS] %%f
+        set /a TESTS_PASSED+=1
+    ) else (
+        echo [FAIL] %%f
+        set /a TESTS_FAILED+=1
+    )
+    echo -------------------------
+)
+
+
+:: --- Summary ---
+echo.
+echo =================================
+echo           TEST SUMMARY
+echo =================================
+echo.
+echo Passed: !TESTS_PASSED!
+echo Failed: !TESTS_FAILED!
+echo.
+
+if !TESTS_FAILED! GTR 0 (
+    echo Some tests failed.
+    exit /b 1
+) else (
     echo All tests passed successfully!
     exit /b 0
-) else (
-    echo [FAIL] Absolute path call failed with ERRORLEVEL %ERRORLEVEL%
-    exit /b 1
 )
