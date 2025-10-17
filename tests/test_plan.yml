@@ -1,0 +1,50 @@
+test_cases:
+  - id: UNIT-001
+    category: "Unit"
+    target: ":checkCompatibility"
+    script: "unit/test_checkCompatibility.cmd"
+    status: "PASS"
+    ci_run_id: 18593323580
+    notes: "Verifies admin check returns correct ERRORLEVEL."
+  - id: INT-001
+    category: "Integration (Menu)"
+    target: ":displayMainMenu"
+    script: "integration/test_MainMenuDisplay.cmd"
+    status: "PASS"
+    ci_run_id: 18593323580
+    notes: "Verifies main menu display integrity."
+  - id: INT-002
+    category: "Integration (Menu)"
+    target: ":displayWindowsOfficeMenu"
+    script: "integration/test_WindowsOfficeMenuDisplay.cmd"
+    status: "PASS"
+    ci_run_id: 18595736407
+    notes: "Verifies office menu display integrity."
+  - id: INT-003
+    category: "Integration (Menu)"
+    target: ":displayUtilitiesMenu"
+    script: "integration/test_UtilitiesMenuDisplay.cmd"
+    status: "PASS"
+    ci_run_id: 18595736407
+    notes: "Verifies utilities menu display integrity."
+  - id: INT-004
+    category: "Integration (Loop)"
+    target: "All Display Menus"
+    script: "integration/test_MenuDisplayLoop.cmd"
+    status: "PASS"
+    ci_run_id: 18596094520
+    notes: "Verifies stability of all menus in a loop."
+  - id: INT-005
+    category: "Integration (Menu)"
+    target: ":displayLicenseMenu"
+    script: "(to be created)"
+    status: "TO DO"
+    ci_run_id: null
+    notes: ""
+  - id: INT-006
+    category: "Integration (Menu)"
+    target: ":displayPackageManagerMenu"
+    script: "(to be created)"
+    status: "TO DO"
+    ci_run_id: null
+    notes: ""

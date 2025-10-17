@@ -5,6 +5,7 @@ if /i "%~1"=="checkCompatibility" goto :checkCompatibility
 if /i "%~1"=="displayMainMenu" goto :displayMainMenu
 if /i "%~1"=="displayWindowsOfficeMenu" goto :displayWindowsOfficeMenu
 if /i "%~1"=="displayUtilitiesMenu" goto :displayUtilitiesMenu
+if /i "%~1"=="displayLicenseMenu" goto :displayLicenseMenu
 if not "%~1"=="" goto :eof
 set "baseDirectory=%~dp0"
 cd /d "%baseDirectory%"
@@ -433,11 +434,7 @@ REM ============================================
 REM End of Windows Office Utilities functions
 REM ========================================================================================================================
 ================
-:LicenseMenu
-REM Start of Active Licenses Menu
-setlocal
-Title Active Licenses Menu
-cls
+:displayLicenseMenu
 echo.
 echo        ========================================================
 echo        [1] Online                                     : Press 1
@@ -448,6 +445,14 @@ echo        [5] Restore License                            : Press 5
 echo        [6] MAS (Microsoft Activation Scripts)         : Press 6
 echo        [7] Back to Main Menu                          : Press 7
 echo        ========================================================
+goto :eof
+
+:LicenseMenu
+REM Start of Active Licenses Menu
+setlocal
+Title Active Licenses Menu
+cls
+call :displayLicenseMenu
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :MainMenuLoop
 if %ERRORLEVEL% == 6 goto :mas
