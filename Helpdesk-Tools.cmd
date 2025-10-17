@@ -4,6 +4,7 @@
 if /i "%~1"=="checkCompatibility" goto :checkCompatibility
 if /i "%~1"=="displayMainMenu" goto :displayMainMenu
 if /i "%~1"=="displayWindowsOfficeMenu" goto :displayWindowsOfficeMenu
+if /i "%~1"=="displayUtilitiesMenu" goto :displayUtilitiesMenu
 if not "%~1"=="" goto :eof
 set "baseDirectory=%~dp0"
 cd /d "%baseDirectory%"
@@ -515,11 +516,7 @@ goto :LicenseMenu
 REM End of Active Lienses functions
 REM ========================================================================================================================
 ================
-:UtilitiesMenu
-setlocal
-REM Start of Utilities Menu
-cls
-title Utilities Main Menu
+:displayUtilitiesMenu
 echo.
 echo        =================================================
 echo        [1] Set High Performance                : Press 1
@@ -531,6 +528,14 @@ echo        [6] Active IDM                          : Press 6
 echo        [7] Windows Debloat                     : Press 7
 echo        [8] Back to Main Menu                   : Press 8
 echo        =================================================
+goto :eof
+
+:UtilitiesMenu
+setlocal
+REM Start of Utilities Menu
+cls
+title Utilities Main Menu
+call :displayUtilitiesMenu
 Choice /N /C 12345678 /M " Press your choice : "
 if %ERRORLEVEL% == 8 goto :MainMenuLoop
 if %ERRORLEVEL% == 7 goto :debloat & goto :UtilitiesMenu
