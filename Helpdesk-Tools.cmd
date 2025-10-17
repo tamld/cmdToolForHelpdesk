@@ -22,7 +22,16 @@ REM Go UAC to get Admin privileges
 REM ========================================================================================================================================
 :MainMenu
 @echo off
-set "appVersion=v0.6.80 Feb 15, 2025"
+
+:: TEST DISPATCHER: Check if a specific function is being called for testing
+if not "%~1"=="" (
+    if /i "%~1"==":checkCompatibility" goto :checkCompatibility
+    :: In the future, add other testable functions here
+    
+    echo WARNING: Direct call to an unknown or non-testable label '%~1'.
+    exit /b 1
+)
+
 set "baseDirectory=%~dp0"
 set "system32=%windir%\system32"
 call :getOfficePath
