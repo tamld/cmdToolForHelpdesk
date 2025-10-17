@@ -20,7 +20,7 @@ jobs:
     - name: Run Unit Test Suite
       run: |
         cd tests
-        call test_runner.cmd unit
+        test_runner.cmd unit
       shell: cmd
 
   integration-tests:
@@ -34,5 +34,5 @@ jobs:
     - name: Run Integration Test Suite
       run: |
         cd tests
-        call test_runner.cmd integration
+        test_runner.cmd integration
       shell: cmd
