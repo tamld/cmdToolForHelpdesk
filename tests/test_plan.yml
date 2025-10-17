@@ -45,6 +45,6 @@ test_cases:
     category: "Integration (Menu)"
     target: ":displayPackageManagerMenu"
     script: "(to be created)"
-    status: "TO DO"
-    ci_run_id: null
-    notes: ""
+    status: "PASS"
+    ci_run_id: 18597307985
+    notes: "Verifies package manager menu display integrity."

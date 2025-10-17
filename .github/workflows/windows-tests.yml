@@ -9,19 +9,30 @@ on:
       - main
 
 jobs:
-  test:
-    timeout-minutes: 2
-    # This is the most important part: specify a Windows runner
+  unit-tests:
     runs-on: windows-latest
+    timeout-minutes: 2
 
     steps:
-    # Step 1: Check out the repository's code
     - name: Check out repository
       uses: actions/checkout@v3
 
-    # Step 2: Run the test suite using the test runner
-    - name: Run Test Suite
+    - name: Run Unit Test Suite
       run: |
         cd tests
-        call test_runner.cmd
-      shell: cmd # Ensure the runner uses cmd.exe
+        call test_runner.cmd unit
+      shell: cmd
+
+  integration-tests:
+    runs-on: windows-latest
+    timeout-minutes: 2
+
+    steps:
+    - name: Check out repository
+      uses: actions:checkout@v3
+
+    - name: Run Integration Test Suite
+      run: |
+        cd tests
+        call test_runner.cmd integration
+      shell: cmd
