@@ -25,7 +25,7 @@ REM ============================================================================
 
 :: TEST DISPATCHER: Check if a specific function is being called for testing
 if not "%~1"=="" (
-    if /i "%~1"==":checkCompatibility" goto :checkCompatibility
+    if /i "%~1"=="checkCompatibility" goto :checkCompatibility
     :: In the future, add other testable functions here
     
     echo WARNING: Direct call to an unknown or non-testable label '%~1'.
