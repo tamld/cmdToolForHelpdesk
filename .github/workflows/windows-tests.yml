@@ -1,0 +1,26 @@
+name: Run CMD Test Suite
+
+on:
+  push:
+    branches:
+      - 'refactor/**' # Run on pushes to any branch starting with 'refactor/'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    # This is the most important part: specify a Windows runner
+    runs-on: windows-latest
+
+    steps:
+    # Step 1: Check out the repository's code
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    # Step 2: Run the test suite using the test runner
+    - name: Run Test Suite
+      run: |
+        cd tests
+        call test_runner.cmd
+      shell: cmd # Ensure the runner uses cmd.exe

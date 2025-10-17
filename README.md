@@ -1,15 +1,12 @@
 
 <h1 align="center">🚀 Helpdesk Tool - Công cụ hỗ trợ IT</h1>
 <p align="center">
-  <img src="https://img.shields.io/badge/status-active-brightgreen" alt="Status">
-  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
-  <img src="https://img.shields.io/github/downloads/tamld/tao-repo-tren-github/total.svg">
+  <a href="https://github.com/tamld/cmdToolForHelpdesk/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
+  <a href="https://github.com/tamld/cmdToolForHelpdesk/issues"><img src="https://img.shields.io/github/issues/tamld/cmdToolForHelpdesk" alt="Issues"></a>
+  <a href="https://github.com/tamld/cmdToolForHelpdesk/stargazers"><img src="https://img.shields.io/github/stars/tamld/cmdToolForHelpdesk" alt="Stars"></a>
 </p>
-<p align="center">
-  <img src="https://img.shields.io/github/forks/tamld/tao-repo-tren-github.svg">
-  <img src="https://img.shields.io/github/stars/tamld/tao-repo-tren-github.svg">
-  <img src="https://img.shields.io/github/followers/tamld.svg?style=social&label=Follow&maxAge=2592000">
-</p>
+
+[View in English](README.en.md)
 
 ---
 

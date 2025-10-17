@@ -40,3 +40,5 @@ dist/
 release/
 
 .agents/
+.gemini/
+gha-creds-*.json
