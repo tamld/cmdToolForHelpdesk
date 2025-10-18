@@ -17,7 +17,7 @@ set "choiceMap[1]=InstallSoftware"
 set "choiceMap[2]=WindowsOfficeUtils"
 set "choiceMap[3]=LicenseUtils"
 set "choiceMap[4]=SystemUtils"
-set "choiceMap[5]=PackageManagerMenu"
+set "choiceMap[5]=PackageUtils"
 set "choiceMap[6]=updateScript"
 set "choiceMap[7]=exit"
 
