@@ -3,6 +3,8 @@
 :: TEST DISPATCHER: Check if a specific function is being called for testing
 if /i "%~1"=="checkCompatibility" goto :checkCompatibility
 if /i "%~1"=="MainMenu" goto :MainMenu
+if /i "%~1"=="DisplayMainMenu" goto :DisplayMainMenu
+if /i "%~1"=="InstallMenu" goto :InstallMenu
 if /i "%~1"=="displayWindowsOfficeMenu" goto :displayWindowsOfficeMenu
 if /i "%~1"=="displayUtilitiesMenu" goto :displayUtilitiesMenu
 if /i "%~1"=="displayLicenseMenu" goto :displayLicenseMenu

@@ -45,7 +45,7 @@ echo.
 echo =================================================================
 echo Test run finished.
 if %FAILURES% gtr 0 (
-    echo %FAILURES% test(s) failed.
+    echo !FAILURES! test(s) failed.
     exit /b 1
 ) else (
     echo All tests passed.
