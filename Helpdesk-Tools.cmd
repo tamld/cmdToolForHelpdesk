@@ -15,7 +15,7 @@ cd /d "%BASE_DIRECTORY%"
 setlocal
 set "choiceMap[1]=InstallSoftware"
 set "choiceMap[2]=WindowsOfficeUtils"
-set "choiceMap[3]=LicenseMenu"
+set "choiceMap[3]=LicenseUtils"
 set "choiceMap[4]=UtilitiesMenu"
 set "choiceMap[5]=PackageManagerMenu"
 set "choiceMap[6]=updateScript"
@@ -435,7 +435,7 @@ REM ============================================
 REM End of Windows Office Utilities functions
 REM ========================================================================================================================
 ================
-:displayLicenseMenu
+:DisplayLicenseMenu
 echo.
 echo        ========================================================
 echo        [1] Online                                     : Press 1
@@ -448,26 +448,26 @@ echo        [7] Back to Main Menu                          : Press 7
 echo        ========================================================
 goto :eof
 
-:LicenseMenu
+:LicenseUtils
 REM Start of Active Licenses Menu
 setlocal
 Title Active Licenses Menu
 cls
-call :displayLicenseMenu
+call :DisplayLicenseMenu
 Choice /N /C 1234567 /M " Press your choice : "
-if %ERRORLEVEL% == 7 goto :MainMenuLoop
-if %ERRORLEVEL% == 6 goto :mas
-if %ERRORLEVEL% == 5 goto :restoreLicenses
-if %ERRORLEVEL% == 4 goto :BackupLicenses
-if %ERRORLEVEL% == 3 goto :checkLicense
-if %ERRORLEVEL% == 2 goto :activeByPhone
-if %ERRORLEVEL% == 1 goto :activeOnline
+if %ERRORLEVEL% == 7 goto :LoopMainMenu
+if %ERRORLEVEL% == 6 goto :RunMicrosoftActivationScripts
+if %ERRORLEVEL% == 5 goto :RestoreLicenses
+if %ERRORLEVEL% == 4 goto :DisplayBackupMenu
+if %ERRORLEVEL% == 3 goto :CheckLicenseStatus
+if %ERRORLEVEL% == 2 goto :ActivateByPhone
+if %ERRORLEVEL% == 1 goto :ActivateOnline
 endlocal
 
 REM End of Active Licenses Menu
 REM ==============================================================
 ::@ Start of Active Lienses functions
-:mas
+:RunMicrosoftActivationScripts
 cls
 REM call :hold
 pushd %temp%
@@ -475,16 +475,16 @@ start powershell.exe -command "irm https://get.activated.win | iex"
 popd
 cd %dp%
 cls
-goto :LicenseMenu
+goto :LicenseUtils
 
-:restoreLicenses
+:RestoreLicenses
 cls
 call :hold
-goto :LicenseMenu
+goto :LicenseUtils
 
 REM ============================================
 REM Start of Backup License Windows & Office
-:BackupLicenses
+:DisplayBackupMenu
 Title Backup License Windows ^& Office
 echo.
 echo            =================================================
@@ -493,32 +493,32 @@ echo            [2] BACKUP To NAS STORAGE               : Press 2
 echo            [3] Back to Main Menu                   : Press 3
 echo            =================================================
 Choice /N /C 123 /M " Press your choice : "
-if %ERRORLEVEL% == 3 goto :LicenseMenu
-if %ERRORLEVEL% == 2 goto :backupToNas
-if %ERRORLEVEL% == 1 goto :backupToLocal
+if %ERRORLEVEL% == 3 goto :LicenseUtils
+if %ERRORLEVEL% == 2 goto :BackupToNas
+if %ERRORLEVEL% == 1 goto :BackupToLocal
 
-:backupToNas
-goto :BackupLicenses
+:BackupToNas
+goto :DisplayBackupMenu
 
-:backupToLocal
+:BackupToLocal
 call :hold
-goto :BackupLicenses
+goto :DisplayBackupMenu
 REM End of Backup License Windows & Office
 REM ============================================
-:checkLicense
+:CheckLicenseStatus
 cls
 call :hold
-goto :LicenseMenu
+goto :LicenseUtils
 
-:activeByPhone
+:ActivateByPhone
 cls
 call :hold
-goto :LicenseMenu
+goto :LicenseUtils
 
-:activeOnline
+:ActivateOnline
 cls
 call :hold
-goto :LicenseMenu
+goto :LicenseUtils
 REM End of Active Lienses functions
 REM ========================================================================================================================
 ================

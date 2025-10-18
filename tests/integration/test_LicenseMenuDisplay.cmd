@@ -2,7 +2,7 @@
 setlocal
 
 :: Call the display function from the main script.
-call ..\..\Helpdesk-Tools.cmd displayLicenseMenu
+call ..\..\Helpdesk-Tools.cmd DisplayLicenseMenu
 
 :: The test_runner.cmd is expected to capture stdout and compare it.
 :: This call just ensures the script itself ran without a critical error.
