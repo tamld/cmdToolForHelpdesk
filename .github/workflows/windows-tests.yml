@@ -9,33 +9,14 @@ on:
       - main
 
 jobs:
-  unit-tests:
+  run-tests:
     runs-on: windows-latest
-    timeout-minutes: 2
+    timeout-minutes: 5
 
     steps:
     - name: Check out repository
       uses: actions/checkout@v3
 
-    - name: Create and Run Unit Echo Test
-      run: |
-        echo @echo off > run_unit_echo.cmd
-        echo echo Hello from Unit Tests! >> run_unit_echo.cmd
-        call run_unit_echo.cmd
-      shell: cmd
-
-  integration-tests:
-    runs-on: windows-latest
-    needs: unit-tests
-    timeout-minutes: 2
-
-    steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
-
-    - name: Create and Run Integration Echo Test
-      run: |
-        echo @echo off > run_integration_echo.cmd
-        echo echo Hello from Integration Tests! >> run_integration_echo.cmd
-        call run_integration_echo.cmd
+    - name: Run test suite
+      run: call tests/test_runner.cmd
       shell: cmd

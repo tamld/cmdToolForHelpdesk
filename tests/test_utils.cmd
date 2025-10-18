@@ -3,6 +3,7 @@
 :: TEST UTILS DISPATCHER
 if /i "%~1"=="assertSuccess" goto :assertSuccess
 if /i "%~1"=="assertEqual" goto :assertEqual
+if /i "%~1"=="assertFileContains" goto :assertFileContains
 goto :eof
 
 setlocal
@@ -41,7 +42,25 @@ setlocal
     if "%~1" == "%~2" (
         exit /b 0
     ) else (
-        echo [FAIL] Assertion failed: Expected "%~2", but got "%~1".
+        echo [FAIL] Assertion failed: Expected \"%~2\", but got \"%~1\".
         exit /b 1
     )
     goto :eof
+
+:: =============================================================================
+:: :assertFileContains
+:: Checks if a file contains a specific string.
+::
+:: Usage:
+::   call :assertFileContains "path/to/file.log" "string to find"
+:: =============================================================================
+:assertFileContains
+    findstr /c:"%~2" "%~1" >nul
+    if %errorlevel% equ 0 (
+        exit /b 0
+    ) else (
+        echo [FAIL] Assertion failed: Expected to find \"%~2\" in \"%~1\".
+        exit /b 1
+    )
+    goto :eof
+

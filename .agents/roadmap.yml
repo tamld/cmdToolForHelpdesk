@@ -1,0 +1,49 @@
+# cmdToolForHelpdesk Project Roadmap
+# This roadmap outlines the planned development for the Helpdesk Tool, focusing on
+# enhancing its capabilities within the native Windows CMD environment.
+
+roadmap:
+  - phase: Phase 1: Refinement and Core Stability
+    time: Q4 2025 - Q1 2026
+    objective: Enhance existing functionalities, improve code quality, and ensure stability of core operations.
+    tasks:
+      - description: Complete Refactoring (Structure & Naming) - Finalize ongoing refactoring efforts (menu/submenu, PascalCase for functions/labels, camelCase for helper functions and variables).
+        status: todo
+      - description: Implement Robust Error Handling - Add comprehensive error checking and user-friendly error messages.
+        status: todo
+      - description: Improve User Experience (CLI) - Enhance menu navigation, input validation, and output clarity.
+        status: todo
+      - description: Documentation Update - Update in-script comments and README.md with changes to usage or features.
+        status: todo
+      - description: Basic Verification Procedures - Develop simple, script-based checks or manual verification steps for critical functions.
+        status: todo
+
+  - phase: Phase 2: Feature Expansion & Automation
+    time: Q2 2026 - Q3 2026
+    objective: Introduce new automation features and expand the tool's capabilities within the native Windows context.
+    tasks:
+      - description: Expand Software Installation Options - Add support for more applications via Winget/Chocolatey, or direct download/silent install.
+        status: todo
+      - description: Advanced System Optimization - Implement additional CMD/PowerShell commands for deeper system cleanup, registry optimization, and network configuration.
+        status: todo
+      - description: Enhanced License Management - Improve backup/restore mechanisms for Windows/Office licenses, adding more detailed status checks.
+        status: todo
+      - description: Remote Execution Capabilities (Optional/Advanced) - Explore secure methods for executing parts of the script remotely (e.g., via PsExec or WinRM).
+        status: todo
+      - description: Customization Options - Allow users to easily customize software lists or system settings via external configuration files.
+        status: todo
+
+  - phase: Phase 3: Maintenance & Community Engagement
+    time: Ongoing
+    objective: Ensure the tool remains functional, up-to-date, and responsive to user needs and contributions.
+    tasks:
+      - description: Regular Updates - Periodically review and update software installation commands and URLs.
+        status: todo
+      - description: Bug Fixes - Address reported bugs and issues promptly.
+        status: todo
+      - description: Community Contributions - Actively review and integrate Pull Requests, ensuring adherence to standards.
+        status: todo
+      - description: Performance Tuning - Continuously optimize script execution speed and resource usage.
+        status: todo
+      - description: User Feedback Integration - Regularly solicit and incorporate user feedback to guide future development.
+        status: todo

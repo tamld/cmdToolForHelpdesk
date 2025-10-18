@@ -2,7 +2,7 @@
 
 :: TEST DISPATCHER: Check if a specific function is being called for testing
 if /i "%~1"=="checkCompatibility" goto :checkCompatibility
-if /i "%~1"=="DisplayMainMenu" goto :DisplayMainMenu
+if /i "%~1"=="MainMenu" goto :MainMenu
 if /i "%~1"=="displayWindowsOfficeMenu" goto :displayWindowsOfficeMenu
 if /i "%~1"=="displayUtilitiesMenu" goto :displayUtilitiesMenu
 if /i "%~1"=="displayLicenseMenu" goto :displayLicenseMenu
@@ -11,52 +11,43 @@ if not "%~1"=="" goto :eof
 set "BASE_DIRECTORY=%~dp0"
 cd /d "%BASE_DIRECTORY%"
 
-:Main
-setlocal
-set "choiceMap[1]=InstallSoftware"
-set "choiceMap[2]=WindowsOfficeUtils"
-set "choiceMap[3]=LicenseUtils"
-set "choiceMap[4]=SystemUtils"
-set "choiceMap[5]=PackageUtils"
-set "choiceMap[6]=UpdateScript"
-set "choiceMap[7]=ExitScript"
-
-:DisplayMainMenu
+:MainMenu
 cls
-title Helpdesk Tools v0.6.80 Feb 15, 2025
+title Helpdesk Tools v0.7.0 - Main Menu
 echo.
 echo    ========================================================
-echo    [1] Install All In One Online                  : Press 1
-echo    [2] Windows Office Utilities                   : Press 2
-echo    [3] License Activation                         : Press 3
-echo    [4] System Utilities                           : Press 4
-echo    [5] Package Management                         : Press 5
-echo    [6] Update This Script                         : Press 6
-echo    [7] Exit                                       : Press 7
+echo    [1] Install Menu
+echo    [2] Windows & Office Menu
+echo    [3] License Menu
+echo    [4] Utilities Menu
+echo    [5] Package Manager Menu
+echo    [6] Update Script
+echo    [7] Exit
 echo    ========================================================
-goto :eof
-
-:LoopMainMenu
-call :DisplayMainMenu
 choice /N /C 1234567 /M "Enter your choice: "
-set "userChoice=%errorlevel%"
-call :DispatchMenu choiceMap userChoice
-goto :LoopMainMenu
+if %errorlevel% == 1 goto InstallMenu
+if %errorlevel% == 2 goto WindowsOfficeMenu
+if %errorlevel% == 3 goto LicenseMenu
+if %errorlevel% == 4 goto UtilitiesMenu
+if %errorlevel% == 5 goto PackageManagerMenu
+if %errorlevel% == 6 goto UpdateScript
+if %errorlevel% == 7 goto ExitScript
+goto MainMenu
 
-:InstallSoftware
+:InstallMenu
 setlocal
 :DisplayInstallMenu
 cls
 title Install All In One
 echo.
-echo        ========================================================
-echo        [1] Install All In One with Office 365         : Press 1
-echo        [2] Install All In One with Office 2019        : Press 2
-echo        [3] Install All In One with Office 2021        : Press 3
-echo        [4] Install All In One with Office 2024        : Press 4
-echo        [5] Install System - Network - Helpdesk        : Press 5
-echo        [6] Back to Main Menu                          : Press 6
-echo        ========================================================
+ echo        ========================================================
+ echo        [1] Install All In One with Office 365         : Press 1
+ echo        [2] Install All In One with Office 2019        : Press 2
+ echo        [3] Install All In One with Office 2021        : Press 3
+ echo        [4] Install All In One with Office 2024        : Press 4
+ echo        [5] Install System - Network - Helpdesk        : Press 5
+ echo        [6] Back to Main Menu                          : Press 6
+ echo        ========================================================
 Choice /N /C 123456 /M " Press your choice : "
 if %ERRORLEVEL% == 6 goto :LoopMainMenu
 if %ERRORLEVEL% == 5 goto :InstallAioSystemNetwork
@@ -114,11 +105,11 @@ call :installOffice
 goto :DisplayInstallMenu
 
 :InstallAioSystemNetwork
-call :hold
+call :Hold
 goto :DisplayInstallMenu
 
 :InstallAioHelpdesk
-call :hold
+call :Hold
 goto :DisplayInstallMenu
 
 REM End of Install AIO Online
@@ -130,15 +121,15 @@ REM End of Install AIO Online
 cls
 title Windows Office Main Menu
 echo.
-echo        ==============================================================
-echo        [1] Install Office Online                        : Press 1
-echo        [2] Uninstall Office                             : Press 2
-echo        [3] Remove Office License                        : Press 3
-echo        [4] Convert Office Edition                       : Press 4
-echo        [5] Fix non-Core                                 : Press 5
-echo        [6] Load SKUS Windows                            : Press 6
-echo        [7] Main Menu                                    : Press 7
-echo        ==============================================================
+ echo        ==============================================================
+ echo        [1] Install Office Online                        : Press 1
+ echo        [2] Uninstall Office                             : Press 2
+ echo        [3] Remove Office License                        : Press 3
+ echo        [4] Convert Office Edition                       : Press 4
+ echo        [5] Fix non-Core                                 : Press 5
+ echo        [6] Load SKUS Windows                            : Press 6
+ echo        [7] Main Menu                                    : Press 7
+ echo        ==============================================================
 goto :eof
 
 :WindowsOfficeUtils
@@ -163,14 +154,14 @@ REM Sub menu Install Office Online
 setlocal
 cls
 echo.
-echo                ================================================================
-echo                [1] Install Office 365 (license required)        : Press 1
-echo                [2] Install Office 2024 Volume                   : Press 2
-echo                [3] Install Office 2021 Volume                   : Press 3
-echo                [4] Install Office 2019 Volume                   : Press 4
-echo                [5] Install Manually using Office Deploy Tool    : Pre
-echo                [6] Main Menu                                    : Press 6
-echo                ================================================================
+ echo                ================================================================
+ echo                [1] Install Office 365 (license required)        : Press 1
+ echo                [2] Install Office 2024 Volume                   : Press 2
+ echo                [3] Install Office 2021 Volume                   : Press 3
+ echo                [4] Install Office 2019 Volume                   : Press 4
+ echo                [5] Install Manually using Office Deploy Tool    : Pre
+ echo                [6] Main Menu                                    : Press 6
+ echo                ================================================================
 Choice /N /C 123456 /M " Press your choice : "
 if %ERRORLEVEL% == 6 goto :WindowsOfficeUtils
 if %ERRORLEVEL% == 5 call :DownloadOfficeTool & "%temp%\Office Tool\Office Tool Plus.exe" & goto :WindowsOfficeUtils
@@ -247,17 +238,17 @@ goto :SelectOfficeApps
 :InstallOfficeFromODT
 call :DownloadOfficeTool
 pushd %temp%\Office_Tool
-if "%optAccess%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Access%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optExcel%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Excel%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optWord%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Word%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optOutlook%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Outlook%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optPowerPoint%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"PowerPoint%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optOneNote%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"OneNote%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optVisio%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"VisioPro%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optProject%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"ProjectPro%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optTeams%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Teams%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optPublisher%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Publisher%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optOneDrive%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"OneDrive%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optAccess%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Access%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optExcel%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Excel%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optWord%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Word%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optOutlook%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Outlook%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optPowerPoint%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"PowerPoint%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optOneNote%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"OneNote%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optVisio%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"VisioPro%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optProject%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"ProjectPro%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optTeams%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Teams%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optPublisher%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Publisher%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
+if "%optOneDrive%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"OneDrive%officeVersion%Retail\"><Language ID=\"en-us" /></Product></Add>"
 (echo ^<Configuration^>%odtConfigXml%</Configuration^) > %temp%\Office_Tool\configuration.xml
 setup.exe /configure configuration.xml
 popd
@@ -268,7 +259,7 @@ pushd %temp%
 curl -L -o Office_Tool.zip https://github.com/YerongAI/Office-Tool/releases/latest/download/Office_Tool_with_runtime_v10.1.5.3.zip
 tar -xf Office_Tool.zip
 popd
-goto :EOF
+goto :eof
 REM End of install office  online
 REM ============================================
 REM ============================================
@@ -287,17 +278,17 @@ setlocal
 cls
 Title Load Windows Eddition
 echo.
-echo        ==================================================
-echo        [1] Professional                        : PRESS 1
-echo        [2] ProfessionalWorkstation             : PRESS 2
-echo        [3] Enterprise                          : PRESS 3
-echo        [4] EnterpriseS                         : PRESS 4
-echo        [5] IoTEnterprise                       : PRESS 5
-echo        [6] Education                           : PRESS 6
-echo        [7] LTSC 2016                           : PRESS 7
-echo        [8] LTSC 2019                           : PRESS 8
-echo        [9] Menu Active Office                  : PRESS 9
-echo        ==================================================
+ echo        ==================================================
+ echo        [1] Professional                        : PRESS 1
+ echo        [2] ProfessionalWorkstation             : PRESS 2
+ echo        [3] Enterprise                          : PRESS 3
+ echo        [4] EnterpriseS                         : PRESS 4
+ echo        [5] IoTEnterprise                       : PRESS 5
+ echo        [6] Education                           : PRESS 6
+ echo        [7] LTSC 2016                           : PRESS 7
+ echo        [8] LTSC 2019                           : PRESS 8
+ echo        [9] Menu Active Office                  : PRESS 9
+ echo        ==================================================
 Choice /N /C 123456789 /M " Press your choice : "
 if %errorlevel% == 1 set windowsKey=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set windowsEdition=Professional&& goto :LoadWindowsSku
 if %errorlevel% == 2 set windowsKey=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set windowsEdition=ProfessionalWorkstation&& goto :LoadWindowsSku
@@ -316,9 +307,9 @@ setlocal
 cls
 echo off
 echo ==================================================================
-echo This script will load the specified Windows SKU using the provided license key.
-echo Please wait until the process is complete.
-echo ==================================================================
+ echo This script will load the specified Windows SKU using the provided license key.
+ echo Please wait until the process is complete.
+ echo ==================================================================
 ping -n 3 localhost > nul
 cscript //nologo %windir%\system32\slmgr.vbs /ipk %windowsKey%
 cscript //nologo %windir%\system32\slmgr.vbs /ato
@@ -327,11 +318,11 @@ goto :EOF
 
 :FixNonCoreActivation
 cls
-call :hold
+call :Hold
 goto :WindowsOfficeUtils
 
 :ConvertOfficeEdition
-call :hold
+call :Hold
 goto :WindowsOfficeUtils
 
 REM ============================================
@@ -339,11 +330,11 @@ REM Start of Remove Office Keys
 :DisplayRemoveOfficeKeyMenu
 cls
 echo.
-echo            =================================================
-echo            [1] One by one                          : Press 1
-echo            [2] All                                 : Press 2
-echo            [3] Back to Windows Office Menu         : Press 3
-echo            =================================================
+ echo            =================================================
+ echo            [1] One by one                          : Press 1
+ echo            [2] All                                 : Press 2
+ echo            [3] Back to Windows Office Menu         : Press 3
+ echo            =================================================
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :WindowsOfficeUtils
 if %ERRORLEVEL% == 2 call :RemoveOfficeKeyAll & goto :WindowsOfficeUtils
@@ -376,12 +367,12 @@ REM Start of Uninstall Office
 :DisplayUninstallOfficeMenu
 cls
 echo.
-echo            ====================================================
-echo            [1] Using Sara Cmd                         : Press 1
-echo            [2] Using Office Tool                      : Press 2
-echo            [3] Using BCUninstaller                    : Press 3
-echo            [4] Back to Windows Office Menu            : Press 4
-echo            ====================================================
+ echo            ====================================================
+ echo            [1] Using Sara Cmd                         : Press 1
+ echo            [2] Using Office Tool                      : Press 2
+ echo            [3] Using BCUninstaller                    : Press 3
+ echo            [4] Back to Windows Office Menu            : Press 4
+ echo            ====================================================
 Choice /N /C 1234 /M " Press your choice : "
 if %ERRORLEVEL% == 4 goto :WindowsOfficeUtils
 if %ERRORLEVEL% == 3 goto :UninstallOfficeWithBCU
@@ -403,7 +394,7 @@ cls
 pushd %temp%
 call :DownloadOfficeTool
 echo This script will uninstall your Office installation using the Office Tool.
-echo Please wait until the wizard has completed the uninstallation process
+ echo Please wait until the wizard has completed the uninstallation process
 ping -n 3 localhost > nul
 "Office Tool\Office Tool Plus.Console.exe" deploy /rmall /acpteula
 goto :WindowsOfficeUtils
@@ -411,7 +402,7 @@ goto :WindowsOfficeUtils
 :UninstallOfficeWithSaraUI
 Title Uninstall Office Using Sara UI
 echo This will download (browser download) and install Sara UI for uninstalling Office steps
-echo You must install it manually and follow the wizard guide
+ echo You must install it manually and follow the wizard guide
 ping -n 4 localhost 1>NUL
 start https://aka.ms/SaRA-officeUninstallFromPC
 goto :WindowsOfficeUtils
@@ -424,7 +415,7 @@ echo This will download and remove office without interactive
 pushd %temp%
 curl -L -o SaRACmd.zip https://aka.ms/SaRA-office-uninstall
 tar -xf SaRACmd.zip
-SaRACmd\SaRACmd.exe -S OfficeScrubScenario -AcceptEula
+SaRACmd\SaRAcmd.exe -S OfficeScrubScenario -AcceptEula
 popd
 cd /d %dp%
 cls
@@ -437,15 +428,15 @@ REM ============================================================================
 ================
 :DisplayLicenseMenu
 echo.
-echo        ========================================================
-echo        [1] Online                                     : Press 1
-echo        [2] By Phone                                   : Press 2
-echo        [3] Check License Status                       : Press 3
-echo        [4] Backup License                             : Press 4
-echo        [5] Restore License                            : Press 5
-echo        [6] MAS (Microsoft Activation Scripts)         : Press 6
-echo        [7] Back to Main Menu                          : Press 7
-echo        ========================================================
+ echo        ========================================================
+ echo        [1] Online                                     : Press 1
+ echo        [2] By Phone                                   : Press 2
+ echo        [3] Check License Status                       : Press 3
+ echo        [4] Backup License                             : Press 4
+ echo        [5] Restore License                            : Press 5
+ echo        [6] MAS (Microsoft Activation Scripts)         : Press 6
+ echo        [7] Back to Main Menu                          : Press 7
+ echo        ========================================================
 goto :eof
 
 :LicenseUtils
@@ -469,7 +460,7 @@ REM ==============================================================
 ::@ Start of Active Lienses functions
 :RunMicrosoftActivationScripts
 cls
-REM call :hold
+REM call :Hold
 pushd %temp%
 start powershell.exe -command "irm https://get.activated.win | iex"
 popd
@@ -479,7 +470,7 @@ goto :LicenseUtils
 
 :RestoreLicenses
 cls
-call :hold
+call :Hold
 goto :LicenseUtils
 
 REM ============================================
@@ -487,11 +478,11 @@ REM Start of Backup License Windows & Office
 :DisplayBackupMenu
 Title Backup License Windows ^& Office
 echo.
-echo            =================================================
-echo            [1] BACKUP To Local                     : Press 1
-echo            [2] BACKUP To NAS STORAGE               : Press 2
-echo            [3] Back to Main Menu                   : Press 3
-echo            =================================================
+ echo            =================================================
+ echo            [1] BACKUP To Local                     : Press 1
+ echo            [2] BACKUP To NAS STORAGE               : Press 2
+ echo            [3] Back to Main Menu                   : Press 3
+ echo            =================================================
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :LicenseUtils
 if %ERRORLEVEL% == 2 goto :BackupToNas
@@ -501,39 +492,39 @@ if %ERRORLEVEL% == 1 goto :BackupToLocal
 goto :DisplayBackupMenu
 
 :BackupToLocal
-call :hold
+call :Hold
 goto :DisplayBackupMenu
 REM End of Backup License Windows & Office
 REM ============================================
 :CheckLicenseStatus
 cls
-call :hold
+call :Hold
 goto :LicenseUtils
 
 :ActivateByPhone
 cls
-call :hold
+call :Hold
 goto :LicenseUtils
 
 :ActivateOnline
 cls
-call :hold
+call :Hold
 goto :LicenseUtils
 REM End of Active Lienses functions
 REM ========================================================================================================================
 ================
 :DisplayUtilitiesMenu
 echo.
-echo        =================================================
-echo        [1] Set High Performance                : Press 1
-echo        [2] Change hostname                     : Press 2
-echo        [3] Clean up System                     : Press 3
-echo        [4] Chris Titus Tech Windows Utility    : Press 4
-echo        [5] Install Support Assistant           : Press 5
-echo        [6] Active IDM                          : Press 6
-echo        [7] Windows Debloat                     : Press 7
-echo        [8] Back to Main Menu                   : Press 8
-echo        =================================================
+ echo        =================================================
+ echo        [1] Set High Performance                : Press 1
+ echo        [2] Change hostname                     : Press 2
+ echo        [3] Clean up System                     : Press 3
+ echo        [4] Chris Titus Tech Windows Utility    : Press 4
+ echo        [5] Install Support Assistant           : Press 5
+ echo        [6] Active IDM                          : Press 6
+ echo        [7] Windows Debloat                     : Press 7
+ echo        [8] Back to Main Menu                   : Press 8
+ echo        =================================================
 goto :eof
 
 :SystemUtils
@@ -557,7 +548,7 @@ REM ==============================================================
 REM Start of Utilities functions
 :RunChrisTitusUtility
 :: call https://github.com/ChrisTitusTech/winutil Powershell
-start powershell -command "irm "https://christitus.com/win" | iex"
+start powershell -command "irm \"https://christitus.com/win\" | iex"
 goto :EOF
 
 :RunWindowsDebloatScript
@@ -675,7 +666,7 @@ REM This function will use Windows Disk Cleanup to remove unnecessary files
 :CleanSystem
 Title Clean up System
 echo This script will use Windows Disk Cleanup to remove unnecessary files.
-echo Please wait until the wizard has completed the cleanup process.
+ echo Please wait until the wizard has completed the cleanup process.
 ping -n 3 localhost > nul
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Update Cleanup" /v StateFlags0001 /t REG_DWORD /d 00000002 /f
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Temporary Files" /v StateFlags0001 /t REG_DWORD /d 00000002 /f
@@ -715,7 +706,7 @@ endlocal
 :ApplyWindowsSettings
 cls
 echo This script will perform some basic Windows settings.
-echo Please wait until the process is complete.
+ echo Please wait until the process is complete.
 ping -n 3 localhost > nul
 setlocal
 :: Detect Windows 10 or 11
@@ -902,7 +893,7 @@ COPY /Y "%AppData%\Zoom\bin\Zoom.exe" "%AllUsersProfile%\Zoom.lnk"
 COPY /Y "%AppData%\Microsoft\Teams\current\Teams.exe" "%AllUsersProfile%\Microsoft Teams.lnk"
 COPY /Y "%AppData%\Discord\Update.exe" --processStart Discord.exe "%AllUsersProfile%\Discord.lnk"
 COPY /Y "%AppData%\Telegram Desktop\Telegram.exe" "%AllUsersProfile%\Telegram.lnk"
-COPY /Y "%AppData%\Viber\Viber.exe" "%AllUsersProfile%\Viber.lnk"
+COPY /Y "%AppData%\Viber\Vber.exe" "%AllUsersProfile%\Viber.lnk"
 COPY /Y "%AppData%\WhatsApp\WhatsApp.exe" "%AllUsersProfile%\WhatsApp.lnk"
 COPY /Y "%AppData%\Signal\Signal.exe" "%AllUsersProfile%\Signal.lnk"
 COPY /Y "%AppData%\Skype\Skype.exe" "%AllUsersProfile%\Skype.lnk"
@@ -929,106 +920,19 @@ COPY /Y "%ProgramFiles%\Zemana\AntiMalware\Zemana.exe" "%AllUsersProfile%\Zemana
 COPY /Y "%ProgramFiles%\ESET\ESET Online Scanner\ESETOnlineScanner.exe" "%AllUsersProfile%\ESET Online Scanner.lnk"
 COPY /Y "%ProgramFiles%\Kaspersky Lab\Kaspersky Virus Removal Tool\KVRT.exe" "%AllUsersProfile%\Kaspersky Virus Removal Tool.lnk"
 COPY /Y "%ProgramFiles%\McAfee\Stinger\Stinger.exe" "%AllUsersProfile%\McAfee Stinger.lnk"
-COPY /Y "%ProgramFiles%\ShareX\ShareX.exe" "%AllUsersProfile%\ShareX.lnk"
-COPY /Y "%ProgramFiles%\GIMP 2\bin\gimp-2.10.exe" "%AllUsersProfile%\GIMP.lnk"
-COPY /Y "%ProgramFiles%\Inkscape\bin\inkscape.exe" "%AllUsersProfile%\Inkscape.lnk"
-COPY /Y "%ProgramFiles%\Krita (x64)\bin\krita.exe" "%AllUsersProfile%\Krita.lnk"
-COPY /Y "%ProgramFiles%\Blender Foundation\Blender\blender.exe" "%AllUsersProfile%\Blender.lnk"
-COPY /Y "%ProgramFiles%\Audacity\audacity.exe" "%AllUsersProfile%\Audacity.lnk"
-COPY /Y "%ProgramFiles (x86)%\OBS Studio\bin\64bit\obs64.exe" "%AllUsersProfile%\OBS Studio.lnk"
-COPY /Y "%ProgramFiles%\HandBrake\HandBrake.exe" "%AllUsersProfile%\HandBrake.lnk"
-COPY /Y "%ProgramFiles%\KeePassXC\KeePassXC.exe" "%AllUsersProfile%\KeePassXC.lnk"
-COPY /Y "%ProgramFiles%\Bitwarden\Bitwarden.exe" "%AllUsersProfile%\Bitwarden.lnk"
-COPY /Y "%ProgramFiles%\1Password\1Password.exe" "%AllUsersProfile%\1Password.lnk"
-COPY /Y "%ProgramFiles%\LastPass\LastPass.exe" "%AllUsersProfile%\LastPass.lnk"
-COPY /Y "%ProgramFiles%\Dashlane\Dashlane.exe" "%AllUsersProfile%\Dashlane.lnk"
-COPY /Y "%ProgramFiles%\NordVPN\NordVPN.exe" "%AllUsersProfile%\NordVPN.lnk"
-COPY /Y "%ProgramFiles%\Proton\VPN\ProtonVPN.exe" "%AllUsersProfile%\ProtonVPN.lnk"
-COPY /Y "%ProgramFiles%\ExpressVPN\expressvpn-ui\ExpressVPN.exe" "%AllUsersProfile%\ExpressVPN.lnk"
-COPY /Y "%ProgramFiles%\CyberGhost 8\CyberGhost.exe" "%AllUsersProfile%\CyberGhost VPN.lnk"
-COPY /Y "%ProgramFiles%\Surfshark\Surfshark.exe" "%AllUsersProfile%\Surfshark.lnk"
-COPY /Y "%ProgramFiles%\Private Internet Access\pia-client.exe" "%AllUsersProfile%\Private Internet Access.lnk"
-COPY /Y "%ProgramFiles%\Mullvad VPN\Mullvad VPN.exe" "%AllUsersProfile%\Mullvad VPN.lnk"
-COPY /Y "%ProgramFiles%\Windscribe\Windscribe.exe" "%AllUsersProfile%\Windscribe.lnk"
-COPY /Y "%ProgramFiles%\TunnelBear\TunnelBear.exe" "%AllUsersProfile%\TunnelBear.lnk"
-COPY /Y "%ProgramFiles%\Hotspot Shield\bin\hsscp.exe" "%AllUsersProfile%\Hotspot Shield.lnk"
-COPY /Y "%ProgramFiles%\Proton\Mail\ProtonMail.exe" "%AllUsersProfile%\ProtonMail.lnk"
-COPY /Y "%ProgramFiles%\Tutanota Desktop\Tutanota Desktop.exe" "%AllUsersProfile%\Tutanota.lnk"
-COPY /Y "%ProgramFiles%\Standard Notes\Standard Notes.exe" "%AllUsersProfile%\Standard Notes.lnk"
-COPY /Y "%ProgramFiles%\Joplin\Joplin.exe" "%AllUsersProfile%\Joplin.lnk"
-COPY /Y "%ProgramFiles%\Obsidian\Obsidian.exe" "%AllUsersProfile%\Obsidian.lnk"
-COPY /Y "%ProgramFiles%\Logseq\Logseq.exe" "%AllUsersProfile%\Logseq.lnk"
-COPY /Y "%ProgramFiles%\Notion\Notion.exe" "%AllUsersProfile%\Notion.lnk"
-COPY /Y "%ProgramFiles%\Evernote\Evernote\Evernote.exe" "%AllUsersProfile%\Evernote.lnk"
-COPY /Y "%ProgramFiles%\Todoist\Todoist.exe" "%AllUsersProfile%\Todoist.lnk"
-COPY /Y "%ProgramFiles%\TickTick\TickTick.exe" "%AllUsersProfile%\TickTick.lnk"
-COPY /Y "%ProgramFiles%\Any.do\Any.do.exe" "%AllUsersProfile%\Any.do.lnk"
-COPY /Y "%ProgramFiles%\Microsoft To Do\Todo.exe" "%AllUsersProfile%\Microsoft To Do.lnk"
-COPY /Y "%ProgramFiles%\Google\Keep\Google Keep.exe" "%AllUsersProfile%\Google Keep.lnk"
-COPY /Y "%ProgramFiles%\Simplenote\Simplenote.exe" "%AllUsersProfile%\Simplenote.lnk"
-COPY /Y "%ProgramFiles%\Spotify\Spotify.exe" "%AllUsersProfile%\Spotify.lnk"
-COPY /Y "%ProgramFiles%\iTunes\iTunes.exe" "%AllUsersProfile%\iTunes.lnk"
-COPY /Y "%ProgramFiles%\Amazon Music\Amazon Music.exe" "%AllUsersProfile%\Amazon Music.lnk"
-COPY /Y "%ProgramFiles%\Google\Play Music\Google Play Music.exe" "%AllUsersProfile%\Google Play Music.lnk"
-COPY /Y "%ProgramFiles%\Deezer\Deezer.exe" "%AllUsersProfile%\Deezer.lnk"
-COPY /Y "%ProgramFiles%\TIDAL\TIDAL.exe" "%AllUsersProfile%\TIDAL.lnk"
-COPY /Y "%ProgramFiles%\Pandora\Pandora.exe" "%AllUsersProfile%\Pandora.lnk"
-COPY /Y "%ProgramFiles%\SoundCloud\SoundCloud.exe" "%AllUsersProfile%\SoundCloud.lnk"
-COPY /Y "%ProgramFiles%\Bandcamp\Bandcamp.exe" "%AllUsersProfile%\Bandcamp.lnk"
-COPY /Y "%ProgramFiles%\Netflix\Netflix.exe" "%AllUsersProfile%\Netflix.lnk"
-COPY /Y "%ProgramFiles%\Hulu\Hulu.exe" "%AllUsersProfile%\Hulu.lnk"
-COPY /Y "%ProgramFiles%\Disney+\DisneyPlus.exe" "%AllUsersProfile%\Disney+.lnk"
-COPY /Y "%ProgramFiles%\HBO Max\HBO Max.exe" "%AllUsersProfile%\HBO Max.lnk"
-COPY /Y "%ProgramFiles%\Amazon Prime Video\Amazon Prime Video.exe" "%AllUsersProfile%\Amazon Prime Video.lnk"
-COPY /Y "%ProgramFiles%\YouTube\YouTube.exe" "%AllUsersProfile%\YouTube.lnk"
-COPY /Y "%ProgramFiles%\Twitch\Twitch.exe" "%AllUsersProfile%\Twitch.lnk"
-COPY /Y "%ProgramFiles%\Steam\Steam.exe" "%AllUsersProfile%\Steam.lnk"
-COPY /Y "%ProgramFiles%\Epic Games\Launcher\Portal\Binaries\Win64\EpicGamesLauncher.exe" "%AllUsersProfile%\Epic Games Launcher.lnk"
-COPY /Y "%ProgramFiles%\GOG Galaxy\GalaxyClient.exe" "%AllUsersProfile%\GOG Galaxy.lnk"
-COPY /Y "%ProgramFiles%\Ubisoft\Ubisoft Game Launcher\UbisoftGameLauncher.exe" "%AllUsersProfile%\Ubisoft Connect.lnk"
-COPY /Y "%ProgramFiles%\Electronic Arts\EA Desktop\EA Desktop\EADesktop.exe" "%AllUsersProfile%\EA Desktop.lnk"
-COPY /Y "%ProgramFiles%\Battle.net\Battle.net Launcher.exe" "%AllUsersProfile%\Battle.net.lnk"
-COPY /Y "%ProgramFiles%\Riot Games\Riot Client\RiotClientServices.exe" "%AllUsersProfile%\Riot Client.lnk"
-COPY /Y "%ProgramFiles%\Valve\Steam\steam.exe" "%AllUsersProfile%\Valve Steam.lnk"
-COPY /Y "%ProgramFiles%\Discord\Update.exe" --processStart Discord.exe "%AllUsersProfile%\Discord.lnk"
-COPY /Y "%ProgramFiles%\Parsec\ps_core.exe" "%AllUsersProfile%\Parsec.lnk"
-COPY /Y "%ProgramFiles%\Rainmeter\Rainmeter.exe" "%AllUsersProfile%\Rainmeter.lnk"
-COPY /Y "%ProgramFiles%\Wallpaper Engine\wallpaper32.exe" "%AllUsersProfile%\Wallpaper Engine.lnk"
-COPY /Y "%ProgramFiles%\Stardock\Fences\Fences.exe" "%AllUsersProfile%\Fences.lnk"
-COPY /Y "%ProgramFiles%\StartIsBack\StartIsBack.exe" "%AllUsersProfile%\StartIsBack.lnk"
-COPY /Y "%ProgramFiles%\Open-Shell\StartMenu\OpenShellStartMenu.exe" "%AllUsersProfile%\Open-Shell.lnk"
-COPY /Y "%ProgramFiles%\Classic Shell\ClassicStartMenu.exe" "%AllUsersProfile%\Classic Shell.lnk"
-COPY /Y "%ProgramFiles%\Winaero Tweaker\WinaeroTweaker.exe" "%AllUsersProfile%\Winaero Tweaker.lnk"
-COPY /Y "%ProgramFiles%\Sysinternals\procexp.exe" "%AllUsersProfile%\Process Explorer.lnk"
-COPY /Y "%ProgramFiles%\Sysinternals\procmon.exe" "%AllUsersProfile%\Process Monitor.lnk"
-COPY /Y "%ProgramFiles%\Sysinternals\autoruns.exe" "%AllUsersProfile%\Autoruns.lnk"
-COPY /Y "%ProgramFiles%\Sysinternals\tcpview.exe" "%AllUsersProfile%\TCPView.lnk"
-COPY /Y "%ProgramFiles%\NirSoft\nirlauncher.exe" "%AllUsersProfile%\NirLauncher.lnk"
-COPY /Y "%ProgramFiles%\Piriform\CCleaner\CCleaner.exe" "%AllUsersProfile%\CCleaner.lnk"
-COPY /Y "%ProgramFiles%\Piriform\Defraggler\Defraggler.exe" "%AllUsersProfile%\Defraggler.lnk"
-COPY /Y "%ProgramFiles%\Piriform\Recuva\Recuva.exe" "%AllUsersProfile%\Recuva.lnk"
-COPY /Y "%ProgramFiles%\Piriform\Speccy\Speccy.exe" "%AllUsersProfile%\Speccy.lnk"
-COPY /Y "%ProgramFiles%\Malwarebytes\Anti-Malware\mbam.exe" "%AllUsersProfile%\Malwarebytes Anti-Malware.lnk"
-COPY /Y "%ProgramFiles%\SUPERAntiSpyware\SUPERAntiSpyware.exe" "%AllUsersProfile%\SUPERAntiSpyware.lnk"
-COPY /Y "%ProgramFiles%\AdwCleaner\AdwCleaner.exe" "%AllUsersProfile%\AdwCleaner.lnk"
-COPY /Y "%ProgramFiles%\HitmanPro\HitmanPro.exe" "%AllUsersProfile%\HitmanPro.lnk"
-COPY /Y "%ProgramFiles%\Zemana\AntiMalware\Zemana AntiMalware.exe" "%AllUsersProfile%\Zemana AntiMalware.lnk"
-COPY /Y "%ProgramFiles%\ESET\ESET Online Scanner\ESETOnlineScanner.exe" "%AllUsersProfile%\ESET Online Scanner.lnk"
-COPY /Y "%ProgramFiles%\Kaspersky Lab\Kaspersky Virus Removal Tool\KVRT.exe" "%AllUsersProfile%\Kaspersky Virus Removal Tool.lnk"
-COPY /Y "%ProgramFiles%\McAfee\Stinger\stinger.exe" "%AllUsersProfile%\McAfee Stinger.lnk"
 goto :eof
 
 :displayPackageManagerMenu
 echo.
-echo        ====================================================
-echo        [1] Install Package Management             : Press 1
-echo        [2] Install End Users Applications         : Press 2
-echo        [3] Install Remote Applications            : Press 3
-echo        [4] Install Network Applications           : Press 4
-echo        [5] Install Chat Applications              : Press 5
-echo        [6] Update All                             : Press 6
-echo        [7] Back to Main Menu                      : Press 7
-echo        ====================================================
+ echo        ====================================================
+ echo        [1] Install Package Management             : Press 1
+ echo        [2] Install End Users Applications         : Press 2
+ echo        [3] Install Remote Applications            : Press 3
+ echo        [4] Install Network Applications           : Press 4
+ echo        [5] Install Chat Applications              : Press 5
+ echo        [6] Update All                             : Press 6
+ echo        [7] Back to Main Menu                      : Press 7
+ echo        ====================================================
 goto :eof
 
 :PackageManagerMenu
@@ -1069,7 +973,7 @@ goto :EOF
 
 :wingetDeskjob
 cls
-call :hold
+call :Hold
 goto :EOF
 
 :installEndUsers
@@ -1141,10 +1045,10 @@ goto :EOF
 Title Install Network softwares by Winget
 setlocal
 
-set "packageList=^
-Mobatek.MobaXterm ^
-WiresharkFoundation.Wireshark ^
-Nmap.Nmap ^
+set "packageList=^\
+Mobatek.MobaXterm ^\
+WiresharkFoundation.Wireshark ^\
+Nmap.Nmap ^\
 Zenmap.Zenmap"
 
 for %%p in (%packageList%) do (call :installSoftByWinget %%p)
@@ -1164,15 +1068,15 @@ goto :EOF
 Title Install Chat softwares by Winget
 call :checkCompatibility
 setlocal
-set "packageList=^
-SlackTechnologies.Slack ^
-Discord.Discord ^
-Telegram.TelegramDesktop ^
-Viber.Viber ^
-WhatsApp.WhatsApp ^
-Zalo.Zalo ^
-Facebook.Messenger ^
-Microsoft.Skype ^
+set "packageList=^\
+SlackTechnologies.Slack ^\
+Discord.Discord ^\
+Telegram.TelegramDesktop ^\
+Viber.Viber ^\
+WhatsApp.WhatsApp ^\
+Zalo.Zalo ^\
+Facebook.Messenger ^\
+Microsoft.Skype ^\
 Zoom.Zoom"
 for %%p in (%packageList%) do (call :installSoftByWinget %%p --accept-package-agreements --accept-source-agreements)
 endlocal
@@ -1200,12 +1104,12 @@ cls
 Title Install Enduser Software by Chocolatey
 echo off
 setlocal
-set "packageList=^
-everything ^
-googlechrome ^
-firefox ^
-microsoft-edge ^
-adobereader ^
+set "packageList=^\
+everything ^\
+googlechrome ^\
+firefox ^\
+microsoft-edge ^\
+adobereader ^\
 vlc"
 for %%p in (%packageList%) do (choco install -y %%p > nul)
 call :bcuninstaller-Settings
@@ -1220,871 +1124,871 @@ Title Install Enduser Software by Winget
 echo off
 call :checkCompatibility
 setlocal EnableDelayedExpansion
-set "packageList=^
-voidtools.Everything ^
-Google.Chrome ^
-Mozilla.Firefox ^
-Microsoft.Edge ^
-Adobe.Acrobat.Reader.64-bit ^
-VideoLAN.VLC ^
-RARLab.WinRAR ^
-7-Zip.7-Zip ^
-Glarysoft.GlaryUtilities ^
-IObit.Uninstaller ^
-IObit.SmartDefrag ^
-IObit.DriverBooster ^
-IObit.MalwareFighter ^
-CCleaner.CCleaner ^
-BleachBit.BleachBit ^
-WizTree.WizTree ^
-TreeSize.Free ^
-WinDirStat.WinDirStat ^
-CPU-Z.CPU-Z ^
-GPU-Z.GPU-Z ^
-HWiNFO.HWiNFO ^
-CrystalDiskInfo.CrystalDiskInfo ^
-CrystalDiskMark.CrystalDiskMark ^
-AIDA64.AIDA64.Extreme ^
-Geekbench.Geekbench ^
-MSI.Afterburner ^
-RTSS.RivaTunerStatisticsServer ^
-OBSProject.OBSStudio ^
-ShareX.ShareX ^
-Lightshot.Lightshot ^
-Greenshot.Greenshot ^
-Flameshot.Flameshot ^
-KDE.Krita ^
-GIMP.GIMP ^
-Inkscape.Inkscape ^
-Blender.Blender ^
-Audacity.Audacity ^
-HandBrake.HandBrake ^
-K-Lite.CodecPack.Standard ^
-PotPlayer.PotPlayer ^
-MPC-HC.MPC-HC ^
-foobar2000.foobar2000 ^
-MusicBee.MusicBee ^
-AIMP.AIMP ^
-Spotify.Spotify ^
-Viber.Viber ^
-Telegram.TelegramDesktop ^
-WhatsApp.WhatsApp ^
-Discord.Discord ^
-SlackTechnologies.Slack ^
-Zoom.Zoom ^
-Microsoft.Teams ^
-AnyDesk ^
-TeamViewer.TeamViewer ^
-DucFabulous.UltraViewer ^
-Google.Drive ^
-Dropbox.Dropbox ^
-Microsoft.OneDrive ^
-MEGA.MEGAsync ^
-pCloud.pCloud ^
-KeePassXCTeam.KeePassXC ^
-Bitwarden.Bitwarden ^
-NordVPN.NordVPN ^
-Proton.VPN ^
-TorProject.TorBrowser ^
-Brave.Brave ^
-Vivaldi.Vivaldi ^
-Opera.Opera ^
-Notepad++.Notepad++ ^
-SublimeHQ.SublimeText.4 ^
-Microsoft.VisualStudioCode ^
-Microsoft.WindowsTerminal ^
-PowerShell.PowerShell ^
-JanDeDobbeleer.OhMyPosh ^
-Gerardog.gsudo ^
-htop.htop ^
-lazygit.lazygit ^
-jesseduffield.lazydocker ^
-tldr-pages.tldr ^
-cheat.cheat ^
-charludo.cliner ^
-dandavison.delta ^
-sharkdp.bat ^
-sharkdp.fd ^
-BurntSushi.ripgrep ^
-junegunn.fzf ^
-zoxide.zoxide ^
-eza-community.eza ^
-starship.starship ^
-denisidoro.navi ^
-arthur-s.z ^
-gsamokovarov.jump ^
-wting.autojump ^
-joel-jeremy.jello ^
-stedolan.jq ^
-mikefarah.yq ^
-itchyny.gojq ^
-kisielk.godepgraph ^
-FiloSottile.mkcert ^
-ngrok.ngrok ^
-httpie.httpie ^
-curl.curl ^
-wget.wget ^
-aria2.aria2 ^
-unzip.unzip ^
-zip.zip ^
-tar.tar ^
-gzip.gzip ^
-bzip2.bzip2 ^
-xz.xz ^
-less.less ^
-vim.vim ^
-neovim.neovim ^
-emacs.emacs ^
-nano.nano ^
-tree.tree ^
-ack.ack ^
-ag.the_silver_searcher ^
-ggreer.the_silver_searcher ^
-tmux.tmux ^
-screen.screen ^
-byobu.byobu ^
-htop.htop ^
-glances.glances ^
-nmon.nmon ^
-atop.atop ^
-powertop.powertop ^
-iotop.iotop ^
-iftop.iftop ^
-nethogs.nethogs ^
-speedtest-cli.speedtest-cli ^
-iperf3.iperf3 ^
-mtr.mtr ^
-prettyping.prettyping ^
-gping.gping ^
-dnsutils.dnsutils ^
-bind.dig ^
-bind.host ^
-bind.nslookup ^
-whois.whois ^
-netcat.netcat ^
-socat.socat ^
-nmap.nmap ^
-masscan.masscan ^
-tcpdump.tcpdump ^
-wireshark.wireshark ^
-tshark.tshark ^
-ettercap.ettercap-graphical ^
-bettercap.bettercap ^
-aircrack-ng.aircrack-ng ^
-reaver.reaver ^
-bully.bully ^
-pixiewps.pixiewps ^
-hashcat.hashcat ^
-john.john-the-ripper ^
-hydra.hydra ^
-medusa.medusa ^
-metasploit.metasploit-framework ^
-sqlmap.sqlmap ^
-burpsuite.burpsuite ^
-owasp.zap ^
-nikto.nikto ^
-wpscan.wpscan ^
-gobuster.gobuster ^
-dirb.dirb ^
-dirbuster.dirbuster ^
-wfuzz.wfuzz ^
-ffuf.ffuf ^
-cewl.cewl ^
-crunch.crunch ^
-cupp.cupp ^
-theharvester.theharvester ^
-sublist3r.sublist3r ^
-amass.amass ^
-recon-ng.recon-ng ^
-maltego.maltego-ce ^
-sherlock.sherlock ^
-social-engineer-toolkit.set ^
-gophish.gophish ^
-beef.beef-xss ^
-radare2.radare2 ^
-ghidra.ghidra-sre ^
-ida.ida-free ^
-x64dbg.x64dbg ^
-ollydbg.ollydbg ^
-windbg.windbg-preview ^
-immunityinc.immunity-debugger ^
-cutter.cutter ^
-binary-ninja.binary-ninja ^
-angr.angr ^
-AyrtonSparling.figma-plugins-downloader ^
-Figma.Figma ^
-Adobe.CreativeCloud ^
-Adobe.Photoshop ^
-Adobe.Illustrator ^
-Adobe.InDesign ^
-Adobe.PremierePro ^
-Adobe.AfterEffects ^
-Adobe.Audition ^
-Adobe.Lightroom ^
-Adobe.XD ^
-Sketch.Sketch ^
-InVision.Studio ^
-Marvel.Marvel ^
-Framer.Framer ^
-Principle.Principle ^
-Origami.Studio ^
-Axure.RP ^
-Balsamiq.Wireframes ^
-Justinmind.Prototyper ^
-Proto.io ^
-ProtoPie.ProtoPie ^
-Zeplin.Zeplin ^
-Avocode.Avocode ^
-Abstract.Abstract ^
-Plant.Plant ^
-Lingo.Lingo ^
-IconJar.IconJar ^
-RightFont.RightFont ^
-FontBase.FontBase ^
-NexusFont.NexusFont ^
-Transfonter.Transfonter ^
-Glyphr.Studio ^
-Birdfont.Birdfont ^
-FontForge.FontForge ^
-Coolors.Coolors ^
-Adobe.Color ^
-Paletton.Paletton ^
-ColorHexa.ColorHexa ^
-Canva.Canva ^
-Crello.Crello ^
-Snappa.Snappa ^
-Easil.Easil ^
-Piktochart.Piktochart ^
-Infogram.Infogram ^
-Venngage.Venngage ^
-Visme.Visme ^
-Genially.Genially ^
-Prezi.Prezi ^
-Powtoon.Powtoon ^
-Animaker.Animaker ^
-Vyond.Vyond ^
-Moovly.Moovly ^
-Wideo.Wideo ^
-Lumen5.Lumen5 ^
-Biteable.Biteable ^
-Animoto.Animoto ^
-Magisto.Magisto ^
-Renderforest.Renderforest ^
-Placeit.Placeit ^
-Artlist.Artlist ^
-EpidemicSound.EpidemicSound ^
-PremiumBeat.PremiumBeat ^
-Soundstripe.Soundstripe ^
-Musicbed.Musicbed ^
-Artgrid.Artgrid ^
-Storyblocks.Storyblocks ^
-Pexels.Pexels ^
-Unsplash.Unsplash ^
-Pixabay.Pixabay ^
-Freepik.Freepik ^
-Vecteezy.Vecteezy ^
-Flaticon.Flaticon ^
-TheNounProject.TheNounProject ^
-Google.Fonts ^
-DaFont.DaFont ^
-FontSquirrel.FontSquirrel ^
-Behance.Behance ^
-Dribbble.Dribbble ^
-Pinterest.Pinterest ^
-Instagram.Instagram ^
-Facebook.Facebook ^
-Twitter.Twitter ^
-LinkedIn.LinkedIn ^
-YouTube.YouTube ^
-Vimeo.Vimeo ^
-TikTok.TikTok ^
-Reddit.Reddit ^
-Medium.Medium ^
-Quora.Quora ^
-StackOverflow.StackOverflow ^
-GitHub.GitHub ^
-GitLab.GitLab ^
-Bitbucket.Bitbucket ^
-SourceForge.SourceForge ^
-CodePen.CodePen ^
-JSFiddle.JSFiddle ^
-CodeSandbox.CodeSandbox ^
-Repl.it ^
-Glitch.Glitch ^
-Heroku.Heroku ^
-Netlify.Netlify ^
-Vercel.Vercel ^
-DigitalOcean.DigitalOcean ^
-Linode.Linode ^
-Vultr.Vultr ^
-Amazon.AWS ^
-Google.Cloud ^
-Microsoft.Azure ^
-IBM.Cloud ^
-Oracle.Cloud ^
-Alibaba.Cloud ^
-Tencent.Cloud ^
-Cloudflare.Cloudflare ^
-Fastly.Fastly ^
-Akamai.Akamai ^
-GoDaddy.GoDaddy ^
-Namecheap.Namecheap ^
-Hover.Hover ^
-Gandi.Gandi ^
-Squarespace.Squarespace ^
-Wix.Wix ^
-Weebly.Weebly ^
-Shopify.Shopify ^
-BigCommerce.BigCommerce ^
-Magento.Magento ^
-WooCommerce.WooCommerce ^
-Mailchimp.Mailchimp ^
-ConstantContact.ConstantContact ^
-CampaignMonitor.CampaignMonitor ^
-AWeber.AWeber ^
-GetResponse.GetResponse ^
-Sendinblue.Sendinblue ^
-HubSpot.HubSpot ^
-Salesforce.Salesforce ^
-Zoho.Zoho ^
-Freshworks.Freshworks ^
-Zendesk.Zendesk ^
-Intercom.Intercom ^
-Drift.Drift ^
-SlackTechnologies.Slack ^
-Microsoft.Teams ^
-Google.Chat ^
-Discord.Discord ^
-Zoom.Zoom ^
-Skype.Skype ^
-Google.Meet ^
-Cisco.Webex ^
-GoTo.GoToMeeting ^
-Jitsi.Meet ^
-Whereby.Whereby ^
-Trello.Trello ^
-Asana.Asana ^
-Jira.Jira ^
-Monday.com ^
-ClickUp.ClickUp ^
-Airtable.Airtable ^
-Notion.Notion ^
-Basecamp.Basecamp ^
-Wrike.Wrike ^
-Smartsheet.Smartsheet ^
-Miro.Miro ^
-Mural.Mural ^
-Lucidchart.Lucidchart ^
-Draw.io.Draw.io ^
-Grammarly.Grammarly ^
-ProWritingAid.ProWritingAid ^
-Hemingway.Editor ^
-Evernote.Evernote ^
-OneNote.OneNote ^
-Google.Keep ^
-Simplenote.Simplenote ^
-StandardNotes.StandardNotes ^
-Joplin.Joplin ^
-Obsidian.Obsidian ^
-Logseq.Logseq ^
-RoamResearch.RoamResearch ^
-Typora.Typora ^
-iA.Writer ^
-Ulysses.Ulysses ^
-Scrivener.Scrivener ^
-FinalDraft.FinalDraft ^
-Celtx.Celtx ^
-FadeIn.FadeIn ^
-Trelby.Trelby ^
-LibreOffice.LibreOffice ^
-OpenOffice.OpenOffice ^
-WPS.Office ^
-FreeOffice.FreeOffice ^
-OnlyOffice.OnlyOffice ^
-Google.Docs ^
-Microsoft.Office ^
-Apple.iWork ^
-Dropbox.Paper ^
-Last.fm.Last.fm ^
-Goodreads.Goodreads ^
-Letterboxd.Letterboxd ^
-IMDb.IMDb ^
-RottenTomatoes.RottenTomatoes ^
-Metacritic.Metacritic ^
-Trakt.Trakt ^
-MyAnimeList.MyAnimeList ^
-AniList.AniList ^
-Kitsu.Kitsu ^
-TV.Time ^
-Hobi.Hobi ^
-SeriesGuide.SeriesGuide ^
-Todoist.Todoist ^
-TickTick.TickTick ^
-Any.do ^
-Microsoft.Todo ^
-Things.Things ^
-OmniFocus.OmniFocus ^
-RememberTheMilk.RememberTheMilk ^
-Habitica.Habitica ^
-Forest.Forest ^
-Flora.Flora ^
-Headspace.Headspace ^
-Calm.Calm ^
-InsightTimer.InsightTimer ^
-WakingUp.WakingUp ^
-TenPercentHappier.TenPercentHappier ^
-SimpleHabit.SimpleHabit ^
-MyFitnessPal.MyFitnessPal ^
-LoseIt.LoseIt ^
-Noom.Noom ^
-WW.WeightWatchers ^
-Fitbit.Fitbit ^
-Garmin.Connect ^
-Strava.Strava ^
-Nike.RunClub ^
-Adidas.Running ^
-MapMyRun.MapMyRun ^
-Runkeeper.Runkeeper ^
-Zwift.Zwift ^
-Peloton.Peloton ^
-Duolingo.Duolingo ^
-Babbel.Babbel ^
-Memrise.Memrise ^
-RosettaStone.RosettaStone ^
-Busuu.Busuu ^
-Lingodeer.Lingodeer ^
-Pimsleur.Pimsleur ^
-Anki.Anki ^
-Quizlet.Quizlet ^
-KhanAcademy.KhanAcademy ^
-Coursera.Coursera ^
-edX.edX ^
-Udemy.Udemy ^
-Skillshare.Skillshare ^
-LinkedIn.Learning ^
-MasterClass.MasterClass ^
-Brilliant.org ^
-Codecademy.Codecademy ^
-freeCodeCamp.freeCodeCamp ^
-TheOdinProject.TheOdinProject ^
-HackerRank.HackerRank ^
-LeetCode.LeetCode ^
-Codewars.Codewars ^
-Topcoder.Topcoder ^
-ProjectEuler.ProjectEuler ^
-Exercism.Exercism ^
-Kaggle.Kaggle ^
-DataCamp.DataCamp ^
-Dataquest.Dataquest ^
-Fast.ai ^
-Google.AIPlatform ^
-Amazon.SageMaker ^
-Microsoft.AzureML ^
-IBM.WatsonStudio ^
-H2O.ai ^
-DataRobot.DataRobot ^
-RapidMiner.RapidMiner ^
-KNIME.KNIME ^
-Alteryx.Alteryx ^
-Tableau.Tableau ^
-PowerBI.PowerBI ^
-Qlik.QlikSense ^
-Looker.Looker ^
-Domo.Domo ^
-Sisense.Sisense ^
-MicroStrategy.MicroStrategy ^
-ThoughtSpot.ThoughtSpot ^
-Yellowfin.Yellowfin ^
-Metabase.Metabase ^
-Redash.Redash ^
-Superset.Superset ^
-Grafana.Grafana ^
-Kibana.Kibana ^
-Prometheus.Prometheus ^
-Datadog.Datadog ^
-NewRelic.NewRelic ^
-Dynatrace.Dynatrace ^
-AppDynamics.AppDynamics ^
-Splunk.Splunk ^
-Elastic.Stack ^
-Logz.io ^
-SumoLogic.SumoLogic ^
-Graylog.Graylog ^
-Fluentd.Fluentd ^
-Logstash.Logstash ^
-Telegraf.Telegraf ^
-Collectd.Collectd ^
-StatsD.StatsD ^
-Nagios.Nagios ^
-Zabbix.Zabbix ^
-Icinga.Icinga ^
-Sensu.Sensu ^
-Consul.Consul ^
-Terraform.Terraform ^
-Ansible.Ansible ^
-Puppet.Puppet ^
-Chef.Chef ^
-SaltStack.SaltStack ^
-Jenkins.Jenkins ^
-GitLab.CI ^
-CircleCI.CircleCI ^
-TravisCI.TravisCI ^
-TeamCity.TeamCity ^
-Bamboo.Bamboo ^
-GoCD.GoCD ^
-Spinnaker.Spinnaker ^
-Argo.ArgoCD ^
-Flux.Flux ^
-Kubernetes.Kubernetes ^
-Docker.Swarm ^
-Apache.Mesos ^
-Nomad.Nomad ^
-OpenShift.OpenShift ^
-Rancher.Rancher ^
-Portainer.Portainer ^
-Kustomize.Kustomize ^
-Helm.Helm ^
-Skaffold.Skaffold ^
-Knative.Knative ^
-Istio.Istio ^
-Linkerd.Linkerd ^
-Envoy.Envoy ^
-CoreDNS.CoreDNS ^
-etcd.etcd ^
-containerd.containerd ^
-runc.runc ^
-crun.crun ^
-gVisor.gVisor ^
-Kata.Containers ^
-Firecracker.Firecracker ^
-VirtualBox.VirtualBox ^
-VMware.Workstation ^
-Parallels.Desktop ^
-QEMU.QEMU ^
-KVM.KVM ^
-Xen.Xen ^
-Hyper-V.Hyper-V ^
-Proxmox.VE ^
-oVirt.oVirt ^
-XCP-ng.XCP-ng ^
-OpenStack.OpenStack ^
-CloudStack.CloudStack ^
-Eucalyptus.Eucalyptus ^
-OpenNebula.OpenNebula ^
-Ceph.Ceph ^
-Gluster.GlusterFS ^
-MinIO.MinIO ^
-OpenEBS.OpenEBS ^
-Rook.Rook ^
-Longhorn.Longhorn ^
-MySQL.MySQL ^
-PostgreSQL.PostgreSQL ^
-MariaDB.MariaDB ^
-SQLite.SQLite ^
-Microsoft.SQLServer ^
-Oracle.Database ^
-IBM.Db2 ^
-SAP.HANA ^
-MongoDB.MongoDB ^
-Redis.Redis ^
-Cassandra.Cassandra ^
-Couchbase.Couchbase ^
-Neo4j.Neo4j ^
-ArangoDB.ArangoDB ^
-OrientDB.OrientDB ^
-InfluxDB.InfluxDB ^
-TimescaleDB.TimescaleDB ^
-Prometheus.Prometheus ^
-Elasticsearch.Elasticsearch ^
-Solr.Solr ^
-Algolia.Algolia ^
-MeiliSearch.MeiliSearch ^
-Typesense.Typesense ^
-RabbitMQ.RabbitMQ ^
-ActiveMQ.ActiveMQ ^
-Kafka.Kafka ^
-Pulsar.Pulsar ^
-NATS.NATS ^
-ZeroMQ.ZeroMQ ^
-gRPC.gRPC ^
-Thrift.Thrift ^
-Avro.Avro ^
-ProtocolBuffers.ProtocolBuffers ^
-FlatBuffers.FlatBuffers ^
-MessagePack.MessagePack ^
-JSON.JSON ^
-XML.XML ^
-YAML.YAML ^
-TOML.TOML ^
-CSV.CSV ^
-Parquet.Parquet ^
-Arrow.Arrow ^
-Feather.Feather ^
-HDF5.HDF5 ^
-NetCDF.NetCDF ^
-Zarr.Zarr ^
-OpenCV.OpenCV ^
-Pillow.Pillow ^
-scikit-image.scikit-image ^
-SimpleITK.SimpleITK ^
-Mahotas.Mahotas ^
-NumPy.NumPy ^
-SciPy.SciPy ^
-Pandas.Pandas ^
-Matplotlib.Matplotlib ^
-Seaborn.Seaborn ^
-Plotly.Plotly ^
-Bokeh.Bokeh ^
-Altair.Altair ^
-ggplot.ggplot ^
-scikit-learn.scikit-learn ^
-TensorFlow.TensorFlow ^
-PyTorch.PyTorch ^
-Keras.Keras ^
-Theano.Theano ^
-Caffe.Caffe ^
-MXNet.MXNet ^
-CNTK.CNTK ^
-Chainer.Chainer ^
-fastai.fastai ^
-JAX.JAX ^
-HuggingFace.Transformers ^
-spaCy.spaCy ^
-NLTK.NLTK ^
-Gensim.Gensim ^
-AllenNLP.AllenNLP ^
-Flair.Flair ^
-Stanza.Stanza ^
-CoreNLP.CoreNLP ^
-OpenNLP.OpenNLP ^
-Spark.NLP ^
-Rasa.Rasa ^
-Dialogflow.Dialogflow ^
-Microsoft.BotFramework ^
-Amazon.Lex ^
-IBM.WatsonAssistant ^
-wit.ai ^
-snips.nlu ^
-Dask.Dask ^
-Ray.Ray ^
-Modin.Modin ^
-Vaex.Vaex ^
-cuDF.cuDF ^
-cuML.cuML ^
-cuGraph.cuGraph ^
-BlazingSQL.BlazingSQL ^
-RAPIDS.RAPIDS ^
-Numba.Numba ^
-Cython.Cython ^
-PyPy.PyPy ^
-Jython.Jython ^
-IronPython.IronPython ^
-CPython.CPython ^
-Flask.Flask ^
-Django.Django ^
-FastAPI.FastAPI ^
-Tornado.Tornado ^
-Sanic.Sanic ^
-aiohttp.aiohttp ^
-Bottle.Bottle ^
-CherryPy.CherryPy ^
-Pyramid.Pyramid ^
-Falcon.Falcon ^
-Hug.Hug ^
-Eve.Eve ^
-Dash.Dash ^
-Streamlit.Streamlit ^
-Panel.Panel ^
-Voila.Voila ^
-Gradio.Gradio ^
-Requests.Requests ^
-HTTPX.HTTPX ^
-aiohttp.aiohttp-client ^
-urllib3.urllib3 ^
-BeautifulSoup.BeautifulSoup ^
-lxml.lxml ^
-Scrapy.Scrapy ^
-Selenium.Selenium ^
-Playwright.Playwright ^
-Puppeteer.Puppeteer ^
-Cypress.Cypress ^
-TestCafe.TestCafe ^
-SQLAlchemy.SQLAlchemy ^
-peewee.peewee ^
-PonyORM.PonyORM ^
-tortoise-orm.tortoise-orm ^
-GIN.GIN ^
-Echo.Echo ^
-Fiber.Fiber ^
-Beego.Beego ^
-Revel.Revel ^
-Buffalo.Buffalo ^
-Gorilla.Mux ^
-Chi.Chi ^
-httprouter.httprouter ^
-Express.Express ^
-Koa.Koa ^
-Hapi.Hapi ^
-NestJS.NestJS ^
-Next.js ^
-Nuxt.js ^
-SvelteKit.SvelteKit ^
-Gatsby.Gatsby ^
-Remix.Remix ^
-React.React ^
-Vue.js ^
-Angular.Angular ^
-Svelte.Svelte ^
-Ember.js ^
-Backbone.js ^
-jQuery.jQuery ^
-Lodash.Lodash ^
-Underscore.js ^
-Moment.js ^
-date-fns.date-fns ^
-Day.js ^
-Luxon.Luxon ^
-RxJS.RxJS ^
-Redux.Redux ^
-MobX.MobX ^
-Vuex.Vuex ^
-NgRx.NgRx ^
-Recoil.Recoil ^
-Jotai.Jotai ^
-Zustand.Zustand ^
-GraphQL.GraphQL ^
-Apollo.ApolloClient ^
-Relay.Relay ^
-URQL.URQL ^
-TailwindCSS.TailwindCSS ^
-Bootstrap.Bootstrap ^
-Material-UI.MUI ^
-AntDesign.AntDesign ^
-ChakraUI.ChakraUI ^
-SemanticUI.SemanticUI ^
-Foundation.Foundation ^
-Bulma.Bulma ^
-Sass.Sass ^
-Less.Less ^
-Stylus.Stylus ^
-PostCSS.PostCSS ^
-Webpack.Webpack ^
-Rollup.Rollup ^
-Parcel.Parcel ^
-Vite.Vite ^
-esbuild.esbuild ^
-Snowpack.Snowpack ^
-Babel.Babel ^
-TypeScript.TypeScript ^
-ESLint.ESLint ^
-Prettier.Prettier ^
-Jest.Jest ^
-Mocha.Mocha ^
-Jasmine.Jasmine ^
-AVA.AVA ^
-Vitest.Vitest ^
-TestingLibrary.TestingLibrary ^
-Enzyme.Enzyme ^
-Storybook.Storybook ^
-Ladl.Ladle ^
-Chromatic.Chromatic ^
-Gulp.Gulp ^
-Grunt.Grunt ^
-NPM.NPM ^
-Yarn.Yarn ^
-PNPM.PNPM ^
-Lerna.Lerna ^
-Nx.Nx ^
-Turborepo.Turborepo ^
-Rush.Rush ^
-Gradle.Gradle ^
-Maven.Maven ^
-Ant.Ant ^
-Bazel.Bazel ^
-Buck.Buck ^
-CMake.CMake ^
-Make.Make ^
-Rake.Rake ^
-Capistrano.Capistrano ^
-Fabric.Fabric ^
-pytest.pytest ^
-unittest.unittest ^
-nose2.nose2 ^
-tox.tox ^
-nox.nox ^
-PHPUnit.PHPUnit ^
-Codeception.Codeception ^
-Behat.Behat ^
-PHPSpec.PHPSpec ^
-RSpec.RSpec ^
-Minitest.Minitest ^
-Capybara.Capybara ^
-Cucumber.Cucumber ^
-JUnit.JUnit ^
-TestNG.TestNG ^
-Mockito.Mockito ^
-PowerMock.PowerMock ^
-Spock.Spock ^
-NUnit.NUnit ^
-xUnit.net ^
-MSTest.MSTest ^
-Moq.Moq ^
-Bogus.Bogus ^
-AutoFixture.AutoFixture ^
-Go.testing ^
-Testify.Testify ^
-Go.GoConvey ^
-Go.GoMega ^
-Go.GoCheck ^
-Swift.XCTest ^
-Quick.Quick ^
-Nimble.Nimble ^
-Rust.testing ^
-cargo-test.cargo-test ^
-proptest.proptest ^
-quickcheck.quickcheck-rust ^
-criterion.criterion-rs ^
-Elixir.ExUnit ^
-Kotlin.kotlin.test ^
-Spek.Spek ^
-Kotest.Kotest ^
-ScalaTest.ScalaTest ^
-Specs2.Specs2 ^
-uTest.uTest ^
-Clojure.test ^
-Midje.Midje ^
-Kaocha.Kaocha ^
-Haskell.Hspec ^
-Haskell.tasty ^
-Haskell.QuickCheck ^
-OCaml.OUnit ^
-OCaml.QCheck ^
-Erlang.EUnit ^
-CommonLisp.FiveAM ^
-CommonLisp.rove ^
-D.unittest ^
-Crystal.spec ^
-Zig.test ^
-Nim.unittest ^
-Julia.Test ^
-MATLAB.UnitTestingFramework ^
-R.testthat ^
-Perl.Test-Simple ^
-Lua.Busted ^
-Dart.test ^
-Flutter.test ^
-hluk.CopyQ ^
-LocalSend.LocalSend ^
+set "packageList=^\
+voidtools.Everything ^\
+Google.Chrome ^\
+Mozilla.Firefox ^\
+Microsoft.Edge ^\
+Adobe.Acrobat.Reader.64-bit ^\
+VideoLAN.VLC ^\
+RARLab.WinRAR ^\
+7-Zip.7-Zip ^\
+Glarysoft.GlaryUtilities ^\
+IObit.Uninstaller ^\
+IObit.SmartDefrag ^\
+IObit.DriverBooster ^\
+IObit.MalwareFighter ^\
+CCleaner.CCleaner ^\
+BleachBit.BleachBit ^\
+WizTree.WizTree ^\
+TreeSize.Free ^\
+WinDirStat.WinDirStat ^\
+CPU-Z.CPU-Z ^\
+GPU-Z.GPU-Z ^\
+HWiNFO.HWiNFO ^\
+CrystalDiskInfo.CrystalDiskInfo ^\
+CrystalDiskMark.CrystalDiskMark ^\
+AIDA64.AIDA64.Extreme ^\
+Geekbench.Geekbench ^\
+MSI.Afterburner ^\
+RTSS.RivaTunerStatisticsServer ^\
+OBSProject.OBSStudio ^\
+ShareX.ShareX ^\
+Lightshot.Lightshot ^\
+Greenshot.Greenshot ^\
+Flameshot.Flameshot ^\
+KDE.Krita ^\
+GIMP.GIMP ^\
+Inkscape.Inkscape ^\
+Blender.Blender ^\
+Audacity.Audacity ^\
+HandBrake.HandBrake ^\
+K-Lite.CodecPack.Standard ^\
+PotPlayer.PotPlayer ^\
+MPC-HC.MPC-HC ^\
+foobar2000.foobar2000 ^\
+MusicBee.MusicBee ^\
+AIMP.AIMP ^\
+Spotify.Spotify ^\
+Viber.Viber ^\
+Telegram.TelegramDesktop ^\
+WhatsApp.WhatsApp ^\
+Discord.Discord ^\
+SlackTechnologies.Slack ^\
+Zoom.Zoom ^\
+Microsoft.Teams ^\
+AnyDesk ^\
+TeamViewer.TeamViewer ^\
+DucFabulous.UltraViewer ^\
+Google.Drive ^\
+Dropbox.Dropbox ^\
+Microsoft.OneDrive ^\
+MEGA.MEGAsync ^\
+pCloud.pCloud ^\
+KeePassXCTeam.KeePassXC ^\
+Bitwarden.Bitwarden ^\
+NordVPN.NordVPN ^\
+Proton.VPN ^\
+TorProject.TorBrowser ^\
+Brave.Brave ^\
+Vivaldi.Vivaldi ^\
+Opera.Opera ^\
+Notepad++.Notepad++ ^\
+SublimeHQ.SublimeText.4 ^\
+Microsoft.VisualStudioCode ^\
+Microsoft.WindowsTerminal ^\
+PowerShell.PowerShell ^\
+JanDeDobbeleer.OhMyPosh ^\
+Gerardog.gsudo ^\
+htop.htop ^\
+lazygit.lazygit ^\
+jesseduffield.lazydocker ^\
+tldr-pages.tldr ^\
+cheat.cheat ^\
+charludo.cliner ^\
+dandavison.delta ^\
+sharkdp.bat ^\
+sharkdp.fd ^\
+BurntSushi.ripgrep ^\
+junegunn.fzf ^\
+zoxide.zoxide ^\
+eza-community.eza ^\
+starship.starship ^\
+denisidoro.navi ^\
+arthur-s.z ^\
+gsamokovarov.jump ^\
+wting.autojump ^\
+joel-jeremy.jello ^\
+stedolan.jq ^\
+mikefarah.yq ^\
+itchyny.gojq ^\
+kisielk.godepgraph ^\
+FiloSottile.mkcert ^\
+ngrok.ngrok ^\
+httpie.httpie ^\
+curl.curl ^\
+wget.wget ^\
+aria2.aria2 ^\
+unzip.unzip ^\
+zip.zip ^\
+tar.tar ^\
+gzip.gzip ^\
+bzip2.bzip2 ^\
+xx.xz ^\
+lesss.less ^\
+vim.vim ^\
+neovim.neovim ^\
+emacs.emacs ^\
+nano.nano ^\
+tree.tree ^\
+ack.ack ^\
+ag.the_silver_searcher ^\
+ggreer.the_silver_searcher ^\
+tmux.tmux ^\
+screen.screen ^\
+byobu.byobu ^\
+htop.htop ^\
+glances.glances ^\
+nmon.nmon ^\
+atop.atop ^\
+powertop.powertop ^\
+iotop.iotop ^\
+iftop.iftop ^\
+nethogs.nethogs ^\
+speedtest-cli.speedtest-cli ^\
+iperf3.iperf3 ^\
+mtr.mtr ^\
+prettyping.prettyping ^\
+gping.gping ^\
+dnsutils.dnsutils ^\
+bind.dig ^\
+bind.host ^\
+bind.nslookup ^\
+whois.whois ^\
+netcat.netcat ^\
+socat.socat ^\
+nmap.nmap ^\
+masscan.masscan ^\
+tcpdump.tcpdump ^\
+wireshark.wireshark ^\
+tshark.tshark ^\
+ettercap.ettercap-graphical ^\
+bettercap.bettercap ^\
+aircrack-ng.aircrack-ng ^\
+reaver.reaver ^\
+bully.bully ^\
+pixiewps.pixiewps ^\
+hashcat.hashcat ^\
+john.john-the-ripper ^\
+hydra.hydra ^\
+medusa.medusa ^\
+metasploit.metasploit-framework ^\
+sqlmap.sqlmap ^\
+burpsuite.burpsuite ^\
+owasp.zap ^\
+nikto.nikto ^\
+wpscan.wpscan ^\
+gobuster.gobuster ^\
+dirb.dirb ^\
+dirbuster.dirbuster ^\
+wfuzz.wfuzz ^\
+ffuf.ffuf ^\
+cewl.cewl ^\
+crunch.crunch ^\
+cupp.cupp ^\
+theharvester.theharvester ^\
+sublist3r.sublist3r ^\
+amass.amass ^\
+recon-ng.recon-ng ^\
+maltego.maltego-ce ^\
+sherlock.sherlock ^\
+social-engineer-toolkit.set ^\
+gophish.gophish ^\
+beef.beef-xss ^\
+radare2.radare2 ^\
+ghidra.ghidra-sre ^\
+ida.ida-free ^\
+x64dbg.x64dbg ^\
+olydbg.ollydbg ^\
+windbg.windbg-preview ^\
+immunityinc.immunity-debugger ^\
+cutter.cutter ^\
+binary-ninja.binary-ninja ^\
+angr.angr ^\
+AyrtonSparling.figma-plugins-downloader ^\
+Figma.Figma ^\
+Adobe.CreativeCloud ^\
+Adobe.Photoshop ^\
+Adobe.Illustrator ^\
+Adobe.InDesign ^\
+Adobe.PremierePro ^\
+Adobe.AfterEffects ^\
+Adobe.Audition ^\
+Adobe.Lightroom ^\
+Adobe.XD ^\
+Sketch.Sketch ^\
+InVision.Studio ^\
+Marvel.Marvel ^\
+Framer.Framer ^\
+Principle.Principle ^\
+Origami.Studio ^\
+Axure.RP ^\
+Balsamiq.Wireframes ^\
+Justinmind.Prototyper ^\
+Proto.io ^\
+ProtoPie.ProtoPie ^\
+Zeplin.Zeplin ^\
+Avocode.Avocode ^\
+Abstract.Abstract ^\
+Plant.Plant ^\
+Lingo.Lingo ^\
+IconJar.IconJar ^\
+RightFont.RightFont ^\
+FontBase.FontBase ^\
+NexusFont.NexusFont ^\
+Transfonter.Transfonter ^\
+Glyphr.Studio ^\
+Birdfont.Birdfont ^\
+FontForge.FontForge ^\
+Coolors.Coolors ^\
+Adobe.Color ^\
+Paletton.Paletton ^\
+ColorHexa.ColorHexa ^\
+Canva.Canva ^\
+Crello.Crello ^\
+Snappa.Snappa ^\
+Easil.Easil ^\
+Piktochart.Piktochart ^\
+Infogram.Infogram ^\
+Venngage.Venngage ^\
+Visme.Visme ^\
+Genially.Genially ^\
+Prezi.Prezi ^\
+Powtoon.Powtoon ^\
+Animaker.Animaker ^\
+Vyond.Vyond ^\
+Moovly.Moovly ^\
+Wideo.Wideo ^\
+Lumen5.Lumen5 ^\
+Biteable.Biteable ^\
+Animoto.Animoto ^\
+Magisto.Magisto ^\
+Renderforest.Renderforest ^\
+Placeit.Placeit ^\
+Artlist.Artlist ^\
+EpidemicSound.EpidemicSound ^\
+PremiumBeat.PremiumBeat ^\
+Soundstripe.Soundstripe ^\
+Musicbed.Musicbed ^\
+Artgrid.Artgrid ^\
+Storyblocks.Storyblocks ^\
+Pexels.Pexels ^\
+Unsplash.Unsplash ^\
+Pixabay.Pixabay ^\
+Freepik.Freepik ^\
+Vecteezy.Vecteezy ^\
+Flaticon.Flaticon ^\
+TheNounProject.TheNounProject ^\
+Google.Fonts ^\
+DaFont.DaFont ^\
+FontSquirrel.FontSquirrel ^\
+Behance.Behance ^\
+Dribbble.Dribbble ^\
+Pinterest.Pinterest ^\
+Instagram.Instagram ^\
+Facebook.Facebook ^\
+Twitter.Twitter ^\
+LinkedIn.LinkedIn ^\
+YouTube.YouTube ^\
+Vimeo.Vimeo ^\
+TikTok.TikTok ^\
+Reddit.Reddit ^\
+Medium.Medium ^\
+Quora.Quora ^\
+StackOverflow.StackOverflow ^\
+GitHub.GitHub ^\
+GitLab.GitLab ^\
+Bitbucket.Bitbucket ^\
+SourceForge.SourceForge ^\
+CodePen.CodePen ^\
+JSFiddle.JSFiddle ^\
+CodeSandbox.CodeSandbox ^\
+Repl.it ^\
+Glitch.Glitch ^\
+Heroku.Heroku ^\
+Netlify.Netlify ^\
+Vercel.Vercel ^\
+DigitalOcean.DigitalOcean ^\
+Linode.Linode ^\
+Vultr.Vultr ^\
+Amazon.AWS ^\
+Google.Cloud ^\
+Microsoft.Azure ^\
+IBM.Cloud ^\
+Oracle.Cloud ^\
+Alibaba.Cloud ^\
+Tencent.Cloud ^\
+Cloudflare.Cloudflare ^\
+Fastly.Fastly ^\
+Akamai.Akamai ^\
+GoDaddy.GoDaddy ^\
+Namecheap.Namecheap ^\
+Hover.Hover ^\
+Gandi.Gandi ^\
+Squarespace.Squarespace ^\
+Wix.Wix ^\
+Weebly.Weebly ^\
+Shopify.Shopify ^\
+BigCommerce.BigCommerce ^\
+Magento.Magento ^\
+WooCommerce.WooCommerce ^\
+Mailchimp.Mailchimp ^\
+ConstantContact.ConstantContact ^\
+CampaignMonitor.CampaignMonitor ^\
+AWeber.AWeber ^\
+GetResponse.GetResponse ^\
+Sendinblue.Sendinblue ^\
+HubSpot.HubSpot ^\
+Salesforce.Salesforce ^\
+Zoho.Zoho ^\
+Freshworks.Freshworks ^\
+Zendesk.Zendesk ^\
+Intercom.Intercom ^\
+Drift.Drift ^\
+SlackTechnologies.Slack ^\
+Microsoft.Teams ^\
+Google.Chat ^\
+Discord.Discord ^\
+Zoom.Zoom ^\
+Skype.Skype ^\
+Google.Meet ^\
+Cisco.Webex ^\
+GoTo.GoToMeeting ^\
+Jitsi.Meet ^\
+Whereby.Whereby ^\
+Trello.Trello ^\
+Asana.Asana ^\
+Jira.Jira ^\
+Monday.com ^\
+ClickUp.ClickUp ^\
+Airtable.Airtable ^\
+Notion.Notion ^\
+Basecamp.Basecamp ^\
+Wrike.Wrike ^\
+Smartsheet.Smartsheet ^\
+Miro.Miro ^\
+Mural.Mural ^\
+Lucidchart.Lucidchart ^\
+Draw.io.Draw.io ^\
+Grammarly.Grammarly ^\
+ProWritingAid.ProWritingAid ^\
+Hemingway.Editor ^\
+Evernote.Evernote ^\
+OneNote.OneNote ^\
+Google.Keep ^\
+Simplenote.Simplenote ^\
+StandardNotes.StandardNotes ^\
+Joplin.Joplin ^\
+Obsidian.Obsidian ^\
+Logseq.Logseq ^\
+RoamResearch.RoamResearch ^\
+Typora.Typora ^\
+iA.Writer ^\
+Ulysses.Ulysses ^\
+Scrivener.Scrivener ^\
+FinalDraft.FinalDraft ^\
+Celtx.Celtx ^\
+FadeIn.FadeIn ^\
+Trelby.Trelby ^\
+LibreOffice.LibreOffice ^\
+OpenOffice.OpenOffice ^\
+WPS.Office ^\
+FreeOffice.FreeOffice ^\
+OnlyOffice.OnlyOffice ^\
+Google.Docs ^\
+Microsoft.Office ^\
+Apple.iWork ^\
+Dropbox.Paper ^\
+Last.fm.Last.fm ^\
+Goodreads.Goodreads ^\
+Letterboxd.Letterboxd ^\
+IMDb.IMDb ^\
+RottenTomatoes.RottenTomatoes ^\
+Metacritic.Metacritic ^\
+Trakt.Trakt ^\
+MyAnimeList.MyAnimeList ^\
+AniList.AniList ^\
+Kitsu.Kitsu ^\
+TV.Time ^\
+Hobi.Hobi ^\
+SeriesGuide.SeriesGuide ^\
+Todoist.Todoist ^\
+TickTick.TickTick ^\
+Any.do ^\
+Microsoft.Todo ^\
+Things.Things ^\
+OmniFocus.OmniFocus ^\
+RememberTheMilk.RememberTheMilk ^\
+Habitica.Habitica ^\
+Forest.Forest ^\
+Flora.Flora ^\
+Headspace.Headspace ^\
+Calm.Calm ^\
+InsightTimer.InsightTimer ^\
+WakingUp.WakingUp ^\
+TenPercentHappier.TenPercentHappier ^\
+SimpleHabit.SimpleHabit ^\
+MyFitnessPal.MyFitnessPal ^\
+LoseIt.LoseIt ^\
+Noom.Noom ^\
+WW.WeightWatchers ^\
+Fitbit.Fitbit ^\
+Garmin.Connect ^\
+Strava.Strava ^\
+Nike.RunClub ^\
+Adidas.Running ^\
+MapMyRun.MapMyRun ^\
+Runkeeper.Runkeeper ^\
+Zwift.Zwift ^\
+Peloton.Peloton ^\
+Duolingo.Duolingo ^\
+Babbel.Babbel ^\
+Memrise.Memrise ^\
+RosettaStone.RosettaStone ^\
+Busuu.Busuu ^\
+Lingodeer.Lingodeer ^\
+Pimsleur.Pimsleur ^\
+Anki.Anki ^\
+Quizlet.Quizlet ^\
+KhanAcademy.KhanAcademy ^\
+Coursera.Coursera ^\
+edX.edX ^\
+Udemy.Udemy ^\
+Skillshare.Skillshare ^\
+LinkedIn.Learning ^\
+MasterClass.MasterClass ^\
+Brilliant.org ^\
+Codecademy.Codecademy ^\
+freeCodeCamp.freeCodeCamp ^\
+TheOdinProject.TheOdinProject ^\
+HackerRank.HackerRank ^\
+LeetCode.LeetCode ^\
+Codewars.Codewars ^\
+Topcoder.Topcoder ^\
+ProjectEuler.ProjectEuler ^\
+Exercism.Exercism ^\
+Kaggle.Kaggle ^\
+DataCamp.DataCamp ^\
+Dataquest.Dataquest ^\
+Fast.ai ^\
+Google.AIPlatform ^\
+Amazon.SageMaker ^\
+Microsoft.AzureML ^\
+IBM.WatsonStudio ^\
+H2O.ai ^\
+DataRobot.DataRobot ^\
+RapidMiner.RapidMiner ^\
+KNIME.KNIME ^\
+Alteryx.Alteryx ^\
+Tableau.Tableau ^\
+PowerBI.PowerBI ^\
+Qlik.QlikSense ^\
+Looker.Looker ^\
+Domo.Domo ^\
+Sisense.Sisense ^\
+MicroStrategy.MicroStrategy ^\
+ThoughtSpot.ThoughtSpot ^\
+Yellowfin.Yellowfin ^\
+Metabase.Metabase ^\
+Redash.Redash ^\
+Superset.Superset ^\
+Grafana.Grafana ^\
+Kibana.Kibana ^\
+Prometheus.Prometheus ^\
+Datadog.Datadog ^\
+NewRelic.NewRelic ^\
+Dynatrace.Dynatrace ^\
+AppDynamics.AppDynamics ^\
+Splunk.Splunk ^\
+Elastic.Stack ^\
+Logz.io ^\
+SumoLogic.SumoLogic ^\
+Graylog.Graylog ^\
+Fluentd.Fluentd ^\
+Logstash.Logstash ^\
+Telegraf.Telegraf ^\
+Collectd.Collectd ^\
+StatsD.StatsD ^\
+Nagios.Nagios ^\
+Zabbix.Zabbix ^\
+Icinga.Icinga ^\
+Sensu.Sensu ^\
+Consul.Consul ^\
+Terraform.Terraform ^\
+Ansible.Ansible ^\
+Puppet.Puppet ^\
+Chef.Chef ^\
+SaltStack.SaltStack ^\
+Jenkins.Jenkins ^\
+GitLab.CI ^\
+CircleCI.CircleCI ^\
+TravisCI.TravisCI ^\
+TeamCity.TeamCity ^\
+Bamboo.Bamboo ^\
+GoCD.GoCD ^\
+Spinnaker.Spinnaker ^\
+Argo.ArgoCD ^\
+Flux.Flux ^\
+Kubernetes.Kubernetes ^\
+Docker.Swarm ^\
+Apache.Mesos ^\
+Nomad.Nomad ^\
+OpenShift.OpenShift ^\
+Rancher.Rancher ^\
+Portainer.Portainer ^\
+Kustomize.Kustomize ^\
+Helm.Helm ^\
+Skaffold.Skaffold ^\
+Knative.Knative ^\
+Istio.Istio ^\
+Linkerd.Linkerd ^\
+Envoy.Envoy ^\
+CoreDNS.CoreDNS ^\
+etcd.etcd ^\
+containerd.containerd ^\
+runc.runc ^\
+crun.crun ^\
+gVisor.gVisor ^\
+Kata.Containers ^\
+Firecracker.Firecracker ^\
+VirtualBox.VirtualBox ^\
+VMware.Workstation ^\
+Parallels.Desktop ^\
+QEMU.QEMU ^\
+KVM.KVM ^\
+Xen.Xen ^\
+Hyper-V.Hyper-V ^\
+Proxmox.VE ^\
+oVirt.oVirt ^\
+XCP-ng.XCP-ng ^\
+OpenStack.OpenStack ^\
+CloudStack.CloudStack ^\
+Eucalyptus.Eucalyptus ^\
+OpenNebula.OpenNebula ^\
+Ceph.Ceph ^\
+Gluster.GlusterFS ^\
+MinIO.MinIO ^\
+OpenEBS.OpenEBS ^\
+Rook.Rook ^\
+Longhorn.Longhorn ^\
+MySQL.MySQL ^\
+PostgreSQL.PostgreSQL ^\
+MariaDB.MariaDB ^\
+SQLite.SQLite ^\
+Microsoft.SQLServer ^\
+Oracle.Database ^\
+IBM.Db2 ^\
+SAP.HANA ^\
+MongoDB.MongoDB ^\
+Redis.Redis ^\
+Cassandra.Cassandra ^\
+Couchbase.Couchbase ^\
+Neo4j.Neo4j ^\
+ArangoDB.ArangoDB ^\
+OrientDB.OrientDB ^\
+InfluxDB.InfluxDB ^\
+TimescaleDB.TimescaleDB ^\
+Prometheus.Prometheus ^\
+Elasticsearch.Elasticsearch ^\
+Solr.Solr ^\
+Algolia.Algolia ^\
+MeiliSearch.MeiliSearch ^\
+Typesense.Typesense ^\
+RabbitMQ.RabbitMQ ^\
+ActiveMQ.ActiveMQ ^\
+Kafka.Kafka ^\
+Pulsar.Pulsar ^\
+NATS.NATS ^\
+ZeroMQ.ZeroMQ ^\
+gRPC.gRPC ^\
+Thrift.Thrift ^\
+Avro.Avro ^\
+ProtocolBuffers.ProtocolBuffers ^\
+FlatBuffers.FlatBuffers ^\
+MessagePack.MessagePack ^\
+JSON.JSON ^\
+XML.XML ^\
+YAML.YAML ^\
+TOML.TOML ^\
+CSV.CSV ^\
+Parquet.Parquet ^\
+Arrow.Arrow ^\
+Feather.Feather ^\
+HDF5.HDF5 ^\
+NetCDF.NetCDF ^\
+Zarr.Zarr ^\
+OpenCV.OpenCV ^\
+Pillow.Pillow ^\
+scikit-image.scikit-image ^\
+SimpleITK.SimpleITK ^\
+Mahotas.Mahotas ^\
+NumPy.NumPy ^\
+SciPy.SciPy ^\
+Pandas.Pandas ^\
+Matplotlib.Matplotlib ^\
+Seaborn.Seaborn ^\
+Plotly.Plotly ^\
+Bokeh.Bokeh ^\
+Altair.Altair ^\
+ggplot.ggplot ^\
+scikit-learn.scikit-learn ^\
+TensorFlow.TensorFlow ^\
+PyTorch.PyTorch ^\
+Keras.Keras ^\
+Theano.Theano ^\
+Caffe.Caffe ^\
+MXNet.MXNet ^\
+CNTK.CNTK ^\
+Chainer.Chainer ^\
+fastai.fastai ^\
+JAX.JAX ^\
+HuggingFace.Transformers ^\
+spaCy.spaCy ^\
+NLTK.NLTK ^\
+Gensim.Gensim ^\
+AllenNLP.AllenNLP ^\
+Flair.Flair ^\
+Stanza.Stanza ^\
+CoreNLP.CoreNLP ^\
+OpenNLP.OpenNLP ^\
+Spark.NLP ^\
+Rasa.Rasa ^\
+Dialogflow.Dialogflow ^\
+Microsoft.BotFramework ^\
+Amazon.Lex ^\
+IBM.WatsonAssistant ^\
+wit.ai ^\
+snips.nlu ^\
+Dask.Dask ^\
+Ray.Ray ^\
+Modin.Modin ^\
+Vaex.Vaex ^\
+cuDF.cuDF ^\
+cuML.cuML ^\
+cuGraph.cuGraph ^\
+BlazingSQL.BlazingSQL ^\
+RAPIDS.RAPIDS ^\
+Numba.Numba ^\
+Cython.Cython ^\
+PyPy.PyPy ^\
+Jython.Jython ^\
+IronPython.IronPython ^\
+CPython.CPython ^\
+Flask.Flask ^\
+Django.Django ^\
+FastAPI.FastAPI ^\
+Tornado.Tornado ^\
+Sanic.Sanic ^\
+aiohttp.aiohttp ^\
+Bottle.Bottle ^\
+CherryPy.CherryPy ^\
+Pyramid.Pyramid ^\
+Falcon.Falcon ^\
+Hug.Hug ^\
+Eve.Eve ^\
+Dash.Dash ^\
+Streamlit.Streamlit ^\
+Panel.Panel ^\
+Voila.Voila ^\
+Gradio.Gradio ^\
+Requests.Requests ^\
+HTTPX.HTTPX ^\
+aiohttp.aiohttp-client ^\
+urllib3.urllib3 ^\
+BeautifulSoup.BeautifulSoup ^\
+lxml.lxml ^\
+Scrapy.Scrapy ^\
+Selenium.Selenium ^\
+Playwright.Playwright ^\
+Puppeteer.Puppeteer ^\
+Cypress.Cypress ^\
+TestCafe.TestCafe ^\
+SQLAlchemy.SQLAlchemy ^\
+peewee.peewee ^\
+PonyORM.PonyORM ^\
+tortoise-orm.tortoise-orm ^\
+GIN.GIN ^\
+Echo.Echo ^\
+Fiber.Fiber ^\
+Beego.Beego ^\
+Revel.Revel ^\
+Buffalo.Buffalo ^\
+Gorilla.Mux ^\
+Chi.Chi ^\
+httprouter.httprouter ^\
+Express.Express ^\
+Koa.Koa ^\
+Hapi.Hapi ^\
+NestJS.NestJS ^\
+Next.js ^\
+Nuxt.js ^\
+SvelteKit.SvelteKit ^\
+Gatsby.Gatsby ^\
+Remix.Remix ^\
+React.React ^\
+Vue.js ^\
+Angular.Angular ^\
+Svelte.Svelte ^\
+Ember.js ^\
+Backbone.js ^\
+jQuery.jQuery ^\
+Lodash.Lodash ^\
+Underscore.js ^\
+Moment.js ^\
+date-fns.date-fns ^\
+Day.js ^\
+Luxon.Luxon ^\
+RxJS.RxJS ^\
+Redux.Redux ^\
+MobX.MobX ^\
+Vuex.Vuex ^\
+NgRx.NgRx ^\
+Recoil.Recoil ^\
+Jotai.Jotai ^\
+Zustand.Zustand ^\
+GraphQL.GraphQL ^\
+Apollo.ApolloClient ^\
+Relay.Relay ^\
+URQL.URQL ^\
+TailwindCSS.TailwindCSS ^\
+Bootstrap.Bootstrap ^\
+Material-UI.MUI ^\
+AntDesign.AntDesign ^\
+ChakraUI.ChakraUI ^\
+SemanticUI.SemanticUI ^\
+Foundation.Foundation ^\
+Bulma.Bulma ^\
+Sass.Sass ^\
+Less.Less ^\
+Stylus.Stylus ^\
+PostCSS.PostCSS ^\
+Webpack.Webpack ^\
+Rollup.Rollup ^\
+Parcel.Parcel ^\
+Vite.Vite ^\
+esbuild.esbuild ^\
+Snowpack.Snowpack ^\
+Babel.Babel ^\
+TypeScript.TypeScript ^\
+ESLint.ESLint ^\
+Prettier.Prettier ^\
+Jest.Jest ^\
+Mocha.Mocha ^\
+Jasmine.Jasmine ^\
+AVA.AVA ^\
+Vitest.Vitest ^\
+TestingLibrary.TestingLibrary ^\
+Enzyme.Enzyme ^\
+Storybook.Storybook ^\
+Ladl.Ladle ^\
+Chromatic.Chromatic ^\
+Gulp.Gulp ^\
+Grunt.Grunt ^\
+NPM.NPM ^\
+Yarn.Yarn ^\
+PNPM.PNPM ^\
+Lerna.Lerna ^\
+Nx.Nx ^\
+Turborepo.Turborepo ^\
+Rush.Rush ^\
+Gradle.Gradle ^\
+Maven.Maven ^\
+Ant.Ant ^\
+Bazel.Bazel ^\
+Buck.Buck ^\
+CMake.CMake ^\
+Make.Make ^\
+Rake.Rake ^\
+Capistrano.Capistrano ^\
+Fabric.Fabric ^\
+pytest.pytest ^\
+unittest.unittest ^\
+nose2.nose2 ^\
+tox.tox ^\
+nox.nox ^\
+PHPUnit.PHPUnit ^\
+Codeception.Codeception ^\
+Behat.Behat ^\
+PHPSpec.PHPSpec ^\
+RSpec.RSpec ^\
+Minitest.Minitest ^\
+Capybara.Capybara ^\
+Cucumber.Cucumber ^\
+JUnit.JUnit ^\
+TestNG.TestNG ^\
+Mockito.Mockito ^\
+PowerMock.PowerMock ^\
+Spock.Spock ^\
+NUnit.NUnit ^\
+xUnit.net ^\
+MSTest.MSTest ^\
+Moq.Moq ^\
+Bogus.Bogus ^\
+AutoFixture.AutoFixture ^\
+Go.testing ^\
+Testify.Testify ^\
+Go.GoConvey ^\
+Go.GoMega ^\
+Go.GoCheck ^\
+Swift.XCTest ^\
+Quick.Quick ^\
+Nimble.Nimble ^\
+Rust.testing ^\
+cargo-test.cargo-test ^\
+proptest.proptest ^\
+quickcheck.quickcheck-rust ^\
+criterion.criterion-rs ^\
+Elixir.ExUnit ^\
+Kotlin.kotlin.test ^\
+Spek.Spek ^\
+Kotest.Kotest ^\
+ScalaTest.ScalaTest ^\
+Specs2.Specs22 ^\
+uTest.uTest ^\
+Clojure.test ^\
+Midje.Midje ^\
+Kaocha.Kaocha ^\
+Haskell.Hspec ^\
+Haskell.tasty ^\
+Haskell.QuickCheck ^\
+OCaml.OUnit ^\
+OCaml.QCheck ^\
+Erlang.EUnit ^\
+CommonLisp.FiveAM ^\
+CommonLisp.rove ^\
+D.unittest ^\
+Crystal.spec ^\
+Zig.test ^\
+Nim.unittest ^\
+Julia.Test ^\
+MATLAB.UnitTestingFramework ^\
+R.testthat ^\
+Perl.Test-Simple ^\
+Lua.Busted ^\
+Dart.test ^\
+Flutter.test ^\
+hluk.CopyQ ^\
+LocalSend.LocalSend ^\
 HiBitSoftware.HiBitUninstaller"
 
 for %%p in (%packageList%) do (call :installSoftByWinget %%p -h --accept-package-agreements --accept-source-agreements --ignore-security-hash --force)
 endlocal
 ::call :bcuninstaller-Settings
-call :killTasks
+call :KillTasks
 cls
 goto :EOF
 
-:checkCompatibility
+:CheckCompatibility
 :: ============================================================
 :: Check if the script is running with administrator privileges
 :: ============================================================
@@ -2130,7 +2034,7 @@ for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "%POWERSHELL_
 )
 
 echo.
-echo [*] Detected Assets:
+ echo [*] Detected Assets:
     echo     Dependencies ZIP: %DEP_ZIP_URL%
     echo     Main Package: %MSIXBUNDLE_URL%
     echo.
@@ -2162,7 +2066,7 @@ if not exist "%MSIXBUNDLE_PATH%" (
 )
 
 echo.
-echo [*] Downloads complete.
+ echo [*] Downloads complete.
 
 :: Install dependencies
 echo [*] Installing dependencies...
@@ -2177,7 +2081,7 @@ echo [*] Cleaning up...
 rmdir /s /q "%TEMP_WINGET_DIR%"
 
 echo.
-echo [*] Winget installation process finished.
+ echo [*] Winget installation process finished.
 goto :EOF
 REM End of Winget functions
 REM ========================================================================================================================
@@ -2271,7 +2175,7 @@ goto :EOF
 :install7Zip
 cls
 Title Install 7zip using Winget
-call :checkCompatibility
+call :CheckCompatibility
 call :installSoftByWinget "7-Zip.7-Zip"
 goto :EOF
 
@@ -2282,7 +2186,7 @@ set /p username=Enter the username:
 set /p password=Enter the password:
 goto :EOF
 
-:hold
+:Hold
 echo Press any key to continue...
 pause > nul
 goto :EOF
@@ -2320,154 +2224,154 @@ goto :EOF
 cls
 setlocal EnableDelayedExpansion
 echo Closing non-essential applications...
-set "appList=^
-msedge.exe ^
-chrome.exe ^
-firefox.exe ^
-WINWORD.EXE ^
-EXCEL.EXE ^
-POWERPNT.EXE ^
-OUTLOOK.EXE ^
-ONENOTE.EXE ^
-MSPUB.EXE ^
-MSACCESS.EXE ^
-Teams.exe ^
-OneDrive.exe ^
-wordpad.exe ^
-notepad.exe ^
-calc.exe ^
-mspaint.exe ^
-SnippingTool.exe ^
-iexplore.exe ^
-vlc.exe ^
-WinRAR.exe ^
-7zFM.exe ^
-notepad++.exe ^
-sublime_text.exe ^
-Code.exe ^
-git-bash.exe ^
-Docker Desktop.exe ^
-VirtualBox.exe ^
-TeamViewer.exe ^
-AnyDesk.exe ^
-UltraViewer_Desktop.exe ^
-Zoom.exe ^
-Teams.exe ^
-Discord.exe ^
-Telegram.exe ^
-Viber.exe ^
-WhatsApp.exe ^
-Signal.exe ^
-Skype.exe ^
-Zalo.exe ^
-slack.exe ^
-Everything.exe ^
-ClassicStartMenu.exe ^
-OpenShellStartMenu.exe ^
-WinaeroTweaker.exe ^
-procexp.exe ^
-procmon.exe ^
-autoruns.exe ^
-tcpview.exe ^
-NirLauncher.exe ^
-CCleaner.exe ^
-Defraggler.exe ^
-Recuva.exe ^
-Speccy.exe ^
-mbam.exe ^
-SUPERAntiSpyware.exe ^
-AdwCleaner.exe ^
-HitmanPro.exe ^
-Zemana.exe ^
-ESETOnlineScanner.exe ^
-KVRT.exe ^
-Stinger.exe ^
-ShareX.exe ^
-gimp-2.10.exe ^
-inkscape.exe ^
-krita.exe ^
-blender.exe ^
-audacity.exe ^
-obs64.exe ^
-HandBrake.exe ^
-KeePassXC.exe ^
-Bitwarden.exe ^
-1Password.exe ^
-LastPass.exe ^
-Dashlane.exe ^
-NordVPN.exe ^
-ProtonVPN.exe ^
-expressvpn.exe ^
-CyberGhost.exe ^
-Surfshark.exe ^
-pia-client.exe ^
-Mullvad VPN.exe ^
-Windscribe.exe ^
-TunnelBear.exe ^
-hsscp.exe ^
-ProtonMail.exe ^
-Tutanota Desktop.exe ^
-Standard Notes.exe ^
-Joplin.exe ^
-Obsidian.exe ^
-Logseq.exe ^
-Notion.exe ^
-Evernote.exe ^
-Todoist.exe ^
-TickTick.exe ^
-Any.do.exe ^
-Todo.exe ^
-Google Keep.exe ^
-Simplenote.exe ^
-Spotify.exe ^
-iTunes.exe ^
-Amazon Music.exe ^
-Google Play Music.exe ^
-Deezer.exe ^
-TIDAL.exe ^
-Pandora.exe ^
-SoundCloud.exe ^
-Bandcamp.exe ^
-Netflix.exe ^
-Hulu.exe ^
-DisneyPlus.exe ^
-HBO Max.exe ^
-Amazon Prime Video.exe ^
-YouTube.exe ^
-Twitch.exe ^
-Steam.exe ^
-EpicGamesLauncher.exe ^
-GalaxyClient.exe ^
-UbisoftGameLauncher.exe ^
-EADesktop.exe ^
-Battle.net Launcher.exe ^
-RiotClientServices.exe ^
-steam.exe ^
-Discord.exe ^
-ps_core.exe ^
-Rainmeter.exe ^
-wallpaper32.exe ^
-Fences.exe ^
-StartIsBack.exe ^
-OpenShellStartMenu.exe ^
-ClassicShell.exe ^
-WinaeroTweaker.exe ^
-procexp.exe ^
-procmon.exe ^
-autoruns.exe ^
-tcpview.exe ^
-nirlauncher.exe ^
-CCleaner.exe ^
-Defraggler.exe ^
-Recuva.exe ^
-Speccy.exe ^
-mbam.exe ^
-SUPERAntiSpyware.exe ^
-AdwCleaner.exe ^
-HitmanPro.exe ^
-Zemana AntiMalware.exe ^
-ESETOnlineScanner.exe ^
-KVRT.exe ^
+set "appList=^\
+msedge.exe ^\
+chrome.exe ^\
+firefox.exe ^\
+WINWORD.EXE ^\
+EXCEL.EXE ^\
+POWERPNT.EXE ^\
+OUTLOOK.EXE ^\
+ONENOTE.EXE ^\
+MSPUB.EXE ^\
+MSACCESS.EXE ^\
+Teams.exe ^\
+OneDrive.exe ^\
+wordpad.exe ^\
+notepad.exe ^\
+calc.exe ^\
+mspaint.exe ^\
+SnippingTool.exe ^\
+iexplore.exe ^\
+vlc.exe ^\
+WinRAR.exe ^\
+7zFM.exe ^\
+notepad++.exe ^\
+sublime_text.exe ^\
+Code.exe ^\
+git-bash.exe ^\
+Docker Desktop.exe ^\
+VirtualBox.exe ^\
+TeamViewer.exe ^\
+AnyDesk.exe ^\
+UltraViewer_Desktop.exe ^\
+Zoom.exe ^\
+Teams.exe ^\
+Discord.exe ^\
+Telegram.exe ^\
+Viber.exe ^\
+WhatsApp.exe ^\
+Signal.exe ^\
+Skype.exe ^\
+Zalo.exe ^\
+slack.exe ^\
+Everything.exe ^\
+ClassicStartMenu.exe ^\
+OpenShellStartMenu.exe ^\
+WinaeroTweaker.exe ^\
+procexp.exe ^\
+procmon.exe ^\
+autoruns.exe ^\
+tcpview.exe ^\
+NirLauncher.exe ^\
+CCleaner.exe ^\
+Defraggler.exe ^\
+Recuva.exe ^\
+Speccy.exe ^\
+mbam.exe ^\
+SUPERAntiSpyware.exe ^\
+AdwCleaner.exe ^\
+HitmanPro.exe ^\
+Zemana.exe ^\
+ESETOnlineScanner.exe ^\
+KVRT.exe ^\
+Stinger.exe ^\
+ShareX.exe ^\
+gimp-2.10.exe ^\
+inkscape.exe ^\
+krita.exe ^\
+blender.exe ^\
+audacity.exe ^\
+obs64.exe ^\
+HandBrake.exe ^\
+KeePassXC.exe ^\
+Bitwarden.exe ^\
+1Password.exe ^\
+LastPass.exe ^\
+Dashlane.exe ^\
+NordVPN.exe ^\
+ProtonVPN.exe ^\
+expressvpn.exe ^\
+CyberGhost.exe ^\
+Surfshark.exe ^\
+pia-client.exe ^\
+Mullvad VPN.exe ^\
+Windscribe.exe ^\
+TunnelBear.exe ^\
+hsscp.exe ^\
+ProtonMail.exe ^\
+Tutanota Desktop.exe ^\
+Standard Notes.exe ^\
+Joplin.exe ^\
+Obsidian.exe ^\
+Logseq.exe ^\
+Notion.exe ^\
+Evernote.exe ^\
+Todoist.exe ^\
+TickTick.exe ^\
+Any.do.exe ^\
+Todo.exe ^\
+Google Keep.exe ^\
+Simplenote.exe ^\
+Spotify.exe ^\
+iTunes.exe ^\
+Amazon Music.exe ^\
+Google Play Music.exe ^\
+Deezer.exe ^\
+TIDAL.exe ^\
+Pandora.exe ^\
+SoundCloud.exe ^\
+Bandcamp.exe ^\
+Netflix.exe ^\
+Hulu.exe ^\
+DisneyPlus.exe ^\
+HBO Max.exe ^\
+Amazon Prime Video.exe ^\
+YouTube.exe ^\
+Twitch.exe ^\
+Steam.exe ^\
+EpicGamesLauncher.exe ^\
+GalaxyClient.exe ^\
+UbisoftGameLauncher.exe ^\
+EADesktop.exe ^\
+Battle.net Launcher.exe ^\
+RiotClientServices.exe ^\
+steam.exe ^\
+Discord.exe ^\
+ps_core.exe ^\
+Rainmeter.exe ^\
+wallpaper32.exe ^\
+Fences.exe ^\
+StartIsBack.exe ^\
+OpenShellStartMenu.exe ^\
+ClassicShell.exe ^\
+WinaeroTweaker.exe ^\
+procexp.exe ^\
+procmon.exe ^\
+autoruns.exe ^\
+tcpview.exe ^\
+nirlauncher.exe ^\
+CCleaner.exe ^\
+Defraggler.exe ^\
+Recuva.exe ^\
+Speccy.exe ^\
+mbam.exe ^\
+SUPERAntiSpyware.exe ^\
+AdwCleaner.exe ^\
+HitmanPro.exe ^\
+Zemana AntiMalware.exe ^\
+ESETOnlineScanner.exe ^\
+KVRT.exe ^\
 stinger.exe"
 for %%a in (%appList%) do (
     taskkill /f /im %%a >nul 2>&1
@@ -2478,10 +2382,10 @@ goto :EOF
 :About
 cls
 echo =================================================================
-echo Helpdesk Tools v0.6.80
-echo.
-echo This script is designed to automate common helpdesk tasks.
-echo For more information, visit: https://github.com/tamld/cmdToolForHelpdesk
+ echo Helpdesk Tools v0.6.80
+ echo.
+ echo This script is designed to automate common helpdesk tasks.
+ echo For more information, visit: https://github.com/tamld/cmdToolForHelpdesk
 ping -n 3 localhost >NUL
 goto :EOF
 
@@ -2496,34 +2400,34 @@ cd BCUninstaller
 (
 echo ^<?xml version="1.0" encoding="utf-8"?^>
 echo ^<BCU-settings^>
-echo  ^<Advanced.AutoUpdate bool="False" /^>
-echo  ^<Advanced.CheckForBetas bool="False" /^>
-echo  ^<Advanced.Concurrent bool="True" /^>
-echo  ^<Advanced.Language string="" /^>
-echo  ^<Advanced.Logging bool="False" /^>
-echo  ^<Advanced.ScanForOrphans bool="True" /^>
-echo  ^<Advanced.Theme int="0" /^>
-echo  ^<Advanced.UseGoogleForInfo bool="False" /^>
-echo  ^<External.Steam.IsEnabled bool="True" /^>
-echo  ^<External.Steam.Path string="" /^>
-echo  ^<External.WindowsFeatures.IsEnabled bool="True" /^>
-echo  ^<External.WindowsStore.IsEnabled bool="True" /^>
-echo  ^<Filtering.ShowAll bool="False" /^>
-echo  ^<Filtering.ShowProtected bool="False" /^>
-echo  ^<Filtering.ShowSystemComponents bool="False" /^>
-echo  ^<Filtering.ShowUpdates bool="False" /^>
-echo  ^<Filtering.ShowStoreApps bool="True" /^>
-echo  ^<Main.AdvancedTools bool="True" /^>
-echo  ^<Main.CheckForUpdates bool="False" /^>
-echo  ^<Main.SendStatistics bool="False" /^>
-echo  ^<Main.ShowAllUsers bool="True" /^>
-echo  ^<Main.SystemRestore bool="False" /^>
-echo  ^<Uninstall.AutoCRemove bool="True" /^>
-echo  ^<Uninstall.AutoKill bool="False" /^>
-echo  ^<Uninstall.Confidence int="2" /^>
-echo  ^<Uninstall.DeleteJunk bool="True" /^>
-echo  ^<Uninstall.UseQuiet bool="True" /^>
-echo ^</BCU-settings^>
+ echo  ^<Advanced.AutoUpdate bool="False" /^>
+ echo  ^<Advanced.CheckForBetas bool="False" /^>
+ echo  ^<Advanced.Concurrent bool="True" /^>
+ echo  ^<Advanced.Language string="" /^>
+ echo  ^<Advanced.Logging bool="False" /^>
+ echo  ^<Advanced.ScanForOrphans bool="True" /^>
+ echo  ^<Advanced.Theme int="0" /^>
+ echo  ^<Advanced.UseGoogleForInfo bool="False" /^>
+ echo  ^<External.Steam.IsEnabled bool="True" /^>
+ echo  ^<External.Steam.Path string="" /^>
+ echo  ^<External.WindowsFeatures.IsEnabled bool="True" /^>
+ echo  ^<External.WindowsStore.IsEnabled bool="True" /^>
+ echo  ^<Filtering.ShowAll bool="False" /^>
+ echo  ^<Filtering.ShowProtected bool="False" /^>
+ echo  ^<Filtering.ShowSystemComponents bool="False" /^>
+ echo  ^<Filtering.ShowUpdates bool="False" /^>
+ echo  ^<Filtering.ShowStoreApps bool="True" /^>
+ echo  ^<Main.AdvancedTools bool="True" /^>
+ echo  ^<Main.CheckForUpdates bool="False" /^>
+ echo  ^<Main.SendStatistics bool="False" /^>
+ echo  ^<Main.ShowAllUsers bool="True" /^>
+ echo  ^<Main.SystemRestore bool="False" /^>
+ echo  ^<Uninstall.AutoCRemove bool="True" /^>
+ echo  ^<Uninstall.AutoKill bool="False" /^>
+ echo  ^<Uninstall.Confidence int="2" /^>
+ echo  ^<Uninstall.DeleteJunk bool="True" /^>
+ echo  ^<Uninstall.UseQuiet bool="True" /^>
+ echo ^</BCU-settings^>
 ) > BCUninstaller.xml
 popd
 goto :eof
@@ -2533,13 +2437,13 @@ goto :eof
 setlocal EnableDelayedExpansion
 set "mapName=%~1"
 set "choiceVarName=%~2"
-set "choiceValue=!%choiceVarName%!"
+set "choiceValue=!%choiceVarName%новение!"
 for /f "tokens=2 delims==" %%A in ('set %mapName%[!choiceValue!] 2^>nul') do (
     set "targetLabel=%%A"
 )
 
 if defined targetLabel (
-    call :%targetLabel%
+    call :%%targetLabel%%
 )
 
 endlocal
