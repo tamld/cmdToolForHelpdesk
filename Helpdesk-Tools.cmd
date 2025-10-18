@@ -13,7 +13,7 @@ cd /d "%BASE_DIRECTORY%"
 
 :Main
 setlocal
-set "choiceMap[1]=install"
+set "choiceMap[1]=InstallSoftware"
 set "choiceMap[2]=WindowsOfficeMenu"
 set "choiceMap[3]=LicenseMenu"
 set "choiceMap[4]=UtilitiesMenu"
@@ -43,9 +43,9 @@ set "userChoice=%errorlevel%"
 call :dispatchMenu choiceMap userChoice
 goto :LoopMainMenu
 
-:install
+:InstallSoftware
 setlocal
-:InstallMenu
+:DisplayInstallMenu
 cls
 title Install All In One
 echo.
@@ -58,68 +58,68 @@ echo        [5] Install System - Network - Helpdesk        : Press 5
 echo        [6] Back to Main Menu                          : Press 6
 echo        ========================================================
 Choice /N /C 123456 /M " Press your choice : "
-if %ERRORLEVEL% == 6 goto :MainMenuLoop
-if %ERRORLEVEL% == 5 goto :installAioSystemNetwork
-if %ERRORLEVEL% == 4 goto :installAioO2024
-if %ERRORLEVEL% == 3 goto :installAioO2021
-if %ERRORLEVEL% == 2 goto :installAioO2019
-if %ERRORLEVEL% == 1 goto :installAioO365
+if %ERRORLEVEL% == 6 goto :LoopMainMenu
+if %ERRORLEVEL% == 5 goto :InstallAioSystemNetwork
+if %ERRORLEVEL% == 4 goto :InstallAioWithOffice2024
+if %ERRORLEVEL% == 3 goto :InstallAioWithOffice2021
+if %ERRORLEVEL% == 2 goto :InstallAioWithOffice2019
+if %ERRORLEVEL% == 1 goto :InstallAioWithOffice365
 endlocal
 goto :EOF
 
-:installAio
+:InstallAioCommon
 call :installEndUsers
 call :installRemoteApps
 call :installNetworkApps
 call :installChatApps
 goto :EOF
 
-:installAioO365
+:InstallAioWithOffice365
 Title Install All in One with Office 365
-call :installAio
+call :InstallAioCommon
 set opt5=(NO)
 set optS=(NO)
-set office=365
+set officeVersion=365
 call :installO365
-goto :InstallMenu
+goto :DisplayInstallMenu
 
-:installAioO2019
+:InstallAioWithOffice2019
 Title Install All in One with Office 2019
-call :installAio
+call :InstallAioCommon
 set opt5=(NO)
 set optS=(NO)
-set office=2019
-set office_type=Volume
+set officeVersion=2019
+set officeType=Volume
 call :installOffice
-goto :InstallMenu
+goto :DisplayInstallMenu
 
-:installAioO2021
+:InstallAioWithOffice2021
 Title Install All in One with Office 2021
 call :installAIO
 set opt5=(NO)
 set optS=(NO)
-set office=2021
-set office_type=Volume
+set officeVersion=2021
+set officeType=Volume
 call :installOffice
-goto :InstallMenu
+goto :DisplayInstallMenu
 
-:installAioO2024
+:InstallAioWithOffice2024
 Title Install All in One with Office 2024
 call :installAIO
 set opt5=(NO)
 set optS=(NO)
-set office=2024
-set office_type=Volume
+set officeVersion=2024
+set officeType=Volume
 call :installOffice
-goto :InstallMenu
+goto :DisplayInstallMenu
 
-:installAioSystemNetwork
+:InstallAioSystemNetwork
 call :hold
-goto :InstallMenu
+goto :DisplayInstallMenu
 
-:installAIO-Helpdesk
+:InstallAioHelpdesk
 call :hold
-goto :InstallMenu
+goto :DisplayInstallMenu
 
 REM End of Install AIO Online
 ::========================================================================================================================
