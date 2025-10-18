@@ -2,26 +2,26 @@
 
 :: TEST DISPATCHER: Check if a specific function is being called for testing
 if /i "%~1"=="checkCompatibility" goto :checkCompatibility
-if /i "%~1"=="displayMainMenu" goto :displayMainMenu
+if /i "%~1"=="DisplayMainMenu" goto :DisplayMainMenu
 if /i "%~1"=="displayWindowsOfficeMenu" goto :displayWindowsOfficeMenu
 if /i "%~1"=="displayUtilitiesMenu" goto :displayUtilitiesMenu
 if /i "%~1"=="displayLicenseMenu" goto :displayLicenseMenu
 if /i "%~1"=="displayPackageManagerMenu" goto :displayPackageManagerMenu
 if not "%~1"=="" goto :eof
-set "baseDirectory=%~dp0"
-cd /d "%baseDirectory%"
+set "BASE_DIRECTORY=%~dp0"
+cd /d "%BASE_DIRECTORY%"
 
-:main
+:Main
 setlocal
-set "CHOICE_MAP[1]=install"
-set "CHOICE_MAP[2]=WindowsOfficeMenu"
-set "CHOICE_MAP[3]=LicenseMenu"
-set "CHOICE_MAP[4]=UtilitiesMenu"
-set "CHOICE_MAP[5]=PackageManagerMenu"
-set "CHOICE_MAP[6]=updateScript"
-set "CHOICE_MAP[7]=exit"
+set "choiceMap[1]=install"
+set "choiceMap[2]=WindowsOfficeMenu"
+set "choiceMap[3]=LicenseMenu"
+set "choiceMap[4]=UtilitiesMenu"
+set "choiceMap[5]=PackageManagerMenu"
+set "choiceMap[6]=updateScript"
+set "choiceMap[7]=exit"
 
-:displayMainMenu
+:DisplayMainMenu
 cls
 title Helpdesk Tools v0.6.80 Feb 15, 2025
 echo.
@@ -36,12 +36,12 @@ echo    [7] Exit                                       : Press 7
 echo    ========================================================
 goto :eof
 
-:MainMenuLoop
-call :displayMainMenu
+:LoopMainMenu
+call :DisplayMainMenu
 choice /N /C 1234567 /M "Enter your choice: "
-set "USER_CHOICE=%errorlevel%"
-call :dispatchMenu CHOICE_MAP USER_CHOICE
-goto :MainMenuLoop
+set "userChoice=%errorlevel%"
+call :dispatchMenu choiceMap userChoice
+goto :LoopMainMenu
 
 :install
 setlocal
