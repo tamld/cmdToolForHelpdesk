@@ -2,7 +2,7 @@
 setlocal
 
 :: Call the display function from the main script.
-call ..\Helpdesk-Tools.cmd displayWindowsOfficeMenu
+call ..\..\Helpdesk-Tools.cmd DisplayWindowsOfficeMenu
 
 :: Use an assertion from the utils script to check the result.
 call test_utils.cmd assertSuccess

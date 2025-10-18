@@ -14,7 +14,7 @@ cd /d "%BASE_DIRECTORY%"
 :Main
 setlocal
 set "choiceMap[1]=InstallSoftware"
-set "choiceMap[2]=WindowsOfficeMenu"
+set "choiceMap[2]=WindowsOfficeUtils"
 set "choiceMap[3]=LicenseMenu"
 set "choiceMap[4]=UtilitiesMenu"
 set "choiceMap[5]=PackageManagerMenu"
@@ -126,7 +126,7 @@ REM End of Install AIO Online
 ================
 ::==============================================================================
 :: Start of Windows Office Utilities Menu
-:displayWindowsOfficeMenu
+:DisplayWindowsOfficeMenu
 cls
 title Windows Office Main Menu
 echo.
@@ -141,25 +141,25 @@ echo        [7] Main Menu                                    : Press 7
 echo        ==============================================================
 goto :eof
 
-:WindowsOfficeMenu
+:WindowsOfficeUtils
 setlocal
-cd /d %baseDirectory%
-call :displayWindowsOfficeMenu
+cd /d %BASE_DIRECTORY%
+call :DisplayWindowsOfficeMenu
 Choice /N /C 1234567 /M " Press your choice : "
-if %ERRORLEVEL% == 7 goto :MainMenuLoop
-if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :WindowsOfficeMenu
-if %ERRORLEVEL% == 5 goto :fixNonCore
-if %ERRORLEVEL% == 4 goto :convertOfficeEdition
-if %ERRORLEVEL% == 3 goto :removeOfficeKey
-if %ERRORLEVEL% == 2 goto :uninstallOffice
-if %ERRORLEVEL% == 1 goto :InstallOfficeMenu
+if %ERRORLEVEL% == 7 goto :LoopMainMenu
+if %ERRORLEVEL% == 6 call :DisplayLoadSkusMenu & goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 5 goto :FixNonCoreActivation
+if %ERRORLEVEL% == 4 goto :ConvertOfficeEdition
+if %ERRORLEVEL% == 3 goto :DisplayRemoveOfficeKeyMenu
+if %ERRORLEVEL% == 2 goto :DisplayUninstallOfficeMenu
+if %ERRORLEVEL% == 1 goto :DisplayInstallOfficeMenu
 endlocal
 REM ==============================================================================
 REM Start of Windows Office Utilities functions
 REM ==============================================================================
 REM Sub menu Install Office Online
 
-:InstallOfficeMenu
+:DisplayInstallOfficeMenu
 setlocal
 cls
 echo.
@@ -172,16 +172,16 @@ echo                [5] Install Manually using Office Deploy Tool    : Pre
 echo                [6] Main Menu                                    : Press 6
 echo                ================================================================
 Choice /N /C 123456 /M " Press your choice : "
-if %ERRORLEVEL% == 6 goto :WindowsOfficeMenu
-if %ERRORLEVEL% == 5 call :downloadOffice & "%temp%\Office Tool\Office Tool Plus.exe" & goto WindowsOfficeMenu
-if %ERRORLEVEL% == 4 set "office=2019"& set "office_type=Volume"& call :defineOffice& goto :WindowsOfficeMenu
-if %ERRORLEVEL% == 3 set "office=2021"& set "office_type=Volume"& call :defineOffice& goto :WindowsOfficeMenu
-if %ERRORLEVEL% == 2 set "office=2024"& set "office_type=Volume"& call :defineOffice& goto :WindowsOfficeMenu
-if %ERRORLEVEL% == 1 set "office=365"& call :installO365& goto :WindowsOfficeMenu
+if %ERRORLEVEL% == 6 goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 5 call :DownloadOfficeTool & "%temp%\Office Tool\Office Tool Plus.exe" & goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 4 set "officeVersion=2019"& set "officeType=Volume"& call :DefineOfficeInstallation& goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 3 set "officeVersion=2021"& set "officeType=Volume"& call :DefineOfficeInstallation& goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 2 set "officeVersion=2024"& set "officeType=Volume"& call :DefineOfficeInstallation& goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 1 set "officeVersion=365"& call :InstallOffice365& goto :WindowsOfficeUtils
 endlocal
 REM ============================================
 REM Stat of install office  online
-:installO365
+:InstallOffice365
 Title Install Office 365
 cls
 pushd %temp%
@@ -190,80 +190,80 @@ start OfficeSetup.exe
 popd
 goto :eof
 
-:defineOffice
+:DefineOfficeInstallation
 cls
 @echo off
-cd /d %baseDirectory%
+cd /d %BASE_DIRECTORY%
 :: set app id
 Set "on=(YES)"
 Set "off=(NO)"
-Set "optP=%off%"
-Set "optN=%off%"
-Set "optA=%off%"
-Set "optX=%off%"
-Set "optW=%off%"
-Set "optO=%off%"
-Set "optV=%off%"
-Set "optL=%off%"
-Set "optT=%off%"
-Set "optS=%on%"
-Set "optD=%on%"
-:selectOfficeApp
+Set "optPowerPoint=%off%"
+Set "optOneNote=%off%"
+Set "optAccess=%off%"
+Set "optExcel=%off%"
+Set "optWord=%off%"
+Set "optOutlook=%off%"
+Set "optVisio=%off%"
+Set "optProject=%off%"
+Set "optTeams=%off%"
+Set "optPublisher=%on%"
+Set "optOneDrive=%on%"
+:SelectOfficeApps
 cls
-echo Office %office% %office_type% will be installed with the following components:
+echo Office %officeVersion% %officeType% will be installed with the following components:
 echo.
-<NUL Set/P=[1] & echo Access      : %optA%
-<NUL Set/P=[2] & echo Excel       : %optX%
-<NUL Set/P=[3] & echo Word        : %optW%
-<NUL Set/P=[4] & echo Outlook     : %optO%
-<NUL Set/P=[5] & echo PowerPoint  : %optP%
-<NUL Set/P=[6] & echo OneNote     : %optN%
-<NUL Set/P=[7] & echo VisioPro    : %optV%
-<NUL Set/P=[8] & echo ProjectPro  : %optL%
-<NUL Set/P=[9] & echo Teams       : %optT%
-<NUL Set/P=[P] & echo Publisher   : %optS%
-<NUL Set/P=[D] & echo OneDrive    : %optD%
+<NUL Set/P=[1] & echo Access      : %optAccess%
+<NUL Set/P=[2] & echo Excel       : %optExcel%
+<NUL Set/P=[3] & echo Word        : %optWord%
+<NUL Set/P=[4] & echo Outlook     : %optOutlook%
+<NUL Set/P=[5] & echo PowerPoint  : %optPowerPoint%
+<NUL Set/P=[6] & echo OneNote     : %optOneNote%
+<NUL Set/P=[7] & echo VisioPro    : %optVisio%
+<NUL Set/P=[8] & echo ProjectPro  : %optProject%
+<NUL Set/P=[9] & echo Teams       : %optTeams%
+<NUL Set/P=[P] & echo Publisher   : %optPublisher%
+<NUL Set/P=[D] & echo OneDrive    : %optOneDrive%
 echo.
-echo List of components to install Office %office%
+echo List of components to install Office %officeVersion%
 <NUL Set/P=[Q] & echo Quit to Office Menu
 echo.
 CHOICE /c 123456789PDSXQ /n /m "--> Select option(s) and then press [X] to start the installation: "
-if %ERRORLEVEL% == 14 goto :InstallOfficeMenu
-if %ERRORLEVEL% == 13 goto :installOffice
-if %ERRORLEVEL% == 12 (if "%optS%"=="%off%" (Set "optS=%on%") Else (Set "optS=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 11 (if "%optD%"=="%off%" (Set "optD=%on%") Else (Set "optD=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 10 (if "%optT%"=="%off%" (Set "optT=%on%") Else (Set "optT=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 9 (if "%optL%"=="%off%" (Set "optL=%on%") Else (Set "optL=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 8 (if "%optV%"=="%off%" (Set "optV=%on%") Else (Set "optV=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 7 (if "%optN%"=="%off%" (Set "optN=%on%") Else (Set "optN=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 6 (if "%optP%"=="%off%" (Set "optP=%on%") Else (Set "optP=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 5 (if "%optO%"=="%off%" (Set "optO=%on%") Else (Set "optO=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 4 (if "%optW%"=="%off%" (Set "optW=%on%") Else (Set "optW=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 3 (if "%optX%"=="%off%" (Set "optX=%on%") Else (Set "optX=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 2 (if "%optA%"=="%off%" (Set "optA=%on%") Else (Set "optA=%off%")) & goto :selectOfficeApp
-if %ERRORLEVEL% == 1 (if "%optP%"=="%off%" (Set "optP=%on%") Else (Set "optP=%off%")) & goto :selectOfficeApp
-goto :selectOfficeApp
+if %ERRORLEVEL% == 14 goto :DisplayInstallOfficeMenu
+if %ERRORLEVEL% == 13 goto :InstallOfficeFromODT
+if %ERRORLEVEL% == 12 (if "%optPublisher%"=="%off%" (Set "optPublisher=%on%") Else (Set "optPublisher=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 11 (if "%optOneDrive%"=="%off%" (Set "optOneDrive=%on%") Else (Set "optOneDrive=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 10 (if "%optTeams%"=="%off%" (Set "optTeams=%on%") Else (Set "optTeams=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 9 (if "%optProject%"=="%off%" (Set "optProject=%on%") Else (Set "optProject=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 8 (if "%optVisio%"=="%off%" (Set "optVisio=%on%") Else (Set "optVisio=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 7 (if "%optOneNote%"=="%off%" (Set "optOneNote=%on%") Else (Set "optOneNote=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 6 (if "%optPowerPoint%"=="%off%" (Set "optPowerPoint=%on%") Else (Set "optPowerPoint=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 5 (if "%optOutlook%"=="%off%" (Set "optOutlook=%on%") Else (Set "optOutlook=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 4 (if "%optWord%"=="%off%" (Set "optWord=%on%") Else (Set "optWord=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 3 (if "%optExcel%"=="%off%" (Set "optExcel=%on%") Else (Set "optExcel=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 2 (if "%optAccess%"=="%off%" (Set "optAccess=%on%") Else (Set "optAccess=%off%")) & goto :SelectOfficeApps
+if %ERRORLEVEL% == 1 (if "%optPowerPoint%"=="%off%" (Set "optPowerPoint=%on%") Else (Set "optPowerPoint=%off%")) & goto :SelectOfficeApps
+goto :SelectOfficeApps
 
-:installOffice
-call :downloadOffice
+:InstallOfficeFromODT
+call :DownloadOfficeTool
 pushd %temp%\Office_Tool
-if "%optA%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"Access%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optX%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"Excel%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optW%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"Word%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optO%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"Outlook%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optP%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"PowerPoint%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optN%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"OneNote%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optV%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"VisioPro%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optL%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"ProjectPro%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optT%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"Teams%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optS%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"Publisher%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-if "%optD%"=="%on%" Set "app=%app%<Add OfficeClientEdition=\"64\" Channel=\"%office_type%\"><Product ID=\"OneDrive%office%Retail\"><Language ID=\"en-us\" /></Product></Add>"
-(echo ^<Configuration^>%app%</Configuration^) > %temp%\Office_Tool\configuration.xml
+if "%optAccess%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Access%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optExcel%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Excel%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optWord%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Word%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optOutlook%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Outlook%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optPowerPoint%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"PowerPoint%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optOneNote%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"OneNote%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optVisio%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"VisioPro%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optProject%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"ProjectPro%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optTeams%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Teams%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optPublisher%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"Publisher%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+if "%optOneDrive%"=="%on%" Set "odtConfigXml=%odtConfigXml%<Add OfficeClientEdition=\"64\" Channel=\"%officeType%\"><Product ID=\"OneDrive%officeVersion%Retail\"><Language ID=\"en-us\" /></Product></Add>"
+(echo ^<Configuration^>%odtConfigXml%</Configuration^) > %temp%\Office_Tool\configuration.xml
 setup.exe /configure configuration.xml
 popd
 goto :eof
 
-:downloadOffice
+:DownloadOfficeTool
 pushd %temp%
 curl -L -o Office_Tool.zip https://github.com/YerongAI/Office-Tool/releases/latest/download/Office_Tool_with_runtime_v10.1.5.3.zip
 tar -xf Office_Tool.zip
@@ -273,7 +273,7 @@ REM End of install office  online
 REM ============================================
 REM ============================================
 REM Start of Get Office Path
-:getOfficePath
+:GetOfficePath
 cls
 echo off
 for %%a in (4,5,6) do (
@@ -282,7 +282,7 @@ if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%Pro
 goto :eof
 
 :: Function Menu that selects which edition Windows will convert to
-:LoadSkusMenu
+:DisplayLoadSkusMenu
 setlocal
 cls
 Title Load Windows Eddition
@@ -299,19 +299,19 @@ echo        [8] LTSC 2019                           : PRESS 8
 echo        [9] Menu Active Office                  : PRESS 9
 echo        ==================================================
 Choice /N /C 123456789 /M " Press your choice : "
-if %errorlevel% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSkus
-if %errorlevel% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSkus
-if %errorlevel% == 3 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set typeW=Enterprise&& goto :loadSkus
-if %errorlevel% == 4 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set typeW=EnterpriseS&& goto :loadSkus
-if %errorlevel% == 5 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=IoTEnterprise&& goto :loadSkus
-if %errorlevel% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Education&& goto :loadSkus
-if %errorlevel% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSkus
-if %errorlevel% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSkus
-if %errorlevel% == 9 goto :WindowsOfficeMenu
+if %errorlevel% == 1 set windowsKey=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set windowsEdition=Professional&& goto :LoadWindowsSku
+if %errorlevel% == 2 set windowsKey=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set windowsEdition=ProfessionalWorkstation&& goto :LoadWindowsSku
+if %errorlevel% == 3 set windowsKey=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set windowsEdition=Enterprise&& goto :LoadWindowsSku
+if %errorlevel% == 4 set windowsKey=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set windowsEdition=EnterpriseS&& goto :LoadWindowsSku
+if %errorlevel% == 5 set windowsKey=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set windowsEdition=IoTEnterprise&& goto :LoadWindowsSku
+if %errorlevel% == 6 set windowsKey=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set windowsEdition=Education&& goto :LoadWindowsSku
+if %errorlevel% == 7 set windowsKey=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set windowsEdition=wdLTSB2016&& goto :LoadWindowsSku
+if %errorlevel% == 8 set windowsKey=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set windowsEdition=wdLTSC2019&& goto :LoadWindowsSku
+if %errorlevel% == 9 goto :WindowsOfficeUtils
 endlocal
 
 :: Loads a specified Windows SKU (edition) using downloaded license files.
-:loadSkus
+:LoadWindowsSku
 setlocal
 cls
 echo off
@@ -320,23 +320,23 @@ echo This script will load the specified Windows SKU using the provided license 
 echo Please wait until the process is complete.
 echo ==================================================================
 ping -n 3 localhost > nul
-cscript //nologo %windir%\system32\slmgr.vbs /ipk %keyW%
+cscript //nologo %windir%\system32\slmgr.vbs /ipk %windowsKey%
 cscript //nologo %windir%\system32\slmgr.vbs /ato
 endlocal
 goto :EOF
 
-:fixNonCore
+:FixNonCoreActivation
 cls
 call :hold
-goto :WindowsOfficeMenu
+goto :WindowsOfficeUtils
 
-:convertOfficeEdition
+:ConvertOfficeEdition
 call :hold
-goto :WindowsOfficeMenu
+goto :WindowsOfficeUtils
 
 REM ============================================
 REM Start of Remove Office Keys
-:removeOfficeKey
+:DisplayRemoveOfficeKeyMenu
 cls
 echo.
 echo            =================================================
@@ -345,11 +345,11 @@ echo            [2] All                                 : Press 2
 echo            [3] Back to Windows Office Menu         : Press 3
 echo            =================================================
 Choice /N /C 123 /M " Press your choice : "
-if %ERRORLEVEL% == 3 goto :WindowsOfficeMenu
-if %ERRORLEVEL% == 2 call :removeOfficeKeyAll & goto :WindowsOfficeMenu
-if %ERRORLEVEL% == 1 call :removeOfficeKeyOneByOne & goto :WindowsOfficeMenu
+if %ERRORLEVEL% == 3 goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 2 call :RemoveOfficeKeyAll & goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 1 call :RemoveOfficeKeyOneByOne & goto :WindowsOfficeUtils
 
-:removeOfficeKeyOneByOne
+:RemoveOfficeKeyOneByOne
 cls
 setlocal
 pushd %officePath%
@@ -358,11 +358,11 @@ popd
 ping -n 2 localhost 1>NUL
 goto :eof
 
-:removeOfficeKeyAll
+:RemoveOfficeKeyAll
 echo off
 cls
 setlocal
-call :getOfficePath
+call :GetOfficePath
 pushd %officePath%
 cscript //nologo ospp.vbs /dstatus | findstr /b /c:"Last 5 characters of installed product key" > %temp%\keys.txt
 for /f "tokens=2 delims=: " %%a in (%temp%\keys.txt) do (cscript //nologo ospp.vbs /unpkey:%%a)
@@ -373,7 +373,7 @@ REM End of Remove Office Keys
 REM ============================================
 REM ============================================
 REM Start of Uninstall Office
-:uninstallOffice
+:DisplayUninstallOfficeMenu
 cls
 echo.
 echo            ====================================================
@@ -383,52 +383,52 @@ echo            [3] Using BCUninstaller                    : Press 3
 echo            [4] Back to Windows Office Menu            : Press 4
 echo            ====================================================
 Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 4 goto :WindowsOfficeMenu
-if %ERRORLEVEL% == 3 goto :removeOfficeBCUninstaller
-if %ERRORLEVEL% == 2 goto :removeOfficeOfficeTool
-if %ERRORLEVEL% == 1 goto :removeOfficeSaraCmd
+if %ERRORLEVEL% == 4 goto :WindowsOfficeUtils
+if %ERRORLEVEL% == 3 goto :UninstallOfficeWithBCU
+if %ERRORLEVEL% == 2 goto :UninstallOfficeWithODT
+if %ERRORLEVEL% == 1 goto :UninstallOfficeWithSaraCmd
 
-:removeOfficeBCUninstaller
+:UninstallOfficeWithBCU
 cls
 Title Uninstall Office Using BulkCrapUninstaller
 echo This will install BCUninstaller into your computer
 call :checkCompatibility
 call :installSoftByWinget Klocman.BulkCrapUninstaller
 call :bcuninstaller-Settings
-goto :WindowsOfficeMenu
+goto :WindowsOfficeUtils
 
-:removeOfficeOfficeTool
+:UninstallOfficeWithODT
 Title Uninstall Office Using Office Tool
 cls
 pushd %temp%
-call :downloadOffice
+call :DownloadOfficeTool
 echo This script will uninstall your Office installation using the Office Tool.
 echo Please wait until the wizard has completed the uninstallation process
 ping -n 3 localhost > nul
 "Office Tool\Office Tool Plus.Console.exe" deploy /rmall /acpteula
-goto :WindowsOfficeMenu
+goto :WindowsOfficeUtils
 
-:removeOfficeSaraUI
+:UninstallOfficeWithSaraUI
 Title Uninstall Office Using Sara UI
 echo This will download (browser download) and install Sara UI for uninstalling Office steps
 echo You must install it manually and follow the wizard guide
 ping -n 4 localhost 1>NUL
 start https://aka.ms/SaRA-officeUninstallFromPC
-goto :WindowsOfficeMenu
+goto :WindowsOfficeUtils
 
 :: Uninstalls Office completely using the SaRA command-line tool.
-:removeOfficeSaraCmd
+:UninstallOfficeWithSaraCmd
 Title Uninstall office completely using Sara Cmd
 cls
 echo This will download and remove office without interactive
 pushd %temp%
 curl -L -o SaRACmd.zip https://aka.ms/SaRA-office-uninstall
 tar -xf SaRACmd.zip
-SaRACmd\SaRAcmd.exe -S OfficeScrubScenario -AcceptEula
+SaRACmd\SaRACmd.exe -S OfficeScrubScenario -AcceptEula
 popd
 cd /d %dp%
 cls
-goto :WindowsOfficeMenu
+goto :WindowsOfficeUtils
 
 REM End of Remove Office Keys
 REM ============================================
