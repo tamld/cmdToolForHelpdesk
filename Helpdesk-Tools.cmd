@@ -18,8 +18,8 @@ set "choiceMap[2]=WindowsOfficeUtils"
 set "choiceMap[3]=LicenseUtils"
 set "choiceMap[4]=SystemUtils"
 set "choiceMap[5]=PackageUtils"
-set "choiceMap[6]=updateScript"
-set "choiceMap[7]=exit"
+set "choiceMap[6]=UpdateScript"
+set "choiceMap[7]=ExitScript"
 
 :DisplayMainMenu
 cls
@@ -2183,7 +2183,7 @@ REM End of Winget functions
 REM ========================================================================================================================
 ================
 REM function update CMD via github
-:updateScript
+:UpdateScript
 cls
 cd /d %dp%
 copy Helpdesk-Tools.cmd Helpdesk-Tools-old.cmd /Y
@@ -2193,31 +2193,31 @@ echo Script updated successfully.
 ping -n 2 localhost 1>NUL
 exit
 
-:checkUpdate
-call :get_latest_release
-if not "%cmd_current_version%"=="%cmd_latest_release%" (
-    echo A new version of this script is available: %cmd_latest_release%
+:CheckForUpdate
+call :GetLatestReleaseTag
+if not "%cmd_current_version%"=="%latestReleaseTag%" (
+    echo A new version of this script is available: %latestReleaseTag%
     echo Do you want to update?
     Choice /N /C YN /M "[Yes], [No]: "
-    If ERRORLEVEL == 1 call :updateScript
+    If ERRORLEVEL == 1 call :UpdateScript
 )
 goto :eof
 
-:get_latest_release
+:GetLatestReleaseTag
 for /f "tokens=*" %%a in ('powershell -command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/tamld/cmdToolForHelpdesk/releases/latest').tag_name"') do (
-    set "cmd_latest_release=%%a"
+    set "latestReleaseTag=%%a"
 )
 goto :eof
 
 :checkWingetUpdate
 for /f "tokens=*" %%a in ('powershell -command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest').tag_name"') do (
-    set "winget_latest_release=%%a"
+    set "wingetLatestRelease=%%a"
 )
 for /f "tokens=*" %%a in ('winget --version') do (
-    set "winget_current_version=%%a"
+    set "wingetCurrentVersion=%%a"
 )
-if not "%winget_current_version%"=="%winget_latest_release%" (
-    echo A new version of Winget is available: %winget_latest_release%
+if not "%wingetCurrentVersion%"=="%wingetLatestRelease%" (
+    echo A new version of Winget is available: %wingetLatestRelease%
     echo Do you want to update?
     Choice /N /C YN /M "[Yes], [No]: "
     If ERRORLEVEL == 1 call :packageManagement
@@ -2475,7 +2475,7 @@ for %%a in (%appList%) do (
 endlocal
 goto :EOF
 
-:about
+:About
 cls
 echo =================================================================
 echo Helpdesk Tools v0.6.80
@@ -2485,7 +2485,7 @@ echo For more information, visit: https://github.com/tamld/cmdToolForHelpdesk
 ping -n 3 localhost >NUL
 goto :EOF
 
-:exit
+:ExitScript
 call :clean
 exit
 
