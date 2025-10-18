@@ -16,7 +16,7 @@ setlocal
 set "choiceMap[1]=InstallSoftware"
 set "choiceMap[2]=WindowsOfficeUtils"
 set "choiceMap[3]=LicenseUtils"
-set "choiceMap[4]=UtilitiesMenu"
+set "choiceMap[4]=SystemUtils"
 set "choiceMap[5]=PackageManagerMenu"
 set "choiceMap[6]=updateScript"
 set "choiceMap[7]=exit"
@@ -522,7 +522,7 @@ goto :LicenseUtils
 REM End of Active Lienses functions
 REM ========================================================================================================================
 ================
-:displayUtilitiesMenu
+:DisplayUtilitiesMenu
 echo.
 echo        =================================================
 echo        [1] Set High Performance                : Press 1
@@ -536,129 +536,129 @@ echo        [8] Back to Main Menu                   : Press 8
 echo        =================================================
 goto :eof
 
-:UtilitiesMenu
+:SystemUtils
 setlocal
 REM Start of Utilities Menu
 cls
 title Utilities Main Menu
-call :displayUtilitiesMenu
+call :DisplayUtilitiesMenu
 Choice /N /C 12345678 /M " Press your choice : "
-if %ERRORLEVEL% == 8 goto :MainMenuLoop
-if %ERRORLEVEL% == 7 goto :debloat & goto :UtilitiesMenu
-if %ERRORLEVEL% == 6 call :activeIdm & goto :UtilitiesMenu
-if %ERRORLEVEL% == 5 goto :installSupportAssistant
-if %ERRORLEVEL% == 4 call :winUtil & goto :UtilitiesMenu
-if %ERRORLEVEL% == 3 goto :cleanUpSystem & goto :UtilitiesMenu
-if %ERRORLEVEL% == 2 goto :changeHostName & goto :UtilitiesMenu
-if %ERRORLEVEL% == 1 goto :setHighPerformance & goto :UtilitiesMenu
+if %ERRORLEVEL% == 8 goto :LoopMainMenu
+if %ERRORLEVEL% == 7 goto :RunWindowsDebloatScript & goto :SystemUtils
+if %ERRORLEVEL% == 6 call :activeIdm & goto :SystemUtils
+if %ERRORLEVEL% == 5 goto :InstallSupportAssistant
+if %ERRORLEVEL% == 4 call :RunChrisTitusUtility & goto :SystemUtils
+if %ERRORLEVEL% == 3 goto :CleanSystem & goto :SystemUtils
+if %ERRORLEVEL% == 2 goto :ChangeHostName & goto :SystemUtils
+if %ERRORLEVEL% == 1 goto :SetHighPerformancePowerPlan & goto :SystemUtils
 endlocal
 REM End of Utilities Menu
 REM ==============================================================
 REM Start of Utilities functions
-:winUtil
+:RunChrisTitusUtility
 :: call https://github.com/ChrisTitusTech/winutil Powershell
 start powershell -command "irm "https://christitus.com/win" | iex"
 goto :EOF
 
-:debloat
+:RunWindowsDebloatScript
 start powershell -command "iwr -useb https://git.io/debloat|iex"
 goto :EOF
 
-:setHighPerformance
+:SetHighPerformancePowerPlan
 powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
 goto :EOF
 
-:GetUserInformation
+:GetUserInfo
 echo Enter new username that you'd like to add:
-set /p user=
+set /p userName=
 
 REM Prompt user to set password or not
-:inputPass
-echo Do you want to set a password for %user%? [Y/N]
-set /p setpass=
+:PromptForPassword
+echo Do you want to set a password for %userName%? [Y/N]
+set /p shouldSetPassword=
 
-if /i %setpass% == y (
-set /p pass=Enter password:
-net user %user% %pass% /add 2>nul
+if /i %shouldSetPassword% == y (
+set /p password=Enter password:
+net user %userName% %password% /add 2>nul
 cls
-) else if /i %setpass% == n (
-net user %user% "" /add 2>nul
+) else if /i %shouldSetPassword% == n (
+net user %userName% "" /add 2>nul
 cls
 ) else (
 echo Invalid input. Please try again.
-goto :inputPass
+goto :PromptForPassword
 cls
 )
 goto :EOF
 
-:addUserToAdmins
+:AddUserToAdmins
 REM This function adds the user to the Administrators group.
-call :GetUserInformation
-net localgroup administrators %user% /add
+call :GetUserInfo
+net localgroup administrators %userName% /add
 if %errorlevel% == 0 (
-    echo User %user% was added to administrators group.
+    echo User %userName% was added to administrators group.
     ping -n 2 localhost 1>NUL
     cls
 ) else (
-    echo Failed to add user %user% to administrators group.
+    echo Failed to add user %userName% to administrators group.
 )
 cls
-goto :UtilitiesMenu
+goto :SystemUtils
 
-:addUserToUsers
+:AddUserToUsers
 REM This function adds the user to the Users group.
-call :GetUserInformation
-echo User %user% was added to users group.
+call :GetUserInfo
+echo User %userName% was added to users group.
 ping -n 2 localhost 1>NUL
 cls
-goto :UtilitiesMenu
+goto :SystemUtils
 
-:restartPc
+:RestartComputer
 cls
 echo This will force restart computer with 5s
 shutdown -r -t 5 -f
-goto :UtilitiesMenu
+goto :SystemUtils
 
-:installSupportAssistant
+:InstallSupportAssistant
 Title Install Support Assistant
 setlocal
 echo This script will automatically detect your computer's brand (Dell, HP, or Lenovo) and install the appropriate support assistant software.
 ping -n 3 localhost 1>NUL
 REM Detect brand name
-for /f %%b in ('wmic computersystem get manufacturer ^| findstr /I "Dell HP Lenovo"') do set "BRAND=%%b"
+for /f %%b in ('wmic computersystem get manufacturer ^| findstr /I "Dell HP Lenovo"') do set "computerBrand=%%b"
 REM Download and install the appropriate support assistant
-if /I "%BRAND%" == "Dell" (
+if /I "%computerBrand%" == "Dell" (
     choco install -y supportassist --ignore-checksums
-) else if /I "%BRAND%" == "HP" (
+) else if /I "%computerBrand%" == "HP" (
     choco install -y hpsupportassistant --ignore-checksums
-) else if /I "%BRAND%" == "Lenovo" (
+) else if /I "%computerBrand%" == "Lenovo" (
     choco install -y lenovo-thinkvantage-system-update --ignore-checksums
 ) else (
-    echo Unknown brand: %BRAND%
+    echo Unknown brand: %computerBrand%
 )
 endlocal
 goto :eof
 cd %dp%
-goto :UtilitiesMenu
+goto :SystemUtils
 
 
-:joinDomain
+:JoinDomain
 setlocal
-set /p server=Enter the FQDN of the domain controller:
+set /p domainController=Enter the FQDN of the domain controller:
 REM check if host can reach the AD with FQDN
-ping %server%
-REM ping -n 4 %server% 1>NUL
+ping %domainController%
+REM ping -n 4 %domainController% 1>NUL
 if %errorlevel% neq 0 (
     echo Cannot reach server. Exiting...
     ping -n 5 localhost 1>NUL
 ) else (
-    echo %server% is pingable. Proceeding with upgrade...
+    echo %domainController% is pingable. Proceeding with upgrade...
     ping -n 5 localhost 1>NUL
     cls
     echo Please enter FQDN username instead of username only (domain\username instead of username)
     call :inputCredential
     echo Joining domain...
-    wmic computersystem where name="%computername%" call joindomainorworkgroup name=%server% username=%username% password=%password%
+    wmic computersystem where name="%computername%" call joindomainorworkgroup name=%domainController% username=%username% password=%password%
     if %errorlevel% neq 0 (
         cls
         echo Failed to join domain. Error code: %errorlevel%
@@ -669,10 +669,10 @@ if %errorlevel% neq 0 (
     )
     ping -n 5 localhost 1>NUL
 endlocal
-goto :UtilitiesMenu
+goto :SystemUtils
 
 REM This function will use Windows Disk Cleanup to remove unnecessary files
-:cleanUpSystem
+:CleanSystem
 Title Clean up System
 echo This script will use Windows Disk Cleanup to remove unnecessary files.
 echo Please wait until the wizard has completed the cleanup process.
@@ -687,40 +687,40 @@ REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Wi
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Windows Error Reporting Files" /v StateFlags0001 /t REG_DWORD /d 00000002 /f
 cls
 cleanmgr /sagerun:1
-goto :UtilitiesMenu
+goto :SystemUtils
 
-:changeHostName
+:ChangeHostName
 Title Change host name
 setlocal
-set /p _newComputername=Enter new computer name:
-WMIC ComputerSystem where Name="%computername%" call Rename Name="%_newComputername%"
-for /f "skip=1 tokens=2 delims==; " %%i in ('WMIC ComputerSystem where Name^="%computername%" call Rename Name^="%_newComputername%" ^| findstr "ReturnValue ="') do set _statusChangeHostName=%%i
+set /p newComputerName=Enter new computer name:
+WMIC ComputerSystem where Name="%computername%" call Rename Name="%newComputerName%"
+for /f "skip=1 tokens=2 delims==; " %%i in ('WMIC ComputerSystem where Name^="%computername%" call Rename Name^="%newComputerName%" ^| findstr "ReturnValue ="') do set statusChangeHostName=%%i
 cls
-if %_statusChangeHostName% == 0 (
-    echo Your computername will change to %_newComputername%
+if %statusChangeHostName% == 0 (
+    echo Your computername will change to %newComputerName%
     echo Restart computer to apply the change
     ping -n 3 localhost 1>NUL
     cls
 )
-if %_statusChangeHostName% NEQ 0 (
+if %statusChangeHostName% NEQ 0 (
     echo Your computer name will not change
     echo Try a name without containing special characters like ^~, ^!, ^@.....
     echo Do you want to change your computer hostname again^?
     Choice /N /C YN /M "[Yes], [No]: "
-    If ERRORLEVEL == Y goto :changeHostName
+    If ERRORLEVEL == Y goto :ChangeHostName
 )
 endlocal
-    goto :UtilitiesMenu
+    goto :SystemUtils
 
-:settingWindows
+:ApplyWindowsSettings
 cls
 echo This script will perform some basic Windows settings.
 echo Please wait until the process is complete.
 ping -n 3 localhost > nul
 setlocal
 :: Detect Windows 10 or 11
-for /f "tokens=2,3 delims= " %%a in ('wmic os get name /value ^| findstr /i "name"') do set winver=%%b
-if %winver%==11 (
+for /f "tokens=2,3 delims= " %%a in ('wmic os get name /value ^| findstr /i "name"') do set windowsVersion=%%b
+if %windowsVersion%==11 (
     echo Revert classic menu Right click W11
     reg add HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2} /ve /t REG_SZ /d "" /f
     reg add HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32 /ve /t REG_SZ /d "" /f
