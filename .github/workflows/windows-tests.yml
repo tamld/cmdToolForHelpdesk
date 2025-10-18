@@ -26,11 +26,12 @@ jobs:
 
   integration-tests:
     runs-on: windows-latest
+    needs: unit-tests
     timeout-minutes: 2
 
     steps:
     - name: Check out repository
-      uses: actions:checkout@v3
+      uses: actions/checkout@v3
 
     - name: Create and Run Integration Echo Test
       run: |
