@@ -40,7 +40,7 @@ goto :eof
 call :DisplayMainMenu
 choice /N /C 1234567 /M "Enter your choice: "
 set "userChoice=%errorlevel%"
-call :dispatchMenu choiceMap userChoice
+call :DispatchMenu choiceMap userChoice
 goto :LoopMainMenu
 
 :InstallSoftware
@@ -1049,7 +1049,7 @@ call :displayPackageManagerMenu
 choice /n /c 1234567 /m "Press your choice (1-7):"
 
 set "USER_CHOICE=%errorlevel%"
-call :dispatchMenu pkg_menu USER_CHOICE
+call :DispatchMenu packageMenuMap userChoice
 goto :PackageManagerMenu
 
 
@@ -2528,18 +2528,18 @@ echo ^</BCU-settings^>
 popd
 goto :eof
 
-:dispatchMenu
-:: Usage: call :dispatch_menu <array_prefix> <choice_var>
+:DispatchMenu
+:: Usage: call :DispatchMenu <mapName> <choiceVarName>
 setlocal EnableDelayedExpansion
-set "prefix=%~1"
-set "varName=%~2"
-set "sel=!%varName%!
-for /f "tokens=2 delims==" %%A in ('set %prefix%[%sel%] 2^>nul') do (
-    set "target=%%A"
+set "mapName=%~1"
+set "choiceVarName=%~2"
+set "choiceValue=!%choiceVarName%!"
+for /f "tokens=2 delims==" %%A in ('set %mapName%[!choiceValue!] 2^>nul') do (
+    set "targetLabel=%%A"
 )
 
-if defined target (
-    call :%target%
+if defined targetLabel (
+    call :%targetLabel%
 )
 
 endlocal
