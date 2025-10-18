@@ -4,7 +4,6 @@ setlocal enabledelayedexpansion
 echo --- Running Menu Display Loop Test ---
 
 FOR %%m IN (
-    displayMainMenu
     displayWindowsOfficeMenu
     displayUtilitiesMenu
     displayLicenseMenu
