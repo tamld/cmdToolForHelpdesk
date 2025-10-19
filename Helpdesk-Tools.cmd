@@ -100,7 +100,8 @@ goto InstallMenu
 
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities
-:installAIO
+:installAio
+echo ANCHOR_installAio
 Title Install All in One 
 cls
 call :checkCompatibility
@@ -123,7 +124,7 @@ goto :installAIOMenu
 
 :installAIO-O2019
 Title Install All in One with Office 2019
-call :installAIO
+call :installAio
 set opt5=(NO)
 set opt6=(NO)
 set opt7=(NO)
@@ -139,7 +140,7 @@ goto :installAIOMenu
 
 :installAIO-O2021
 Title Install All in One with Office 2021
-call :installAIO
+call :installAio
 set opt5=(NO)
 set opt6=(NO)
 set opt7=(NO)
@@ -155,7 +156,7 @@ goto :installAIOMenu
 
 :installAIO-O2024
 Title Install All in One with Office 2024
-call :installAIO
+call :installAio
 set opt5=(NO)
 set opt6=(NO)
 set opt7=(NO)

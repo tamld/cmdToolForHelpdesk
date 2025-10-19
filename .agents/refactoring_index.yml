@@ -9,7 +9,7 @@
 - old_name: :installAIO
   new_name: :installAio
   type: Helper
-  status: To Do
+  status: In Progress
 - old_name: :installAIO-Fresh
   new_name: :installAioFresh
   type: Helper
