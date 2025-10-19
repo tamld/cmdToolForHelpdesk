@@ -1,0 +1,48 @@
+
+# A structured log of lessons learned to prevent repeating mistakes.
+# This file is part of the agent's core knowledge base.
+author: "Gemini Agent (based on user feedback)"
+date: "2025-10-19"
+
+lessons:
+  - id: LL-001
+    topic: "CMD Function Testability"
+    problem: "Cannot test CMD functions in isolation using `call script.cmd :label`."
+    root_cause: "The `call :label` syntax is unreliable and often re-executes the entire script from the top instead of targeting the specific label."
+    solution: "Mandate the use of a central 'Dispatcher Pattern' at the top of the script. Tests can then call `script.cmd function_name` to reliably execute only the desired function."
+
+  - id: LL-002
+    topic: "CMD Subroutine Return Mechanism"
+    problem: "Using `exit /b` in a called function terminates the entire test runner process, preventing the test from completing or reporting results."
+    root_cause: "`exit /b` terminates the current cmd.exe process, not just the subroutine."
+    solution: "Always use `goto :eof` to return from a subroutine. This passes control back to the caller and correctly preserves the ERRORLEVEL."
+
+  - id: LL-003
+    topic: "Debugging Strategy"
+    problem: "Attempting to debug complex errors by repeatedly modifying the main script is inefficient and risky."
+    root_cause: "Lack of a systematic isolation process."
+    solution: "When faced with a persistent error, create a minimal, temporary test case that isolates the single problematic operation. This provides clear, evidence-based direction for the fix."
+
+  - id: LL-004
+    topic: "CI Pathing Consistency"
+    problem: "Tests were failing in the CI environment with 'file not found' errors."
+    root_cause: "The `cd` command within test scripts was altering the relative working directory, breaking subsequent `call` commands."
+    solution: "Establish a stable working directory in the main test runner. All sub-tests must use paths relative to that stable directory and must not change it."
+
+  - id: LL-005
+    topic: "Test Result Verification"
+    problem: "A test was reported as 'passing' in the CI, but its logs contained errors like 'command not recognized'."
+    root_cause: "The test's validation mechanism itself was broken, leading to a false positive."
+    solution: "Always inspect the full logs of a 'successful' run to ensure tests are passing for the right reasons. A broken assertion is a failed test."
+
+  - id: LL-006
+    topic: "Agent Proactive Analysis"
+    problem: "Agent gave a superficial answer to a general query about project progress."
+    root_cause: "The agent's default scanning protocol prioritized common file names (`README.md`) over project-specific SSoT declarations (`.agents/` directory)."
+    solution: "The agent's core logic must be updated to always check for a project-specific SSoT first. This was formalized as `LAW-CONTEXT-001: SSoT Primacy`."
+
+  - id: LL-007
+    topic: "Agent Plan Interpretation"
+    problem: "Agent confused long-term strategic goals (`roadmap.yml`) with immediate tactical tasks (`backlog.yml`)."
+    root_cause: "The agent did not stratify the planning documents it found within the SSoT."
+    solution: "The agent's core logic must be updated to classify plans into 'Strategic' and 'Tactical' and to prioritize the Tactical plan for branch-specific work. This was formalized as `GUIDELINE-PLAN-001: Plan Stratification`."

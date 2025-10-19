@@ -20,7 +20,7 @@ REM Go UAC to get Admin privileges
     pushd "%CD%"
     CD /D "%~dp0"
 REM ========================================================================================================================================    
-:main
+:MainMenu
 @echo off
 set "appversion=v0.6.80 Feb 15, 2025"
 set "dp=%~dp0"
@@ -45,9 +45,9 @@ echo    [7] Exit                                       : Press 7
 ::echo    [8] Test                                       : Press 8
 echo    ========================================================
 Choice /N /C 1234567 /M " Press your choice :"
-::if %ERRORLEVEL% == 8 call :checkCompatibility & goto main
+::if %ERRORLEVEL% == 8 call :checkCompatibility & goto MainMenu
 if %ERRORLEVEL% == 7 call :clean && goto exit
-if %ERRORLEVEL% == 6 call :updateCMD & goto main
+if %ERRORLEVEL% == 6 call :updateCMD & goto MainMenu
 if %ERRORLEVEL% == 5 goto packageManagementMenu
 if %ERRORLEVEL% == 4 goto utilities
 if %ERRORLEVEL% == 3 goto activeLicenses
@@ -74,7 +74,7 @@ echo        [5] Main Menu                                : Press 5
 echo        ======================================================
 choice /n /c 12345 /M "Press your choice: "
 
-if errorlevel 5 goto main
+if errorlevel 5 goto MainMenu
 if errorlevel 4 goto installAIO-O2019
 if errorlevel 3 goto installAIO-O2021
 if errorlevel 2 goto installAIO-O2024
@@ -104,8 +104,7 @@ goto :EOF
 
 
 :installAIO-Fresh
-Title Install All in One from fresh Windows without Office
-call :installAIO
+call :installAio
 call :Clean
 goto :installAIOMenu
 
@@ -189,7 +188,7 @@ setlocal
 cd /d %dp%
 call :DisplayOfficeWindowsMenu
 Choice /N /C 1234567 /M " Press your choice : "
-if %ERRORLEVEL% == 7 goto :main
+if %ERRORLEVEL% == 7 goto :MainMenu
 if %ERRORLEVEL% == 6 call :loadSkusMenu & goto :office-windows
 if %ERRORLEVEL% == 5 goto :fixNonCore
 if %ERRORLEVEL% == 4 goto :convertOfficeEddition
@@ -630,7 +629,7 @@ Title Active Licenses Menu
 cls
 call :DisplayActiveLicensesMenu
 Choice /N /C 1234567 /M " Press your choice : "
-if %ERRORLEVEL% == 7 goto :main
+if %ERRORLEVEL% == 7 goto :MainMenu
 if %ERRORLEVEL% == 6 goto :MAS
 if %ERRORLEVEL% == 5 goto :restoreLicenses
 if %ERRORLEVEL% == 4 goto :backupLicenses
@@ -723,7 +722,7 @@ cls
 title Utilities Main Menu
 call :DisplayUtilitiesMenu
 Choice /N /C 12345678 /M " Press your choice : "
-if %ERRORLEVEL% == 8 goto :main
+if %ERRORLEVEL% == 8 goto :MainMenu
 if %ERRORLEVEL% == 7 goto :debloat & goto :utilities
 if %ERRORLEVEL% == 6 call :activeIDM & goto :utilities
 if %ERRORLEVEL% == 5 goto :installSupportAssistant
@@ -1039,7 +1038,7 @@ set "pkg_menu[3]=installRemoteApps"
 set "pkg_menu[4]=installNetworkApps"
 set "pkg_menu[5]=installChatApps"
 set "pkg_menu[6]=update-All"
-set "pkg_menu[7]=main"
+set "pkg_menu[7]=MainMenu"
 
 :: Display menu
 call :DisplayPackageManagerMenu

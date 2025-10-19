@@ -1,0 +1,55 @@
+
+# This file defines the operational model for the agent in this project.
+# It is the primary entry point for understanding how to behave.
+version: 1.1
+author: "Gemini Agent (based on user feedback)"
+date: "2025-10-19"
+
+# SSoT Declaration: Defines the scope of the agent's knowledge and authority.
+single_source_of_truth:
+  description: "The entire .agents/ directory is the SSoT. This file is the entry point."
+  entry_point_file: ".agents/operational_model.yml"
+
+# Planning Stratification: Differentiates between long-term vision and short-term tasks.
+planning_levels:
+  strategic:
+    file: ".agents/roadmap.yml"
+    description: "Long-term vision and project phases. Answers 'Where are we going?'"
+    scope: "Project-wide, multi-quarter."
+  tactical:
+    file: ".agents/backlog.yml"
+    description: "Immediate, actionable tasks for a specific context (e.g., a branch). Answers 'What are we doing now?'"
+    scope: "Current branch/sprint."
+  detailed_manifest:
+    file: ".agents/refactoring_index.yml"
+    description: "A detailed manifest for a specific, large-scale task, like renaming."
+    scope: "Task-specific."
+
+# Standard Operating Procedure (SOP) for Task Analysis and Execution.
+# This forces a structured, context-aware thought process.
+sop_task_analysis:
+  - step: 1
+    action: "Identify the current context (e.g., current git branch)."
+    purpose: "To scope the analysis to relevant work."
+  - step: 2
+    action: "Consult this file (`operational_model.yml`) to locate the tactical plan (e.g., `backlog.yml`)."
+    purpose: "To find the correct source of immediate tasks, avoiding strategic plans."
+  - step: 3
+    action: "Filter the tactical plan for tasks relevant to the current context/branch."
+    purpose: "To identify what should be worked on right now."
+  - step: 4
+    action: "Identify the highest-priority 'In Progress' or 'To Do' task from the filtered list."
+    purpose: "To ensure work is done in the correct order of priority."
+  - step: 5
+    action: "Consult the knowledge base (`lessons_learned.yml`, `core_principles.yml`) before acting."
+    purpose: "To ensure the proposed action does not violate past lessons or core rules."
+  - step: 6
+    action: "Propose a concrete, verifiable action based on the identified tactical task."
+    purpose: "To translate the plan into execution."
+
+# Knowledge Base: A structured repository of rules and learnings.
+knowledge_base:
+  - file: ".agents/lessons_learned.yml"
+    description: "Structured list of past failures and corrective principles. Must be consulted before proposing actions."
+  - file: ".agents/core_principles.yml"
+    description: "Core, non-negotiable rules for the project."

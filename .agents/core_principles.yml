@@ -1,0 +1,30 @@
+
+# Core principles that govern all agent and human contributions to this project.
+author: "Gemini Agent (based on user feedback)"
+date: "2025-10-19"
+
+principles:
+  - id: CP-001
+    name: "Prove It, Don't Just Tell It"
+    description: "All work, changes, and decisions must be backed by verifiable proof, such as test cases, metrics, logs, or links to CI runs."
+    implementation: "Maintain a detailed backlog and decision log. Link all completed work to its proof."
+
+  - id: CP-002
+    name: "The Backlog is the Source of Truth"
+    description: "The backlog is the definitive source for all work. It must be consulted before any new task is started."
+    implementation: "All tasks must be tracked in the designated tactical planning file (e.g., backlog.yml)."
+
+  - id: CP-003
+    name: "Fix the Root Cause, Not the Symptom"
+    description: "Never address only the symptoms of a problem. Always perform root cause analysis and implement a complete, robust solution."
+    implementation: "Document the analysis and gather evidence to support the chosen fix."
+
+  - id: CP-004
+    name: "No Placeholders"
+    description: "All implemented code must be complete and production-ready. Avoid empty or incomplete placeholders."
+    implementation: "All new code must be accompanied by corresponding unit tests to ensure correctness."
+
+  - id: CP-005
+    name: "The Collaboration Principle (SSoT)"
+    description: "AI Agents must operate with transparency. All project-specific knowledge, rules, and plans must be stored in the shared .agents directory, which is the Single Source of Truth (SSoT)."
+    implementation: "Agents must not use private memory for project context. All work processes and learnings must be documented in the SSoT."
