@@ -48,6 +48,7 @@ echo    [6] Update CMD                                 : Press 6
 echo    [7] Exit                                       : Press 7
 ::echo    [8] Test                                       : Press 8
 echo    ========================================================
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234567 /M " Press your choice :"
 ::if %ERRORLEVEL% == 8 call :checkCompatibility & goto MainMenu
 if %ERRORLEVEL% == 7 call :clean && goto exit
