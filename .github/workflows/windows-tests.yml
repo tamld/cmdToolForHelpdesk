@@ -1,3 +1,4 @@
+
 name: Run CMD Tests
 
 on:
@@ -18,10 +19,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Create test reports directory
+      run: mkdir .\tests\reports
+
     - name: Generate script output log
       run: |
         echo 7 | .\Helpdesk-Tools.cmd > .\tests\reports\main_script.log 2>&1
         echo "Script output log generated."
 
-    - name: Run test suite
+    - name: Run test suite to verify logs
       run: .\tests\test_runner.cmd
