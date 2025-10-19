@@ -702,11 +702,7 @@ call :hold
 goto :activeLicenses
 REM End of Active Lienses functions
 REM ========================================================================================================================================
-:utilities
-setlocal
-REM Start of Utilities Menu
-cls
-title Utilities Main Menu
+:DisplayUtilitiesMenu
 echo.
 echo        =================================================
 echo        [1] Set High Performance                : Press 1
@@ -718,6 +714,14 @@ echo        [6] Active IDM                          : Press 6
 echo        [7] Windows Debloat                     : Press 7
 echo        [8] Back to Main Menu                   : Press 8
 echo        =================================================
+goto :eof
+
+:utilities
+setlocal
+REM Start of Utilities Menu
+cls
+title Utilities Main Menu
+call :DisplayUtilitiesMenu
 Choice /N /C 12345678 /M " Press your choice : "
 if %ERRORLEVEL% == 8 goto :main
 if %ERRORLEVEL% == 7 goto :debloat & goto :utilities
@@ -1011,6 +1015,19 @@ COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop
 COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
 goto :eof
 
+:DisplayPackageManagerMenu
+echo.
+echo        ====================================================
+echo        [1] Install Package Management             : Press 1
+echo        [2] Install End Users Applications         : Press 2
+echo        [3] Install Remote Applications            : Press 3
+echo        [4] Install Network Applications           : Press 4
+echo        [5] Install Chat Applications              : Press 5
+echo        [6] Upgrade All Software Online            : Press 6
+echo        [7] Main Menu                              : Press 7
+echo        ====================================================
+goto :eof
+
 :packageManagementMenu
 cls
 title Package Management Software Main Menu
@@ -1025,16 +1042,7 @@ set "pkg_menu[6]=update-All"
 set "pkg_menu[7]=main"
 
 :: Display menu
-echo.
-echo        ====================================================
-echo        [1] Install Package Management             : Press 1
-echo        [2] Install End Users Applications         : Press 2
-echo        [3] Install Remote Applications            : Press 3
-echo        [4] Install Network Applications           : Press 4
-echo        [5] Install Chat Applications              : Press 5
-echo        [6] Upgrade All Software Online            : Press 6
-echo        [7] Main Menu                              : Press 7
-echo        ====================================================
+call :DisplayPackageManagerMenu
 choice /n /c 1234567 /m "Press your choice (1-7):"
 
 set "USER_CHOICE=%errorlevel%"

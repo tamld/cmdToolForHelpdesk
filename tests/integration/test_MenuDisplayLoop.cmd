@@ -16,8 +16,8 @@ set "MENU_LIST=^
     DisplayUninstallOfficeMenu ^
     DisplayActiveLicensesMenu ^
     DisplayBackupLicensesMenu ^
-    utilities ^
-    packageManagementMenu
+    DisplayUtilitiesMenu ^
+    DisplayPackageManagerMenu
 "
 
 echo =================================================================
