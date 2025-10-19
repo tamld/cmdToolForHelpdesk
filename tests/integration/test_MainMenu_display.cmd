@@ -4,7 +4,7 @@
 
 setlocal
 
-set "LOG_FILE=%~dp0..\reports\main_script.log"
+set "LOG_FILE=%~dp0..\reports\main_menu.log"
 set "ANCHOR_TEXT=Install All In One Online"
 
 if not exist "%LOG_FILE%" (

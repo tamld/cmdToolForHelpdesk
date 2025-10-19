@@ -57,7 +57,7 @@ if %ERRORLEVEL% == 5 goto packageManagementMenu
 if %ERRORLEVEL% == 4 goto utilities
 if %ERRORLEVEL% == 3 goto activeLicenses
 if %ERRORLEVEL% == 2 goto office-windows
-if %ERRORLEVEL% == 1 goto installAIOMenu
+if %ERRORLEVEL% == 1 goto InstallMenu
 endlocal
 goto end
 
@@ -65,7 +65,8 @@ REM ============================================================================
 REM ==============================================================================
 REM Start of installAIOMenu
 REM Install Software Online using Winget or Chocolatey
-:installAIOMenu
+:InstallMenu
+echo ANCHOR_InstallMenu
 setlocal
 cls
 title Install All In One Online
@@ -88,7 +89,7 @@ if errorlevel 1 goto installAIO-Fresh
 echo Invalid selection. Please try again.
 pause >nul
 endlocal
-goto installAIOMenu
+goto InstallMenu
 
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities

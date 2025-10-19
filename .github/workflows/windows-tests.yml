@@ -1,3 +1,4 @@
+
 name: Run CMD Tests
 
 on:
@@ -22,9 +23,13 @@ jobs:
       run: mkdir tests\reports
       shell: cmd
 
-    - name: Generate script output log
+    - name: Generate MainMenu output log
       shell: cmd
-      run: .\Helpdesk-Tools.cmd /test > .\tests\reports\main_script.log 2>&1
+      run: .\Helpdesk-Tools.cmd /test > .\tests\reports\main_menu.log 2>&1
+
+    - name: Generate InstallMenu output log
+      shell: cmd
+      run: echo 1 | .\Helpdesk-Tools.cmd /test > .\tests\reports\install_menu.log 2>&1
 
     - name: Run test suite to verify logs
       run: .\tests\test_runner.cmd

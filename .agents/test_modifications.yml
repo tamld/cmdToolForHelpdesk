@@ -1,0 +1,18 @@
+# This file acts as a manifest for temporary code modifications made for testing purposes.
+# It allows for controlled application and rollback of test-specific changes (e.g., adding echo anchors).
+
+modifications:
+  - id: TM-001
+    file_path: "Helpdesk-Tools.cmd"
+    target_function: ":InstallMenu"
+    description: "Add echo anchor for reachability test of InstallMenu."
+    applied: true
+    original_code: |
+      :InstallMenu
+      setlocal
+      cls
+    modified_code: |
+      :InstallMenu
+      echo ANCHOR_InstallMenu
+      setlocal
+      cls
