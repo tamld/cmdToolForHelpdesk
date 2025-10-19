@@ -7,8 +7,8 @@ set "FAILURES=0"
 
 :: List of all current, mixed-concern menu labels to test
 set "MENU_LIST=^
-    main ^
-    installAIOMenu ^
+    DisplayMainMenu ^
+    DisplayInstallMenu ^
     DisplayOfficeWindowsMenu ^
     DisplayInstallOfficeMenu ^
     DisplayLoadSkusMenu ^
