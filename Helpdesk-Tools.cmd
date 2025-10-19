@@ -117,6 +117,7 @@ goto :EOF
 
 
 :installAioFresh
+echo ANCHOR_installAioFresh
 call :installAio
 call :Clean
 goto :InstallMenu
