@@ -1694,7 +1694,7 @@ goto :EOF
 
 :end
 call :clean
-exit
+goto :EOF
 
 
 

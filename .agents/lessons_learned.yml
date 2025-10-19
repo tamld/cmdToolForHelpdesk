@@ -1,4 +1,3 @@
-
 # A structured log of lessons learned to prevent repeating mistakes.
 # This file is part of the agent's core knowledge base.
 author: "Gemini Agent (based on user feedback)"
@@ -46,3 +45,9 @@ lessons:
     problem: "Agent confused long-term strategic goals (`roadmap.yml`) with immediate tactical tasks (`backlog.yml`)."
     root_cause: "The agent did not stratify the planning documents it found within the SSoT."
     solution: "The agent's core logic must be updated to classify plans into 'Strategic' and 'Tactical' and to prioritize the Tactical plan for branch-specific work. This was formalized as `GUIDELINE-PLAN-001: Plan Stratification`."
+
+  - id: LL-008
+    topic: "CMD Process Termination in CI"
+    problem: "A CI job was failing even though the test script reported internal success. The test runner itself seemed to crash."
+    root_cause: "The main script being tested (`Helpdesk-Tools.cmd`) used an `exit` command, which terminates the entire parent CMD process, killing the test runner that called it. The CI environment interprets this unexpected termination as a failure."
+    solution: "In scripts designed to be called by other scripts (like in a testing context), always use `goto :EOF` to return control to the caller, instead of `exit` which terminates the whole process tree."
