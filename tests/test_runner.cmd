@@ -1,6 +1,5 @@
-
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
 :: Master Test Runner
 :: This script executes all .cmd test files found in its subdirectories.
@@ -17,10 +16,12 @@ for /d %%d in (%TESTS_DIR%*) do (
         echo =======================================================================
         for %%f in ("%%d\*.cmd") do (
             echo.
-            echo --- Running: %%~nxdf ---
+            echo --- Running: %%~nxf ---
             call "%%f"
-            if !errorlevel! neq 0 (
-                echo [ERROR] Test failed: %%~nxf
+            
+            :: Use 'if errorlevel 1' for robust failure detection. This checks if errorlevel is 1 or greater.
+            if errorlevel 1 (
+                echo [ERROR] Test failed: %%~nxf with errorlevel !errorlevel!
                 set /a FAILURES+=1
             )
         )
@@ -30,7 +31,9 @@ for /d %%d in (%TESTS_DIR%*) do (
 echo.
 echo =======================================================================
 echo Test run finished.
-if %FAILURES% equ 0 (
+
+:: Use quotes for robust comparison to handle cases where the variable might be empty.
+if "%FAILURES%"=="0" (
     echo All tests passed!
     exit /b 0
 ) else (
