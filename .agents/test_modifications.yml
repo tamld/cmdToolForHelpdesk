@@ -56,4 +56,36 @@ modifications:
 
       Title Install All in One
 
+  - id: TM-003
+
+    file_path: "Helpdesk-Tools.cmd"
+
+    target_function: ":installAioFresh"
+
+    description: "Add echo anchor for reachability test of installAioFresh."
+
+    applied: true
+
+    original_code: |
+
+      :installAioFresh
+
+      call :installAio
+
+      call :Clean
+
+      goto :InstallMenu
+
+    modified_code: |
+
+      :installAioFresh
+
+      echo ANCHOR_installAioFresh
+
+      call :installAio
+
+      call :Clean
+
+      goto :InstallMenu
+
 
