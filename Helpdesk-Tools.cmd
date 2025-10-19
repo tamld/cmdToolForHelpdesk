@@ -78,6 +78,7 @@ echo        [3] Fresh Install with Office 2021           : Press 3
 echo        [4] Fresh Install with Office 2019           : Press 4
 echo        [5] Main Menu                                : Press 5
 echo        ======================================================
+if /i "%~1"=="/test" goto :EOF
 choice /n /c 12345 /M "Press your choice: "
 
 if errorlevel 5 goto MainMenu

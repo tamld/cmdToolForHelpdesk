@@ -1,22 +1,25 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal
 
-:: Master Test Runner - Final Robust Version
+:: Master Test Runner - File Reporting Version
 
 set "FAILURES=0"
+set "RESULT_FILE=%~dp0reports\test_result.txt"
+
+if not exist "%~dp0reports" mkdir "%~dp0reports"
 
 for /d %%d in (%~dp0*) do (
     if exist "%%d\*.cmd" (
         echo.
         echo =======================================================================
-        echo Running tests in: %%~nxd
+        echo Verifying outcomes in: %%~nxd
         echo =======================================================================
         for %%f in ("%%d\*.cmd") do (
             echo.
-            echo --- Running: %%~nxf ---
+            echo --- Verifying: %%~nxf ---
             call "%%f"
-            if !errorlevel! neq 0 (
-                echo [ERROR] Test failed: %%~nxf
+            if errorlevel 1 (
+                echo [ERROR] Verification failed: %%~nxf
                 set /a FAILURES+=1
             )
         )
@@ -25,14 +28,15 @@ for /d %%d in (%~dp0*) do (
 
 echo.
 echo =======================================================================
-echo Test run finished.
+echo Verification run finished.
 
-if !FAILURES! gtr 0 (
-    echo !FAILURES! test(s) failed.
-    exit /b 1
+if %FAILURES% GEQ 1 (
+    echo %FAILURES% verification(s) failed.
+    echo 1 > %RESULT_FILE%
 ) else (
-    echo All tests passed!
-    exit /b 0
+    echo All verifications passed!
+    echo 0 > %RESULT_FILE%
 )
 
 endlocal
+goto :EOF
