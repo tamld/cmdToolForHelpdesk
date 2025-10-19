@@ -91,7 +91,7 @@ if errorlevel 5 goto MainMenu
 if errorlevel 4 goto installAIO-O2019
 if errorlevel 3 goto installAIO-O2021
 if errorlevel 2 goto installAIO-O2024
-if errorlevel 1 goto installAIO-Fresh
+if errorlevel 1 goto installAioFresh
 
 echo Invalid selection. Please try again.
 pause >nul
@@ -116,10 +116,11 @@ call :debloat
 goto :EOF
 
 
-:installAIO-Fresh
+:installAioFresh
+echo ANCHOR_installAioFresh
 call :installAio
 call :Clean
-goto :installAIOMenu
+goto :InstallMenu
 
 :installAIO-O2019
 Title Install All in One with Office 2019

@@ -3,17 +3,89 @@
 # It allows for controlled application and rollback of test-specific changes (e.g., adding echo anchors).
 
 modifications:
+
   - id: TM-001
+
     file_path: "Helpdesk-Tools.cmd"
+
     target_function: ":InstallMenu"
+
     description: "Add echo anchor for reachability test of InstallMenu."
+
     applied: true
+
     original_code: |
+
       :InstallMenu
+
       setlocal
+
       cls
+
     modified_code: |
+
       :InstallMenu
+
       echo ANCHOR_InstallMenu
+
       setlocal
+
       cls
+
+  - id: TM-002
+
+    file_path: "Helpdesk-Tools.cmd"
+
+    target_function: ":installAio"
+
+    description: "Add echo anchor for reachability test of installAio."
+
+    applied: true
+
+    original_code: |
+
+      :installAio
+
+      Title Install All in One
+
+    modified_code: |
+
+      :installAio
+
+      echo ANCHOR_installAio
+
+      Title Install All in One
+
+  - id: TM-003
+
+    file_path: "Helpdesk-Tools.cmd"
+
+    target_function: ":installAioFresh"
+
+    description: "Add echo anchor for reachability test of installAioFresh."
+
+    applied: true
+
+    original_code: |
+
+      :installAioFresh
+
+      call :installAio
+
+      call :Clean
+
+      goto :InstallMenu
+
+    modified_code: |
+
+      :installAioFresh
+
+      echo ANCHOR_installAioFresh
+
+      call :installAio
+
+      call :Clean
+
+      goto :InstallMenu
+
+

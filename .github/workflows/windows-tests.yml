@@ -1,4 +1,3 @@
-
 name: Run CMD Tests
 
 on:
@@ -43,4 +42,15 @@ jobs:
         run: |
           mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:installAio > .\tests\reports\install_aio.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-install-aio-fresh:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run InstallAioFresh Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:installAioFresh > .\tests\reports\install_aio_fresh.log 2>&1
           .\tests\test_runner.cmd

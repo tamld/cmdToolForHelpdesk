@@ -13,7 +13,7 @@
 - old_name: :installAIO-Fresh
   new_name: :installAioFresh
   type: Helper
-  status: To Do
+  status: In Progress
 - old_name: :installAIO-O2019
   new_name: :installAioWithOffice2019
   type: Helper
