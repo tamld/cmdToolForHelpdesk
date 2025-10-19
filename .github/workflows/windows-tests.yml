@@ -20,5 +20,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Run tests
+    - name: Run test suite
       run: .\tests\test_runner.cmd
+
+    - name: Check test results
+      run: |
+        $result = Get-Content .\tests\reports\test_result.txt
+        if ($result -ne "0") {
+          echo "Tests failed with result code: $result"
+          exit 1
+        }
+        echo "All tests passed with result code: $result"
