@@ -1,3 +1,4 @@
+
 name: Run CMD Tests
 
 on:
@@ -20,13 +21,19 @@ jobs:
 
     - name: Create test reports directory
       run: mkdir .\tests\reports
+      shell: cmd
+
+    - name: (DEBUG) List all files
+      run: dir /s
+      shell: cmd
 
     - name: Generate script output log
       shell: cmd
       run: |
-        echo 7 > .\tests\input.txt
-        .\Helpdesk-Tools.cmd < .\tests\input.txt > .\tests\reports\main_script.log 2>&1
+        echo 7 > "%GITHUB_WORKSPACE%\tests\input.txt"
+        "%GITHUB_WORKSPACE%\Helpdesk-Tools.cmd" < "%GITHUB_WORKSPACE%\tests\input.txt" > "%GITHUB_WORKSPACE%\tests\reports\main_script.log" 2>&1
         echo "Script output log generated."
 
     - name: Run test suite to verify logs
       run: .\tests\test_runner.cmd
+      shell: cmd
