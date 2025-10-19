@@ -1,0 +1,24 @@
+name: Run CMD Tests
+
+on:
+  # Run when pushing to feature, fix, or refactor branches
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+      - 'refactor/**'
+  # Run when a Pull Request is opened against the main branch
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Run tests
+      run: .\tests\test_runner.cmd
