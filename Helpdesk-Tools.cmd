@@ -610,11 +610,7 @@ REM End of Remove Office Keys
 REM ============================================
 REM End of Windows Office Utilities functions
 REM ========================================================================================================================================
-:activeLicenses
-REM Start of Active Licenses Menu
-setlocal
-Title Active Licenses Menu
-cls
+:DisplayActiveLicensesMenu
 echo.
 echo        ========================================================
 echo        [1] Online                                     : Press 1
@@ -625,6 +621,14 @@ echo        [5] Restore License                            : Press 5
 echo        [6] MAS (Microsoft Activation Scripts)         : Press 6
 echo        [7] Back to Main Menu                          : Press 7
 echo        ========================================================
+goto :eof
+
+:activeLicenses
+REM Start of Active Licenses Menu
+setlocal
+Title Active Licenses Menu
+cls
+call :DisplayActiveLicensesMenu
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :main
 if %ERRORLEVEL% == 6 goto :MAS
@@ -655,8 +659,7 @@ goto :activeLicenses
 
 REM ============================================
 REM Start of Backup License Windows & Office
-:backupLicenses
-cls
+:DisplayBackupLicensesMenu
 Title Backup License Windows ^& Office
 echo.
 echo            =================================================
@@ -664,6 +667,11 @@ echo            [1] BACKUP To Local                     : Press 1
 echo            [2] BACKUP To NAS STORAGE               : Press 2
 echo            [3] Back to Main Menu                   : Press 3
 echo            =================================================
+goto :eof
+
+:backupLicenses
+cls
+call :DisplayBackupLicensesMenu
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :activeLicenses
 if %ERRORLEVEL% == 2 goto :backupToNAS

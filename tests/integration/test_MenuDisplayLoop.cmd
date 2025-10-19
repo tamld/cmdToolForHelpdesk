@@ -14,8 +14,8 @@ set "MENU_LIST=^
     DisplayLoadSkusMenu ^
     DisplayRemoveOfficeKeyMenu ^
     DisplayUninstallOfficeMenu ^
-    activeLicenses ^
-    backupLicenses ^
+    DisplayActiveLicensesMenu ^
+    DisplayBackupLicensesMenu ^
     utilities ^
     packageManagementMenu
 "
