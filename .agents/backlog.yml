@@ -10,10 +10,10 @@ tasks:
     status: "Done"
 
   - id: 11
-    description: "(ACTIVE) Rename all functions/menus according to the manifest in 'refactoring_index.yml'. Progress: Renamed `:installAIOMenu` to `:InstallMenu` and `:installAIO` to `:installAio`."
+    description: "(ACTIVE) Rename all functions/menus according to the manifest in 'refactoring_index.yml'. Progress: Renamed `:installAIOMenu` to `:InstallMenu`, `:installAIO` to `:installAio`, and `:installAIO-Fresh` to `:installAioFresh`."
     status: "In Progress"
   - id: 10
-    description: "(ACTIVE) Implement Action Function Reachability Test. Progress: Implemented test for `:installAio`."
+    description: "(ACTIVE) Implement Action Function Reachability Test. Progress: Implemented test for `:installAio` and `:installAioFresh`."
     status: "In Progress"
 
   - id: 12
