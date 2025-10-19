@@ -73,7 +73,6 @@ REM ============================================================================
 REM Start of installAIOMenu
 REM Install Software Online using Winget or Chocolatey
 :InstallMenu
-echo ANCHOR_InstallMenu
 setlocal
 cls
 title Install All In One Online

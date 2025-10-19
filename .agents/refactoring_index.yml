@@ -5,7 +5,7 @@
 - old_name: :installAIOMenu
   new_name: :InstallMenu
   type: Controller
-  status: In Progress
+  status: Done
 - old_name: :installAIO
   new_name: :installAio
   type: Helper
