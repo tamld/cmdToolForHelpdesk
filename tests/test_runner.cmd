@@ -1,13 +1,9 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
-:: Master Test Runner - Robust Version 2
+:: Master Test Runner - Final Robust Version
 
 set "FAILURES=0"
-set "RESULT_FILE=%~dp0reports\test_result.txt"
-
-:: Ensure reports directory exists
-if not exist "%~dp0reports" mkdir "%~dp0reports"
 
 for /d %%d in (%~dp0*) do (
     if exist "%%d\*.cmd" (
@@ -19,7 +15,7 @@ for /d %%d in (%~dp0*) do (
             echo.
             echo --- Running: %%~nxf ---
             call "%%f"
-            if errorlevel 1 (
+            if !errorlevel! neq 0 (
                 echo [ERROR] Test failed: %%~nxf
                 set /a FAILURES+=1
             )
@@ -31,13 +27,12 @@ echo.
 echo =======================================================================
 echo Test run finished.
 
-if %FAILURES% GEQ 1 (
-    echo %FAILURES% test(s) failed.
-    echo 1 > %RESULT_FILE%
+if !FAILURES! gtr 0 (
+    echo !FAILURES! test(s) failed.
+    exit /b 1
 ) else (
     echo All tests passed!
-    echo 0 > %RESULT_FILE%
+    exit /b 0
 )
 
 endlocal
-goto :EOF
