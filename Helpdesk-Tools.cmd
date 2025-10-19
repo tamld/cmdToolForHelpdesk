@@ -1,8 +1,13 @@
 echo off
 Title Script Auto install Software
 
-:: Check for /test argument to bypass UAC check in CI environment
-if /i "%~1"=="/test" goto MainMenu
+:: Check for /test:<Label> argument to bypass UAC and jump to a specific label for testing
+for /f "tokens=1,2 delims=:" %%a in ("%~1") do (
+    if /i "%%a"=="/test" (
+        if not "%%b"=="" goto %%b
+        goto MainMenu
+    )
+)
 
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 if '%errorlevel%' NEQ '0' (

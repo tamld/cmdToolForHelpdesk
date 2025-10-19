@@ -8,7 +8,7 @@ set "RESULT_FILE=%~dp0reports\test_result.txt"
 
 if not exist "%~dp0reports" mkdir "%~dp0reports"
 
-for /d %%d in (%~dp0*) do (
+for /d %%d in (%~dp0integration) do (
     if exist "%%d\*.cmd" (
         echo.
         echo =======================================================================

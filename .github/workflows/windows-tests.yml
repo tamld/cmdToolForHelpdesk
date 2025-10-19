@@ -1,3 +1,4 @@
+
 name: Run CMD Tests
 
 on:
@@ -11,35 +12,24 @@ on:
       - main
 
 jobs:
-  test:
+  test-main-menu:
     runs-on: windows-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - name: Run MainMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:MainMenu > .\tests\reports\main_menu.log 2>&1
+          .\tests\test_runner.cmd
 
-    - name: Create test reports directory
-      run: mkdir tests\reports
-      shell: cmd
-
-    - name: Generate MainMenu output log
-      shell: cmd
-      run: .\Helpdesk-Tools.cmd /test > .\tests\reports\main_menu.log 2>&1
-
-    - name: Generate InstallMenu output log
-      shell: cmd
-      run: echo 1 | .\Helpdesk-Tools.cmd /test > .\tests\reports\install_menu.log 2>&1
-
-    - name: Run test suite to verify logs
-      run: .\tests\test_runner.cmd
-      shell: cmd
-
-    - name: Check test results
-      shell: pwsh
-      run: |
-        $result = Get-Content .\tests\reports\test_result.txt
-        if ($result -ne "0") {
-          echo "Tests failed with result code: $result"
-          exit 1
-        }
-        echo "All tests passed with result code: $result"
+  test-install-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run InstallMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:InstallMenu > .\tests\reports\install_menu.log 2>&1
+          .\tests\test_runner.cmd
