@@ -10,28 +10,11 @@ tasks:
     status: "Done"
 
   - id: 11
-    description: "(ACTIVE) Rename all functions/menus according to the manifest in 'refactoring_index.yml'. This will be done incrementally, segment by segment, with verification via reachability tests (Task #7 and #10)."
+    description: "(ACTIVE) Rename all functions/menus according to the manifest in 'refactoring_index.yml'. Progress: Renamed `:installAIOMenu` to `:InstallMenu` and `:installAIO` to `:installAio`."
     status: "In Progress"
-    priority: "Critical"
-    owner: "Gemini"
-    branch: "refactor/structure-and-naming"
-    date_created: "2025-10-19"
-
-  - id: 7
-    description: "(ACTIVE) Implement Menu Stability Loop Test. Create a single integration test that calls all display-only menu functions to verify they are reachable. Verification will be done via 'Reachability Testing': confirming a unique text 'anchor' (e.g., the menu title) is present in the script's output for each menu."
-    status: "In Progress"
-    priority: "High"
-    owner: "Gemini"
-    branch: "refactor/structure-and-naming"
-    date_created: "2025-10-17"
-
   - id: 10
-    description: "(ACTIVE) Implement Action Function Reachability Test. Create a single integration test that triggers all action/logic functions to verify they are reachable. Verification will be done via 'Reachability Testing': adding a unique 'echo ANCHOR_FunctionName' at the start of each function and confirming the anchor text is present in the script's output."
+    description: "(ACTIVE) Implement Action Function Reachability Test. Progress: Implemented test for `:installAio`."
     status: "In Progress"
-    priority: "High"
-    owner: "Gemini"
-    branch: "refactor/structure-and-naming"
-    date_created: "2025-10-19"
 
   - id: 12
     description: "(AUDIT) Analyze and resolve the broken test 'test_MenuDisplayLoop.cmd'. The test failed in CI run 18631074302. Analysis showed the test was an outdated, non-functional attempt at implementing Task #7. The decision was made to delete this file to unblock the CI pipeline."

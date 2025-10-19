@@ -17,15 +17,3 @@ modifications:
       echo ANCHOR_InstallMenu
       setlocal
       cls
-  - id: TM-002
-    file_path: "Helpdesk-Tools.cmd"
-    target_function: ":installAio"
-    description: "Add echo anchor for reachability test of installAio."
-    applied: true
-    original_code: |
-      :installAio
-      Title Install All in One
-    modified_code: |
-      :installAio
-      echo ANCHOR_installAio
-      Title Install All in One

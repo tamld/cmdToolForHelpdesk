@@ -101,7 +101,6 @@ goto InstallMenu
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities
 :installAio
-echo ANCHOR_installAio
 Title Install All in One 
 cls
 call :checkCompatibility
