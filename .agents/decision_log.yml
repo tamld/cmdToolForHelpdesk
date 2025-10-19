@@ -1,0 +1,87 @@
+- decisionId: 1
+  timestamp: "2025-10-18T08:00:00Z"
+  strategy:
+    name: "Full Batch Refactoring"
+    description: "Refactor all items of a given type (e.g., all menus) at once, then run a single, large CI test."
+  proposer: "User"
+  outcome:
+    status: "Discussed / Not Attempted"
+    reason: "Deemed too risky. A failure in the large batch would be difficult to debug."
+  lesson: "Large, monolithic changes are risky. Prefer smaller, verifiable steps."
+
+- decisionId: 2
+  timestamp: "2025-10-18T08:05:00Z"
+  strategy:
+    name: "Incremental Batching by Functional Area"
+    description: "Refactor one self-contained functional area at a time. Commit and run CI for each area."
+  proposer: "Agent (as a compromise)"
+  outcome:
+    status: "Adopted"
+    reason: "Balances speed of batching with the safety of incremental changes. Simplifies debugging."
+  lesson: "A hybrid approach can balance competing goals like speed and safety."
+
+- decisionId: 3
+  timestamp: "2025-10-18T08:15:00Z"
+  strategy_tested: "Incremental Batching by Functional Area"
+  context: "Applied to the 'Main Menu' section."
+  outcome:
+    status: "Success"
+    evidence:
+      type: "GitHub Actions CI Run"
+      id: "18608451744"
+  lesson: "The strategy was successful for a small, simple functional area."
+
+- decisionId: 4
+  timestamp: "2025-10-18T08:25:00Z"
+  strategy_tested: "Incremental Batching by Functional Area"
+  context: "Applied to the '[1] Install All In One Online' section."
+  outcome:
+    status: "Success"
+    evidence:
+      type: "GitHub Actions CI Run"
+      id: "18608547799"
+  lesson: "The strategy remains effective for a more complex functional area with multiple sub-functions."
+
+- decisionId: 5
+  timestamp: "2025-10-18T08:40:00Z"
+  strategy_tested: "Incremental Batching by Functional Area"
+  context: "Applied to the '[2] Windows Office Utilities' section."
+  outcome:
+    status: "Success"
+    evidence:
+      type: "GitHub Actions CI Run"
+      id: "18608640322"
+  lesson: "The strategy is robust, successfully handling a large and complex functional area with multiple sub-menus and intricate logic."
+
+- decisionId: 6
+  timestamp: "2025-10-18T08:50:00Z"
+  strategy_tested: "Incremental Batching by Functional Area"
+  context: "Applied to the '[3] License Activation' section."
+  outcome:
+    status: "Success"
+    evidence:
+      type: "GitHub Actions CI Run"
+      id: "18608714132"
+  lesson: "Strategy continues to be effective for sections with multiple sub-menus and external process calls (e.g., PowerShell)."
+
+- decisionId: 7
+  timestamp: "2025-10-18T09:00:00Z"
+  strategy_tested: "Incremental Batching by Functional Area"
+  context: "Applied to the '[4] System Utilities' section."
+  outcome:
+    status: "Success"
+    evidence:
+      type: "GitHub Actions CI Run"
+      id: "18608750579"
+  lesson: "Strategy remains effective for sections with a mix of simple commands, external tool calls (PowerShell, wmic), and user input handling."
+
+- decisionId: 8
+  timestamp: "2025-10-18T09:15:00Z"
+  strategy_tested: "Incremental Batching by Functional Area"
+  context: "Applied to the '[5] Package Management' section."
+  outcome:
+    status: "Success"
+    evidence:
+      type: "GitHub Actions CI Run"
+      id: "18609303880"
+  lesson: "Strategy is consistently successful across all major functional blocks of the main menu."

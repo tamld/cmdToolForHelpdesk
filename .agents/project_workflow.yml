@@ -1,0 +1,61 @@
+# .agents/project_workflow.yml
+
+refactoring:
+  process:
+    - step: "Select a logical, test-covered section."
+      id: "select"
+    - step: "Apply naming conventions to the target section."
+      id: "apply"
+    - step: "Run specific tests to verify no regressions."
+      id: "test"
+    - step: "Commit the changes with a clear message."
+      id: "commit"
+    - step: "Repeat for the next section."
+      id: "repeat"
+
+  namingConventions:
+    - type: "Function/Label"
+      style: "PascalCase"
+      example: ":DisplayMainMenu"
+    - type: "Variable"
+      style: "camelCase"
+      example: "userChoice"
+    - type: "Constant"
+      style: "SCREAMING_SNAKE_CASE"
+      example: "BASE_DIRECTORY"
+
+  exclusionList:
+    description: "List of system variables, keywords, and magic strings that must not be renamed."
+    categories:
+      - name: "System & Environment Variables"
+        items:
+          - "%errorlevel%"
+          - "%~dp0"
+          - "%~1"
+          - "%*"
+          - "%temp%"
+          - "%windir%"
+          - "%systemdrive%"
+          - "%ProgramFiles%"
+          - "%ProgramFiles(x86)%"
+          - "%appdata%"
+          - "%PUBLIC%"
+          - "%computername%"
+          - "%%a"
+      - name: "Command Keywords & Special Values"
+        items:
+          - "tokens"
+          - "delims"
+          - "skip"
+          - "NEQ"
+          - "EQU"
+          - "x86"
+          - "64"
+          - "Professional"
+          - "Enterprise"
+          - "Volume"
+          - "Retail"
+          - "Dell"
+          - "HP"
+          - "Lenovo"
+          - "ReturnValue"
