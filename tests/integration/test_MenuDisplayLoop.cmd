@@ -9,11 +9,11 @@ set "FAILURES=0"
 set "MENU_LIST=^
     main ^
     installAIOMenu ^
-    office-windows ^
-    installOfficeMenu ^
-    loadSkusMenu ^
-    removeOfficeKey ^
-    uninstallOffice ^
+    DisplayOfficeWindowsMenu ^
+    DisplayInstallOfficeMenu ^
+    DisplayLoadSkusMenu ^
+    DisplayRemoveOfficeKeyMenu ^
+    DisplayUninstallOfficeMenu ^
     activeLicenses ^
     backupLicenses ^
     utilities ^

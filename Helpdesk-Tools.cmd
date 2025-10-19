@@ -169,9 +169,7 @@ REM End of Install AIO Online
 ::========================================================================================================================================
 ::==============================================================================
 :: Start of Windows Office Utilities Menu
-:office-windows
-setlocal
-cd /d %dp%
+:DisplayOfficeWindowsMenu
 cls
 title Windows Office Main Menu
 echo.
@@ -184,6 +182,12 @@ echo        [5] Fix Noncore Windows                              : Press 5
 echo        [6] Load SKUS Windows                                : Press 6
 echo        [7] Main Menu                                        : Press 7
 echo        ==============================================================
+goto :eof
+
+:office-windows
+setlocal
+cd /d %dp%
+call :DisplayOfficeWindowsMenu
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :main
 if %ERRORLEVEL% == 6 call :loadSkusMenu & goto :office-windows
@@ -198,9 +202,8 @@ REM Start of Windows Office Utilities functions
 REM ==============================================================================
 REM Sub menu Install Office Online
 
-:installOfficeMenu
+:DisplayInstallOfficeMenu
 Title Install Office Online
-setlocal
 cls
 echo.
 echo Select Office Version to Install
@@ -212,6 +215,11 @@ echo                [4] Office 2019 (PerpetualVL)                          : Pre
 echo                [5] Install Manually using Office Deploy Tool          : Press 5
 echo                [6] Main Menu                                          : Press 6
 echo                ================================================================
+goto :eof
+
+:installOfficeMenu
+setlocal
+call :DisplayInstallOfficeMenu
 Choice /N /C 123456 /M " Press your choice : "
 if %ERRORLEVEL% == 6 goto :office-windows
 if %ERRORLEVEL% == 5 call :downloadOffice & "%temp%\Office Tool\Office Tool Plus.exe" & goto office-windows
@@ -396,8 +404,7 @@ if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%Pro
 goto :eof
 
 :: Function Menu that selects which edition Windows will convert to
-:loadSkusMenu
-setlocal
+:DisplayLoadSkusMenu
 cls
 Title Load Windows Eddition
 echo.
@@ -414,16 +421,21 @@ echo        [7] LTSB 2016                           : PRESS 7
 echo        [8] LTSC 2019                           : PRESS 8
 echo        [9] Menu Active Office                  : PRESS 9
 echo        ==================================================
+goto :eof
+
+:loadSkusMenu
+setlocal
+call :DisplayLoadSkusMenu
 Choice /N /C 123456789 /M " Press your choice : "
-if %errorlevel% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSKUS
-if %errorlevel% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSKUS
-if %errorlevel% == 3 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set typeW=Enterprise&& goto :loadSKUS
-if %errorlevel% == 4 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set typeW=EnterpriseS&& goto :loadSKUS
-if %errorlevel% == 5 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=IoTEnterprise&& goto :loadSKUS
-if %errorlevel% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Education&& goto :loadSKUS
-if %errorlevel% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSKUS
-if %errorlevel% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSKUS
-if %errorlevel% == 9 goto :office-windows
+if %ERRORLEVEL% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSKUS
+if %ERRORLEVEL% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSKUS
+if %ERRORLEVEL% == 3 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set typeW=Enterprise&& goto :loadSKUS
+if %ERRORLEVEL% == 4 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set typeW=EnterpriseS&& goto :loadSKUS
+if %ERRORLEVEL% == 5 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=IoTEnterprise&& goto :loadSKUS
+if %ERRORLEVEL% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Education&& goto :loadSKUS
+if %ERRORLEVEL% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSKUS
+if %ERRORLEVEL% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSKUS
+if %ERRORLEVEL% == 9 goto :office-windows
 endlocal
 
 :: Loads a specified Windows SKU (edition) using downloaded license files.
@@ -469,7 +481,7 @@ goto :office-windows
 
 REM ============================================
 REM Start of Remove Office Keys
-:removeOfficeKey
+:DisplayRemoveOfficeKeyMenu
 cls
 Title Remove Office Key
 echo.
@@ -479,6 +491,10 @@ echo            [1] One by one                          : Press 1
 echo            [2] All                                 : Press 2
 echo            [3] Back to Windows Office Menu         : Press 3
 echo            =================================================
+goto :eof
+
+:removeOfficeKey
+call :DisplayRemoveOfficeKeyMenu
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :office-windows
 if %ERRORLEVEL% == 2 call :removeOfficeKey-All & goto :office-windows
@@ -518,6 +534,14 @@ goto :eof
     
     
 :uninstallOffice
+call :DisplayUninstallOfficeMenu
+Choice /N /C 1234 /M " Press your choice : "
+if %ERRORLEVEL% == 4 goto :office-windows
+if %ERRORLEVEL% == 3 goto :removeOffice-BCUninstaller
+if %ERRORLEVEL% == 2 goto :removeOffice-OfficeTool
+if %ERRORLEVEL% == 1 goto :removeOffice-saraCmd
+
+:DisplayUninstallOfficeMenu
 cls
 Title Uninstall Office all versions
 echo.
@@ -527,11 +551,7 @@ echo            [2] Using Office Tool Plus                 : Press 2
 echo            [3] Using BCUninstaller                    : Press 3
 echo            [4] Back to Windows Office Menu            : Press 4
 echo            ====================================================
-Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 4 goto :office-windows
-if %ERRORLEVEL% == 3 goto :removeOffice-BCUninstaller
-if %ERRORLEVEL% == 2 goto :removeOffice-OfficeTool
-if %ERRORLEVEL% == 1 goto :removeOffice-saraCmd
+goto :eof
 
 :removeOffice-BCUninstaller
 cls
