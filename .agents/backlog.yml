@@ -34,20 +34,13 @@ tasks:
     date_created: "2025-10-15"
 
   - id: 5
-    description: "Enforce Dispatcher Pattern. (Note: Deferred to a future 'refactor/enable-unit-testing' branch. The current strategy prioritizes reachability testing first)."
-    status: "Deferred"
-    priority: "Low"
-    owner: "Gemini"
-    branch: "refactor/structure-and-naming"
-    date_created: "2025-10-17"
-
+    description: "Enforce Dispatcher Pattern: All testable functions must be callable via a central dispatcher at the top of the script."
+    status: "In Progress"
+    priority: "Critical"
   - id: 6
-    description: "Refactor All Menus: Separate display logic from interactive logic. (Note: Deferred to a future 'refactor/enable-unit-testing' branch. The current strategy prioritizes reachability testing first)."
-    status: "Deferred"
-    priority: "Low"
-    owner: "Gemini"
-    branch: "refactor/structure-and-naming"
-    date_created: "2025-10-17"
+    description: "Refactor All Menus: Separate display logic (echo) from interactive logic (choice) for all menus to enable UI testing."
+    status: "In Progress"
+    priority: "High"
 
   - id: 8
     description: "Experiment to find optimal CI parallelization limits by running unit and integration tests in parallel jobs."
