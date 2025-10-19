@@ -1,5 +1,9 @@
 echo off
 Title Script Auto install Software
+
+:: Check for /test argument to bypass UAC check in CI environment
+if /i "%~1"=="/test" goto MainMenu
+
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 if '%errorlevel%' NEQ '0' (
     echo  Run CMD as Administrator...
