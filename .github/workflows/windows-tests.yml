@@ -1,0 +1,26 @@
+name: Run CMD Tests
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+      - 'refactor/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-dynamic-tests:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        test_name: [MainMenu, InstallMenu, installAio, installAioFresh]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run ${{ matrix.test_name }} Test
+        shell: cmd
+        run: |
+          if not exist .\tests\reports mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:${{ matrix.test_name }} > .\tests\reports\${{ matrix.test_name }}.log 2>&1
+          REM The test_runner.cmd will be implemented later to verify logs
