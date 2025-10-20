@@ -48,7 +48,7 @@ Choice /N /C 1234567 /M " Press your choice :"
 ::if %ERRORLEVEL% == 8 call :checkCompatibility & goto main
 if %ERRORLEVEL% == 7 call :clean && goto exit
 if %ERRORLEVEL% == 6 call :updateCMD & goto main
-if %ERRORLEVEL% == 5 goto packageManagementMenu
+if %ERRORLEVEL% == 5 goto PackageManagementMenu
 if %ERRORLEVEL% == 4 goto UtilitiesMenu
 if %ERRORLEVEL% == 3 goto activeLicenses
 if %ERRORLEVEL% == 2 goto OfficeWindowsMenu
@@ -996,7 +996,11 @@ COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop
 COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
 goto :eof
 
-:packageManagementMenu
+:testPackageManagementMenu
+call :PackageManagementMenu
+goto :EOF
+
+:PackageManagementMenu
 cls
 title Package Management Software Main Menu
 
