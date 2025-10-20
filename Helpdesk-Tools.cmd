@@ -233,6 +233,7 @@ goto :eof
 :installOfficeMenu
 setlocal
 call :DisplayInstallOfficeMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123456 /M " Press your choice : "
 if %ERRORLEVEL% == 6 goto :office-windows
 if %ERRORLEVEL% == 5 call :downloadOffice & "%temp%\Office Tool\Office Tool Plus.exe" & goto office-windows
