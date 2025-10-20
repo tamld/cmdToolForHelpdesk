@@ -1033,12 +1033,12 @@ cls
 title Package Management Software Main Menu
 
 :: Define menu mapping
-set "pkg_menu[1]=packageManagement"
-set "pkg_menu[2]=installEndusers"
-set "pkg_menu[3]=installRemoteApps"
-set "pkg_menu[4]=installNetworkApps"
-set "pkg_menu[5]=installChatApps"
-set "pkg_menu[6]=update-All"
+set "pkg_menu[1]=RunPackageManagement"
+set "pkg_menu[2]=InstallEndUsers"
+set "pkg_menu[3]=InstallRemoteApps"
+set "pkg_menu[4]=InstallNetworkApps"
+set "pkg_menu[5]=InstallChatApps"
+set "pkg_menu[6]=UpdateAllPackages"
 set "pkg_menu[7]=main"
 
 :: Display menu
@@ -1059,7 +1059,11 @@ call :dispatch_menu pkg_menu USER_CHOICE
 goto :packageManagementMenu
 
 
-:update-All
+:testUpdateAllPackages
+call :UpdateAllPackages
+goto :EOF
+
+:UpdateAllPackages
 Title Update Softwares
 call :checkCompatibility
 cls
@@ -1079,7 +1083,11 @@ cls
 call :hold
 goto :EOF
 
-:installEndusers
+:testInstallEndUsers
+call :InstallEndUsers
+goto :EOF
+
+:InstallEndUsers
 cls
 Title Install End User Softwares
 where winget >nul 2>&1
@@ -1092,7 +1100,11 @@ if %errorlevel%==0 (
 )
 goto :EOF
 
-:installRemoteApps
+:testInstallRemoteApps
+call :InstallRemoteApps
+goto :EOF
+
+:InstallRemoteApps
 cls
 Title Install Remote Apps
 where winget >nul 2>&1
@@ -1105,7 +1117,11 @@ if %errorlevel%==0 (
 )
 goto :EOF
 
-:installNetworkApps
+:testInstallNetworkApps
+call :InstallNetworkApps
+goto :EOF
+
+:InstallNetworkApps
 cls
 Title Install Network Apps
 where winget >nul 2>&1
@@ -1118,7 +1134,11 @@ if %errorlevel%==0 (
 )
 goto :EOF
 
-:installChatApps
+:testInstallChatApps
+call :InstallChatApps
+goto :EOF
+
+:InstallChatApps
 cls
 Title Install Chat Apps
 where winget >nul 2>&1
@@ -1366,7 +1386,11 @@ call :killtasks
 cls
 goto :EOF
 
-:packageManagement
+:testRunPackageManagement
+call :RunPackageManagement
+goto :EOF
+
+:RunPackageManagement
 pushd %temp%
 cls
 

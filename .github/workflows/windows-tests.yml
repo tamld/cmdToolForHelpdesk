@@ -48,6 +48,18 @@ jobs:
             expected_text: "Install All in One with Office 2021"
           - test_name: testInstallAioWithOffice2024
             expected_text: "Install All in One with Office 2024"
+          - test_name: testRunPackageManagement
+            expected_text: "Checking if Chocolatey is installed"
+          - test_name: testInstallEndUsers
+            expected_text: "Install End User Softwares"
+          - test_name: testInstallRemoteApps
+            expected_text: "Install Remote Apps"
+          - test_name: testInstallNetworkApps
+            expected_text: "Install Network Apps"
+          - test_name: testInstallChatApps
+            expected_text: "Install Chat Apps"
+          - test_name: testUpdateAllPackages
+            expected_text: "Update Softwares"
 
     steps:
       - uses: actions/checkout@v3
