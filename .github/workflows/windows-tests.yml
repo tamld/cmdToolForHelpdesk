@@ -36,6 +36,12 @@ jobs:
             expected_text: "File has been updated"
           - test_name: testInstallOfficeMenu
             expected_text: "Install Office Online"
+          - test_name: testUninstallOffice
+            expected_text: "Uninstall Office all versions"
+          - test_name: testRemoveOfficeKey
+            expected_text: "Remove Office Key"
+          - test_name: testLoadSkusMenu
+            expected_text: "Load Windows Eddition"
 
     steps:
       - uses: actions/checkout@v3

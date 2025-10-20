@@ -190,11 +190,11 @@ echo        [7] Main Menu                                        : Press 7
 echo        ==============================================================
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :main
-if %ERRORLEVEL% == 6 call :loadSkusMenu & goto :office-windows
+if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :OfficeWindowsMenu
 if %ERRORLEVEL% == 5 goto :fixNonCore
 if %ERRORLEVEL% == 4 goto :convertOfficeEddition
-if %ERRORLEVEL% == 3 goto :removeOfficeKey
-if %ERRORLEVEL% == 2 goto :uninstallOffice
+if %ERRORLEVEL% == 3 goto :RemoveOfficeKey
+if %ERRORLEVEL% == 2 goto :UninstallOffice
 if %ERRORLEVEL% == 1 goto :InstallOfficeMenu
 endlocal
 REM ==============================================================================
@@ -404,7 +404,11 @@ if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%Pro
 goto :eof
 
 :: Function Menu that selects which edition Windows will convert to
-:loadSkusMenu
+:testLoadSkusMenu
+call :LoadSkusMenu
+goto :EOF
+
+:LoadSkusMenu
 setlocal
 cls
 Title Load Windows Eddition
@@ -477,7 +481,11 @@ goto :office-windows
 
 REM ============================================
 REM Start of Remove Office Keys
-:removeOfficeKey
+:testRemoveOfficeKey
+call :RemoveOfficeKey
+goto :EOF
+
+:RemoveOfficeKey
 cls
 Title Remove Office Key
 echo.
@@ -525,7 +533,11 @@ goto :eof
 
     
     
-:uninstallOffice
+:testUninstallOffice
+call :UninstallOffice
+goto :EOF
+
+:UninstallOffice
 cls
 Title Uninstall Office all versions
 echo.
