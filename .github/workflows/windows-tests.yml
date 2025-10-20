@@ -42,6 +42,12 @@ jobs:
             expected_text: "Remove Office Key"
           - test_name: testLoadSkusMenu
             expected_text: "Load Windows Eddition"
+          - test_name: testInstallAioWithOffice2019
+            expected_text: "Install All in One with Office 2019"
+          - test_name: testInstallAioWithOffice2021
+            expected_text: "Install All in One with Office 2021"
+          - test_name: testInstallAioWithOffice2024
+            expected_text: "Install All in One with Office 2024"
 
     steps:
       - uses: actions/checkout@v3

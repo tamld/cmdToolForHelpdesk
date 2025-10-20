@@ -75,9 +75,9 @@ echo        ======================================================
 choice /n /c 12345 /M "Press your choice: "
 
 if errorlevel 5 goto main
-if errorlevel 4 goto installAIO-O2019
-if errorlevel 3 goto installAIO-O2021
-if errorlevel 2 goto installAIO-O2024
+if errorlevel 4 goto InstallAioWithOffice2019
+if errorlevel 3 goto InstallAioWithOffice2021
+if errorlevel 2 goto InstallAioWithOffice2024
 if errorlevel 1 goto installAIO-Fresh
 
 echo Invalid selection. Please try again.
@@ -109,7 +109,11 @@ call :installAIO
 call :Clean
 goto :installAIOMenu
 
-:installAIO-O2019
+:testInstallAioWithOffice2019
+call :InstallAioWithOffice2019
+goto :EOF
+
+:InstallAioWithOffice2019
 Title Install All in One with Office 2019
 call :installAIO
 set opt5=(NO)
@@ -125,7 +129,11 @@ set office_type=Volume
 call :installOffice
 goto :installAIOMenu
 
-:installAIO-O2021
+:testInstallAioWithOffice2021
+call :InstallAioWithOffice2021
+goto :EOF
+
+:InstallAioWithOffice2021
 Title Install All in One with Office 2021
 call :installAIO
 set opt5=(NO)
@@ -141,7 +149,11 @@ set office_type=Volume
 call :installOffice
 goto :installAIOMenu
 
-:installAIO-O2024
+:testInstallAioWithOffice2024
+call :InstallAioWithOffice2024
+goto :EOF
+
+:InstallAioWithOffice2024
 Title Install All in One with Office 2024
 call :installAIO
 set opt5=(NO)
