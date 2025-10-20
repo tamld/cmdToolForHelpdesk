@@ -47,7 +47,7 @@ echo    ========================================================
 Choice /N /C 1234567 /M " Press your choice :"
 ::if %ERRORLEVEL% == 8 call :checkCompatibility & goto main
 if %ERRORLEVEL% == 7 call :clean && goto exit
-if %ERRORLEVEL% == 6 call :updateCMD & goto main
+if %ERRORLEVEL% == 6 call :UpdateCMD & goto main
 if %ERRORLEVEL% == 5 goto PackageManagementMenu
 if %ERRORLEVEL% == 4 goto UtilitiesMenu
 if %ERRORLEVEL% == 3 goto activeLicenses
@@ -1452,7 +1452,11 @@ goto :EOF
 REM End of Winget functions
 REM ========================================================================================================================================
 REM function update CMD via github
-:updateCMD
+:testUpdateCMD
+call :UpdateCMD
+goto :EOF
+
+:UpdateCMD
 cls
 cd /d %dp%
 copy Helpdesk-Tools.cmd Helpdesk-Tools-old.cmd /Y
