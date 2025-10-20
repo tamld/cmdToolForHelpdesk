@@ -15,7 +15,26 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        test_name: [MainMenu, InstallMenu, installAio, installAioFresh, testActiveLicenses, testUtilitiesMenu, testOfficeWindowsMenu, testPackageManagementMenu, testUpdateCMD]
+        include:
+          - test_name: MainMenu
+            expected_text: "Main Menu"
+          - test_name: InstallMenu
+            expected_text: "Install All In One Online"
+          - test_name: installAio
+            expected_text: "Install All in One"
+          - test_name: installAioFresh
+            expected_text: "Install All in One from fresh Windows without Office"
+          - test_name: testActiveLicenses
+            expected_text: "Active Licenses Menu"
+          - test_name: testUtilitiesMenu
+            expected_text: "Utilities Main Menu"
+          - test_name: testOfficeWindowsMenu
+            expected_text: "Windows Office Main Menu"
+          - test_name: testPackageManagementMenu
+            expected_text: "Package Management Software Main Menu"
+          - test_name: testUpdateCMD
+            expected_text: "File has been updated"
+
     steps:
       - uses: actions/checkout@v3
       - name: Run ${{ matrix.test_name }} Test
@@ -23,4 +42,4 @@ jobs:
         run: |
           if not exist .\tests\reports mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:${{ matrix.test_name }} > .\tests\reports\${{ matrix.test_name }}.log 2>&1
-          REM The test_runner.cmd will be implemented later to verify logs
+          call .\tests\test_runner.cmd .\tests\reports\${{ matrix.test_name }}.log "${{ matrix.expected_text }}"
