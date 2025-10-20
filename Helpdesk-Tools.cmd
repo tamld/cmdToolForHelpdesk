@@ -49,9 +49,9 @@ Choice /N /C 1234567 /M " Press your choice :"
 if %ERRORLEVEL% == 7 call :clean && goto exit
 if %ERRORLEVEL% == 6 call :updateCMD & goto main
 if %ERRORLEVEL% == 5 goto packageManagementMenu
-if %ERRORLEVEL% == 4 goto utilities
+if %ERRORLEVEL% == 4 goto UtilitiesMenu
 if %ERRORLEVEL% == 3 goto activeLicenses
-if %ERRORLEVEL% == 2 goto office-windows
+if %ERRORLEVEL% == 2 goto OfficeWindowsMenu
 if %ERRORLEVEL% == 1 goto installAIOMenu
 endlocal
 goto end
@@ -169,7 +169,11 @@ REM End of Install AIO Online
 ::========================================================================================================================================
 ::==============================================================================
 :: Start of Windows Office Utilities Menu
-:office-windows
+:testOfficeWindowsMenu
+call :OfficeWindowsMenu
+goto :EOF
+
+:OfficeWindowsMenu
 setlocal
 cd /d %dp%
 cls
@@ -679,7 +683,11 @@ call :activeLicenses
 goto :EOF
 
 REM ========================================================================================================================================
-:utilities
+:testUtilitiesMenu
+call :UtilitiesMenu
+goto :EOF
+
+:UtilitiesMenu
 setlocal
 REM Start of Utilities Menu
 cls
