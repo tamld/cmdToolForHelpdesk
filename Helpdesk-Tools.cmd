@@ -200,6 +200,7 @@ goto :eof
 setlocal
 cd /d %dp%
 call :DisplayOfficeWindowsMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :MainMenu
 if %ERRORLEVEL% == 6 call :loadSkusMenu & goto :office-windows

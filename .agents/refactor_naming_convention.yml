@@ -1,0 +1,12 @@
+convention:
+  target_objects: [Menu, Submenu, Function]
+  rules:
+    - type: Menu
+      case: PascalCase
+      example: :MainMenu, :InstallOfficeMenu
+    - type: Submenu
+      case: PascalCase
+      example: :RemoveOfficeKey, :SelectOfficeApp
+    - type: Function
+      case: camelCase
+      example: :downloadOffice, :checkCompatibility

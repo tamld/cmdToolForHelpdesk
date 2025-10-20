@@ -54,3 +54,14 @@ jobs:
           mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:installAioFresh > .\tests\reports\install_aio_fresh.log 2>&1
           .\tests\test_runner.cmd
+
+  test-office-windows-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run OfficeWindowsMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:office-windows > .\tests\reports\office_windows_menu.log 2>&1
+          .\tests\test_runner.cmd
