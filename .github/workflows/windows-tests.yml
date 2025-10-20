@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        test_name: [MainMenu, InstallMenu, installAio, installAioFresh]
+        test_name: [MainMenu, InstallMenu, installAio, installAioFresh, testActiveLicenses]
     steps:
       - uses: actions/checkout@v3
       - name: Run ${{ matrix.test_name }} Test

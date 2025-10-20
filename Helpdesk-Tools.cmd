@@ -673,6 +673,11 @@ cls
 call :hold
 goto :activeLicenses
 REM End of Active Lienses functions
+
+:testActiveLicenses
+call :activeLicenses
+goto :EOF
+
 REM ========================================================================================================================================
 :utilities
 setlocal
