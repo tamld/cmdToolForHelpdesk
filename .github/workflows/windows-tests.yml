@@ -34,6 +34,8 @@ jobs:
             expected_text: "Package Management Software Main Menu"
           - test_name: testUpdateCMD
             expected_text: "File has been updated"
+          - test_name: testInstallOfficeMenu
+            expected_text: "Install Office Online"
 
     steps:
       - uses: actions/checkout@v3

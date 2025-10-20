@@ -195,14 +195,18 @@ if %ERRORLEVEL% == 5 goto :fixNonCore
 if %ERRORLEVEL% == 4 goto :convertOfficeEddition
 if %ERRORLEVEL% == 3 goto :removeOfficeKey
 if %ERRORLEVEL% == 2 goto :uninstallOffice
-if %ERRORLEVEL% == 1 goto :installOfficeMenu
+if %ERRORLEVEL% == 1 goto :InstallOfficeMenu
 endlocal
 REM ==============================================================================
 REM Start of Windows Office Utilities functions
 REM ==============================================================================
 REM Sub menu Install Office Online
 
-:installOfficeMenu
+:testInstallOfficeMenu
+call :InstallOfficeMenu
+goto :EOF
+
+:InstallOfficeMenu
 Title Install Office Online
 setlocal
 cls
