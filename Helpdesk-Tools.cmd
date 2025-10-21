@@ -110,7 +110,7 @@ call :installEndusers
 call :installChatApps
 call :installRemoteApps
 call :installUnikey
-call :createShortcut
+call :createShortcutss
 call :installSupportAssistant
 call :debloat
 goto :EOF
@@ -1058,7 +1058,7 @@ set "pkg_menu[2]=installEndusers"
 set "pkg_menu[3]=installRemoteApps"
 set "pkg_menu[4]=installNetworkApps"
 set "pkg_menu[5]=installChatApps"
-set "pkg_menu[6]=update-All"
+set "pkg_menu[6]=updateAllPackages"
 set "pkg_menu[7]=MainMenu"
 
 :: Display menu
@@ -1071,7 +1071,7 @@ call :dispatch_menu pkg_menu USER_CHOICE
 goto :PackageManagerMenu
 
 
-:update-All
+:updateAllPackages
 Title Update Softwares
 call :checkCompatibility
 cls

@@ -209,7 +209,7 @@
 - old_name: :update-All
   new_name: :updateAllPackages
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :winget-Deskjob
   new_name: :wingetInstallDeskjob
   type: Helper
