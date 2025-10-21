@@ -206,7 +206,7 @@ if %ERRORLEVEL% == 7 goto :MainMenu
 if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :office-windows
 if %ERRORLEVEL% == 5 goto :fixNonCore
 if %ERRORLEVEL% == 4 goto :convertOfficeEddition
-if %ERRORLEVEL% == 3 goto :removeOfficeKey
+if %ERRORLEVEL% == 3 goto :RemoveOfficeKeyMenu
 if %ERRORLEVEL% == 2 goto :uninstallOffice
 if %ERRORLEVEL% == 1 goto :installOfficeMenu
 endlocal
@@ -508,8 +508,9 @@ echo            [3] Back to Windows Office Menu         : Press 3
 echo            =================================================
 goto :eof
 
-:removeOfficeKey
+:RemoveOfficeKeyMenu
 call :DisplayRemoveOfficeKeyMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :office-windows
 if %ERRORLEVEL% == 2 call :removeOfficeKey-All & goto :office-windows

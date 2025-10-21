@@ -81,7 +81,7 @@
 - old_name: :removeOfficeKey
   new_name: :RemoveOfficeKeyMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :removeOfficeKey-1B1
   new_name: :removeOfficeKeyOneByOne
   type: Helper
