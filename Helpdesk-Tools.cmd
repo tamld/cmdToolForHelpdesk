@@ -1097,7 +1097,7 @@ Title Install End User Softwares
 where winget >nul 2>&1
 if %errorlevel%==0 (
     echo [*] Using Winget to install End Users Applications...
-    call :winget-Endusers
+    call :wingetInstallEndUsers
 ) else (
     echo [*] Winget not found. Switching to Chocolatey...
     call :chocoInstallEndUsers

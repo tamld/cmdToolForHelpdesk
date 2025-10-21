@@ -261,7 +261,7 @@
 - old_name: :winget-Endusers
   new_name: :wingetInstallEndUsers
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :packageManagement
   new_name: :installPackageManagers
   type: Helper
