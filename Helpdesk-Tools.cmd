@@ -1126,7 +1126,7 @@ if %errorlevel%==0 (
     call :winget-Network
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Network Applications...
-    call :choco-Network
+    call :chocoInstallNetwork
 )
 goto :EOF
 
@@ -1143,7 +1143,7 @@ if %errorlevel%==0 (
 )
 goto :EOF
 
-:choco-Network
+:chocoInstallNetwork
 cls
 Title Install Network softwares by Chocolatey
 call :checkCompatibility
