@@ -649,7 +649,7 @@ call :DisplayActiveLicensesMenu
 if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :MainMenu
-if %ERRORLEVEL% == 6 goto :MAS
+if %ERRORLEVEL% == 6 goto :runMicrosoftActivationScripts
 if %ERRORLEVEL% == 5 goto :restoreLicenses
 if %ERRORLEVEL% == 4 goto :BackupLicensesMenu
 if %ERRORLEVEL% == 3 goto :checkLicense
@@ -660,7 +660,7 @@ endlocal
 REM End of Active Licenses Menu
 REM ==============================================================================
 ::@ Start of Active Lienses functions
-:MAS
+:runMicrosoftActivationScripts
 cls
 REM call :hold
 pushd %temp%

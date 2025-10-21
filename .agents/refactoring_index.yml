@@ -117,7 +117,7 @@
 - old_name: :MAS
   new_name: :runMicrosoftActivationScripts
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :restoreLicenses
   new_name: :restoreLicenses
   type: Helper
