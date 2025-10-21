@@ -555,7 +555,7 @@ if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234 /M " Press your choice : "
 if %ERRORLEVEL% == 4 goto :office-windows
 if %ERRORLEVEL% == 3 goto :removeOfficeWithBCUninstaller
-if %ERRORLEVEL% == 2 goto :removeOffice-OfficeTool
+if %ERRORLEVEL% == 2 goto :removeOfficeWithOfficeTool
 if %ERRORLEVEL% == 1 goto :removeOffice-saraCmd
 
 :DisplayUninstallOfficeMenu
@@ -579,7 +579,7 @@ call :installSoft_ByWinget Klocman.BulkCrapUninstaller
 call :bcuninstaller-Settings
 goto :office-windows
 
-:removeOffice-OfficeTool
+:removeOfficeWithOfficeTool
 Title Uninstall Office Using Office Tool
 cls
 pushd %temp%
