@@ -77,7 +77,7 @@
 - old_name: :convertOfficeEddition
   new_name: :convertOfficeEdition
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :removeOfficeKey
   new_name: :RemoveOfficeKeyMenu
   type: Controller

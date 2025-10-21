@@ -205,7 +205,7 @@ Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :MainMenu
 if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :office-windows
 if %ERRORLEVEL% == 5 goto :fixNonCore
-if %ERRORLEVEL% == 4 goto :convertOfficeEddition
+if %ERRORLEVEL% == 4 goto :convertOfficeEdition
 if %ERRORLEVEL% == 3 goto :RemoveOfficeKeyMenu
 if %ERRORLEVEL% == 2 goto :UninstallOfficeMenu
 if %ERRORLEVEL% == 1 goto :installOfficeMenu
@@ -490,7 +490,7 @@ cls
 call :hold
 goto :office-windows
 
-:convertOfficeEddition
+:convertOfficeEdition
 call :hold
 goto :office-windows
 
