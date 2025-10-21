@@ -17,7 +17,7 @@
 - old_name: :installAIO-O2019
   new_name: :installAioWithOffice2019
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :installAIO-O2021
   new_name: :installAioWithOffice2021
   type: Helper
