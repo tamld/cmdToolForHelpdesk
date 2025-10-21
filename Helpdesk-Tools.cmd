@@ -61,7 +61,7 @@ Choice /N /C 1234567 /M " Press your choice :"
 if %ERRORLEVEL% == 7 call :clean && goto exit
 if %ERRORLEVEL% == 6 call :updateCMD & goto MainMenu
 if %ERRORLEVEL% == 5 goto packageManagementMenu
-if %ERRORLEVEL% == 4 goto utilities
+if %ERRORLEVEL% == 4 goto :UtilitiesMenu
 if %ERRORLEVEL% == 3 goto activeLicenses
 if %ERRORLEVEL% == 2 goto office-windows
 if %ERRORLEVEL% == 1 goto InstallMenu
@@ -735,12 +735,13 @@ echo        [8] Back to Main Menu                   : Press 8
 echo        =================================================
 goto :eof
 
-:utilities
+:UtilitiesMenu
 setlocal
 REM Start of Utilities Menu
 cls
 title Utilities Main Menu
 call :DisplayUtilitiesMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 12345678 /M " Press your choice : "
 if %ERRORLEVEL% == 8 goto :MainMenu
 if %ERRORLEVEL% == 7 goto :debloat & goto :utilities

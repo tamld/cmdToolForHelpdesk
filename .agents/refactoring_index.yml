@@ -149,7 +149,7 @@
 - old_name: :utilities
   new_name: :UtilitiesMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :winutil
   new_name: :runWinUtil
   type: Helper

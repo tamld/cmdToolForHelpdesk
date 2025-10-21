@@ -142,3 +142,14 @@ jobs:
           mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:BackupLicensesMenu > .\tests\reports\backup_licenses_menu.log 2>&1
           .\tests\test_runner.cmd
+
+  test-utilities-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run UtilitiesMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:UtilitiesMenu > .\tests\reports\utilities_menu.log 2>&1
+          .\tests\test_runner.cmd
