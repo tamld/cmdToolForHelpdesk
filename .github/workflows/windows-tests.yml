@@ -87,3 +87,14 @@ jobs:
           mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:LoadSkusMenu > .\tests\reports\load_skus_menu.log 2>&1
           .\tests\test_runner.cmd
+
+  test-select-office-app:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run SelectOfficeApp Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:selectOfficeApp > .\tests\reports\select_office_app.log 2>&1
+          .\tests\test_runner.cmd

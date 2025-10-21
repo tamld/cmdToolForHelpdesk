@@ -296,11 +296,10 @@ Set "opt8=%on%" ::OneDrive
 Set "opt9=%on%" ::VisioPro2021Retail
 Set "optP=%on%" ::ProjectPro2021Retail
 Set "optD=%on%" ::ProofingTools
-Set "optS=%on%" ::Skype
-goto :selectOfficeApp
+goto :SelectOfficeApp
      
 :: Function menu select app to install. Default is yes with Yes colored green.
-:selectOfficeApp
+:SelectOfficeApp
 cls
 @echo off
 echo.
@@ -319,6 +318,7 @@ echo List of components to install Office %office%
 <NUL Set/P=[S] & (if "%optS%"=="%on%" (Call :setColor "%optS%" 0a) Else (<NUL Set/P="%optS%")) & echo  Microsoft Skype.
 <NUL Set/P=[Q] & echo Quit to Office Menu
 echo.
+if /i "%~1"=="/test" goto :EOF
 CHOICE /c 123456789PDSXQ /n /m "--> Select option(s) and then press [X] to start the installation: "
 if %ERRORLEVEL% == 14 goto :installOfficeMenu
 if %ERRORLEVEL% == 13 goto :installOffice

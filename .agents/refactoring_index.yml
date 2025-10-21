@@ -45,7 +45,7 @@
 - old_name: :selectOfficeApp
   new_name: :selectOfficeApp
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :setColor
   new_name: :setColor
   type: Helper
