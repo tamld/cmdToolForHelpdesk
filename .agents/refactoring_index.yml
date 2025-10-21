@@ -165,7 +165,7 @@
 - old_name: :input_pass
   new_name: :inputPassword
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :addUserToAdmins
   new_name: :addUserToAdmins
   type: Helper

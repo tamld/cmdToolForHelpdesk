@@ -781,7 +781,7 @@ echo Enter new username that you'd like to add:
 set /p user=
 
 REM Prompt user to set password or not
-:input_pass
+:inputPassword
 echo Do you want to set a password for %user%? [Y/N]
 set /p setpass=
 
@@ -799,7 +799,7 @@ net user %user% "" /add 2>nul
 cls
 ) else (
 echo Invalid input. Please try again.
-goto :input_pass
+goto :inputPassword
 cls
 )
 goto :EOF
