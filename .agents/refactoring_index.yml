@@ -241,7 +241,7 @@
 - old_name: :choco-Chat
   new_name: :chocoInstallChat
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :winget-Chat
   new_name: :wingetInstallChat
   type: Helper

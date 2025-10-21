@@ -1139,7 +1139,7 @@ if %errorlevel%==0 (
     call :winget-Chat
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Chat Applications...
-    call :choco-Chat
+    call :chocoInstallChat
 )
 goto :EOF
 
@@ -1234,7 +1234,7 @@ call :killtasks
 endlocal
 goto :EOF
 
-:choco-Chat
+:chocoInstallChat
 Title Install Chat softwares by Chocolatey
 call :checkCompatibility
 setlocal
