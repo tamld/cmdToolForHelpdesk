@@ -1123,7 +1123,7 @@ Title Install Network Apps
 where winget >nul 2>&1
 if %errorlevel%==0 (
     echo [*] Using Winget to install Network Applications...
-    call :winget-Network
+    call :wingetInstallNetwork
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Network Applications...
     call :chocoInstallNetwork
@@ -1189,7 +1189,7 @@ call :killtasks
 endlocal
 goto :EOF
 
-:winget-Network
+:wingetInstallNetwork
 Title Install Network softwares by Winget
 setlocal
 
