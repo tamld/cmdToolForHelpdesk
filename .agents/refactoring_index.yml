@@ -25,7 +25,7 @@
 - old_name: :installAIO-O2024
   new_name: :installAioWithOffice2024
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :office-windows
   new_name: :OfficeWindowsMenu
   type: Controller
