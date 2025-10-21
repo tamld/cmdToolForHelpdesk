@@ -249,7 +249,7 @@
 - old_name: :winget-RemoteSupport
   new_name: :wingetInstallRemoteSupport
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :choco-RemoteSupport
   new_name: :chocoInstallRemoteSupport
   type: Helper

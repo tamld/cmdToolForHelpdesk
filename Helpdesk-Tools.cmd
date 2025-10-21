@@ -1110,7 +1110,7 @@ Title Install Remote Apps
 where winget >nul 2>&1
 if %errorlevel%==0 (
     echo [*] Using Winget to install Remote Applications...
-    call :winget-RemoteSupport
+    call :wingetInstallRemoteSupport
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Remote Applications...
     call :choco-RemoteSupport
@@ -1286,7 +1286,7 @@ endlocal
 call :killtasks
 goto :EOF
 
-:winget-RemoteSupport
+:wingetInstallRemoteSupport
 cls
 call :checkCompatibility
 call :installSoft_ByWinget TeamViewer.TeamViewer
