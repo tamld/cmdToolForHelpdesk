@@ -197,7 +197,7 @@
 - old_name: :settingWindows
   new_name: :applyWindowsSettings
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :createShortcut
   new_name: :createShortcuts
   type: Helper

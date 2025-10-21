@@ -104,7 +104,7 @@ REM function install fresh Windows using Winget utilities
 Title Install All in One 
 cls
 call :checkCompatibility
-call :settingWindows
+call :applyWindowsSettings
 call :setHighPerformance
 call :installEndusers
 call :installChatApps
@@ -960,7 +960,7 @@ If ERRORLEVEL == Y goto :changeHostName
 endlocal
     goto :utilities
 
-:settingWindows
+:applyWindowsSettings
 cls
 echo off
 echo Setting OS
