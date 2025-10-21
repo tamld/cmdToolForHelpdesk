@@ -831,7 +831,7 @@ ping -n 2 localhost 1>NUL
 cls
 goto :utilities
 
-:restartPC
+:restartPc
 cls
 echo This will force restart computer with 5s
 shutdown -r -t 5 -f

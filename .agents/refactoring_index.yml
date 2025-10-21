@@ -177,7 +177,7 @@
 - old_name: :restartPC
   new_name: :restartPc
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :installSupportAssistant
   new_name: :installSupportAssistant
   type: Helper
