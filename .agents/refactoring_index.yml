@@ -105,7 +105,7 @@
 - old_name: :removeOffice-saraUI
   new_name: :removeOfficeWithSaraUI
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :removeOffice-saraCmd
   new_name: :removeOfficeWithSaraCmd
   type: Helper

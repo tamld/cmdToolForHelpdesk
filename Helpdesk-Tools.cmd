@@ -591,7 +591,7 @@ ping -n 3 localhost > nul
 "Office Tool\Office Tool Plus.Console.exe" deploy /rmall /acpteula
 goto :office-windows
 
-:removeOffice-saraUI
+:removeOfficeWithSaraUI
 Title Uninstall Office Using Office Tool
 cls
 Title Uninstall Office Using Sara UI
