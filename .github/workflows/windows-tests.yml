@@ -131,3 +131,14 @@ jobs:
           mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:ActiveLicensesMenu > .\tests\reports\active_licenses_menu.log 2>&1
           .\tests\test_runner.cmd
+
+  test-backup-licenses-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run BackupLicensesMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:BackupLicensesMenu > .\tests\reports\backup_licenses_menu.log 2>&1
+          .\tests\test_runner.cmd

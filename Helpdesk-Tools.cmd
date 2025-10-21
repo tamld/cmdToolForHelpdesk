@@ -651,7 +651,7 @@ Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :MainMenu
 if %ERRORLEVEL% == 6 goto :MAS
 if %ERRORLEVEL% == 5 goto :restoreLicenses
-if %ERRORLEVEL% == 4 goto :backupLicenses
+if %ERRORLEVEL% == 4 goto :BackupLicensesMenu
 if %ERRORLEVEL% == 3 goto :checkLicense
 if %ERRORLEVEL% == 2 goto :activeByPhone
 if %ERRORLEVEL% == 1 goto :activeOnline
@@ -687,9 +687,10 @@ echo            [3] Back to Main Menu                   : Press 3
 echo            =================================================
 goto :eof
 
-:backupLicenses
+:BackupLicensesMenu
 cls
 call :DisplayBackupLicensesMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :ActiveLicensesMenu
 if %ERRORLEVEL% == 2 goto :backupToNAS

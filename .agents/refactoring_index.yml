@@ -125,7 +125,7 @@
 - old_name: :backupLicenses
   new_name: :BackupLicensesMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :backupToNAS
   new_name: :backupToNas
   type: Helper
