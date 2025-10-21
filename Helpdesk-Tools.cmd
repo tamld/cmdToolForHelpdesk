@@ -514,9 +514,9 @@ if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :office-windows
 if %ERRORLEVEL% == 2 call :removeOfficeKey-All & goto :office-windows
-if %ERRORLEVEL% == 1 call :removeOfficeKey-1B1 & goto :office-windows
+if %ERRORLEVEL% == 1 call :removeOfficeKeyOneByOne & goto :office-windows
 
-:removeOfficeKey-1B1
+:removeOfficeKeyOneByOne
 cls
 setlocal 
 pushd %officePath%

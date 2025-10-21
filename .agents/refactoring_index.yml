@@ -85,7 +85,7 @@
 - old_name: :removeOfficeKey-1B1
   new_name: :removeOfficeKeyOneByOne
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :removeOfficeKey-All
   new_name: :removeOfficeKeyAll
   type: Helper
