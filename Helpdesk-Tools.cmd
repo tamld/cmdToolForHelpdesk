@@ -1100,7 +1100,7 @@ if %errorlevel%==0 (
     call :winget-Endusers
 ) else (
     echo [*] Winget not found. Switching to Chocolatey...
-    call :choco-Endusers
+    call :chocoInstallEndUsers
 )
 goto :EOF
 
@@ -1303,7 +1303,7 @@ choco install -y teamviewer ultraviewer anydesk.install
 REM choco install -y ultraviewer --ignore-checksums
 goto :EOF
 
-:choco-Endusers
+:chocoInstallEndUsers
 cls
 Title Install Enduser Software by Chocolatey
 echo off

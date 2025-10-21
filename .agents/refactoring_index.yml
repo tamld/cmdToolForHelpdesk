@@ -257,7 +257,7 @@
 - old_name: :choco-Endusers
   new_name: :chocoInstallEndUsers
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :winget-Endusers
   new_name: :wingetInstallEndUsers
   type: Helper
