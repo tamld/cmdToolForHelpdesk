@@ -207,7 +207,7 @@ if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :office-windows
 if %ERRORLEVEL% == 5 goto :fixNonCore
 if %ERRORLEVEL% == 4 goto :convertOfficeEddition
 if %ERRORLEVEL% == 3 goto :RemoveOfficeKeyMenu
-if %ERRORLEVEL% == 2 goto :uninstallOffice
+if %ERRORLEVEL% == 2 goto :UninstallOfficeMenu
 if %ERRORLEVEL% == 1 goto :installOfficeMenu
 endlocal
 REM ==============================================================================
@@ -549,8 +549,9 @@ goto :eof
 
     
     
-:uninstallOffice
+:UninstallOfficeMenu
 call :DisplayUninstallOfficeMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234 /M " Press your choice : "
 if %ERRORLEVEL% == 4 goto :office-windows
 if %ERRORLEVEL% == 3 goto :removeOffice-BCUninstaller

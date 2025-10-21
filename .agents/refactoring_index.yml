@@ -93,7 +93,7 @@
 - old_name: :uninstallOffice
   new_name: :UninstallOfficeMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :removeOffice-BCUninstaller
   new_name: :removeOfficeWithBCUninstaller
   type: Helper

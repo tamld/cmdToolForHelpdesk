@@ -109,3 +109,14 @@ jobs:
           mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:RemoveOfficeKeyMenu > .\tests\reports\remove_office_key_menu.log 2>&1
           .\tests\test_runner.cmd
+
+  test-uninstall-office-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run UninstallOfficeMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:UninstallOfficeMenu > .\tests\reports\uninstall_office_menu.log 2>&1
+          .\tests\test_runner.cmd
