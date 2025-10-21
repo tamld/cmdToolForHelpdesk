@@ -513,7 +513,7 @@ call :DisplayRemoveOfficeKeyMenu
 if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :office-windows
-if %ERRORLEVEL% == 2 call :removeOfficeKey-All & goto :office-windows
+if %ERRORLEVEL% == 2 call :removeOfficeKeyAll & goto :office-windows
 if %ERRORLEVEL% == 1 call :removeOfficeKeyOneByOne & goto :office-windows
 
 :removeOfficeKeyOneByOne
@@ -532,7 +532,7 @@ popd
 ping -n 2 localhost 1>NUL
 goto :eof
 
-:removeOfficeKey-All
+:removeOfficeKeyAll
 echo off 
 cls
 setlocal 

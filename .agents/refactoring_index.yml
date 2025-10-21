@@ -89,7 +89,7 @@
 - old_name: :removeOfficeKey-All
   new_name: :removeOfficeKeyAll
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :uninstallOffice
   new_name: :UninstallOfficeMenu
   type: Controller
