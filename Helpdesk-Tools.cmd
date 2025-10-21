@@ -1113,7 +1113,7 @@ if %errorlevel%==0 (
     call :wingetInstallRemoteSupport
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Remote Applications...
-    call :choco-RemoteSupport
+    call :chocoInstallRemoteSupport
 )
 goto :EOF
 
@@ -1294,7 +1294,7 @@ call :installSoft_ByWinget DucFabulous.UltraViewer
 call :killtasks
 goto :EOF
 
-:choco-RemoteSupport
+:chocoInstallRemoteSupport
 cls
 Title Install Remote Support Software by Chocolatey
 echo off

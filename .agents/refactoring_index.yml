@@ -253,7 +253,7 @@
 - old_name: :choco-RemoteSupport
   new_name: :chocoInstallRemoteSupport
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :choco-Endusers
   new_name: :chocoInstallEndUsers
   type: Helper
