@@ -69,7 +69,7 @@
 - old_name: :loadSKUS
   new_name: :loadSkus
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :fixNonCore
   new_name: :fixNonCore
   type: Helper

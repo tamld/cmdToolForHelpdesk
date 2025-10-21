@@ -442,19 +442,19 @@ setlocal
 call :DisplayLoadSkusMenu
 if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123456789 /M " Press your choice : "
-if %ERRORLEVEL% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSKUS
-if %ERRORLEVEL% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSKUS
-if %ERRORLEVEL% == 3 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set typeW=Enterprise&& goto :loadSKUS
-if %ERRORLEVEL% == 4 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set typeW=EnterpriseS&& goto :loadSKUS
-if %ERRORLEVEL% == 5 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=IoTEnterprise&& goto :loadSKUS
-if %ERRORLEVEL% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Education&& goto :loadSKUS
-if %ERRORLEVEL% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSKUS
-if %ERRORLEVEL% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSKUS
+if %ERRORLEVEL% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSkus
+if %ERRORLEVEL% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSkus
+if %ERRORLEVEL% == 3 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set typeW=Enterprise&& goto :loadSkus
+if %ERRORLEVEL% == 4 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set typeW=EnterpriseS&& goto :loadSkus
+if %ERRORLEVEL% == 5 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=IoTEnterprise&& goto :loadSkus
+if %ERRORLEVEL% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Education&& goto :loadSkus
+if %ERRORLEVEL% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSkus
+if %ERRORLEVEL% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSkus
 if %ERRORLEVEL% == 9 goto :office-windows
 endlocal
 
 :: Loads a specified Windows SKU (edition) using downloaded license files.
-:loadSKUS
+:loadSkus
 setlocal
 cls
 echo off
