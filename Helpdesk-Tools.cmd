@@ -554,7 +554,7 @@ call :DisplayUninstallOfficeMenu
 if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234 /M " Press your choice : "
 if %ERRORLEVEL% == 4 goto :office-windows
-if %ERRORLEVEL% == 3 goto :removeOffice-BCUninstaller
+if %ERRORLEVEL% == 3 goto :removeOfficeWithBCUninstaller
 if %ERRORLEVEL% == 2 goto :removeOffice-OfficeTool
 if %ERRORLEVEL% == 1 goto :removeOffice-saraCmd
 
@@ -570,7 +570,7 @@ echo            [4] Back to Windows Office Menu            : Press 4
 echo            ====================================================
 goto :eof
 
-:removeOffice-BCUninstaller
+:removeOfficeWithBCUninstaller
 cls
 Title Uninstall Office Using BulkCrapUninstaller
 echo This will install BCUninstaller into your computer

@@ -97,7 +97,7 @@
 - old_name: :removeOffice-BCUninstaller
   new_name: :removeOfficeWithBCUninstaller
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :removeOffice-OfficeTool
   new_name: :removeOfficeWithOfficeTool
   type: Helper
