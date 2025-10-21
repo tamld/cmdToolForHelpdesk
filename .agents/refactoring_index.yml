@@ -65,7 +65,7 @@
 - old_name: :loadSkusMenu
   new_name: :LoadSkusMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :loadSKUS
   new_name: :loadSkus
   type: Helper
