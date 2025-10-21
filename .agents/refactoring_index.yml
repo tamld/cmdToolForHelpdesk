@@ -29,11 +29,11 @@
 - old_name: :office-windows
   new_name: :OfficeWindowsMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :installOfficeMenu
   new_name: :InstallOfficeMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :downloadOffice
   new_name: :downloadOffice
   type: Helper
