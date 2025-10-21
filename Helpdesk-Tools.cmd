@@ -1136,7 +1136,7 @@ Title Install Chat Apps
 where winget >nul 2>&1
 if %errorlevel%==0 (
     echo [*] Using Winget to install Chat Applications...
-    call :winget-Chat
+    call :wingetInstallChat
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Chat Applications...
     call :chocoInstallChat
@@ -1259,7 +1259,7 @@ for %%p in (%packageList%) do (choco install -y %%p)
 endlocal
 goto :EOF
 
-:winget-Chat
+:wingetInstallChat
 Title Install Chat softwares by Winget
 call :checkCompatibility
 setlocal

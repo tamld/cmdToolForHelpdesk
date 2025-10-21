@@ -245,7 +245,7 @@
 - old_name: :winget-Chat
   new_name: :wingetInstallChat
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :winget-RemoteSupport
   new_name: :wingetInstallRemoteSupport
   type: Helper
