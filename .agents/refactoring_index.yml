@@ -129,7 +129,7 @@
 - old_name: :backupToNAS
   new_name: :backupToNas
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :backupToLocal
   new_name: :backupToLocal
   type: Helper

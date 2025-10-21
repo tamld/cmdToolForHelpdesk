@@ -693,10 +693,10 @@ call :DisplayBackupLicensesMenu
 if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123 /M " Press your choice : "
 if %ERRORLEVEL% == 3 goto :ActiveLicensesMenu
-if %ERRORLEVEL% == 2 goto :backupToNAS
+if %ERRORLEVEL% == 2 goto :backupToNas
 if %ERRORLEVEL% == 1 goto :backupToLocal
 
-:backupToNAS
+:backupToNas
 call :hold
 goto :backupLicenses
 
