@@ -1,7 +1,7 @@
 - old_name: :main
   new_name: :MainMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :installAIOMenu
   new_name: :InstallMenu
   type: Controller
