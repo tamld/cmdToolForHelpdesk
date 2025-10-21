@@ -153,3 +153,14 @@ jobs:
           mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:UtilitiesMenu > .\tests\reports\utilities_menu.log 2>&1
           .\tests\test_runner.cmd
+
+  test-package-management-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run PackageManagerMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:PackageManagerMenu > .\tests\reports\package_management_menu.log 2>&1
+          .\tests\test_runner.cmd

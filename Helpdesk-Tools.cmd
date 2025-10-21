@@ -1048,7 +1048,7 @@ echo        [7] Main Menu                              : Press 7
 echo        ====================================================
 goto :eof
 
-:packageManagementMenu
+:PackageManagerMenu
 cls
 title Package Management Software Main Menu
 
@@ -1063,11 +1063,12 @@ set "pkg_menu[7]=MainMenu"
 
 :: Display menu
 call :DisplayPackageManagerMenu
+if /i "%~1"=="/test" goto :EOF
 choice /n /c 1234567 /m "Press your choice (1-7):"
 
 set "USER_CHOICE=%errorlevel%"
 call :dispatch_menu pkg_menu USER_CHOICE
-goto :packageManagementMenu
+goto :PackageManagerMenu
 
 
 :update-All

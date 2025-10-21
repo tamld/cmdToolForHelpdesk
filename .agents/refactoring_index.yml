@@ -205,7 +205,7 @@
 - old_name: :packageManagementMenu
   new_name: :PackageManagerMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :update-All
   new_name: :updateAllPackages
   type: Helper
