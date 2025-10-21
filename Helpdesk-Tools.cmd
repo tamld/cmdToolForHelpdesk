@@ -1086,7 +1086,7 @@ echo Task done!
 ping -n 2 localhost > nul
 goto :EOF
 
-:winget-Deskjob
+:wingetInstallDeskjob
 cls
 call :hold
 goto :EOF

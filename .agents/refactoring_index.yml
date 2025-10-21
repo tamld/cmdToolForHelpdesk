@@ -213,7 +213,7 @@
 - old_name: :winget-Deskjob
   new_name: :wingetInstallDeskjob
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :installEndusers
   new_name: :installEndUserApps
   type: Helper
