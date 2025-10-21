@@ -640,12 +640,13 @@ echo        [7] Back to Main Menu                          : Press 7
 echo        ========================================================
 goto :eof
 
-:activeLicenses
+:ActiveLicensesMenu
 REM Start of Active Licenses Menu
 setlocal
 Title Active Licenses Menu
 cls
 call :DisplayActiveLicensesMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :MainMenu
 if %ERRORLEVEL% == 6 goto :MAS
@@ -690,7 +691,7 @@ goto :eof
 cls
 call :DisplayBackupLicensesMenu
 Choice /N /C 123 /M " Press your choice : "
-if %ERRORLEVEL% == 3 goto :activeLicenses
+if %ERRORLEVEL% == 3 goto :ActiveLicensesMenu
 if %ERRORLEVEL% == 2 goto :backupToNAS
 if %ERRORLEVEL% == 1 goto :backupToLocal
 

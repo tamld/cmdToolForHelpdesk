@@ -113,7 +113,7 @@
 - old_name: :activeLicenses
   new_name: :ActiveLicensesMenu
   type: Controller
-  status: To Do
+  status: Done
 - old_name: :MAS
   new_name: :runMicrosoftActivationScripts
   type: Helper
