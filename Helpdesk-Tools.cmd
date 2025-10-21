@@ -89,7 +89,7 @@ choice /n /c 12345 /M "Press your choice: "
 
 if errorlevel 5 goto MainMenu
 if errorlevel 4 goto installAioWithOffice2019
-if errorlevel 3 goto installAIO-O2021
+if errorlevel 3 goto installAioWithOffice2021
 if errorlevel 2 goto installAIO-O2024
 if errorlevel 1 goto installAioFresh
 
@@ -137,7 +137,7 @@ set office_type=Volume
 call :installOffice
 goto :installAIOMenu
 
-:installAIO-O2021
+:installAioWithOffice2021
 Title Install All in One with Office 2021
 call :installAio
 set opt5=(NO)
