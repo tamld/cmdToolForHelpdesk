@@ -203,7 +203,7 @@ call :DisplayOfficeWindowsMenu
 if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234567 /M " Press your choice : "
 if %ERRORLEVEL% == 7 goto :MainMenu
-if %ERRORLEVEL% == 6 call :loadSkusMenu & goto :office-windows
+if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :office-windows
 if %ERRORLEVEL% == 5 goto :fixNonCore
 if %ERRORLEVEL% == 4 goto :convertOfficeEddition
 if %ERRORLEVEL% == 3 goto :removeOfficeKey
@@ -437,9 +437,10 @@ echo        [9] Menu Active Office                  : PRESS 9
 echo        ==================================================
 goto :eof
 
-:loadSkusMenu
+:LoadSkusMenu
 setlocal
 call :DisplayLoadSkusMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123456789 /M " Press your choice : "
 if %ERRORLEVEL% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSKUS
 if %ERRORLEVEL% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSKUS

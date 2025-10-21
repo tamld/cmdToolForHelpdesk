@@ -76,3 +76,14 @@ jobs:
           mkdir .\tests\reports
           .\Helpdesk-Tools.cmd /test:InstallOfficeMenu > .\tests\reports\install_office_menu.log 2>&1
           .\tests\test_runner.cmd
+
+  test-load-skus-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run LoadSkusMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:LoadSkusMenu > .\tests\reports\load_skus_menu.log 2>&1
+          .\tests\test_runner.cmd
