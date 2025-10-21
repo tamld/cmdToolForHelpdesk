@@ -556,7 +556,7 @@ Choice /N /C 1234 /M " Press your choice : "
 if %ERRORLEVEL% == 4 goto :office-windows
 if %ERRORLEVEL% == 3 goto :removeOfficeWithBCUninstaller
 if %ERRORLEVEL% == 2 goto :removeOfficeWithOfficeTool
-if %ERRORLEVEL% == 1 goto :removeOffice-saraCmd
+if %ERRORLEVEL% == 1 goto :removeOfficeWithSaraCmd
 
 :DisplayUninstallOfficeMenu
 cls
@@ -602,7 +602,7 @@ start https://aka.ms/SaRA-officeUninstallFromPC
 goto :office-windows
 
 :: Uninstalls Office completely using the SaRA command-line tool.
-:removeOffice-saraCmd
+:removeOfficeWithSaraCmd
 Title Uninstall office completely using Sara Cmd
 cls
 echo This will download and remove office without interactive
