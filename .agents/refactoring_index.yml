@@ -153,7 +153,7 @@
 - old_name: :winutil
   new_name: :runWinUtil
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :debloat
   new_name: :debloat
   type: Helper

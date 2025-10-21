@@ -747,7 +747,7 @@ if %ERRORLEVEL% == 8 goto :MainMenu
 if %ERRORLEVEL% == 7 goto :debloat & goto :utilities
 if %ERRORLEVEL% == 6 call :activeIDM & goto :utilities
 if %ERRORLEVEL% == 5 goto :installSupportAssistant
-if %ERRORLEVEL% == 4 call :winutil & goto :utilities
+if %ERRORLEVEL% == 4 call :runWinUtil & goto :utilities
 if %ERRORLEVEL% == 3 goto :cleanUpSystem & goto :utilities
 if %ERRORLEVEL% == 2 goto :changeHostName & goto :utilities
 if %ERRORLEVEL% == 1 goto :setHighPerformance & goto :utilities
@@ -755,7 +755,7 @@ endlocal
 REM End of Utilities Menu
 REM ==============================================================================
 REM Start of Utilities functions
-:winutil  
+:runWinUtil  
 :: call https://github.com/ChrisTitusTech/winutil Powershell
 start powershell -command "irm "https://christitus.com/win" | iex"
 goto :EOF
