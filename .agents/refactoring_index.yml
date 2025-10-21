@@ -217,7 +217,7 @@
 - old_name: :installEndusers
   new_name: :installEndUserApps
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :installRemoteApps
   new_name: :installRemoteApps
   type: Helper

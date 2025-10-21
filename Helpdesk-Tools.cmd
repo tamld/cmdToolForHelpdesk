@@ -106,7 +106,7 @@ cls
 call :checkCompatibility
 call :applyWindowsSettings
 call :setHighPerformance
-call :installEndusers
+call :installEndUserApps
 call :installChatApps
 call :installRemoteApps
 call :installUnikey
@@ -1054,7 +1054,7 @@ title Package Management Software Main Menu
 
 :: Define menu mapping
 set "pkg_menu[1]=packageManagement"
-set "pkg_menu[2]=installEndusers"
+set "pkg_menu[2]=installEndUserApps"
 set "pkg_menu[3]=installRemoteApps"
 set "pkg_menu[4]=installNetworkApps"
 set "pkg_menu[5]=installChatApps"
@@ -1091,7 +1091,7 @@ cls
 call :hold
 goto :EOF
 
-:installEndusers
+:installEndUserApps
 cls
 Title Install End User Softwares
 where winget >nul 2>&1
