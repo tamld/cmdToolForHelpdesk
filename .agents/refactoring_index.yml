@@ -301,7 +301,7 @@
 - old_name: :clean
   new_name: :cleanTemp
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :activeIDM
   new_name: :activeIdm
   type: Helper
@@ -313,11 +313,11 @@
 - old_name: :hold
   new_name: :notifyUnderConstruction
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :end
   new_name: :exitScript
   type: Helper
-  status: To Do
+  status: Done
 - old_name: :extractZip
   new_name: :extractZip
   type: Helper
@@ -330,3 +330,47 @@
   new_name: :dispatchMenu
   type: Helper
   status: To Do
+- old_name: :DisplayOfficeWindowsMenu
+  new_name: :displayOfficeWindowsMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayInstallOfficeMenu
+  new_name: :displayInstallOfficeMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayLoadSkusMenu
+  new_name: :displayLoadSkusMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayRemoveOfficeKeyMenu
+  new_name: :displayRemoveOfficeKeyMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayUninstallOfficeMenu
+  new_name: :displayUninstallOfficeMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayActiveLicensesMenu
+  new_name: :displayActiveLicensesMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayBackupLicensesMenu
+  new_name: :displayBackupLicensesMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayUtilitiesMenu
+  new_name: :displayUtilitiesMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayPackageManagerMenu
+  new_name: :displayPackageManagerMenu
+  type: Helper
+  status: Done
+- old_name: :installAIO-System-Network
+  new_name: :installAioSystemNetwork
+  type: Helper
+  status: Done
+- old_name: :installAIO-Helpdesk
+  new_name: :installAioHelpdesk
+  type: Helper
+  status: Done

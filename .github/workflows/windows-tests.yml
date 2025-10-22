@@ -63,7 +63,7 @@ jobs:
         shell: cmd
         run: |
           mkdir .\tests\reports
-          .\Helpdesk-Tools.cmd /test:office-windows > .\tests\reports\office_windows_menu.log 2>&1
+          .\Helpdesk-Tools.cmd /test:OfficeWindowsMenu > .\tests\reports\office_windows_menu.log 2>&1
           .\tests\test_runner.cmd
 
   test-install-office-menu:
