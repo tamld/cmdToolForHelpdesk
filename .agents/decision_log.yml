@@ -85,3 +85,15 @@
       type: "GitHub Actions CI Run"
       id: "18609303880"
   lesson: "Strategy is consistently successful across all major functional blocks of the main menu."
+
+- decisionId: 9
+  timestamp: "2025-10-22T12:00:00Z"
+  strategy_tested: "Single Atomic Commit for Remaining Renames"
+  context: "Applied to final 16 items: 10 Display helpers (displayOfficeWindowsMenu, etc.), 1 controller (OfficeWindowsMenu), 2 legacy installAIO-*, 3 utility functions (cleanTemp, notifyUnderConstruction, exitScript)."
+  approach: "Rename all labels and update all references (calls & gotos) in one commit to avoid broken state."
+  outcome:
+    status: "Success"
+    evidence:
+      type: "Code Review"
+      details: "All old label names removed, no grep matches for office-windows, Display*, installAIO-*, :clean, :hold, :end. CI workflow already updated with OfficeWindowsMenu."
+  lesson: "For small scope (16 items), atomic rename is safer than incremental batching—avoids intermediate broken states and reduces CI runs. Display helpers kept as camelCase per convention (displayMenuName) rather than deleted."

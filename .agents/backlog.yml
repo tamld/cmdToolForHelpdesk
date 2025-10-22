@@ -10,8 +10,9 @@ tasks:
     status: "Done"
 
   - id: 11
-    description: "(ACTIVE) Rename all functions/menus according to the manifest in 'refactoring_index.yml'. Progress: Renamed `:installAIOMenu` to `:InstallMenu`, `:installAIO` to `:installAio`, and `:installAIO-Fresh` to `:installAioFresh`."
-    status: "In Progress"
+    description: "Rename all functions/menus according to the manifest in 'refactoring_index.yml'. COMPLETED: Renamed all 16 remaining items including Display helpers, legacy installAIO-*, office-windows controller, and utility functions (clean, hold, end). All references (calls & gotos) updated."
+    status: "Done"
+    date_completed: "2025-10-22"
   - id: 10
     description: "(ACTIVE) Implement Action Function Reachability Test. Progress: Implemented test for `:installAio` and `:installAioFresh`."
     status: "In Progress"

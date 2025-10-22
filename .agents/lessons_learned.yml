@@ -51,3 +51,15 @@ lessons:
     problem: "A CI job was failing even though the test script reported internal success. The test runner itself seemed to crash."
     root_cause: "The main script being tested (`Helpdesk-Tools.cmd`) used an `exit` command, which terminates the entire parent CMD process, killing the test runner that called it. The CI environment interprets this unexpected termination as a failure."
     solution: "In scripts designed to be called by other scripts (like in a testing context), always use `goto :EOF` to return control to the caller, instead of `exit` which terminates the whole process tree."
+
+  - id: LL-009
+    topic: "Bulk Rename Strategy for CMD Labels"
+    problem: "Need to rename 16 remaining labels across multiple categories (Display helpers, controller, legacy functions) without breaking CI."
+    root_cause: "Previous incremental approach worked for functional areas but created overhead (multiple commits/CI runs) for small remaining scope."
+    solution: "For small scopes (<20 items), use atomic commit strategy: (1) Rename all labels in one pass, (2) Update all references (calls & gotos) in same commit, (3) Verify no old names remain via grep, (4) Single CI run validates all changes. Faster and safer than incremental for small scope."
+    
+  - id: LL-010
+    topic: "Git Operations in AI Agent Terminal"
+    problem: "Agent's git commands in terminal frequently fail to parse output correctly, causing workflow disruptions."
+    root_cause: "Complex git output with formatting, colors, and multi-line responses are hard for AI to parse reliably."
+    solution: "Use simpler, more parse-friendly git commands: (1) `git status --short` instead of `git status`, (2) `git diff --name-only` for file lists, (3) `git diff --stat` for change summary, (4) Avoid commands with interactive prompts or pager output, (5) Use `--porcelain` flags when available for machine-readable output."
