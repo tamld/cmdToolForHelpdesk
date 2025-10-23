@@ -1,0 +1,117 @@
+# Sustainable AI Delivery Framework
+version: 1.0
+last_updated: "2025-10-22"
+author: "Codex agent"
+
+purpose:
+  - "Provide a durable philosophy applicable to new and ongoing projects."
+  - "Define the guardrails AI agents must enforce to keep delivery stable and compliant."
+
+applicability:
+  new_projects:
+    description: "Projects initiated after adoption of this framework."
+    mandate:
+      - "Bootstrap AGENTS.md, parallel operations spec, and ai_partner_framework before any code generation."
+      - "Create initial CARE spec and test scaffold in `specs/000-bootstrap/`."
+      - "Configure CI matrix, feature flag stubs, and documentation playbook on day zero."
+  existing_projects:
+    description: "Projects with legacy code or partial automation."
+    mandate:
+      - "Perform readiness audit (contracts, tests, flags, metrics) before delegating large AI changes."
+      - "Introduce missing artefacts incrementally (spec folders, AGENTS.md) while maintaining service stability."
+      - "Add guardrail tickets to backlog for each gap discovered."
+
+principles:
+  - id: P1
+    name: "Spec-Driven Transformation"
+    statement: "Translate goals, needs, and environment insights into machine-readable specs before action."
+    enforcement:
+      - "Reject tasks lacking CARE-compliant plan.md or documented assumptions."
+      - "Escalate incomplete specs via decision log entries."
+  - id: P2
+    name: "Human Governance"
+    statement: "Humans define priorities, approve designs, and sign off on merges; AI agents execute within boundaries."
+    enforcement:
+      - "Require human approval tags on security/performance PRs."
+      - "Log governance decisions in `.agents/decision_log.yml`."
+  - id: P3
+    name: "Context Engineering"
+    statement: "Capture objectives, constraints, and environment state before any AI task."
+    enforcement:
+      - "Use `specs/<ticket>/handoff.md` to summarise context for runners."
+      - "Ensure backlog entries reference relevant specs and lessons."
+  - id: P4
+    name: "Parallel Discipline"
+    statement: "Scale delivery through explicit ownership boundaries and automated checks."
+    enforcement:
+      - "Adhere to branch naming, handoff logging, CI matrix, and feature flag policies."
+      - "Monitor metrics defined in `.agents/parallel_operations.yml`."
+  - id: P5
+    name: "Continuous Verification"
+    statement: "Measure outcomes and feed learnings back into the system."
+    enforcement:
+      - "Update `.agents/lessons_learned.yml` for every incident or improvement."
+      - "Review metrics weekly; open issues if thresholds slip."
+  - id: P6
+    name: "Legacy Safeguarding"
+    statement: "Stabilise existing systems before introducing AI-driven modifications."
+    enforcement:
+      - "Require smoke tests and rollback plan for legacy modules prior to automation."
+      - "Tag risky branches with `legacy-guard` and enforce manual validation."
+
+process_layers:
+  discovery:
+    steps:
+      - "Collect goal, need, desire, plan, and environment inputs from stakeholders."
+      - "AI drafts clarification questions; unresolved ambiguities logged in `specs/<ticket>/questions.md`."
+      - "Human signs off on clarified problem statement."
+  specification:
+    steps:
+      - "Generate CARE spec, test charters, and success metrics."
+      - "Define rollout/rollback strategy and flag configuration."
+      - "Store artefacts in version control before coding."
+  execution:
+    steps:
+      - "Follow ai_partner_framework implementation phases."
+      - "Ensure Codex tasks stay within approved context and sandbox rules."
+  reinforcement:
+    steps:
+      - "Run audits using documentation_playbook guidelines."
+      - "Compare metrics to thresholds; adjust processes accordingly."
+
+readiness_audit:
+  checklist:
+    - "AGENTS.md present and current"
+    - "parallel_operations.yml referenced and up to date"
+    - "ai_partner_framework.md adopted"
+    - "Spec folders exist for active tickets"
+    - "CI matrix configured"
+    - "Feature flag infrastructure available"
+    - "Lessons learned current (no unresolved incidents)"
+  scoring:
+    complete: "All items satisfied"
+    partial: "Gaps logged with remediation tickets"
+    blocked: "Automation paused until blockers resolved"
+
+integration_points:
+  - file: "ops/ai/philosophy-headlines.md"
+    role: "Public summary"
+  - file: ".agents/parallel_operations.yml"
+    role: "Operational SOP"
+  - file: ".agents/ai_partner_framework.md"
+    role: "Implementation guidance"
+  - file: ".agents/documentation_playbook.yml"
+    role: "Documentation governance"
+
+update_protocol:
+  trigger:
+    - "New project kickoff"
+    - "Major incident or audit finding"
+    - "Quarterly governance review"
+  steps:
+    - "Draft changes in branch"
+    - "Run readiness audit"
+    - "Update lessons and decision log"
+    - "Obtain human approval"
+    - "Merge and communicate"
+

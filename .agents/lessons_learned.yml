@@ -70,7 +70,7 @@ lessons:
     root_cause: "`gh` CLI defaults to using pager (less/more) for long output, which waits for user interaction. AI cannot send keystrokes to exit pager."
     solution: 
       immediate_fix: "Always append `| cat` to gh commands to bypass pager, e.g., `gh run list --limit 1 | cat`"
-      better_fix: "Use `--json` flag with `jq` for structured parsing: `gh run list --limit 1 --json status,conclusion,displayTitle | jq -r '.[0] | \"Status: \\(.status), Result: \\(.conclusion)\"'`"
+      better_fix: "Use `--json` flag with `jq` for structured parsing: `gh run list --limit 1 --json status,conclusion,displayTitle | jq -r '.[0] | \"Status: \(.status), Result: \(.conclusion)\"'`"
       environment_fix: "Set env var before gh commands: `PAGER=cat gh run list` or configure gh: `gh config set pager cat`"
       best_practice: "For CI monitoring in AI agent, use REST API via curl instead of gh CLI to avoid pager issues entirely."
     examples:
@@ -199,3 +199,9 @@ lessons:
         reverse_questions:
           - "What breaks if the working directory differs on self-hosted runners?"
           - "Can the rule be idempotent when pre-commit isn't installed?"
+
+  - id: LL-019
+    topic: "CI-Reliant Testing for Platform-Specific Scripts"
+    problem: "Local testing of platform-specific scripts (e.g., .cmd files) is impossible or unreliable on a host with a different OS (e.g., testing CMD on macOS)."
+    root_cause: "The agent's execution environment (non-Windows) cannot interpret or run the script's commands natively, leading to an inability to validate changes before pushing."
+    solution: "For platform-specific scripts, local validation must be skipped. All testing and verification MUST be delegated to the CI pipeline that uses the correct target OS runner (e.g., `runs-on: windows-latest` for `.cmd` scripts). This is the only reliable source of truth for script behavior."
