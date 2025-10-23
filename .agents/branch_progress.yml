@@ -1,0 +1,215 @@
+# Branch Progress Template (LL-014 compliance)
+# Copy this to your feature branch as .agents/branch_progress.yml and fill sections
+
+branch: "feature/ci-care-lint-13-agemini"
+task_id: 13
+owner_current: "GitHub Copilot (agemini mode)"
+workflow_state: "authored"  # authored | ready_for_runner | in_progress | blocked | review | done
+started_at: "2025-10-23T11:28:00Z"
+last_updated: "2025-10-23T11:30:00Z"
+
+# === CONTEXT (WHY) - Answer "Why this approach?" ===
+context:
+  why_this_approach: |
+    Enforce CARE spec structure (Context, Actions, Risks, Expectations) for all specs/ documentation.
+    Rationale: Incomplete specs lead to unclear handoffs and implementation gaps (per LL-014).
+    Approach: CI workflow + Bash lint script (simple, no dependencies) validates required headings on every push/PR.
+  
+  trade_offs:
+    - decision: "Use Bash regex for heading detection"
+      chosen: "Bash + grep/awk (simple, fast, CI-friendly)"
+      rationale: "Avoid node/python deps for this small task; Markdown heading format is stable"
+      evidence: "specs/13/plan.md (Actions section)"
+    
+    - decision: "Only validate presence of headings, not content quality"
+      chosen: "Structural validation only"
+      rationale: "Content quality review is human judgment; automation catches missing sections"
+      evidence: "Risks section in specs/13/plan.md"
+  
+  attempted_but_failed: []
+  
+  known_issues:
+    - "Lint script may be fragile with non-standard Markdown (e.g., HTML headings, nested code blocks with # symbols)"
+    - "No validation of metadata fields (task ID, author, status) yet—deferred to future enhancement"
+  
+  dependencies:
+    - external: "GitHub Actions (ubuntu-latest runner)"
+    - internal: "specs/13/plan.md (defines CARE schema), .github/workflows/ (CI integration)"
+
+# === HANDOFF INFO (WHO/WHEN) - Answer "Who did what when?" ===
+roles:
+  author:
+    agent: "GitHub Copilot (agemini mode)"
+    status: "Spec authored, branch initialized"
+    handoff_at: null
+  
+  runner:
+    agent: null
+    status: "Awaiting spec review and approval to proceed with implementation"
+    started_at: null
+
+handoff_ready: false  # Set true when ready for next agent
+handoff_checklist:
+  environment_setup:
+    - "Checkout branch: git checkout feature/ci-care-lint-13-agemini"
+    - "Review spec: specs/13/plan.md"
+    - "Ensure bash, git, gh CLI available"
+  
+  how_to_resume:
+    - "1. Read specs/13/plan.md for CARE lint requirements"
+    - "2. Implement .github/workflows/lint_care_spec.yml"
+    - "3. Create lint script (e.g., scripts/lint_care_spec.sh)"
+    - "4. Test with valid/invalid sample specs"
+    - "5. Update this file (branch_progress.yml) with progress and set handoff_ready=true"
+  
+  critical_files:
+    - path: "specs/13/plan.md"
+      note: "CARE spec schema and requirements"
+    - path: ".agents/branch_progress.yml"
+      note: "Live handoff tracking (this file)"
+  
+  credentials_needed: []
+  
+  local_state: []
+
+# === PROGRESS (WHAT DONE) - Answer "What's complete?" ===
+milestones:
+  - timestamp: "2025-10-23T11:28:00Z"
+    action: "Created feature branch and marker commit"
+    evidence:
+      - commit: "9704bdd"
+    status: "Done"
+  
+  - timestamp: "2025-10-23T11:29:00Z"
+    action: "Created draft PR #2"
+    evidence:
+      - pr: "#2"
+    status: "Done"
+  
+  - timestamp: "2025-10-23T11:30:00Z"
+    action: "Authored specs/13/plan.md with CARE structure and reflection/reverse-thinking sections"
+    evidence:
+      - file: "specs/13/plan.md"
+    status: "Done"
+  
+  - timestamp: "2025-10-23T11:31:00Z"
+    action: "Initialized .agents/branch_progress.yml with context and handoff checklist"
+    evidence:
+      - file: ".agents/branch_progress.yml"
+    status: "Done"
+
+next_steps:
+  - "Implement lint script (scripts/lint_care_spec.sh)"
+  - "Add CI workflow (.github/workflows/lint_care_spec.yml)"
+  - "Test with sample valid/invalid specs"
+  - "Update documentation (.agents/README.md)"
+  - "Set handoff_ready=true and label PR ready-for-handoff"
+
+blockers: []
+
+# === VERIFICATION (HOW TO TEST) - Answer "How do I verify this works?" ===
+verification:
+  unit_tests:
+    - command: "npm test src/module"
+      expected: "All tests pass, X assertions"
+      evidence: "Local run output or CI link"
+  
+  integration_tests:
+    - command: "npm run test:integration"
+      expected: "Service responds with 200"
+      evidence: "CI run #12345"
+  
+  regression_checks:
+    - check: "Existing feature X still works"
+      command: "npm run test:regression"
+      expected: "No new failures"
+  
+  manual_qa:
+    - scenario: "User does Y"
+      expected: "System shows Z"
+      tested: false
+      blocker: "Waiting for staging deploy"
+
+# === ROLLBACK (UNDO) - Answer "How do I undo if this breaks?" ===
+rollback:
+  safe_point: "commit SHA of last known good state"
+  revert_steps:
+    - "git revert <commit range>"
+    - "Re-enable old behavior by..."
+  
+  dependencies_affected:
+    - "Module X: revert to previous version"
+    - "Config Y: restore old value"
+  
+  communication:
+    - "Notify team in PR #<id> or Slack channel"
+    - "Update backlog.yml status to 'Blocked' with reason"
+
+# === COMMUNICATION (WHO TO ASK) - Answer "Where's the discussion?" ===
+communication:
+  discussions:
+    - location: "PR #<id> comments"
+      participants: ["Agent A", "Agent B", "User"]
+      key_decisions:
+        - "Decision 1: rationale"
+        - "Decision 2: rationale"
+    
+    - location: ".agents/brainstorm_<topic>.yml"
+      context: "Original question or design discussion"
+  
+  if_stuck:
+    - "Post question in PR #<id> (tag @agent or @user)"
+    - "Create .agents/brainstorm_task_<id>_followup.yml"
+  
+  previous_handoffs:
+    - from: "Agent A"
+      to: "Agent B"
+      at: "YYYY-MM-DDTHH:MM:SSZ"
+      reason: "Agent A completed spec, Agent B implements"
+      handoff_doc: ".agents/branch_progress.yml (this file)"
+
+# === METRICS (HOW LONG) - Answer "How much effort?" ===
+metrics:
+  estimated_effort: "X hours"
+  actual_effort_so_far: "Y hours"
+  time_breakdown:
+    - phase: "Research & planning"
+      duration: "Z min"
+    - phase: "Implementation"
+      duration: "W hours"
+    - phase: "Testing & debugging"
+      duration: "V min (ongoing)"
+  
+  handoff_latency:
+    - from: "Author spec complete"
+      to: "Runner start implementation"
+      hours: null
+
+# === REFLECTION (SELF-CHECK) - Answer "What might still be wrong?" ===
+reflection:
+  self_assessment: |
+    Task #13 is low-risk: additive CI workflow with no production code changes.
+    Spec is complete with CARE structure, reflection, and reverse-questions.
+    Implementation not started yet—this is author handoff point.
+    Risk areas: lint script regex fragility, backward compat with existing specs.
+  
+  risks_unaddressed:
+    - "Markdown parsing edge cases (HTML headings, code blocks with # symbols) may cause false positives/negatives"
+    - "No rollout plan for validating existing specs—may need exemption mechanism or bulk fix"
+  
+  tradeoffs_reconsidered:
+    - decision: "Bash regex vs AST parser"
+      alternative: "Use markdown-cli or remark-lint (node-based)"
+      reason_to_revisit: "If regex proves too fragile in practice, consider AST parser for robustness"
+
+# === REVERSE-THINKING (CHALLENGE) - Ask "How would a reviewer break this?" ===
+reverse_questions:
+  - "What if a spec file uses HTML `<h1>` tags instead of Markdown `#` syntax—will the linter miss it?"
+  - "If we enforce CARE on all specs/, how do we handle templates, drafts, or archived specs that don't fit the structure?"
+  - "What happens when the lint script itself has a bug—will it block all PRs and cause developer friction?"
+  - "Should the linter also validate that sections aren't empty, or is presence of heading enough?"
+
+# === QUESTIONS FOR REVIEW ===
+questions_for_review:
+  - "Question 1 for reviewer or next agent?"
+  - "Should we add feature X in this task or defer?"
