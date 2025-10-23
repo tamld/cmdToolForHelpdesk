@@ -17,4 +17,4 @@ code_conventions:
   - title: Pull Request
     description: Each PR should address a specific issue and have a clear description.
   - title: Branching Strategy
-    description: All development, testing, and refactoring must be done in a new branch (e.g., `feature/<name>`, `fix/<name>`, `refactor/<name>`). Direct changes to the `main` branch are prohibited. All changes must be thoroughly tested before creating a pull request to merge into `main`.
+    description: All development, testing, and refactoring must be done in a descriptive branch per `ops/git/branching.md`. Direct changes to the `main` branch are prohibited. All changes must be thoroughly tested before creating a pull request to merge into `main`.

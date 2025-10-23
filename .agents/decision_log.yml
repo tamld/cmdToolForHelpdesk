@@ -97,3 +97,82 @@
       type: "Code Review"
       details: "All old label names removed, no grep matches for office-windows, Display*, installAIO-*, :clean, :hold, :end. CI workflow already updated with OfficeWindowsMenu."
   lesson: "For small scope (16 items), atomic rename is safer than incremental batching—avoids intermediate broken states and reduces CI runs. Display helpers kept as camelCase per convention (displayMenuName) rather than deleted."
+
+- decisionId: 10
+  timestamp: "2025-10-22T21:45:00Z"
+  topic: "Multi-Agent Collaboration Pattern"
+  context: "User clarified that agents should use .agents/ as collaborative workspace. Instead of formal review docs, use simple YAML brainstorm files with timestamp, author, observations, and responses section for other agents."
+  decision: "Adopted simplified brainstorm pattern: .agents/brainstorm_<topic>.yml with observations array and responses section for multi-agent feedback."
+  rationale: "Simpler, more practical than heavyweight consensus protocol. Agents can iterate by adding responses to same file."
+  implementation: "Created brainstorm_parallel_ops_review.yml with 6 observations about new multi-agent framework, awaiting feedback from framework author."
+  lesson: "Don't over-engineer. .agents/ directory IS the collaborative workspace—just add structured YAML files for async agent communication."
+
+- decisionId: 11
+  timestamp: "2025-10-23T00:35:00Z"
+  topic: "Experimental Branches Cleanup"
+  context: |
+    Evaluate legacy experimental branches without checking out, using remote refs and CI evidence:
+    - origin/experiment/ci-parallelization
+      - Latest run: failure (databaseId: 18640530050, createdAt: 2025-10-20T02:47:29Z)
+      - Diff vs main includes CI workflow consolidation to a single parallel job.
+    - origin/experiment/multi-test-capability
+      - Multiple runs: mostly failures; one early success using matrix strategy (databaseId: 18641117841), followed by repeated failures.
+    - refactor/structure-and-naming (current work)
+      - Multiple successful CI runs on 2025-10-21 and 2025-10-22 (e.g., databaseId: 18718711338).
+  evidence:
+    - type: "GitHub Actions CI Runs"
+      details:
+        - branch: "experiment/ci-parallelization"
+          runs:
+            - id: 18640530050
+              status: "completed"
+              conclusion: "failure"
+        - branch: "experiment/multi-test-capability"
+          runs:
+            - id: 18642075423
+              conclusion: "failure"
+            - id: 18642050113
+              conclusion: "failure"
+            - id: 18642019537
+              conclusion: "failure"
+            - id: 18641828517
+              conclusion: "failure"
+            - id: 18641798029
+              conclusion: "failure"
+            - id: 18641287734
+              conclusion: "failure"
+            - id: 18641260957
+              conclusion: "failure"
+            - id: 18641231749
+              conclusion: "failure"
+            - id: 18641117841
+              conclusion: "success"
+        - branch: "refactor/structure-and-naming"
+          runs:
+            - id: 18718711338
+              conclusion: "success"
+  decision: |
+    Treat both experimental branches as superseded. The CI strategy that is currently working lives on the refactor branch; the experiments produced repeated failures and assumptions have been addressed elsewhere.
+    - Proposed action: delete remote branches `experiment/ci-parallelization` and `experiment/multi-test-capability` after user confirmation.
+  implementation: |
+    Safe commands (do not run without approval):
+      git push origin --delete experiment/ci-parallelization
+      git push origin --delete experiment/multi-test-capability
+  lesson: |
+    Prefer analyzing remote refs (`origin/<branch>`) and CI evidence (`gh run list --branch <name> --json ...`) over checking out when the working tree is dirty. Consolidate learnings into the active branch and remove stale experiments to reduce cognitive load.
+  restorePoints:
+    - branch: "experiment/ci-parallelization"
+      headSha: "51bddcca971b50ec8430ae62419fd6e06700da82"
+    - branch: "experiment/multi-test-capability"
+      headSha: "b062c6c9fb2381bc54f4bbaea0ac0711218debb7"
+  approved:
+    by: "User"
+    at: "2025-10-23T00:45:00Z"
+    method: "Chat confirmation: CONFIRM DELETE"
+  executed:
+    at: "2025-10-23T00:50:00Z"
+    actor: "Gemini"
+    commands:
+      - "git push origin --delete experiment/ci-parallelization"
+      - "git push origin --delete experiment/multi-test-capability"
+    result: "Both remote branches deleted successfully."

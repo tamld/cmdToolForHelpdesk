@@ -167,6 +167,17 @@ lessons:
       - LL-013: "Verifiable communication requires evidence; LL-014 extends to handoff artifacts"
       - LL-010: "Git operations need care; LL-014 adds handoff commit ritual for traceability"
 
+  - id: LL-015
+    topic: "Delegating Merge to Codex After Review"
+    problem: "Sessions idled waiting for human merge even after Codex completed review and CI passed, reducing parallel throughput."
+    root_cause: "We asked Codex for review but not for the final merge action once checks were green."
+    solution:
+      practice: "After `@codex review`, leave a follow-up `@codex` comment instructing it to merge and delete the branch once CI succeeds."
+      checklist:
+        - "Ensure CARE spec, handoff, branch_progress.yml, and metrics log are up to date before requesting merge."
+        - "Confirm PR checks (CI, security) are required and green; Codex will not merge when blockers remain."
+        - "Record the merge delegation in branch_progress.yml milestones and metrics log (codex_iterations)."
+
   - id: LL-018
     topic: "Reflective Practice & Reverse-Thinking Prompts"
     problem: "Answers and handoff docs occasionally optimize for speed over quality, missing a brief reflection or 'challenge-your-own-solution' step that would reveal gaps early."
@@ -188,4 +199,3 @@ lessons:
         reverse_questions:
           - "What breaks if the working directory differs on self-hosted runners?"
           - "Can the rule be idempotent when pre-commit isn't installed?"
-
