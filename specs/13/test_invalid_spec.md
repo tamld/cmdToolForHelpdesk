@@ -6,6 +6,9 @@ This is the context.
 ## Actions
 These are the actions.
 
+## Risks
+These are the risks (now added).
+
 ## Expectations
 These are the expectations.
 
