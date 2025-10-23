@@ -205,3 +205,10 @@ lessons:
     problem: "Local testing of platform-specific scripts (e.g., .cmd files) is impossible or unreliable on a host with a different OS (e.g., testing CMD on macOS)."
     root_cause: "The agent's execution environment (non-Windows) cannot interpret or run the script's commands natively, leading to an inability to validate changes before pushing."
     solution: "For platform-specific scripts, local validation must be skipped. All testing and verification MUST be delegated to the CI pipeline that uses the correct target OS runner (e.g., `runs-on: windows-latest` for `.cmd` scripts). This is the only reliable source of truth for script behavior."
+
+  - id: LL-020
+    topic: "Git Commit Author Consistency"
+    problem: "Commits created by AI agents were using the local machine's default Git user name (e.g., 'Mac') instead of the project's required author identity."
+    root_cause: "The `git commit` command, when run via shell, defaults to the system's `user.name` and `user.email` config. The agent did not explicitly override this default."
+    solution: "All `git commit` commands executed by agents MUST use the `--author` flag to explicitly set the author identity to the project standard (`tamld <ductam1828@gmail.com>`). This overrides any local or global Git configuration."
+    example: '`git commit --author="tamld <ductam1828@gmail.com>" -m "Your commit message"`'
