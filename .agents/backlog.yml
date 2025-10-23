@@ -69,11 +69,12 @@ tasks:
 
   - id: 13
     description: "Enforce CARE spec lint in CI workflow for all specs/**/*.md files. Validates presence of required sections (Context, Actions, Risks, Expectations) and optional sections (Reflection, Reverse Questions)."
-    status: "Ready for handoff"
+    status: "Done"
     priority: "Medium"
-    owner: "GitHub Copilot (agemini mode)"
+    owner: "Gemini"
     branch: "feature/ci-care-lint-13-agemini"
     date_created: "2025-10-23"
+    date_completed: "2025-10-23"
     handoff_notes: |
       Spec complete: specs/13/plan.md (full CARE structure with reflection & reverse-questions).
       Branch progress: .agents/branch_progress.yml (context, handoff checklist, next steps).
