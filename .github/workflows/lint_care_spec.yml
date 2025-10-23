@@ -1,9 +1,14 @@
 name: Lint CARE Specs
 
 on:
+  pull_request:
+    paths:
+      - 'specs/**.md'
   push:
     branches:
       - 'feature/ci-care-lint-13-agemini'
+    paths:
+      - 'specs/**.md'
 
 jobs:
   validate-specs:
