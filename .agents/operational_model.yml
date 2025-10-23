@@ -29,8 +29,12 @@ planning_levels:
 # This forces a structured, context-aware thought process.
 sop_task_analysis:
   - step: 1
-    action: "Identify the current context (e.g., current git branch)."
-    purpose: "To scope the analysis to relevant work."
+    action: "Identify the current context (e.g., current git branch) and project type."
+    purpose: "To scope the analysis to relevant work and adapt framework defaults to project reality."
+    checks:
+      - "Read .agents/cmd_project_adaptations.yml (if exists) for project-specific overrides"
+      - "Verify project language/framework (CMD/Bash/Python/Node/etc.)"
+      - "Check for framework-specific files that may not exist in this project"
   - step: 2
     action: "Consult this file (`operational_model.yml`) to locate the tactical plan (e.g., `backlog.yml`)."
     purpose: "To find the correct source of immediate tasks, avoiding strategic plans."
@@ -49,6 +53,8 @@ sop_task_analysis:
 
 # Knowledge Base: A structured repository of rules and learnings.
 knowledge_base:
+  - file: ".agents/cmd_project_adaptations.yml"
+    description: "CMD-specific framework overrides - READ FIRST for this project type. Prevents Node.js/TypeScript assumptions."
   - file: ".agents/lessons_learned.yml"
     description: "Structured list of past failures and corrective principles. Must be consulted before proposing actions."
   - file: ".agents/core_principles.yml"

@@ -4,7 +4,40 @@
 
 documentType: "AI_AGENT_ANCHOR"
 topic: "CMD Script Testing Strategy"
-version: 1.0
+version: 1.1
+last_updated: "2025-10-23"
+
+# ⚠️ CRITICAL: CURRENT LIMITATIONS (Reality Check)
+current_reality:
+  infrastructure: "No Windows VM available for CI or local testing"
+  actual_coverage: "UI/menu navigation verification only (log string matching via findstr)"
+  validation_method: "Parse output logs for expected menu text - does NOT execute actual operations"
+  
+  cannot_verify:
+    - "Actual software installations (winget/chocolatey commands)"
+    - "Registry key creation/modification"
+    - "Windows/Office license backup/restore operations"
+    - "System service start/stop/configuration"
+    - "File system modifications outside test directory"
+    - "Network operations (downloads, API calls)"
+  
+  confidence_level:
+    refactoring: "MEDIUM - safe for structure/naming changes (detect if menus still render)"
+    production: "LOW - no guarantee functions work in real environment"
+  
+  recommended_use: |
+    - ✅ Safe for: Menu restructuring, naming conventions, navigation flow
+    - ⚠️  Caution for: Error handling logic, input validation
+    - ❌ Unsafe for: Business logic changes, system modification code
+  
+  future_roadmap:
+    phase_1: "Implement dry-run mode for destructive operations (DRY_RUN env var)"
+    phase_2: "Contract testing - verify command syntax without execution"
+    phase_3: "Cloud Windows VM integration for real validation (requires infrastructure investment)"
+  
+  related_lessons:
+    - "LL-019: Test Validity Gap (to be created)"
+    - "See .agents/multi_agent_stability_plan.yml for detailed analysis"
 
 philosophy:
   name: "Multi-layered Testing"

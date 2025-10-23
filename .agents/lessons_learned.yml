@@ -46,6 +46,44 @@ lessons:
     root_cause: "The agent did not stratify the planning documents it found within the SSoT."
     solution: "The agent's core logic must be updated to classify plans into 'Strategic' and 'Tactical' and to prioritize the Tactical plan for branch-specific work. This was formalized as `GUIDELINE-PLAN-001: Plan Stratification`."
 
+  - id: LL-019
+    topic: "Test Validity Gap - Infrastructure Constraints"
+    problem: "Test suite claims multi-layer coverage (unit/integration/e2e) but only validates UI text rendering, not actual functionality."
+    root_cause: "No Windows VM environment available for real system modification testing. Tests parse log files (findstr) to verify menu display, not business logic execution."
+    impact: "False confidence - CI passing does NOT mean code works in production. Only safe for refactoring structure/naming."
+    solution: |
+      1. Honest documentation: Add reality_check section to testing_strategy.yml
+      2. Scope limitation: Mark tests as 'smoke tests' not 'functional tests'
+      3. Recommended: Implement dry-run mode for all destructive operations (Phase 2)
+      4. Long-term: Invest in cloud VM infrastructure or accept manual QA requirement
+    evidence:
+      - "tests/integration/*.cmd - all use 'findstr /C:\"string\" log_file'"
+      - "No tests verify registry changes, file downloads, or service states"
+      - "GitHub Actions runs on ubuntu-latest (Linux) not windows-latest"
+    date_identified: "2025-10-23"
+    related_docs:
+      - ".agents/testing_strategy.yml (current_reality section)"
+      - ".agents/multi_agent_stability_plan.yml (IMM-001)"
+
+  - id: LL-020
+    topic: "Framework-Project Type Mismatch Detection"
+    problem: "Multi-agent framework (parallel_operations.yml, ai_partner_framework.md) assumes Node.js/TypeScript conventions but project is pure CMD Batch script."
+    root_cause: "Framework templates created for JavaScript projects - no project type detection in operational_model.yml SOP."
+    impact: "Agents may waste time looking for contracts/, packages/config/, or try to create TypeScript files."
+    solution: |
+      1. Create .agents/cmd_project_adaptations.yml with CMD-specific overrides
+      2. Add project type detection to operational_model.yml step 1
+      3. Update AGENTS.md with 'Read This First' section for CMD constraints
+      4. Reference adaptations file in parallel_operations.yml
+    examples_of_mismatch:
+      - "parallel_operations.yml:22 - 'Contracts live under contracts/' (N/A for CMD)"
+      - "parallel_operations.yml:26 - 'Feature flags in packages/config/flags.ts' (should be ENV vars)"
+      - "ai_partner_framework.md:117 - 'Type definitions (TypeScript)' (not applicable)"
+    date_identified: "2025-10-23"
+    related_docs:
+      - ".agents/brainstorm_cmd_project_constraints.yml (OBS-001)"
+      - ".agents/multi_agent_stability_plan.yml (IMM-002, GUARD-001)"
+
   - id: LL-008
     topic: "CMD Process Termination in CI"
     problem: "A CI job was failing even though the test script reported internal success. The test runner itself seemed to crash."
