@@ -1,13 +1,13 @@
 # Valid Spec Example
 
-## Context
+# Context
 This is the context.
 
-## Actions
+# Actions
 These are the actions.
 
-## Risks
+# Risks
 These are the risks.
 
-## Expectations
+# Expectations
 These are the expectations.

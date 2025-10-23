@@ -1,6 +1,6 @@
 # Task #13: Enforce CARE Spec Lint in CI
 
-## Context (Why)
+# Context (Why)
 
 **Problem:** Spec files under `specs/` may be incomplete or missing required CARE sections (Context, Actions, Risks, Expectations), leading to unclear handoffs and implementation gaps.
 
@@ -12,7 +12,7 @@
 - Reduces back-and-forth during handoffs
 - Aligns with LL-014 (handoff completeness) and LL-018 (reflection)
 
-## Actions (What to do)
+# Actions (What to do)
 
 1. **Define CARE spec schema**
    - Required sections: `# Context`, `# Actions`, `# Risks`, `# Expectations`
@@ -42,7 +42,7 @@
    - Update `.agents/README.md` with CARE lint guidance
    - Add error messages that guide authors to fix issues
 
-## Risks (What could go wrong)
+# Risks (What could go wrong)
 
 - **Risk 1: Overly strict validation blocks legitimate edge cases**
   - Mitigation: Allow optional sections; only enforce core CARE headings
@@ -56,7 +56,7 @@
   - Mitigation: Use regex for heading detection; test with varied formatting
   - Alternative: Consider markdown AST parser if Bash regex insufficient
 
-## Expectations (Success criteria)
+# Expectations (Success criteria)
 
 - [ ] CI workflow exists and runs on `specs/**` changes
 - [ ] Lint script detects missing CARE sections and reports clear error messages
@@ -64,7 +64,7 @@
 - [ ] Documentation updated in `.agents/README.md`
 - [ ] CI passes on this PR before marking ready-for-handoff
 
-## Reflection
+# Reflection
 
 - **Self-assessment:** This task is low-risk additive work (new workflow + script); no changes to production code.
 - **Assumptions:**
@@ -74,7 +74,7 @@
   - No validation of section *content* (only presence of headings)
   - No enforcement of metadata fields yet
 
-## Reverse Questions
+# Reverse Questions
 
 - What happens if a spec legitimately doesn't fit CARE structure (e.g., a quick note or template)? Should we have a file naming convention to exclude certain files?
 - If we add reflection and reverse_questions sections to CARE later, how do we handle backward compatibility with old specs?
