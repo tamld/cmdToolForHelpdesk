@@ -19,6 +19,6 @@ jobs:
 
       - name: Lint all spec files
         run: |
-          find specs -type f -name "*.md" ! -name "template-*.md" -print0 | while IFS= read -r -d $'\0' file; do
+          find specs -type f -name "*.md" ! -name "template-*.md" ! -name "test_invalid_spec.md" -print0 | while IFS= read -r -d $'\0' file; do
             ./scripts/lint_care_spec.sh "$file"
           done
