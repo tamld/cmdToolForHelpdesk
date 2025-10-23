@@ -1,0 +1,189 @@
+# Branch Progress Template (LL-014 compliance)
+# Copy this to your feature branch as .agents/branch_progress.yml and fill sections
+
+branch: "feature/<domain>-<ticket>-<agent>"
+task_id: <ticket_number>
+owner_current: "<Agent Name>"
+workflow_state: "authored"  # authored | ready_for_runner | in_progress | blocked | review | done
+started_at: "YYYY-MM-DDTHH:MM:SSZ"
+last_updated: "YYYY-MM-DDTHH:MM:SSZ"
+
+# === CONTEXT (WHY) - Answer "Why this approach?" ===
+context:
+  why_this_approach: |
+    Brief explanation of chosen solution and alternatives considered.
+    Example: "Chose GitHub Actions over pre-commit because..."
+  
+  trade_offs:
+    - decision: "Key decision point"
+      chosen: "What was chosen"
+      rationale: "Why this over alternatives"
+      evidence: "Link to discussion/brainstorm"
+  
+  attempted_but_failed:
+    - approach: "What was tried"
+      reason: "Why it didn't work"
+      evidence: "Commit SHA if reverted, or notes"
+  
+  known_issues:
+    - "Issue 1: description and impact"
+    - "Issue 2: edge case not yet handled"
+  
+  dependencies:
+    - external: "External service/API dependency"
+    - internal: "Internal file/module dependency"
+
+# === HANDOFF INFO (WHO/WHEN) - Answer "Who did what when?" ===
+roles:
+  author:
+    agent: "<Author Agent Name>"
+    status: "Spec complete, handoff ready"
+    handoff_at: "YYYY-MM-DDTHH:MM:SSZ"
+  
+  runner:
+    agent: "<Runner Agent Name or null>"
+    status: "Not started | Implementation X% | Blocked | Testing"
+    started_at: "YYYY-MM-DDTHH:MM:SSZ or null"
+
+handoff_ready: false  # Set true when ready for next agent
+handoff_checklist:
+  environment_setup:
+    - "Step 1: Install/configure X"
+    - "Step 2: Set env var Y=..."
+  
+  how_to_resume:
+    - "1. Checkout branch: git checkout <branch>"
+    - "2. Read this file + PR #<id> comments"
+    - "3. Current blocker: <description or 'none'>"
+    - "4. Next action: <specific next step>"
+  
+  critical_files:
+    - path: "path/to/file"
+      note: "What this file does and key lines"
+  
+  credentials_needed:
+    - "Service X API key (ask user for .env.local)"
+  
+  local_state:
+    - "Database seeded with test data"
+
+# === PROGRESS (WHAT DONE) - Answer "What's complete?" ===
+milestones:
+  - timestamp: "YYYY-MM-DDTHH:MM:SSZ"
+    action: "Brief description of milestone"
+    evidence:
+      - file: "path/to/file:line-range"
+      - commit: "SHA"
+      - ci_run: "run_id"
+      - pr: "#123"
+    status: "Done | In Progress | Blocked"
+
+next_steps:
+  - "Next action 1"
+  - "Next action 2"
+
+blockers:
+  - issue: "Description of blocker"
+    waiting_for: "Who/what is blocking"
+    mitigation: "Temporary workaround or escalation plan"
+
+# === VERIFICATION (HOW TO TEST) - Answer "How do I verify this works?" ===
+verification:
+  unit_tests:
+    - command: "npm test src/module"
+      expected: "All tests pass, X assertions"
+      evidence: "Local run output or CI link"
+  
+  integration_tests:
+    - command: "npm run test:integration"
+      expected: "Service responds with 200"
+      evidence: "CI run #12345"
+  
+  regression_checks:
+    - check: "Existing feature X still works"
+      command: "npm run test:regression"
+      expected: "No new failures"
+  
+  manual_qa:
+    - scenario: "User does Y"
+      expected: "System shows Z"
+      tested: false
+      blocker: "Waiting for staging deploy"
+
+# === ROLLBACK (UNDO) - Answer "How do I undo if this breaks?" ===
+rollback:
+  safe_point: "commit SHA of last known good state"
+  revert_steps:
+    - "git revert <commit range>"
+    - "Re-enable old behavior by..."
+  
+  dependencies_affected:
+    - "Module X: revert to previous version"
+    - "Config Y: restore old value"
+  
+  communication:
+    - "Notify team in PR #<id> or Slack channel"
+    - "Update backlog.yml status to 'Blocked' with reason"
+
+# === COMMUNICATION (WHO TO ASK) - Answer "Where's the discussion?" ===
+communication:
+  discussions:
+    - location: "PR #<id> comments"
+      participants: ["Agent A", "Agent B", "User"]
+      key_decisions:
+        - "Decision 1: rationale"
+        - "Decision 2: rationale"
+    
+    - location: ".agents/brainstorm_<topic>.yml"
+      context: "Original question or design discussion"
+  
+  if_stuck:
+    - "Post question in PR #<id> (tag @agent or @user)"
+    - "Create .agents/brainstorm_task_<id>_followup.yml"
+  
+  previous_handoffs:
+    - from: "Agent A"
+      to: "Agent B"
+      at: "YYYY-MM-DDTHH:MM:SSZ"
+      reason: "Agent A completed spec, Agent B implements"
+      handoff_doc: ".agents/branch_progress.yml (this file)"
+
+# === METRICS (HOW LONG) - Answer "How much effort?" ===
+metrics:
+  estimated_effort: "X hours"
+  actual_effort_so_far: "Y hours"
+  time_breakdown:
+    - phase: "Research & planning"
+      duration: "Z min"
+    - phase: "Implementation"
+      duration: "W hours"
+    - phase: "Testing & debugging"
+      duration: "V min (ongoing)"
+  
+  handoff_latency:
+    - from: "Author spec complete"
+      to: "Runner start implementation"
+      hours: null
+
+# === REFLECTION (SELF-CHECK) - Answer "What might still be wrong?" ===
+reflection:
+  self_assessment: |
+    Brief self-audit of the current work (gaps, assumptions, test coverage).
+    Example: "Did not run on Windows 2019; path quoting could break."
+  risks_unaddressed:
+    - "Risk 1: description and impact"
+  tradeoffs_reconsidered:
+    - decision: "What we chose"
+      alternative: "What we deferred"
+      reason_to_revisit: "When/why to revisit the tradeoff"
+
+# === REVERSE-THINKING (CHALLENGE) - Ask "How would a reviewer break this?" ===
+reverse_questions:
+  - "What would fail if the working dir changes on the CI runner?"
+  - "What if the dependency is missing or pinned differently?"
+  - "Which edge case isn't covered by the current tests?"
+
+# === QUESTIONS FOR REVIEW ===
+questions_for_review:
+  - "Question 1 for reviewer or next agent?"
+  - "Should we add feature X in this task or defer?"

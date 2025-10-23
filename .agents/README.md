@@ -42,3 +42,15 @@
 - If you discover recurring issues or manual steps, log them for the next agent in `.agents/notes.md` (create if needed) and consider adding a checklist item in `.agent/state/checklist.json` after syncing with the user.
 - Encourage coachability: note any CMD quirks encountered (e.g., delayed expansion pitfalls, escaping rules) so future sessions learn without repeating mistakes.
 - Favor additive documentation over tribal knowledge; when in doubt, write the runbook first, then automate.
+
+## Handoff validation (CI-first)
+
+- Preferred: rely on CI to validate handoff artifacts (works on macOS hosts; no Windows required).
+
+- Triggering options:
+  - Add label `ready-for-handoff` to the PR (auto-runs workflow `validate-handoff`).
+  - Or manually run the Action from GitHub UI ("Run workflow").
+
+- The workflow executes `.agents/scripts/validate_handoff.sh` against the PR head SHA on `ubuntu-latest` and checks that `/.agents/branch_progress.yml` is complete, including the new `reflection` and `reverse_questions` sections.
+
+- Local run is optional; on macOS it only validates YAML content (no Windows-only tests).
