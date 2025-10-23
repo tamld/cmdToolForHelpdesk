@@ -319,3 +319,22 @@ lessons:
     severity: "HIGH"
     action: "Update brainstorm_template.yml to require 'answer' for CQ-XXX"
     related_lessons: ["LL-021: First Agent Syndrome"]
+
+  - id: LL-033
+    topic: "Learning Quality Quantification"
+    problem: "SoT 3-layer thiếu metrics cụ thể để quyết định khi nào STM → LTM và đo hiệu quả lesson."
+    root_cause: "Chưa có delta chuẩn (lần reuse, tỉ lệ lỗi) nên lesson dễ trở thành lý thuyết."
+    solution:
+      metrics:
+        - "error_recurrence_rate = (# incidents sau lesson) / (# incidents trước lesson); mục tiêu < 10% trong 30 ngày."
+        - "lesson_reuse_count = số lần lesson được trích trong branch_progress/backlog; promote LTM khi ≥3 lần reuse thành công."
+        - "handoff_latency_delta = (handoff latency sau lesson) / (trước lesson); mục tiêu giảm >20%."
+      automation:
+        - "Viết script quét branch_progress.yml & metrics_log.yml để đếm reuse, đo handoff latency; lưu kết quả vào lessons."
+        - "Thêm trường metrics (timestamp, value) vào mỗi lesson để log số liệu hiện tại."
+      governance:
+        - "Review 2 tuần/lần: lesson nào không đạt target → ghi chú cải tiến/hợp nhất, log vào decision_log.yml."
+    evidence:
+      - "Brainstorm 2025-10-23 yêu cầu định lượng STM/LTM."
+      - "metrics_log.yml chưa bám lesson reuse / handoff effect."
+
