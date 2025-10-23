@@ -1,0 +1,24 @@
+name: Lint CARE Specs
+
+on:
+  pull_request:
+    paths:
+      - 'specs/**.md'
+  push:
+    branches:
+      - 'feature/ci-care-lint-13-agemini'
+    paths:
+      - 'specs/**.md'
+
+jobs:
+  validate-specs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint all spec files
+        run: |
+          find specs -type f -name "*.md" -print0 | while IFS= read -r -d $'\0' file; do
+            ./scripts/lint_care_spec.sh "$file"
+          done
