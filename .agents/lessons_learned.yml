@@ -250,3 +250,72 @@ lessons:
     root_cause: "The `git commit` command, when run via shell, defaults to the system's `user.name` and `user.email` config. The agent did not explicitly override this default."
     solution: "All `git commit` commands executed by agents MUST use the `--author` flag to explicitly set the author identity to the project standard (`tamld <ductam1828@gmail.com>`). This overrides any local or global Git configuration."
     example: '`git commit --author="tamld <ductam1828@gmail.com>" -m "Your commit message"`'
+
+  - id: LL-021
+    topic: "First Agent Syndrome in Brainstorm Responses"
+    problem: "First agent to respond in brainstorm may give broad AGREE without depth. Example: Gemini claimed to address 8 items (OBS-001 to OBS-004, CQ-001 to CQ-004) but only detailed 4 in reasoning. No artifacts proposed despite having relevant experience from Task #13."
+    root_cause: |
+      1. Template may be intimidating - agent defaults to "blanket agree" to complete quickly
+      2. No examples of GOOD responses in template to guide first responder
+      3. Pressure to respond (be first) vs respond thoroughly
+      4. Unclear distinction between observations (OBS-XXX) requiring position vs critical questions (CQ-XXX) requiring explicit answers
+    impact: "Brainstorm loses depth - dialogue becomes shallow Q&A instead of structured analysis with artifacts"
+    solution: |
+      1. Update brainstorm_template.yml with "Good Response Example" section showing 1:1 observation mapping
+      2. Enforce: One observation block per item (not bundled addresses: [OBS-001, OBS-002, ...])
+      3. Mandate: ≥1 artifact proposal if agent has relevant experience from prior tasks
+      4. Add response quality self-checklist:
+         - [ ] Each item addressed in separate observation block
+         - [ ] CQ-XXX questions answered explicitly (not just AGREE)
+         - [ ] ≥1 artifact proposed if I have relevant experience
+         - [ ] Reverse-thinking check completed for my positions
+         - [ ] Evidence citations provided (file:line, commits, CI runs)
+    evidence:
+      - file: ".agents/brainstorm_cmd_project_constraints.yml"
+        commit: "fc64bbc"
+        detail: "Gemini response: addresses 8 items but reasoning covers 4, artifacts_proposed: []"
+      - context: "Gemini had Task #13 CI friction experience but didn't propose LL about it"
+    date_identified: "2025-10-23"
+    severity: "MEDIUM"
+    action: "Update template + add to facilitator_guide.md pitfalls section"
+    related_lessons: ["LL-013: Evidence-based responses", "LL-014: Handoff completeness"]
+
+  - id: LL-022
+    topic: "Critical Questions Need Explicit Answers, Not Just Agreement"
+    problem: "Critical Questions (CQ-XXX) designed to elicit specific answers and depth analysis, but agents can claim to 'address' them with blanket AGREE without actually answering. Example: Gemini 'addresses: [CQ-001, CQ-002, CQ-003, CQ-004]' but no explicit answers to questions like 'How do you verify project type?' or 'What's your protocol when docs promise exceed capabilities?'"
+    root_cause: |
+      Template allows 'addresses: [CQ-001]' without requiring 'answer' field.
+      Agent interprets CQ-XXX same as OBS-XXX (position: AGREE/DISAGREE) instead of providing substantive answer.
+      Response template doesn't distinguish between observations (require position) and questions (require answer).
+    impact: "Critical design questions remain unanswered, defeating purpose of depth_questions in brainstorm. Facilitator cannot synthesize decisions without answers."
+    solution: |
+      1. Update response template to make 'answer' field MANDATORY for CQ-XXX items:
+         ```yaml
+         # For Critical Questions (CQ-XXX):
+         - addresses: [CQ-001]
+           position: ANSWER  # Not AGREE/DISAGREE for questions
+           answer: |
+             Your specific answer here.
+             Include: approach, rationale, alternatives considered.
+           
+           depth_questions_response:
+             - question: "How granular? (from depth_questions)"
+               answer: "Your answer to depth question"
+         ```
+      
+      2. Template should include example CQ-XXX response showing expected detail level
+      
+      3. Facilitator guide: Flag responses with CQ-XXX in addresses but no 'answer' field as incomplete
+      
+      4. Add to response quality checklist:
+         - [ ] All CQ-XXX items have 'answer' field (not just position)
+         - [ ] Depth_questions from CQ-XXX addressed individually
+    evidence:
+      - file: ".agents/brainstorm_cmd_project_constraints.yml"
+        lines: "CQ-001 to CQ-004 define questions like 'How do you verify project type?'"
+        issue: "Gemini response shows 'addresses: [CQ-001, CQ-002, CQ-003, CQ-004]' but no answers"
+        proof: "Search for 'answer:' field in Gemini's response → Not found for CQ items"
+    date_identified: "2025-10-23"
+    severity: "HIGH"
+    action: "Update brainstorm_template.yml to require 'answer' for CQ-XXX"
+    related_lessons: ["LL-021: First Agent Syndrome"]

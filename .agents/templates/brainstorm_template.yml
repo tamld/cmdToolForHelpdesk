@@ -220,49 +220,215 @@ critical_questions:
 # RESPONSE TEMPLATE (For Round 2 Responders)
 # ========================================================================
 response_template: |
+  ⚠️ IMPORTANT: Split observations 1:1 (one block per item addressed)
+  ⚠️ For CQ-XXX (Critical Questions): Use position: ANSWER, not AGREE
+  ⚠️ MUST propose ≥1 artifact if you have relevant experience
+  
   ---
   responder:
     agent: "Your Name (Gemini, Codex, etc.)"
     timestamp: "YYYY-MM-DDTHH:MM:SSZ"
-    round: 2
+    round: 2  # This is Round 2 (responders), not Round 1
   
+  # ========== For OBSERVATIONS (OBS-XXX) ==========
   observations:
-    - addresses: [OBS-001]
+    - addresses: [OBS-001]  # ONE item per block (not bundled)
       position: AGREE | DISAGREE | CONDITIONAL
       
       reasoning: |
         Evidence-based explanation of your position.
         Cite specific files, commands, precedents.
+        
+        Example:
+        "AGREE with OBS-001 because:
+        1. [Reason with evidence]
+        2. [Reason with evidence]
+        3. Evidence: file.yml:22 shows X"
       
       evidence:
         - type: "file_reference | command_output | git_history | metric"
-          details: "Specific evidence"
+          location: "file.yml:22-26"
+          details: "What this proves"
       
       reverse_thinking_check:
         question: "What if MY position is wrong?"
         alternative: "What's the opposite view?"
         weakness: "Flaw in my argument"
+        severity: "LOW | MEDIUM | HIGH - how likely is this weakness?"
       
       alternative_proposals:
         - proposal: "Your alternative"
           pros: []
           cons: []
           vote: "STRONG_SUPPORT | WEAK_SUPPORT | NEUTRAL | OPPOSE"
+          rationale: "WHY this vote (which pros/cons dominate)"
+    
+    # ========== For CRITICAL QUESTIONS (CQ-XXX) ==========
+    - addresses: [CQ-001]  # Answer questions explicitly
+      position: ANSWER  # Not AGREE/DISAGREE for questions
+      
+      answer: |
+        Your specific, detailed answer to the question.
+        
+        Example for "How do you verify project type?":
+        "I verify project type through these steps:
+        1. Check for .agents/PROJECT_TYPE file (explicit marker)
+        2. If absent, scan for indicators (package.json → Node, .cmd → CMD)
+        3. Default to 'generic' with warning if ambiguous
+        4. Log detection result in operational_model.yml execution"
+      
+      depth_questions_response:
+        - question: "How granular? (from depth_questions section)"
+          answer: "CMD vs Bash distinction needed - syntax differs"
+        
+        - question: "Where to store type info?"
+          answer: ".agents/PROJECT_TYPE file for explicitness"
+      
+      reverse_thinking_check:
+        question: "What if this approach FAILS?"
+        failure_scenario: "Hybrid projects (CMD + PowerShell modules)"
+        mitigation: "Primary type in PROJECT_TYPE, note hybrid in adaptations.yml"
   
+  # ========== ARTIFACTS (Required if you have experience) ==========
   artifacts_proposed:
-    - type: "lesson_learned | core_principle | decision | process_update"
-      id: "LL-XXX or CP-XXX"
-      content: "What to document"
-      implementation: "Where/how to add"
+    - type: "lesson_learned"
+      id: "LL-XXX"
+      title: "Your proposed lesson title"
+      problem: "What went wrong or gap identified"
+      root_cause: "Why it happened"
+      solution: "How to fix"
+      evidence: "From your experience (task, commit, CI run)"
+      severity: "LOW | MEDIUM | HIGH"
+    
+    - type: "core_principle"
+      id: "CP-XXX"
+      title: "Your proposed principle"
+      description: "The rule"
+      implementation: "How to follow it"
   
+  # ========== FOLLOW-UP QUESTIONS (Encourage dialogue) ==========
   follow_up_questions:
-    - question: "Your question"
-      directed_to: "Agent name or 'all'"
-      why: "What gap this fills"
+    - question: "Your question here"
+      directed_to: "Specific agent or 'all'"
+      why: "What gap this question fills"
+      type: "clarification | alternative | challenge | extension"
   
+  # ========== AVAILABILITY ==========
   availability:
     can_participate_in_round_3: true | false
-    time_commitment: "Estimate"
+    time_commitment: "Hours available for consensus-building"
+  
+  # ========== QUALITY SELF-CHECK ✅ ==========
+  response_quality_checklist:
+    - "[ ] Each item (OBS/CQ) addressed in separate observation block (not bundled)"
+    - "[ ] CQ-XXX items have 'answer' field with specific answers (not just AGREE)"
+    - "[ ] Depth_questions from CQ-XXX addressed individually"
+    - "[ ] ≥1 artifact proposed if I have relevant experience from prior tasks"
+    - "[ ] Reverse-thinking check completed for all my positions"
+    - "[ ] Evidence citations provided (file:line, commits, CI runs, metrics)"
+    - "[ ] Alternative proposals include rationale for vote (not just pros/cons)"
+    - "[ ] ≥1 follow-up question to encourage dialogue"
+    - "[ ] Round number correct (this is Round 2 for responders)"
+  ---
+
+# ========================================================================
+# GOOD RESPONSE EXAMPLE (Learn from this)
+# ========================================================================
+good_response_example: |
+  ---
+  responder:
+    agent: "Example Agent"
+    timestamp: "2025-10-23T12:00:00Z"
+    round: 2
+  
+  observations:
+    - addresses: [OBS-001]  # ONE item, not bundled
+      position: AGREE
+      
+      reasoning: |
+        AGREE that framework assumes Node.js, causing CMD project friction.
+        Evidence from my direct experience on Task #13:
+        1. CI triggered unexpected workflows (Run CMD Tests, Check Empty PR)
+        2. Had to debug why templates linted incorrectly
+        3. Root cause: parallel_operations.yml:22 assumes contracts/ directory
+      
+      evidence:
+        - type: "file_reference"
+          location: "parallel_operations.yml:22-26"
+          content: "Contracts live under contracts/ ← N/A for CMD"
+        - type: "ci_run"
+          id: "18741992186"
+          issue: "Template lint failed due to Node.js assumptions"
+        - type: "lesson_learned"
+          id: "LL-019"
+          relevance: "Confirms testing infrastructure gap"
+      
+      reverse_thinking_check:
+        question: "What if override file approach is WRONG?"
+        alternative: "Inline conditionals in parallel_operations.yml"
+        weakness: "Override file adds doc overhead - 30% agents may skip"
+        severity: "MEDIUM - based on human reading patterns"
+        mitigation: "Add 'Read This First' banner in operational_model.yml"
+      
+      alternative_proposals:
+        - proposal: "Auto-detect via file markers (.cmd, package.json)"
+          pros: ["No manual config", "Zero doc overhead"]
+          cons: ["Fragile if markers missing", "Doesn't handle hybrid projects"]
+          vote: "WEAK_SUPPORT"
+          rationale: "Cons outweigh - hybrid projects would break detection"
+    
+    - addresses: [CQ-001]  # Separate block for critical question
+      position: ANSWER
+      
+      answer: |
+        I verify project type through:
+        1. Check .agents/PROJECT_TYPE file (explicit, highest priority)
+        2. If missing, scan for markers:
+           - package.json → Node.js
+           - .cmd files → Windows CMD
+           - requirements.txt → Python
+        3. Default to 'generic' with warning if ambiguous
+        4. Log detection in operational_model.yml step 1 execution
+      
+      depth_questions_response:
+        - question: "How granular? (CMD vs Bash vs PowerShell)"
+          answer: "YES - need distinction. CMD and Bash have incompatible syntax."
+        
+        - question: "Where to store type info?"
+          answer: ".agents/PROJECT_TYPE file for explicitness, not convention-based"
+        
+        - question: "Hybrid projects?"
+          answer: "PRIMARY type in PROJECT_TYPE, document hybrid in adaptations.yml"
+  
+  artifacts_proposed:
+    - type: "lesson_learned"
+      id: "LL-021"
+      title: "CI friction from framework-project type mismatch"
+      problem: "Multiple CI workflows triggered unexpectedly in Task #13"
+      root_cause: "Framework assumes Node.js, CMD project has different structure"
+      solution: "Create project type detection + adaptation files"
+      evidence: "CI run 18741992186, my Task #13 debugging experience"
+      severity: "MEDIUM"
+  
+  follow_up_questions:
+    - question: "Should .agents/PROJECT_TYPE be mandatory or optional?"
+      directed_to: "all"
+      why: "Affects whether we auto-detect or require explicit config"
+      type: "clarification"
+  
+  availability:
+    can_participate_in_round_3: true
+    time_commitment: "2-3 hours for synthesis"
+  
+  response_quality_checklist:
+    - "[x] Each item addressed separately"
+    - "[x] CQ-001 has explicit answer"
+    - "[x] LL-021 proposed from Task #13 experience"
+    - "[x] Reverse-thinking with severity estimate"
+    - "[x] Evidence: file:line, CI run, LL ref"
+    - "[x] Alternative proposal with vote rationale"
+    - "[x] Follow-up question provided"
+    - "[x] Round 2 confirmed"
   ---
 
 # ========================================================================
