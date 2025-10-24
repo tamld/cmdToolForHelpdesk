@@ -1,0 +1,99 @@
+# Branch Progress Template (LL-014 compliance)
+# Copy this to your feature branch as .agents/branch_progress.yml and fill sections
+
+branch: "feature/ci-care-lint-13-agemini"
+task_id: 13
+owner_current: "Gemini"
+workflow_state: "done"  # authored | ready_for_runner | in_progress | blocked | review | done
+started_at: "2025-10-23T11:28:00Z"
+last_updated: "2025-10-23T15:00:00Z"
+
+# === CONTEXT (WHY) - Answer "Why this approach?" ===
+context:
+  why_this_approach: |
+    Enforce CARE spec structure (Context, Actions, Risks, Expectations) for all specs/ documentation.
+    Rationale: Incomplete specs lead to unclear handoffs and implementation gaps (per LL-014).
+    Approach: CI workflow + Bash lint script (simple, no dependencies) validates required headings on every push/PR.
+  
+  trade_offs:
+    - decision: "Use Bash regex for heading detection"
+      chosen: "Bash + grep/awk (simple, fast, CI-friendly)"
+      rationale: "Avoid node/python deps for this small task; Markdown heading format is stable"
+      evidence: "specs/13/plan.md (Actions section)"
+    
+    - decision: "Only validate presence of headings, not content quality"
+      chosen: "Structural validation only"
+      rationale: "Content quality review is human judgment; automation catches missing sections"
+      evidence: "Risks section in specs/13/plan.md"
+  
+  attempted_but_failed:
+    - "Initial CI trigger with path filters did not execute as expected."
+    - "Linter failed due to incorrect heading levels (## vs #) in spec files."
+  
+  known_issues:
+    - "Lint script may be fragile with non-standard Markdown (e.g., HTML headings, nested code blocks with # symbols)"
+    - "No validation of metadata fields (task ID, author, status) yet—deferred to future enhancement"
+  
+  dependencies:
+    - external: "GitHub Actions (ubuntu-latest runner)"
+    - internal: "specs/13/plan.md (defines CARE schema), .github/workflows/ (CI integration)"
+
+# === HANDOFF INFO (WHO/WHEN) - Answer "Who did what when?" ===
+roles:
+  author:
+    agent: "GitHub Copilot (agemini mode)"
+    status: "Spec authored, branch initialized"
+    handoff_at: null
+  
+  runner:
+    agent: "Gemini"
+    status: "Implementation complete and verified"
+    started_at: "2025-10-23T14:20:00Z"
+
+handoff_ready: true
+
+# === PROGRESS (WHAT DONE) - Answer "What's complete?" ===
+milestones:
+  - timestamp: "2025-10-23T11:28:00Z"
+    action: "Created feature branch and marker commit"
+    evidence:
+      - commit: "9704bdd"
+    status: "Done"
+  
+  - timestamp: "2025-10-23T11:29:00Z"
+    action: "Created draft PR #2"
+    evidence:
+      - pr: "#2"
+    status: "Done"
+  
+  - timestamp: "2025-10-23T11:30:00Z"
+    action: "Authored specs/13/plan.md with CARE structure and reflection/reverse-thinking sections"
+    evidence:
+      - file: "specs/13/plan.md"
+    status: "Done"
+  
+  - timestamp: "2025-10-23T11:31:00Z"
+    action: "Initialized .agents/branch_progress.yml with context and handoff checklist"
+    evidence:
+      - file: ".agents/branch_progress.yml"
+    status: "Done"
+
+  - timestamp: "2025-10-23T14:35:00Z"
+    action: "Implemented lint script, CI workflow, and test files for CARE spec validation"
+    evidence:
+      - commit: "dbbb028"
+    status: "Done"
+
+  - timestamp: "2025-10-23T15:00:00Z"
+    action: "Verified CI workflow success and failure cases through debugging and fixes."
+    evidence:
+      - commit: "8bdc156"
+      - ci_run: "18742307742"
+    status: "Done"
+
+next_steps:
+  - "Mark PR as ready for review."
+
+blockers: []
+
+# ... (rest of the file is unchanged)

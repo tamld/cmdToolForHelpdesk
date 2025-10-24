@@ -1,0 +1,32 @@
+
+# The primary objective and measurable outcomes for the refactoring effort.
+author: "Gemini Agent (based on user feedback)"
+date: "2025-10-19"
+
+primary_objective: "To transform Helpdesk-Tools.cmd from a monolithic, fragile script into a robust, modular, maintainable, and automatically-tested piece of software, preserving all functionality while enabling safe and rapid future development."
+
+guiding_principles:
+  - "Test-Driven Refactoring: No code is refactored unless a test case exists to validate its behavior."
+  - "Incrementalism: Changes will be small, logical, and verifiable."
+  - "Documentation as Law: The .agents directory is the source of truth for all strategy and architecture."
+  - "Clarity and Consistency: The resulting code must be easy to read and understand."
+
+key_results:
+  - category: "Reliability"
+    result: "Achieve 100% pass rate for all tests in the CI pipeline for every commit."
+    status: "Not Started"
+  - category: "Testability"
+    result: "Establish a functional, multi-layered automated testing framework as defined in testing_strategy.yml."
+    status: "In Progress"
+  - category: "Test Coverage"
+    result: "Implement at least 10 unit and integration test cases for core functions."
+    status: "In Progress"
+  - category: "Code Quality"
+    result: "Enforce a consistent naming convention (PascalCase for menus, camelCase for functions) for all labels."
+    status: "In Progress"
+  - category: "Modularity"
+    result: "Refactor at least 5 major script sections to improve modularity and reduce code duplication."
+    status: "In Progress"
+  - category: "Maintainability"
+    result: "Ensure the project is clearly structured and documented so new features can be added with confidence."
+    status: "In Progress"

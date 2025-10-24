@@ -1,0 +1,17 @@
+strategy: "Controlled Testability Expansion"
+
+root_cause_analysis: |
+  After numerous failed experiments, the root cause of test instability was identified. The monolithic CMD script is fragile and not designed for automated invocation. 
+  Attempts to force testability via external methods (direct `goto` dispatching, input piping) consistently failed due to the script's sensitive execution flow, particularly its use of `setlocal`/`endlocal` and the `choice` command.
+
+lessons_learned:
+  - The initial success of the matrix CI was because it only used pre-validated, stable entry points.
+  - The primary incorrect assumption was that any `label` could be a stable entry point. This is false.
+  - The script must be modified internally in a controlled way to expose new, safe entry points for testing.
+  - The "Refactor for Testability" principle is the correct path forward.
+
+new_strategy_details: 
+  1.  **Establish Baseline:** Re-create the successful matrix-based CI workflow that tests the original, known-good entry points.
+  2.  **Controlled Expansion:** To test a new function/menu (e.g., `:newMenu`), a dedicated test label (e.g., `:testNewMenu`) must be created within the CMD script.
+  3.  **Safe Invocation:** This test label will `call :newMenu` and then immediately and safely `goto :EOF`.
+  4.  **CI Integration:** The new test label (`testNewMenu`) is then added to the CI matrix, allowing it to be run as an independent, isolated test.

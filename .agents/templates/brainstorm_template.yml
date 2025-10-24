@@ -1,0 +1,525 @@
+# Brainstorm Template for Multi-Agent Discussions
+# Version: 1.0
+# Created: 2025-10-23
+# Purpose: Structured dialogue framework with reverse-thinking and artifact generation
+
+# ========================================================================
+# HOW TO USE THIS TEMPLATE
+# ========================================================================
+usage_instructions: |
+  1. Copy this file to .agents/brainstorm_<topic>.yml
+  2. Fill in metadata (questioner, topic, goal)
+  3. Add observations with REVERSE-THINKING prompts
+  4. Responders use RESPONSE_TEMPLATE section
+  5. Round 3: Synthesize into artifacts (lessons, principles, decisions)
+  
+  Key Principles:
+  - Every claim needs evidence (file:line, command output, git log)
+  - Reverse-thinking prevents groupthink ("What if opposite is true?")
+  - Artifacts emerge (not just discussion)
+  - Iterative: Rounds 1-3 until consensus or documented disagreement
+
+# ========================================================================
+# WORKFLOW PROTOCOL
+# ========================================================================
+workflow:
+  philosophy: |
+    Brainstorming is structured dialogue, not Q&A:
+    - Questioner challenges assumptions
+    - Responders provide evidence-based analysis
+    - Artifacts emerge: decisions, lessons, principles
+    - Iterate until clarity or informed disagreement
+  
+  rounds:
+    - round: 1
+      role: "Questioner"
+      goal: "Surface assumptions, identify gaps, propose initial solutions"
+      deliverable: "Observations + reverse-thinking prompts + proposals"
+      
+    - round: 2
+      role: "Responders (Gemini, Codex, other agents)"
+      goal: "Challenge proposals, provide alternatives, vote with evidence"
+      deliverable: "AGREE/DISAGREE/CONDITIONAL + reasoning + artifacts"
+      
+    - round: 3
+      role: "Facilitator (human or consensus agent)"
+      goal: "Resolve conflicts, synthesize consensus, create artifacts"
+      deliverable: "Lessons learned, core principles, operational updates"
+  
+  reverse_thinking_protocol:
+    description: |
+      Before accepting solutions, ask "What if the opposite is true?"
+      This uncovers hidden assumptions and prevents groupthink.
+    
+    template: |
+      reverse_thinking:
+        prompt: "What if we DON'T do X - what fails?"
+        scenarios: [List concrete failure modes]
+        insight: "What this reveals about necessity vs nice-to-have"
+    
+    examples:
+      - question: "Should we add feature X?"
+        reverse: "What if we NEVER add feature X - how do users cope?"
+        
+      - question: "Should we enforce rule Y?"
+        reverse: "What if NO enforcement - what chaos emerges?"
+  
+  evidence_requirements:
+    acceptable:
+      - "File citations (path:line)"
+      - "Git evidence (commit SHA, branch age)"
+      - "Command outputs"
+      - "Test/CI results (run IDs)"
+      - "Metrics data"
+    
+    unacceptable:
+      - "I think..." without data
+      - "Best practice..." without project context
+      - "Usually..." without specific examples
+  
+  conflict_resolution:
+    - step: 1
+      action: "Document both positions with evidence"
+    - step: 2
+      action: "Identify root cause (assumptions? data? values?)"
+    - step: 3
+      action: "Escalate to human if fundamental"
+    - step: 4
+      action: "If technical: experiment, gather data, decide"
+
+# ========================================================================
+# METADATA (Fill This Out)
+# ========================================================================
+metadata:
+  topic: "YOUR_TOPIC_HERE"
+  
+  questioner:
+    agent: "AGENT_NAME"
+    timestamp: "YYYY-MM-DDTHH:MM:SSZ"
+    context: "Why this brainstorm initiated"
+    reverse_questions_used: true | false
+    evidence_provided: true | false
+  
+  responders:
+    - agent: "Expected responder 1"
+      status: "pending | responded | unavailable"
+    - agent: "Expected responder 2"
+      status: "pending"
+  
+  goal: "What clarity or decision we're seeking"
+  
+  success_criteria:
+    - "Criterion 1 (e.g., consensus on approach)"
+    - "Criterion 2 (e.g., at least 3 artifacts created)"
+
+# ========================================================================
+# PROBLEM STATEMENT
+# ========================================================================
+problem_statement: |
+  Describe the issue that prompted this brainstorm.
+  
+  Include:
+  - What triggered this discussion
+  - What's unclear or contentious
+  - What decision/clarity is needed
+  - Why this matters (impact if unresolved)
+
+# ========================================================================
+# OBSERVATIONS (Round 1 - Questioner)
+# ========================================================================
+observations:
+  - id: OBS-001
+    agent: "QUESTIONER_NAME"
+    timestamp: "YYYY-MM-DDTHH:MM:SSZ"
+    topic: "Brief topic name"
+    
+    evidence: |
+      Concrete evidence supporting this observation.
+      
+      Example:
+      File: path/to/file.yml:22-26
+      ```yaml
+      content: "showing the issue"
+      ```
+      
+      Command: ls contracts/
+      Output: No such file or directory
+    
+    concern: |
+      What could go wrong if this isn't addressed.
+      What assumptions are being made.
+    
+    reverse_thinking:
+      prompt: "What if we DON'T address this concern?"
+      scenarios:
+        - "Scenario 1 of what breaks"
+        - "Scenario 2 of confusion"
+      insight: "What this reveals about severity"
+    
+    depth_questions:
+      - "Follow-up question 1"
+      - "Follow-up question 2"
+    
+    question_for_others: |
+      Specific questions for responders.
+      What perspective/expertise needed.
+
+# ========================================================================
+# PROPOSED SOLUTIONS (Round 1 - Questioner)
+# ========================================================================
+proposed_solutions:
+  - solution_id: SOL-001
+    addresses: [OBS-001, OBS-002]
+    
+    proposal: |
+      Detailed description of proposed solution.
+      
+      Include:
+      - What to implement
+      - Where (files/locations)
+      - How (concrete steps)
+    
+    reverse_thinking:
+      prompt: "What if this solution FAILS or is WRONG?"
+      risks:
+        - "Risk 1"
+        - "Risk 2"
+      mitigation: "How to detect/recover from failure"
+    
+    requires_consensus: true | false
+    
+    agent_votes: []
+      # Populated in Round 2
+      # - agent: "Gemini"
+      #   vote: "AGREE | DISAGREE | CONDITIONAL"
+      #   reasoning: "Evidence-based explanation"
+
+# ========================================================================
+# CRITICAL QUESTIONS (Optional - For Complex Topics)
+# ========================================================================
+critical_questions:
+  - question_id: CQ-001
+    category: "Category name"
+    question: "The question"
+    current_gap: "What's missing today"
+    
+    reverse_thinking:
+      prompt: "What if we DON'T answer this question?"
+      scenarios: ["Impact 1", "Impact 2"]
+      insight: "Why this matters"
+    
+    depth_questions:
+      - "Deeper question 1"
+      - "Deeper question 2"
+    
+    stakeholders:
+      - agent: "Agent name"
+        why: "Why their input matters"
+
+# ========================================================================
+# RESPONSE TEMPLATE (For Round 2 Responders)
+# ========================================================================
+response_template: |
+  ⚠️ IMPORTANT: Split observations 1:1 (one block per item addressed)
+  ⚠️ For CQ-XXX (Critical Questions): Use position: ANSWER, not AGREE
+  ⚠️ MUST propose ≥1 artifact if you have relevant experience
+  
+  ---
+  responder:
+    agent: "Your Name (Gemini, Codex, etc.)"
+    timestamp: "YYYY-MM-DDTHH:MM:SSZ"
+    round: 2  # This is Round 2 (responders), not Round 1
+  
+  # ========== For OBSERVATIONS (OBS-XXX) ==========
+  observations:
+    - addresses: [OBS-001]  # ONE item per block (not bundled)
+      position: AGREE | DISAGREE | CONDITIONAL
+      
+      reasoning: |
+        Evidence-based explanation of your position.
+        Cite specific files, commands, precedents.
+        
+        Example:
+        "AGREE with OBS-001 because:
+        1. [Reason with evidence]
+        2. [Reason with evidence]
+        3. Evidence: file.yml:22 shows X"
+      
+      evidence:
+        - type: "file_reference | command_output | git_history | metric"
+          location: "file.yml:22-26"
+          details: "What this proves"
+      
+      reverse_thinking_check:
+        question: "What if MY position is wrong?"
+        alternative: "What's the opposite view?"
+        weakness: "Flaw in my argument"
+        severity: "LOW | MEDIUM | HIGH - how likely is this weakness?"
+      
+      alternative_proposals:
+        - proposal: "Your alternative"
+          pros: []
+          cons: []
+          vote: "STRONG_SUPPORT | WEAK_SUPPORT | NEUTRAL | OPPOSE"
+          rationale: "WHY this vote (which pros/cons dominate)"
+    
+    # ========== For CRITICAL QUESTIONS (CQ-XXX) ==========
+    - addresses: [CQ-001]  # Answer questions explicitly
+      position: ANSWER  # Not AGREE/DISAGREE for questions
+      
+      answer: |
+        Your specific, detailed answer to the question.
+        
+        Example for "How do you verify project type?":
+        "I verify project type through these steps:
+        1. Check for .agents/PROJECT_TYPE file (explicit marker)
+        2. If absent, scan for indicators (package.json → Node, .cmd → CMD)
+        3. Default to 'generic' with warning if ambiguous
+        4. Log detection result in operational_model.yml execution"
+      
+      depth_questions_response:
+        - question: "How granular? (from depth_questions section)"
+          answer: "CMD vs Bash distinction needed - syntax differs"
+        
+        - question: "Where to store type info?"
+          answer: ".agents/PROJECT_TYPE file for explicitness"
+      
+      reverse_thinking_check:
+        question: "What if this approach FAILS?"
+        failure_scenario: "Hybrid projects (CMD + PowerShell modules)"
+        mitigation: "Primary type in PROJECT_TYPE, note hybrid in adaptations.yml"
+  
+  # ========== ARTIFACTS (Required if you have experience) ==========
+  artifacts_proposed:
+    - type: "lesson_learned"
+      id: "LL-XXX"
+      title: "Your proposed lesson title"
+      problem: "What went wrong or gap identified"
+      root_cause: "Why it happened"
+      solution: "How to fix"
+      evidence: "From your experience (task, commit, CI run)"
+      severity: "LOW | MEDIUM | HIGH"
+    
+    - type: "core_principle"
+      id: "CP-XXX"
+      title: "Your proposed principle"
+      description: "The rule"
+      implementation: "How to follow it"
+  
+  # ========== FOLLOW-UP QUESTIONS (Encourage dialogue) ==========
+  follow_up_questions:
+    - question: "Your question here"
+      directed_to: "Specific agent or 'all'"
+      why: "What gap this question fills"
+      type: "clarification | alternative | challenge | extension"
+  
+  # ========== AVAILABILITY ==========
+  availability:
+    can_participate_in_round_3: true | false
+    time_commitment: "Hours available for consensus-building"
+  
+  # ========== QUALITY SELF-CHECK ✅ ==========
+  response_quality_checklist:
+    - "[ ] Each item (OBS/CQ) addressed in separate observation block (not bundled)"
+    - "[ ] CQ-XXX items have 'answer' field with specific answers (not just AGREE)"
+    - "[ ] Depth_questions from CQ-XXX addressed individually"
+    - "[ ] ≥1 artifact proposed if I have relevant experience from prior tasks"
+    - "[ ] Reverse-thinking check completed for all my positions"
+    - "[ ] Evidence citations provided (file:line, commits, CI runs, metrics)"
+    - "[ ] Alternative proposals include rationale for vote (not just pros/cons)"
+    - "[ ] ≥1 follow-up question to encourage dialogue"
+    - "[ ] Round number correct (this is Round 2 for responders)"
+  ---
+
+# ========================================================================
+# GOOD RESPONSE EXAMPLE (Learn from this)
+# ========================================================================
+good_response_example: |
+  ---
+  responder:
+    agent: "Example Agent"
+    timestamp: "2025-10-23T12:00:00Z"
+    round: 2
+  
+  observations:
+    - addresses: [OBS-001]  # ONE item, not bundled
+      position: AGREE
+      
+      reasoning: |
+        AGREE that framework assumes Node.js, causing CMD project friction.
+        Evidence from my direct experience on Task #13:
+        1. CI triggered unexpected workflows (Run CMD Tests, Check Empty PR)
+        2. Had to debug why templates linted incorrectly
+        3. Root cause: parallel_operations.yml:22 assumes contracts/ directory
+      
+      evidence:
+        - type: "file_reference"
+          location: "parallel_operations.yml:22-26"
+          content: "Contracts live under contracts/ ← N/A for CMD"
+        - type: "ci_run"
+          id: "18741992186"
+          issue: "Template lint failed due to Node.js assumptions"
+        - type: "lesson_learned"
+          id: "LL-019"
+          relevance: "Confirms testing infrastructure gap"
+      
+      reverse_thinking_check:
+        question: "What if override file approach is WRONG?"
+        alternative: "Inline conditionals in parallel_operations.yml"
+        weakness: "Override file adds doc overhead - 30% agents may skip"
+        severity: "MEDIUM - based on human reading patterns"
+        mitigation: "Add 'Read This First' banner in operational_model.yml"
+      
+      alternative_proposals:
+        - proposal: "Auto-detect via file markers (.cmd, package.json)"
+          pros: ["No manual config", "Zero doc overhead"]
+          cons: ["Fragile if markers missing", "Doesn't handle hybrid projects"]
+          vote: "WEAK_SUPPORT"
+          rationale: "Cons outweigh - hybrid projects would break detection"
+    
+    - addresses: [CQ-001]  # Separate block for critical question
+      position: ANSWER
+      
+      answer: |
+        I verify project type through:
+        1. Check .agents/PROJECT_TYPE file (explicit, highest priority)
+        2. If missing, scan for markers:
+           - package.json → Node.js
+           - .cmd files → Windows CMD
+           - requirements.txt → Python
+        3. Default to 'generic' with warning if ambiguous
+        4. Log detection in operational_model.yml step 1 execution
+      
+      depth_questions_response:
+        - question: "How granular? (CMD vs Bash vs PowerShell)"
+          answer: "YES - need distinction. CMD and Bash have incompatible syntax."
+        
+        - question: "Where to store type info?"
+          answer: ".agents/PROJECT_TYPE file for explicitness, not convention-based"
+        
+        - question: "Hybrid projects?"
+          answer: "PRIMARY type in PROJECT_TYPE, document hybrid in adaptations.yml"
+  
+  artifacts_proposed:
+    - type: "lesson_learned"
+      id: "LL-021"
+      title: "CI friction from framework-project type mismatch"
+      problem: "Multiple CI workflows triggered unexpectedly in Task #13"
+      root_cause: "Framework assumes Node.js, CMD project has different structure"
+      solution: "Create project type detection + adaptation files"
+      evidence: "CI run 18741992186, my Task #13 debugging experience"
+      severity: "MEDIUM"
+  
+  follow_up_questions:
+    - question: "Should .agents/PROJECT_TYPE be mandatory or optional?"
+      directed_to: "all"
+      why: "Affects whether we auto-detect or require explicit config"
+      type: "clarification"
+  
+  availability:
+    can_participate_in_round_3: true
+    time_commitment: "2-3 hours for synthesis"
+  
+  response_quality_checklist:
+    - "[x] Each item addressed separately"
+    - "[x] CQ-001 has explicit answer"
+    - "[x] LL-021 proposed from Task #13 experience"
+    - "[x] Reverse-thinking with severity estimate"
+    - "[x] Evidence: file:line, CI run, LL ref"
+    - "[x] Alternative proposal with vote rationale"
+    - "[x] Follow-up question provided"
+    - "[x] Round 2 confirmed"
+  ---
+
+# ========================================================================
+# RESPONSES (Round 2 - Agents Append Here)
+# ========================================================================
+responses: []
+  # Gemini appends response here
+  # Codex appends response here
+  # Other agents append here
+
+# ========================================================================
+# SYNTHESIS & ARTIFACTS (Round 3)
+# ========================================================================
+synthesis:
+  status: "Not Started | In Progress | Complete"
+  facilitator: "Agent or human name"
+  
+  decisions_made: []
+    # - decision_id: DEC-001
+    #   topic: "What was decided"
+    #   outcome: "The decision"
+    #   votes: {AGREE: X, DISAGREE: Y, CONDITIONAL: Z}
+    #   implementation: "Concrete next steps"
+    #   evidence: "Why this decision (data/consensus)"
+  
+  artifacts_created: []
+    # - artifact_type: "lesson_learned"
+    #   id: "LL-XXX"
+    #   file: ".agents/lessons_learned.yml"
+    #   status: "Drafted | Merged"
+    #   commit: "SHA if merged"
+  
+  unresolved_conflicts: []
+    # - conflict_id: CONF-001
+    #   topic: "What's contentious"
+    #   positions:
+    #     - agent: "A"
+    #       stance: "Position A"
+    #     - agent: "B"
+    #       stance: "Position B"
+    #   escalation: "Human decision | Further experiment | Accept disagreement"
+    #   decision_by: "Who has final say"
+  
+  process_learnings: []
+    # - learning: "What we learned about brainstorm process itself"
+    #   improvement: "How to do better next time"
+
+# ========================================================================
+# APPENDIX
+# ========================================================================
+appendix:
+  related_files: []
+    # - path: "File path"
+    #   issue: "Why relevant"
+    #   status: "Current state"
+  
+  related_lessons: []
+    # - id: "LL-XXX"
+    #   title: "Lesson title"
+    #   relevance: "How it applies here"
+  
+  related_principles: []
+    # - id: "CP-XXX"
+    #   title: "Principle title"
+    #   relevance: "How it applies here"
+  
+  process_notes: []
+    # - note: "Process observation"
+    #   timestamp: "When noted"
+    #   action: "What to do about it"
+
+# ========================================================================
+# METRICS (Optional)
+# ========================================================================
+metrics:
+  duration:
+    round_1_start: "YYYY-MM-DDTHH:MM:SSZ"
+    round_1_end: null
+    round_2_start: null
+    round_2_end: null
+    round_3_start: null
+    round_3_end: null
+  
+  participation:
+    agents_invited: 0
+    agents_responded: 0
+    response_rate: "0%"
+  
+  outcomes:
+    decisions_made: 0
+    artifacts_created: 0
+    unresolved_conflicts: 0
+    lessons_learned: 0
+    principles_added: 0

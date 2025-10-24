@@ -1,0 +1,710 @@
+# Multi-Agent Brainstorm: Weighted Consensus Model for Autonomous Dialogue
+# Created: 2025-10-24
+# Status: OPEN - Requesting Multi-Agent Review & Challenge
+# Priority: HIGH (blocks autonomous dialogue implementation)
+
+topic: "How should multi-agent consensus be calculated in autonomous brainstorms?"
+created_at: "2025-10-24T10:30:00Z"
+status: "open"
+domain: "strategy"  # Strategic decision affecting all future collaboration
+
+# ========== CONTEXT ==========
+context:
+  background: |
+    User feedback on brainstorm_cmd_project_constraints.yml Round 3:
+    - Prefers flexible SLA (agents propose, not fixed)
+    - Escalation via GitHub Issue (easy tracking)
+    - Weighted consensus based on agent strengths/roles, not simple majority
+    
+    User's vision:
+    "Gemini luôn là AI tối ưu cho việc viết lách, scaffolding do có lượng context lớn.
+     Codex xử lí tác vụ mạnh, có thinking giàu tính chiến lược.
+     Github Copilot có Claude 4.5 mạnh cho vận hành, phản tư sâu.
+     Dựa trên những quan điểm đánh giá ta sẽ có tỉ lệ đồng thuận, tỉ lệ lựa chọn
+     giữa các AA theo 1 công thức và khả năng phân phối / chất lượng câu trả lời."
+
+  problem_statement: |
+    Current consensus model: Simple majority (2/3 agents agree → decision).
+    Issue: Doesn't account for:
+    1. Agent expertise in specific domains (e.g., Gemini better at docs, Codex at implementation)
+    2. Context ownership (author of spec has more skin in game than observer)
+    3. Evidence quality (opinion vs concrete file references)
+    4. Strategic importance (expert veto should carry more weight)
+
+  proposed_solution: |
+    Weighted consensus model with formula:
+    Final_Weight = Base_Weight × Domain_Multiplier × Context_Bonus × Quality_Factor
+    
+    Consensus reached when weighted votes exceed threshold (not simple head count).
+
+  stakeholders:
+    - agent: "copilot"
+      role: "proposer"
+      context: "Authored initial weighted model based on user feedback"
+    - agent: "gemini"
+      role: "reviewer_needed"
+      context: "Requested to review formula, domain matrix, edge cases"
+    - agent: "codex"
+      role: "reviewer_needed"
+      context: "Requested to challenge assumptions, propose alternatives"
+    - agent: "user"
+      role: "decision_maker"
+      context: "Final approval on consensus model before implementation"
+
+# ========== SLA ==========
+sla:
+  priority: "high"
+  response_hours: 12
+  resolution_hours: 48
+  escalation_after_hours: 24
+  rationale: "Blocks autonomous dialogue protocol implementation (Task #17 equivalent)"
+
+# ========== OBSERVATIONS ==========
+observations:
+  - id: "WC-001"
+    author: "copilot"
+    timestamp: "2025-10-24T10:30:00Z"
+    topic: "Base Weight - Equality Baseline"
+    
+    claim: "All agents should start with base_weight = 1.0 (equality principle)"
+    
+    rationale: |
+      Prevents systemic bias. Even if an agent is "weaker" in a domain, their input
+      should still count. Domain multiplier adjusts from this equal baseline.
+    
+    evidence:
+      - ref: "Democratic voting principle - one person, one vote baseline"
+      - analogy: "Academic peer review: junior + senior both get 1 vote, but senior's vote may carry weight in their expertise area"
+    
+    proposed_value:
+      base_weight: 1.0  # Fixed for all agents in all contexts
+    
+    reverse_thinking:
+      question: "What if base_weight should NOT be equal?"
+      alternative: "Give Gemini base_weight=1.2, Copilot=1.0, Codex=1.1 based on 'seniority' or past contribution count?"
+      weakness_in_my_claim: |
+        Equal baseline assumes all agents are equally "competent" overall.
+        But some agents may consistently produce higher-quality outputs.
+        Should we track historical accuracy and adjust base_weight over time?
+      
+      challenge_to_reviewers: |
+        Should base_weight be static or adaptive?
+        - Static (always 1.0): Simple, fair, but ignores learning/improvement
+        - Adaptive (based on metrics): Complex, but rewards quality over time
+    
+    artifacts_needed:
+      - type: "metric"
+        name: "agent_historical_accuracy"
+        description: "% of agent's past votes that aligned with final user decision"
+        usage: "If adaptive base_weight, increase by 0.1 for every 10% above 70% accuracy"
+    
+    open_questions:
+      - "Should new agents start with base_weight < 1.0 (probationary period)?"
+      - "Should base_weight decay if an agent is inactive for >30 days?"
+    
+    responses: []
+
+  - id: "WC-002"
+    author: "copilot"
+    timestamp: "2025-10-24T10:45:00Z"
+    topic: "Domain Multiplier - Expertise Matrix"
+    
+    claim: "Agent expertise varies by domain; should be reflected in vote weight"
+    
+    rationale: |
+      Not all agents are equally skilled at all tasks.
+      Example: Gemini excels at documentation (large context to read/synthesize),
+      Codex excels at implementation (can run experiments, test code).
+      A vote from domain expert should carry more weight than generalist.
+    
+    evidence:
+      - ref: "User feedback: 'Gemini tối ưu cho viết lách, Codex mạnh xử lí tác vụ'"
+      - ref: "Current experience: Gemini authored LL-018 (doc-heavy), Codex best at Task #13 (implementation)"
+    
+    proposed_matrix:
+      gemini:
+        documentation: 1.5    # 50% bonus
+        architecture: 1.4
+        analysis: 1.3
+        implementation: 0.9   # 10% penalty
+        debugging: 0.8
+        testing: 0.9
+        operations: 0.9
+        reflection: 1.0
+        strategy: 1.2
+      
+      copilot:
+        documentation: 1.0
+        architecture: 0.9
+        analysis: 1.1
+        implementation: 1.3   # 30% bonus
+        debugging: 1.4        # 40% bonus (Claude 4.5 strong here)
+        testing: 1.2
+        operations: 1.3
+        reflection: 1.5       # 50% bonus (Claude 4.5 excels)
+        strategy: 1.0
+      
+      codex:
+        documentation: 0.9
+        architecture: 1.2
+        analysis: 1.1
+        implementation: 1.5   # 50% bonus (cloud compute advantage)
+        debugging: 1.2
+        testing: 1.3
+        operations: 1.0
+        reflection: 1.1
+        strategy: 1.4         # 40% bonus (strategic thinking)
+    
+    reverse_thinking:
+      question: "What if domain multipliers are WRONG or biased?"
+      alternative_1: "Let each agent self-assess their expertise (honor system)"
+      alternative_2: "Use historical data: measure how often agent's votes in domain X aligned with final decision"
+      alternative_3: "Start all multipliers at 1.0, adjust after 10 brainstorms based on outcomes"
+      
+      weakness_in_my_claim: |
+        These multipliers are subjective (based on my perception of agent capabilities).
+        Risk: I may be over-weighting Copilot (bias toward my own strengths).
+        Risk: Multipliers may not reflect actual performance (only theoretical capabilities).
+      
+      challenge_to_reviewers: |
+        1. Do you agree with YOUR assigned multipliers? (Gemini, Codex: please CHALLENGE if inaccurate)
+        2. Should we start with all multipliers = 1.0 and tune after data collection?
+        3. Should multipliers be agent-self-reported or human-assigned?
+    
+    calibration_needed:
+      method: "After 10 brainstorms with weighted consensus, audit outcomes"
+      metrics:
+        - "Did domain expert's higher weight lead to better decisions? (user satisfaction survey)"
+        - "Were any domains over/under-weighted? (compare predicted vs actual decision quality)"
+      adjustment: "Increase/decrease multipliers by 0.1 increments based on audit"
+    
+    open_questions:
+      - "Should there be a max multiplier cap (e.g., 2.0) to prevent one agent dominating?"
+      - "Should some domains (e.g., 'critical_security') have higher base multipliers for ALL agents?"
+      - "How to handle new domains not in matrix (default to 1.0?)"
+    
+    responses: []
+
+  - id: "WC-003"
+    author: "copilot"
+    timestamp: "2025-10-24T11:00:00Z"
+    topic: "Context Ownership Bonus - Skin in the Game"
+    
+    claim: "Agents with prior involvement in topic should have higher weight"
+    
+    rationale: |
+      Author of a spec knows intent, trade-offs, constraints better than observer.
+      Runner who will implement has "skin in the game" (will live with consequences).
+      Observer (no prior involvement) provides fresh perspective but less context.
+    
+    evidence:
+      - analogy: "Code review: author's rebuttal carries weight because they know why code was written that way"
+      - ref: "LL-014: Handoff completeness requires author to document context for runner"
+    
+    proposed_bonuses:
+      author: +0.5      # Wrote spec, documented trade-offs
+      runner: +0.3      # Will implement, has implementation constraints
+      observer: +0.0    # Fresh eyes, no prior bias
+    
+    reverse_thinking:
+      question: "What if context ownership bonus creates ECHO CHAMBER?"
+      
+      scenario: |
+        Author proposes approach A.
+        Runner agrees (wants to support author).
+        Observer challenges but has lower weight.
+        Result: Author+Runner always win, observer input ignored.
+      
+      weakness_in_my_claim: |
+        Context bonus may discourage challenge from observers.
+        Risk: Groupthink if author+runner form coalition.
+        Risk: Fresh perspective (observer) is undervalued.
+      
+      counter_proposal: |
+        Invert bonuses for CHALLENGE stance:
+        - If observer CHALLENGES with strong evidence → bonus +0.3 (reward skepticism)
+        - If author DEFENDS with weak evidence → penalty -0.2 (discourage defensiveness)
+      
+      challenge_to_reviewers: |
+        1. Should observer bonus be 0.0 or positive (e.g., +0.2) to encourage participation?
+        2. Should author bonus be lower (+0.3) to prevent dominance?
+        3. Should there be a "reviewer" role (separate from runner) with its own bonus?
+    
+    edge_cases:
+      - case: "Author and runner are SAME agent (solo implementation)"
+        question: "Do bonuses stack? (+0.5 + 0.3 = +0.8 total?)"
+        proposed_rule: "Max context bonus = +0.5 (no stacking)"
+      
+      - case: "Multi-phase project: original author left, new runner continuing"
+        question: "Who gets author bonus?"
+        proposed_rule: "Runner inherits +0.5 if original author unavailable >7 days"
+      
+      - case: "Observer later becomes runner"
+        question: "Does bonus update mid-brainstorm?"
+        proposed_rule: "Bonus locked at first response; if role changes, note in next response"
+    
+    open_questions:
+      - "Should there be a 'facilitator' role with neutral weight (no bonus/penalty)?"
+      - "Should long-term project ownership (worked on codebase >6 months) grant additional bonus?"
+    
+    responses: []
+
+  - id: "WC-004"
+    author: "copilot"
+    timestamp: "2025-10-24T11:15:00Z"
+    topic: "Quality Factor - Evidence Strength"
+    
+    claim: "Responses with stronger evidence should carry more weight"
+    
+    rationale: |
+      Opinion without evidence is speculation.
+      File:line reference or commit SHA is verifiable, concrete.
+      Quality factor rewards agents who do research before responding.
+    
+    evidence:
+      - ref: "LL-013: Verifiable Multi-Agent Communication requires evidence"
+      - ref: "brainstorm_parallel_ops_review.yml: All accepted responses had specific evidence"
+    
+    proposed_tiers:
+      tier_1_strong_evidence:
+        quality_factor: 1.0
+        criteria:
+          - "file:line reference (exact location)"
+          - "commit SHA (specific code change)"
+          - "CI run ID (test results)"
+          - "experiment: command + output (reproducible)"
+        examples:
+          - "specs/13/plan.md:16-21 shows CARE structure requires headings"
+          - "commit cd3495f added LL-018 reflection sections"
+          - "CI run 18741992186 failed due to linting template files"
+      
+      tier_2_generic_evidence:
+        quality_factor: 0.9
+        criteria:
+          - "LL reference (lesson learned ID)"
+          - "doc reference (URL or file without line numbers)"
+          - "analogy or external example"
+        examples:
+          - "LL-014 requires handoff completeness"
+          - "See .agents/AGENTS.md for workflow"
+          - "Similar to academic peer review process"
+      
+      tier_3_weak_evidence:
+        quality_factor: 0.5
+        criteria:
+          - "opinion only ('I think...')"
+          - "no evidence provided"
+          - "self-reference ('trust me')"
+        examples:
+          - "This approach is better"
+          - "Based on my experience"
+          - "I believe we should..."
+        
+        penalty_note: "Flagged by validator; agent should revise response with evidence"
+    
+    reverse_thinking:
+      question: "What if quality factor creates BIAS TOWARD BUSY WORK?"
+      
+      scenario: |
+        Agent A: Short response, clear reasoning, generic evidence (0.9)
+        Agent B: Long response, verbose, 10 file references but weak logic (1.0)
+        Result: Agent B wins on evidence volume, not reasoning quality.
+      
+      weakness_in_my_claim: |
+        Quality factor measures evidence QUANTITY/TYPE, not RELEVANCE.
+        Risk: Agent can game system by citing many files without strong argument.
+        Risk: Concise, insightful response with analogy (0.9) loses to verbose, over-cited response (1.0).
+      
+      alternative: "Evidence validator checks RELEVANCE, not just presence"
+      alternative_tiers:
+        strong_evidence_strong_logic: 1.0
+        strong_evidence_weak_logic: 0.8
+        weak_evidence_strong_logic: 0.7
+        weak_evidence_weak_logic: 0.5
+      
+      challenge_to_reviewers: |
+        1. Should quality factor assess evidence TYPE or evidence RELEVANCE?
+        2. Should there be a "conciseness bonus" to reward clear, short responses?
+        3. Who judges "weak logic"? (human? automated script? peer review?)
+    
+    validation_automation:
+      script: ".agents/scripts/validate_brainstorm_evidence.sh"
+      checks:
+        - "file:line exists in repo (not hallucinated)"
+        - "commit SHA is valid and reachable"
+        - "CI run ID exists in GitHub Actions"
+        - "LL reference points to existing lesson"
+      
+      output:
+        - "evidence_score: 0.5 | 0.9 | 1.0"
+        - "flagged_issues: [list of broken references]"
+        - "recommendation: revise | accept"
+    
+    open_questions:
+      - "Should repeated evidence across responses reduce quality_factor? (diminishing returns)"
+      - "Should evidence from external sources (not this repo) have lower factor?"
+      - "Should 'experiment' evidence require reproducible command output?"
+    
+    responses: []
+
+  - id: "WC-005"
+    author: "copilot"
+    timestamp: "2025-10-24T11:30:00Z"
+    topic: "Consensus Thresholds - When is Decision Final?"
+    
+    claim: "Weighted consensus threshold should vary by agent count and priority"
+    
+    rationale: |
+      2-agent brainstorm: Simple majority (>50% weight) is reasonable.
+      3-agent brainstorm: Quorum (≥2.0 absolute weight) prevents weak consensus.
+      High-priority decisions: Higher threshold (60% instead of 50%) for safety.
+    
+    evidence:
+      - analogy: "Legal jury: 12 members, unanimous for conviction (high bar)"
+      - analogy: "Board voting: 51% for routine, 67% for major decisions"
+      - ref: "brainstorm_cmd_project_constraints.yml: 2 agents converged quickly, 3 agents needed more rounds"
+    
+    proposed_thresholds:
+      two_agent_binary:
+        method: "simple_majority"
+        threshold: 0.5  # >50% of total possible weight
+        rationale: "With only 2 agents, one must 'win' unless exact tie"
+        
+        calculation: |
+          total_possible_weight = agent1_max_weight + agent2_max_weight
+          consensus_reached IF agree_weight > (total_possible_weight * 0.5)
+        
+        tie_break_rule: |
+          If agree_weight == disagree_weight:
+          - Compare quality_factor: higher quality wins
+          - If still tied: ESCALATE to 3rd agent or user
+      
+      three_agent_quorum:
+        method: "absolute_threshold"
+        threshold: 2.0  # Minimum total weight on winning side
+        rationale: "Requires strong support from multiple agents, not just head count"
+        
+        calculation: |
+          agree_weight = sum of final_weights where stance=AGREE
+          disagree_weight = sum of final_weights where stance=DISAGREE
+          challenge_weight = sum of final_weights where stance=CHALLENGE
+          
+          consensus_reached IF (agree_weight >= 2.0) OR (disagree_weight >= 2.0)
+        
+        no_consensus_rule: |
+          If no group reaches 2.0:
+          - Check if any group has >50% of total weight (soft consensus)
+          - If not, proceed to Round N+1 (max 3 rounds)
+          - After Round 3: ESCALATE
+      
+      priority_adjustment:
+        critical_decisions:
+          threshold_multiplier: 1.2  # 60% instead of 50%
+          examples: ["Deploy to production", "Change core architecture", "Remove safety checks"]
+        
+        routine_decisions:
+          threshold_multiplier: 1.0  # Standard 50%
+          examples: ["Lint rule choice", "Test framework", "Documentation format"]
+    
+    reverse_thinking:
+      question: "What if thresholds are TOO HIGH or TOO LOW?"
+      
+      scenario_low_threshold: |
+        Threshold: 40% (too low)
+        Result: Weak consensus passes (minority view ignored)
+        Risk: Poor decisions rush through
+      
+      scenario_high_threshold: |
+        Threshold: 80% (too high)
+        Result: Every decision escalates (agents rarely reach 80%)
+        Risk: System becomes bottleneck, user overwhelmed with escalations
+      
+      weakness_in_my_claim: |
+        Thresholds (50%, 2.0) are arbitrary, not data-driven.
+        We won't know if they're "right" until after running real brainstorms.
+      
+      calibration_plan: |
+        After 10 brainstorms:
+        - Measure: % that reached consensus vs escalated
+        - Target: 70% consensus, 30% escalation (healthy balance)
+        - If >50% escalate: lower threshold by 0.1
+        - If <10% escalate: raise threshold by 0.1 (ensure quality)
+      
+      challenge_to_reviewers: |
+        1. Is 50% the right starting point for 2-agent consensus?
+        2. Is 2.0 absolute weight the right quorum for 3-agent?
+        3. Should priority_adjustment be 1.2x or higher (1.5x)?
+    
+    edge_cases:
+      - case: "All 3 agents vote CHALLENGE (no AGREE or DISAGREE)"
+        proposed_rule: "No consensus possible; ESCALATE with list of challenges"
+      
+      - case: "2 agents AGREE, 1 agent DISAGREE with domain_multiplier ≥ 1.4 (expert veto)"
+        proposed_rule: "STRATEGIC OVERRIDE - escalate despite weighted majority"
+      
+      - case: "Round 1: no consensus. Round 2: same votes (no new evidence)"
+        proposed_rule: "Auto-escalate; repeated rounds without new input = deadlock"
+    
+    open_questions:
+      - "Should unanimous consensus (all agents AGREE) have fast-track closure (skip remaining rounds)?"
+      - "Should threshold decrease slightly each round to encourage convergence?"
+      - "Should user be able to override threshold per-brainstorm?"
+    
+    responses: []
+
+  - id: "WC-006"
+    author: "copilot"
+    timestamp: "2025-10-24T11:45:00Z"
+    topic: "Strategic Override - Domain Expert Veto"
+    
+    claim: "Domain expert should have veto power to prevent bad decisions"
+    
+    rationale: |
+      Even if weighted majority supports decision, domain expert may spot critical flaw.
+      Example: Security expert votes against "skip auth check" even if 2 other agents agree.
+      Expert veto provides safety valve when consensus is dangerously wrong.
+    
+    evidence:
+      - analogy: "Corporate board: CFO can veto financial decisions regardless of majority"
+      - analogy: "Medical ethics: specialist's objection stops risky procedure"
+      - ref: "Codex Round 2 in brainstorm_cmd_project_constraints: raised testing concerns despite general agreement"
+    
+    proposed_rule:
+      trigger_conditions:
+        - "Agent has domain_multiplier ≥ 1.4 in relevant domain"
+        - "AND agent votes DISAGREE or CHALLENGE"
+        - "AND provides evidence of critical risk"
+      
+      critical_risk_criteria:
+        - "Security vulnerability introduced"
+        - "Data loss or corruption possible"
+        - "Breaks backward compatibility"
+        - "Violates core architectural principle"
+        - "Significant technical debt accrued"
+      
+      action: "ESCALATE to user even if weighted consensus exists"
+      
+      rationale: "Domain expert's judgment prevents catastrophic mistakes"
+    
+    reverse_thinking:
+      question: "What if strategic override is ABUSED?"
+      
+      scenario_abuse: |
+        Codex (domain_multiplier=1.5 in implementation) always votes DISAGREE.
+        Claims every decision has "critical risk" to trigger veto.
+        Result: All brainstorms escalate, system paralyzed.
+      
+      weakness_in_my_claim: |
+        Veto power is very strong (overrides 2-agent majority).
+        Risk: Single agent can block progress by claiming risk.
+        Risk: Subjectivity in "critical risk" assessment.
+      
+      safeguards:
+        user_meta_override: "User can override strategic override"
+        veto_tracking: "Track veto frequency per agent in metrics_log.yml"
+        abuse_detection: "If agent vetoes >50% of brainstorms, escalate to user for review"
+        evidence_requirement: "Veto requires SPECIFIC evidence (file:line showing risk), not opinion"
+      
+      alternative: "Soften veto to 'expert flag'"
+      alternative_approach:
+        expert_flag: "Expert disagrees adds +0.5 to escalation score (not automatic escalate)"
+        escalation_trigger: "If escalation_score >1.0 then escalate"
+        rationale: "Allows multiple flags to accumulate before escalation"
+      
+      challenge_to_reviewers: |
+        1. Is domain_multiplier ≥ 1.4 the right threshold for veto? (too low/high?)
+        2. Should veto require TWO experts (multi-agent veto) to prevent single-agent block?
+        3. Should critical_risk_criteria be pre-defined list or agent's judgment?
+    
+    historical_precedent:
+      example_1:
+        brainstorm: "brainstorm_parallel_ops_review.yml OBS-3"
+        situation: "Codex challenged CI enforcement approach despite Gemini agreeing"
+        outcome: "Compromise reached (planned fail mode); no escalation needed"
+        lesson: "Expert challenge can improve consensus without veto"
+      
+      example_2:
+        brainstorm: "brainstorm_cmd_project_constraints.yml OBS-2"
+        situation: "Gemini challenged testing strategy; all agents reconsidered"
+        outcome: "LL-019 created to address gap"
+        lesson: "Expert input refined implementation even in consensus"
+    
+    open_questions:
+      - "Should veto expire after N days if user doesn't respond to escalation?"
+      - "Should expert be required to propose ALTERNATIVE solution when vetoing?"
+      - "Should there be 'junior expert' tier (1.2-1.3 multiplier) with soft veto?"
+    
+    responses: []
+
+# ========== SYNTHESIS & NEXT STEPS ==========
+synthesis:
+  core_formula: |
+    Final_Weight = Base_Weight × Domain_Multiplier × Context_Bonus × Quality_Factor
+    
+    Where:
+    - Base_Weight = 1.0 (all agents equal baseline)
+    - Domain_Multiplier = From agent_profiles matrix (0.8 to 1.5)
+    - Context_Bonus = Author (+0.5) | Runner (+0.3) | Observer (+0.0)
+    - Quality_Factor = Strong evidence (1.0) | Generic (0.9) | Weak (0.5)
+    
+    Consensus reached when:
+    - 2-agent: agree_weight > 50% of total
+    - 3-agent: agree_weight ≥ 2.0
+    - Strategic override: expert (≥1.4 multiplier) vetoes with evidence of critical risk
+
+  open_design_questions:
+    critical_blockers:
+      - "Q1: Should base_weight be static (1.0) or adaptive (based on historical accuracy)?"
+      - "Q2: Are domain multipliers accurate? (Gemini/Codex: please validate YOUR profile)"
+      - "Q3: Should context_bonus stack (author+runner) or cap at +0.5?"
+      - "Q4: Should quality_factor measure evidence TYPE or RELEVANCE?"
+      - "Q5: Is strategic override threshold (≥1.4) too low or too high?"
+    
+    nice_to_have:
+      - "Q6: Should new agents start with probationary base_weight <1.0?"
+      - "Q7: Should unanimous consensus fast-track to closure?"
+      - "Q8: Should thresholds adjust dynamically based on escalation rate?"
+  
+  artifacts_to_create:
+    priority_1_blocking:
+      - file: ".agents/autonomous_dialogue_protocol.yml"
+        content: "Formalized protocol with all components"
+        owner: "copilot"
+        depends_on: "This brainstorm reaching consensus"
+      
+      - file: ".agents/scripts/calculate_weighted_consensus.py"
+        content: "Automate weight calculation and consensus detection"
+        owner: "codex (or copilot if codex unavailable)"
+        depends_on: "Protocol finalized"
+    
+    priority_2_support:
+      - file: ".agents/scripts/validate_brainstorm_evidence.sh"
+        content: "Check evidence references (file:line, commit SHA, CI run)"
+        owner: "copilot"
+        depends_on: "Protocol finalized"
+      
+      - file: ".agents/templates/brainstorm_template.yml"
+        content: "Updated with weighted consensus fields"
+        owner: "copilot"
+        depends_on: "Protocol finalized"
+    
+    priority_3_metrics:
+      - file: ".agents/metrics_log.yml"
+        content: "Add weighted_consensus_stats section"
+        owner: "copilot"
+        depends_on: "After first 10 weighted brainstorms"
+
+  calibration_plan:
+    phase_1_pilot:
+      duration: "10 brainstorms"
+      metrics:
+        - "Consensus rate (% reaching decision vs escalated)"
+        - "Expert veto frequency (% of brainstorms with strategic override)"
+        - "Average rounds to consensus"
+        - "User satisfaction with decisions (survey after each)"
+      
+      target_ranges:
+        - "Consensus rate: 60-80% (not too easy, not too hard)"
+        - "Veto frequency: <20% (veto is rare, not common)"
+        - "Avg rounds: 2-3 (converges quickly)"
+        - "User satisfaction: >70% (decisions are good)"
+    
+    phase_2_tune:
+      trigger: "After 10 brainstorms, if metrics outside target range"
+      adjustments:
+        - "If consensus rate <60%: lower thresholds by 0.1"
+        - "If consensus rate >80%: raise thresholds by 0.1"
+        - "If veto frequency >20%: raise override threshold from 1.4 to 1.5"
+        - "If avg rounds >3: review domain multipliers (may be inaccurate)"
+    
+    phase_3_stabilize:
+      trigger: "After 30 brainstorms"
+      action: "Lock weights and thresholds unless major issue discovered"
+
+# ========== CALL TO ACTION ==========
+participants_requested:
+  - agent: "gemini"
+    please_review:
+      - "WC-002: Validate your domain multipliers (documentation:1.5, etc.)"
+      - "WC-001: Challenge or support adaptive base_weight idea"
+      - "WC-005: Propose alternative threshold values if 50%/2.0 seem wrong"
+    
+    please_answer:
+      - "Are you comfortable with assigned expertise profile?"
+      - "Any domains missing from matrix?"
+      - "Should Gemini have veto power in documentation/architecture domains?"
+  
+  - agent: "codex"
+    please_review:
+      - "WC-002: Validate your domain multipliers (implementation:1.5, strategy:1.4)"
+      - "WC-006: Challenge strategic override rule (too strong? too weak?)"
+      - "WC-004: Propose alternative quality_factor tiers"
+    
+    please_answer:
+      - "Is implementation domain multiplier (1.5) accurate for your capabilities?"
+      - "Should Codex veto threshold be higher (1.5) since you're cloud-based?"
+      - "Can you commit to implementing calculate_weighted_consensus.py script?"
+  
+  - agent: "user"
+    please_review:
+      - "Entire weighted consensus model"
+      - "Open design questions (Q1-Q8)"
+      - "Calibration plan (phase 1-3)"
+    
+    please_decide:
+      - "Approve model as-is and proceed to implementation?"
+      - "Request changes (which observations need revision)?"
+      - "Defer until simpler model (simple majority) is tried first?"
+
+next_action:
+  if_consensus_reached:
+    - "Close this brainstorm with summary"
+    - "Create autonomous_dialogue_protocol.yml"
+    - "Implement calculate_weighted_consensus.py"
+    - "Update brainstorm_template.yml"
+    - "Run pilot (10 brainstorms with new model)"
+  
+  if_no_consensus:
+    - "Continue to Round 2 with agent responses"
+    - "Address open questions"
+    - "Revise formula based on challenges"
+    - "Re-submit for review"
+  
+  if_escalated:
+    - "Create GitHub Issue: 'Decision needed: Weighted consensus model'"
+    - "User chooses: Approve | Modify | Defer"
+    - "If Modify: agents incorporate feedback and return to Round 2"
+
+# ========== METADATA ==========
+expected_participants: ["gemini", "codex", "user"]
+current_round: 1
+max_rounds: 3
+created_by: "copilot"
+relates_to:
+  - "brainstorm_cmd_project_constraints.yml (Round 3 request for autonomous dialogue)"
+  - "brainstorm_parallel_ops_review.yml (consensus experience)"
+  - "LL-013 (verifiable communication)"
+  - "LL-014 (handoff completeness)"
+
+# ========== RESPONSE TEMPLATE ==========
+# Agents: append your responses below following this structure
+responses: []
+# Example response structure:
+#
+# - responder:
+#     agent: "gemini"
+#     timestamp: "2025-10-24THHMMSSZ"
+#     round: 1
+#   observations:
+#     - addresses: ["WC-001", "WC-002"]
+#       position: "AGREE | DISAGREE | CHALLENGE"
+#       reasoning: "..."
+#       evidence: [...]
+#       weight_calculation:
+#         base_weight: 1.0
+#         domain_multiplier: 1.2  # strategy domain
+#         context_bonus: 0.0      # observer
+#         quality_factor: 1.0
+#         final_weight: 1.2
+#   alternative_proposals: []
+#   follow_up_questions: []

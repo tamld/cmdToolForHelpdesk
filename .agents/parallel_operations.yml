@@ -1,0 +1,150 @@
+# Detailed specification for parallel multi-agent operations.
+version: 1.0
+last_updated: "2025-10-22"
+author: "Codex agent"
+
+summary:
+  purpose: "Ensure AI agents collaborate safely and efficiently when tasks run in parallel."
+  scope: ["multi-agent planning", "branch workflow", "Codex cloud tasks", "handoff logging"]
+  related_documents:
+    - path: ".agents/operational_model.yml"
+      role: "Entry point for task selection"
+    - path: ".agents/project_workflow.yml"
+      role: "Base refactoring SOP"
+    - path: "ops/ai/parallel-headlines.md"
+      role: "Public headline summary"
+    - path: "ops/git/handbook.md"
+      role: "Git role/responsibility overview"
+
+parallel_environment:
+  description: "Defines how the repository is prepared for simultaneous agent work."
+  requirements:
+    - "Contracts live under `contracts/` and must be versioned before implementation branches start."
+    - "Mocks/fixtures published in `specs/<ticket>/` with ownership recorded in `.agents/backlog.yml`."
+    - "CI matrix jobs (lint/unit/contract/e2e) must stay independent and green before merge."
+    - "Feature flags defined in `packages/config/flags.ts` or equivalent mechanism (e.g., env toggles for CMD scripts)."
+  sandbox_modes:
+    local: "Workspace-write with branch protection; use when agent has terminal access."
+    cloud_codex: "Isolated environment seeded by GitHub integration; Codex cloud tasks must reference issue and branch per `ops/git/branching.md`."
+
+roles:
+  author:
+    responsibilities:
+      - "Draft specification package under `specs/<ticket>/` (plan.md, mocks, fixtures, handoff.md)."
+      - "Update `.agents/backlog.yml` with `author_agent`, `runner_agent`, `handoff_expected_at`."
+      - "Log contract or policy changes in `.agents/decision_log.yml`."
+    exit_criteria:
+      - "plan.md approved or acknowledged"
+      - "handoff recorded with timestamp"
+  runner:
+    responsibilities:
+      - "Rebase task branch daily and confirm status in backlog."
+      - "Implement code/tests within agreed scope, respecting exclusion lists and lessons learned."
+      - "Run CI subset locally (or via Codex cloud) before pushing."
+      - "Keep feature flags OFF by default until release plan approved."
+    exit_criteria:
+      - "CI matrix green"
+      - "PR template completed (flags, tests, artefacts)."
+  reviewer:
+    responsibilities:
+      - "Check metadata consistency (branch name, backlog entry, spec path)."
+      - "Validate contracts/tests updated and flag coverage."
+      - "Require human approval for security-sensitive changes even if Codex approves."
+    exit_criteria:
+      - "All review discussions resolved"
+      - "Merge performed or blocked with rationale"
+
+codex_interaction:
+  workflows:
+    - name: "code_review"
+      trigger: "@codex review [focus]"
+      rules:
+        - "Always review Codex comments before applying."
+        - "If Codex references new branch, use 'Update PR' in Codex UI to sync with existing branch."
+        - "Escalate to human reviewer for conflicting guidance."
+    - name: "fix_pass"
+      trigger: "@codex fix comments"
+      rules:
+        - "Ensure outstanding comments are scoped to same branch before tagging."
+        - "After Codex completes, inspect diff, rerun targeted tests, and note actions in backlog entry."
+    - name: "auto_merge"
+      trigger: "@codex once CI is green ... merge"
+      rules:
+        - "Only request merge after spec, handoff, branch_progress.yml, and metrics log are current (LL-014/LL-015)."
+        - "Confirm required CI/security checks are green; Codex will merge and delete the branch when no blockers remain."
+        - "Log the delegation in branch_progress milestones and metrics_log entries (codex_iterations)."
+    - name: "custom_task"
+      trigger: "@codex <instruction>"
+      rules:
+        - "Instruction must reference ticket ID and desired artefact."
+        - "Do not mix Ask/Code modes in one task to preserve PR update button (see LL-012)."
+  cloud_guardrails:
+    - "Never allow Codex to merge PRs autonomously."
+    - "Disable network operations not required for task."
+    - "Confirm Codex tasks align with `.agents/core_principles.yml`."
+
+compliance:
+  must_follow:
+    - "Branch naming per `ops/git/branching.md`."
+    - "Hand-off entries in `.agents/backlog.yml` and `.agents/decision_log.yml`."
+    - "Consult `.agents/lessons_learned.yml` prior to refactor or automation tasks."
+    - "Maintain audit logs in `.agents/logs/` for automated scripts."
+    - "Record multi-agent brainstorm/resolution notes with questioner/responder metadata, context summary, status, and verifiable evidence (file paths or commit hashes)."
+  violations_response:
+    - "Pause task"
+    - "Document issue in `.agents/decision_log.yml`"
+    - "Notify human owner via issue comment or direct message"
+
+documentation_split:
+  public_docs:
+    location: "ops/"
+    guidance: "Headlines, rationale, and reader-facing policies."
+  agent_docs:
+    location: ".agents/"
+    guidance: "Detailed SOPs, checklists, and templates for AI execution."
+  spec_storage:
+    location: "specs/<ticket>/"
+    contents: ["plan.md", "handoff.md", "mocks/", "fixtures/"]
+    retention: "Keep until feature fully deployed and deprecation logged."
+
+checklists:
+  author_handshake:
+    - "Backlog entry created or updated"
+    - "Spec folder committed"
+    - "Contract impact documented"
+    - "Handoff timestamp logged"
+  runner_start:
+    - "Read plan.md and handoff.md"
+    - "Sync with latest main"
+    - "Confirm flag defaults"
+    - "Review relevant lessons"
+  reviewer_gate:
+    - "Branch name matches convention"
+    - "Issue linked in PR body"
+    - "Tests + flags ticked in template"
+    - "Manual QA instructions provided if required"
+
+monitoring:
+  metrics:
+    - name: "handoff_latency_hours"
+      description: "Time between author handoff and runner acknowledgement"
+      source: ".agents/backlog.yml"
+      collection: "Manual audit script (pending automation)"
+    - name: "ci_pass_rate"
+      description: "Percentage of branch builds passing on first attempt"
+      source: "GitHub Actions logs"
+      collection: "Use gh CLI with --json; automation planned"
+    - name: "codex_iteration_count"
+      description: "Number of `@codex` cycles per PR"
+      source: "PR comment history"
+      collection: "Count sequential `@codex` mentions manually until script exists"
+  review_cadence: "Weekly manual audit of backlog and decision log"
+
+escalation:
+  triggers:
+    - "Conflicting specs between branches"
+    - "Contract changes without accompanying tests"
+    - "Security or compliance concerns"
+  action:
+    - "Open GitHub issue tagged `needs-human-review`"
+    - "Document escalation in `.agents/decision_log.yml`"

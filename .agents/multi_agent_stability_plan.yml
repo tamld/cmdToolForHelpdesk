@@ -1,0 +1,321 @@
+# Multi-Agent Stability Action Plan
+# Created: 2025-10-23
+# Owner: GitHub Copilot CLI + Human validation needed
+# Purpose: Address gaps identified in brainstorm_cmd_project_constraints.yml
+
+version: 1.0
+status: "PROPOSED - Awaiting human approval"
+
+executive_summary: |
+  Analysis reveals 4 critical gaps in current .agents/ framework when applied to CMD project:
+  1. Framework assumes Node.js conventions (contracts/, packages/)
+  2. Test capability overstated (promises vs reality)
+  3. Branch lifecycle unclear (when to merge?)
+  4. Task priority conflicts between docs
+  
+  This plan proposes concrete actions to fix these issues before multi-agent collaboration scales.
+
+immediate_actions:
+  # Can be done by current agent without consensus
+  
+  - action_id: IMM-001
+    title: "Document Test Limitations Honestly"
+    priority: "CRITICAL"
+    effort: "15 minutes"
+    owner: "Current agent"
+    rationale: "Prevent false confidence in other agents"
+    steps:
+      - Add warning banner to testing_strategy.yml
+      - Create LL-019 in lessons_learned.yml
+      - Update README.md with testing scope section
+    files_to_edit:
+      - ".agents/testing_strategy.yml"
+      - ".agents/lessons_learned.yml"
+      - "README.md"
+    implementation: |
+      Add to testing_strategy.yml (after line 7):
+      
+      ⚠️ CURRENT LIMITATIONS (as of 2025-10-23):
+      ```yaml
+      reality_check:
+        infrastructure: "No Windows VM available for CI/local testing"
+        actual_coverage: "UI/menu navigation only (log string matching)"
+        cannot_verify:
+          - "Actual software installations (winget/choco)"
+          - "Registry modifications"
+          - "License backup/restore operations"
+          - "System service manipulations"
+        confidence_level: "MEDIUM for refactoring safety, LOW for production validation"
+        recommended_use: "Safe for structure/naming refactors, NOT for logic changes"
+      ```
+
+  - action_id: IMM-002
+    title: "Add CMD Project Adaptations File"
+    priority: "HIGH"
+    effort: "30 minutes"
+    owner: "Current agent"
+    rationale: "Prevent Node.js assumptions from breaking workflows"
+    implementation: |
+      Create .agents/cmd_project_adaptations.yml (see SOL-001 in brainstorm)
+      Reference it from operational_model.yml:
+      
+      ```yaml
+      project_type_detection:
+        file: ".agents/cmd_project_adaptations.yml"
+        description: "CMD-specific framework overrides"
+        when_to_consult: "Before applying parallel_operations.yml defaults"
+      ```
+
+  - action_id: IMM-003
+    title: "Update Backlog with Dependency Tracking"
+    priority: "HIGH"
+    effort: "20 minutes"
+    owner: "Current agent"
+    rationale: "Prevent agents from working on tasks out of order"
+    implementation: |
+      Add to backlog.yml tasks:
+      - blocked_by: [list of task IDs]
+      - blocks: [list of task IDs]
+      
+      Example:
+      ```yaml
+      - id: 5
+        description: "Enforce Dispatcher Pattern"
+        status: "On Hold"
+        priority: "Critical (deferred to Phase 2)"
+        blocked_by: [17, 18]
+        phase: 2
+      ```
+
+consensus_required_actions:
+  # Need discussion with human or other agents
+  
+  - action_id: CONS-001
+    title: "Establish Branch Merge SLA"
+    priority: "MEDIUM"
+    proposal: |
+      Add CP-006 to core_principles.yml:
+      - Tasks marked DONE must be merged within 48 hours
+      - Author agent owns merge responsibility
+      - Can delegate to @codex with explicit instruction
+    
+    questions:
+      - "Is 48 hours realistic for this project's cadence?"
+      - "Should we allow exceptions for large refactors?"
+      - "Who reviews merge if author agent is unavailable?"
+    
+    human_decision_needed: true
+
+  - action_id: CONS-002
+    title: "Define Phase Gates in Roadmap"
+    priority: "MEDIUM"
+    proposal: |
+      Update roadmap.yml with explicit phase gates:
+      
+      ```yaml
+      - phase: Phase 1
+        entry_criteria: []
+        exit_criteria:
+          - "All naming conventions unified (Task #11 DONE)"
+          - "Comment standards enforced (Task #17 DONE)"
+          - "Layout organized (Task #18 DONE)"
+          - "At least 80% of refactor/ branches merged"
+        blocker_for: ["Phase 2 tasks: #5, #6, deep testing"]
+      ```
+    
+    rationale: "Prevent agents from jumping ahead to testing before structure is solid"
+    human_decision_needed: true
+
+  - action_id: CONS-003
+    title: "Clarify Multi-Agent Roles for CMD Project"
+    priority: "LOW"
+    proposal: |
+      Create .agents/cmd_agent_roles.yml:
+      
+      ```yaml
+      roles:
+        structure_specialist:
+          focus: ["naming", "comments", "layout"]
+          skills: ["pattern matching", "batch syntax"]
+          typical_tasks: [17, 18, 11]
+        
+        testing_architect:
+          focus: ["test strategy", "CI/CD", "validation"]
+          skills: ["findstr", "errorlevel", "log parsing"]
+          typical_tasks: [10, 13]
+          constraints: "Limited by lack of VM - focus on smoke tests"
+        
+        integration_coordinator:
+          focus: ["merge conflicts", "branch cleanup", "handoffs"]
+          skills: ["git", "PR review", "documentation"]
+          typical_tasks: ["backlog grooming", "decision logging"]
+      ```
+    
+    benefit: "Agents self-select tasks matching their strengths"
+    risk: "Over-specialization if only one agent available"
+
+guardrails_to_strengthen:
+  
+  - guardrail_id: GUARD-001
+    name: "Project Type Verification"
+    location: "operational_model.yml SOP step 1"
+    current_gap: "No detection of project language/framework"
+    fix: |
+      Add to SOP step 1:
+      ```yaml
+      - step: 1
+        action: "Identify project type and constraints"
+        checks:
+          - "Read .agents/cmd_project_adaptations.yml (if exists)"
+          - "Verify language (CMD/Bash/Python/Node/etc)"
+          - "Check for framework-specific files (package.json, requirements.txt, etc)"
+        purpose: "Adapt framework assumptions to actual project reality"
+      ```
+
+  - guardrail_id: GUARD-002
+    name: "Capability Honesty Check"
+    location: "Before claiming task in backlog"
+    current_gap: "Agents may overestimate what's possible"
+    fix: |
+      Add checklist to AGENTS.md section 1 (before starting task):
+      ```markdown
+      ## Pre-Task Verification
+      Before claiming a task, verify:
+      - [ ] Testing infrastructure exists for validation
+      - [ ] Dependencies are available (tools, APIs, environments)
+      - [ ] Task not blocked by incomplete prerequisites
+      - [ ] Scope matches actual project capabilities (not aspirational docs)
+      ```
+
+  - guardrail_id: GUARD-003
+    name: "Merge Conflict Prevention"
+    location: "Before creating new branch"
+    current_gap: "No check for existing work on same area"
+    fix: |
+      Add to AGENTS.md section 1:
+      ```bash
+      # Before starting new refactor branch
+      git branch -a | grep "refactor/"  # Check for existing branches
+      git log --oneline --all --grep="Task #X"  # Check for related work
+      # Review backlog.yml for In Progress tasks in same domain
+      ```
+
+metrics_to_track:
+  # Extend .agents/metrics_log.yml
+  
+  - metric_id: MET-001
+    name: "Framework Mismatch Rate"
+    definition: "% of tasks where agent had to backtrack due to wrong assumptions"
+    collection: "Manual review of decision_log.yml entries"
+    target: "<10% after IMM-002 implemented"
+  
+  - metric_id: MET-002
+    name: "Branch Staleness"
+    definition: "Days between task DONE and branch merged"
+    collection: "Git log analysis (commit dates)"
+    target: "<72 hours average"
+  
+  - metric_id: MET-003
+    name: "Dependency Violation Rate"
+    definition: "% of tasks started before prerequisites completed"
+    collection: "Backlog audit (check blocked_by vs status)"
+    target: "0% (strict enforcement)"
+
+rollout_sequence:
+  # Order matters - build foundation first
+  
+  - step: 1
+    actions: [IMM-001, IMM-002, IMM-003]
+    timeline: "Immediate (today)"
+    validation: "Human review of generated files"
+  
+  - step: 2
+    actions: [GUARD-001, GUARD-002, GUARD-003]
+    timeline: "Before next agent joins project"
+    validation: "Test with hypothetical scenario"
+  
+  - step: 3
+    actions: [CONS-001, CONS-002]
+    timeline: "After human decision"
+    validation: "Update all agents via PR comment"
+  
+  - step: 4
+    actions: [MET-001, MET-002, MET-003]
+    timeline: "Ongoing monitoring"
+    validation: "Weekly review in metrics_log.yml"
+
+communication_plan:
+  
+  - audience: "Human owner (tamld)"
+    method: "Present this file for approval"
+    ask: |
+      1. Approve immediate actions (IMM-*)
+      2. Decide on consensus items (CONS-*)
+      3. Prioritize if resource-constrained
+  
+  - audience: "Future AI agents"
+    method: "Update AGENTS.md with 'Read This First' section"
+    content: |
+      ## 🚨 CRITICAL: Read Before Starting Work
+      
+      This is a **CMD Batch Script** project with specific constraints:
+      
+      1. **No Node.js/TypeScript** - ignore contracts/, packages/ references
+      2. **Limited testing** - UI verification only, no VM for real validation
+      3. **Phase 1 focus** - structure/naming, NOT deep testing/logic
+      4. **Must read**:
+         - `.agents/cmd_project_adaptations.yml` (overrides)
+         - `.agents/testing_strategy.yml` (reality check section)
+         - `.agents/backlog.yml` (check blocked_by before claiming task)
+
+success_criteria:
+  - criteria: "Zero framework mismatch incidents in next 5 tasks"
+    measurement: "No entries in decision_log.yml about wrong assumptions"
+  
+  - criteria: "All agents understand test limitations"
+    measurement: "No PRs claiming validation beyond log parsing"
+  
+  - criteria: "Branch merge latency <72 hours"
+    measurement: "Git log analysis (DONE timestamp to merge timestamp)"
+  
+  - criteria: "Clear task dependencies prevent out-of-order work"
+    measurement: "Backlog audit shows no violations"
+
+risks_and_mitigations:
+  
+  - risk_id: RISK-001
+    description: "Documentation overload - agents skip reading"
+    probability: "MEDIUM"
+    impact: "HIGH"
+    mitigation: |
+      - Keep AGENTS.md concise with "Read This First" TL;DR
+      - Use YAML anchors to avoid duplication
+      - Add validation scripts (.agents/scripts/validate_context.sh)
+  
+  - risk_id: RISK-002
+    description: "Human bottleneck on consensus items"
+    probability: "HIGH"
+    impact: "MEDIUM"
+    mitigation: |
+      - Set 48-hour decision deadline
+      - If no response, agents proceed with conservative default
+      - Document assumption in decision_log.yml
+  
+  - risk_id: RISK-003
+    description: "Guardrails too strict - slow down productivity"
+    probability: "MEDIUM"
+    impact: "MEDIUM"
+    mitigation: |
+      - Monitor metrics (MET-001 to MET-003)
+      - Adjust after 10 tasks completed
+      - Keep escape hatch: "Override if documented in decision_log"
+
+related_files:
+  - ".agents/brainstorm_cmd_project_constraints.yml (problem analysis)"
+  - ".agents/parallel_operations.yml (needs CMD section)"
+  - ".agents/operational_model.yml (needs project type detection)"
+  - ".agents/core_principles.yml (needs CP-006 merge SLA)"
+  - ".agents/roadmap.yml (needs phase gates)"
+
+next_review_date: "2025-10-30 (after 5 tasks completed)"
+owner_approval_needed: true

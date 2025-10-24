@@ -38,5 +38,3 @@ VirtualBox VMs/
 *.iso
 dist/
 release/
-
-.agents/

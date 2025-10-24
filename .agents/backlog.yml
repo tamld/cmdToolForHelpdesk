@@ -1,0 +1,156 @@
+tasks:
+  # Valid status values (LL-014 compliant):
+  # - "To Do": Not started
+  # - "In Progress": Active work by owner
+  # - "Ready for handoff": Work paused, branch_progress.yml complete, ready for next agent
+  # - "Blocked": Cannot proceed due to external dependency
+  # - "Done": Completed and merged
+  # - "On Hold": Deferred by user decision
+
+  - id: 1
+    description: "Refactor the main menu to use the dispatch_menu function and update variable names to camelCase."
+    status: "Done"
+  - id: 2
+    description: "Rename all menu labels to PascalCase and update all goto statements."
+    status: "Done"
+  - id: 3
+    description: "Rename all helper functions to camelCase."
+    status: "Done"
+
+  - id: 11
+    description: "Rename all functions/menus according to the manifest in 'refactoring_index.yml'. COMPLETED: Renamed all 16 remaining items including Display helpers, legacy installAIO-*, office-windows controller, and utility functions (clean, hold, end). All references (calls & gotos) updated."
+    status: "Done"
+    date_completed: "2025-10-22"
+  - id: 10
+    description: "(ACTIVE) Implement Action Function Reachability Test. Progress: Implemented test for `:installAio` and `:installAioFresh`."
+    status: "In Progress"
+
+  - id: 12
+    description: "(AUDIT) Analyze and resolve the broken test 'test_MenuDisplayLoop.cmd'. The test failed in CI run 18631074302. Analysis showed the test was an outdated, non-functional attempt at implementing Task #7. The decision was made to delete this file to unblock the CI pipeline."
+    status: "Done"
+    priority: "Medium"
+    owner: "Gemini"
+    branch: "refactor/structure-and-naming"
+    date_created: "2025-10-19"
+    date_completed: "2025-10-19"
+
+  - id: 4
+    description: "Rename all variables to camelCase. (Note: This task is on hold. The current focus is on renaming functions/menus only, as per user directive)."
+    status: "On Hold"
+    priority: "Low"
+    owner: "Gemini"
+    branch: "refactor/structure-and-naming"
+    date_created: "2025-10-15"
+  
+  - id: 17
+    description: "Audit and standardize comment styles across entire script (REM vs ::, section headers, function documentation)"
+    status: "To Do"
+    priority: "High"
+    phase: 1
+    estimated_effort: "3-5 hours with AI assistance"
+    blocks: [5, 6, 18]
+    details: |
+      Target standard:
+      - REM for function headers and section dividers
+      - :: for inline comments
+      - Consistent ========= separators
+      See .agents/cmd_project_adaptations.yml (comment_style section)
+    date_created: "2025-10-23"
+  
+  - id: 18
+    description: "Reorganize function layout by logical grouping (Dispatcher → Menus → Sub-menus → Actions → Helpers → Utilities)"
+    status: "To Do"
+    priority: "Medium"
+    phase: 1
+    blocked_by: [17]
+    blocks: [5]
+    estimated_effort: "4-6 hours"
+    date_created: "2025-10-23"
+
+  - id: 5
+    description: "Enforce Dispatcher Pattern: All testable functions must be callable via a central dispatcher at the top of the script."
+    status: "On Hold"
+    priority: "Critical (deferred to Phase 2)"
+    phase: 2
+    blocked_by: [17, 18]
+    rationale: "Structure clarity (comments + layout) needed before adding testability layer"
+  
+  - id: 6
+    description: "Refactor All Menus: Separate display logic (echo) from interactive logic (choice) for all menus to enable UI testing."
+    status: "On Hold"
+    priority: "High (deferred to Phase 2)"
+    phase: 2
+    blocked_by: [17, 18]
+    rationale: "Layout organization needed first to identify all menu functions clearly"
+
+  - id: 8
+    description: "Experiment to find optimal CI parallelization limits by running unit and integration tests in parallel jobs."
+    status: "To Do"
+    priority: "Low"
+    owner: "Gemini"
+    branch: "refactor/structure-and-naming"
+    date_created: "2025-10-17"
+
+  - id: 9
+    description: "Experiment to find optimal agent chunk size (data processing limits) for file operations."
+    status: "To Do"
+    priority: "Low"
+    owner: "Gemini"
+    branch: "refactor/structure-and-naming"
+    date_created: "2025-10-17"
+
+  - id: 13
+    description: "Enforce CARE spec lint in CI workflow for all specs/**/*.md files. Validates presence of required sections (Context, Actions, Risks, Expectations) and optional sections (Reflection, Reverse Questions)."
+    status: "Done"
+    priority: "Medium"
+    owner: "Gemini"
+    branch: "feature/ci-care-lint-13-agemini"
+    date_created: "2025-10-23"
+    date_completed: "2025-10-23"
+    handoff_notes: |
+      Spec complete: specs/13/plan.md (full CARE structure with reflection & reverse-questions).
+      Branch progress: .agents/branch_progress.yml (context, handoff checklist, next steps).
+      PR: #2 (draft) https://github.com/tamld/cmdToolForHelpdesk/pull/2
+      Next agent: Implement lint script + CI workflow per specs/13/plan.md Actions section.
+      Verification: Set handoff_ready=true in branch_progress.yml when done, label PR 'ready-for-handoff'.
+    related_lessons:
+      - "LL-014: Handoff completeness"
+      - "LL-018: Reflection + reverse-thinking prompts"
+
+  - id: 14
+    description: "Automate collection of parallel workflow metrics (handoff latency, CI pass rate, Codex iterations)."
+    status: "To Do"
+    priority: "Medium"
+    owner: "Codex"
+    date_created: "2025-10-22"
+
+  - id: 15
+    description: "Add CMD-specific adaptation: update ops/git/handbook.md with a section clarifying non-JS stacks (no contracts/ by default, use env vars instead of packages/config/flags.ts); add a short note in .agents/parallel_operations.yml pointing to the handbook section."
+    status: "Done"
+    priority: "Low"
+    owner: "Codex"
+    date_created: "2025-10-22"
+    date_completed: "2025-10-22"
+
+  - id: 16
+    description: "Introduce .agents/metrics_log.yml for manual tracking of multi-agent metrics (handoff_latency_hours, ci_pass_rate, codex_iteration_count) until automation (Task #14) arrives. Establish update cadence: after each PR merge."
+    status: "Done"
+    priority: "Medium"
+    owner: "Gemini"
+    date_created: "2025-10-22"
+    date_completed: "2025-10-22"
+  
+  - id: 19
+    description: "Document test limitations and framework-project mismatch in lessons_learned.yml (LL-019, LL-020) and create CMD project adaptations guide"
+    status: "Done"
+    priority: "High (honesty > false confidence)"
+    owner: "GitHub Copilot CLI"
+    date_created: "2025-10-23"
+    date_completed: "2025-10-23"
+    deliverables:
+      - ".agents/lessons_learned.yml (LL-019, LL-020)"
+      - ".agents/testing_strategy.yml (current_reality section)"
+      - ".agents/cmd_project_adaptations.yml (new file)"
+      - ".agents/multi_agent_stability_plan.yml (action plan)"
+      - ".agents/brainstorm_cmd_project_constraints.yml (problem analysis)"
+    rationale: "Prevent other agents from making false assumptions about test coverage and project infrastructure"

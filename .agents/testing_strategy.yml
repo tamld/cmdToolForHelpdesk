@@ -1,0 +1,104 @@
+# Anchor Document for AI Agents
+# This document outlines the official testing strategy for this CMD script project.
+# All CI/CD processes and quality assurance efforts must adhere to this strategy.
+
+documentType: "AI_AGENT_ANCHOR"
+topic: "CMD Script Testing Strategy"
+version: 1.1
+last_updated: "2025-10-23"
+
+# ⚠️ CRITICAL: CURRENT LIMITATIONS (Reality Check)
+current_reality:
+  infrastructure: "No Windows VM available for CI or local testing"
+  actual_coverage: "UI/menu navigation verification only (log string matching via findstr)"
+  validation_method: "Parse output logs for expected menu text - does NOT execute actual operations"
+  
+  cannot_verify:
+    - "Actual software installations (winget/chocolatey commands)"
+    - "Registry key creation/modification"
+    - "Windows/Office license backup/restore operations"
+    - "System service start/stop/configuration"
+    - "File system modifications outside test directory"
+    - "Network operations (downloads, API calls)"
+  
+  confidence_level:
+    refactoring: "MEDIUM - safe for structure/naming changes (detect if menus still render)"
+    production: "LOW - no guarantee functions work in real environment"
+  
+  recommended_use: |
+    - ✅ Safe for: Menu restructuring, naming conventions, navigation flow
+    - ⚠️  Caution for: Error handling logic, input validation
+    - ❌ Unsafe for: Business logic changes, system modification code
+  
+  future_roadmap:
+    phase_1: "Implement dry-run mode for destructive operations (DRY_RUN env var)"
+    phase_2: "Contract testing - verify command syntax without execution"
+    phase_3: "Cloud Windows VM integration for real validation (requires infrastructure investment)"
+  
+  related_lessons:
+    - "LL-019: Test Validity Gap (to be created)"
+    - "See .agents/multi_agent_stability_plan.yml for detailed analysis"
+
+philosophy:
+  name: "Multi-layered Testing"
+  description: "To build confidence and ensure quality, we adopt a multi-layered testing strategy, moving from small components to the entire user flow."
+  layers:
+    - name: "Unit Test"
+      description: "Verify individual 'functions' (:label) in isolation to confirm their internal logic."
+    - name: "Integration Test"
+      description: "Verify the interaction between functions, especially the CALL and GOTO navigation flow between menus."
+    - name: "End-to-End (E2E) Test"
+      description: "Verify a complete user journey, from script start to final action execution."
+
+prerequisites:
+  title: "Refactor for Testability"
+  description: "Code must be structured to be testable. This is the most critical prerequisite."
+  requirements:
+    - "Functions must return an ERRORLEVEL using 'EXIT /B <errorlevel>'. Convention: 0 for success, non-zero for failure."
+    - "Functions should be parameterized, taking input via %1, %2, etc., instead of relying on global variables."
+    - "Separate logic from display. A function should either perform logic or display a menu, not both."
+
+framework:
+  name: "Custom Testing Framework"
+  description: "A simple, custom-built testing framework using CMD scripts."
+  directoryStructure: |
+    /tests
+    |-- /fixtures           # Contains mock files, sample inputs
+    |-- /reports            # Contains log output from test runs
+    |-- test_runner.cmd     # Master script to execute all tests
+    |-- test_utils.cmd      # Contains assertion helper functions
+    |-- /unit               # Contains unit test cases
+    |-- /integration        # Contains integration test cases
+    |-- /e2e                # Contains end-to-end test cases
+  coreUtils:
+    name: "test_utils.cmd"
+    description: "The heart of the framework, providing assertion functions."
+    examples:
+      - name: ":assertSuccess"
+        code: "IF %ERRORLEVEL% EQU 0 (EXIT /B 0) ELSE (EXIT /B 1)"
+      - name: ":assertFileExists"
+        code: "IF EXIST \"%~1\" (EXIT /B 0) ELSE (EXIT /B 1)"
+
+scenarios:
+  - type: "Unit Test"
+    goal: "Verify a single function (e.g., :myFunction) in isolation."
+    method: "Create a dedicated test script that CALLs the specific :label in the main script and then uses test_utils.cmd to assert the resulting %ERRORLEVEL%. "
+    example:
+      file: "tests/unit/test_myFunction.cmd"
+      code: |
+        CALL ..\..\Helpdesk-Tools.cmd :myFunction "param1"
+        CALL ..\..\tests\test_utils.cmd :assertSuccess
+
+  - type: "Integration Test"
+    goal: "Verify the navigation flow between menus."
+    method: |
+      1. Refactor menu functions to accept input from an environment variable (e.g., %TEST_INPUT_SEQUENCE%) in test mode, instead of using interactive 'SET /P'.
+      2. In the test script, set this environment variable to simulate user choices.
+      3. CALL the menu function and redirect its output to a log file.
+      4. Use 'findstr' to check if the log contains the expected output (e.g., the title of the next menu), thus verifying the GOTO was successful.
+
+  - type: "End-to-End (E2E) Test"
+    goal: "Verify a complete user workflow."
+    method: "Similar to integration tests, but the %TEST_INPUT_SEQUENCE% will contain a longer sequence of choices to simulate a full journey. Assertions are made on the final ERRORLEVEL of the entire script and the final success message in the output log."
+
+summary: "By implementing this plan, we transform a fragile CMD project into a robust, reliable, and maintainable software tool."

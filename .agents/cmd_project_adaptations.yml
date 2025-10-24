@@ -1,0 +1,284 @@
+# CMD Project Adaptations
+# Framework overrides for Batch Script projects
+# Created: 2025-10-23
+# Referenced by: operational_model.yml, parallel_operations.yml
+
+version: 1.0
+project_type: "Windows CMD Batch Script"
+language: "Batch (.cmd)"
+framework: "None (native Windows scripting)"
+
+# Override default framework assumptions
+framework_overrides:
+  
+  contracts:
+    status: "NOT_APPLICABLE"
+    reason: "Batch scripts don't use contract-based interfaces or API schemas"
+    alternative: |
+      Use structured comments in function headers:
+      
+      REM ========================================================================
+      REM Function: :BackupWindowsLicense
+      REM Purpose: Exports Windows activation key to file
+      REM Parameters:
+      REM   %1 = destination directory (optional, defaults to %temp%)
+      REM Returns:
+      REM   ERRORLEVEL 0 = success
+      REM   ERRORLEVEL 1 = export failed
+      REM   ERRORLEVEL 2 = no license found
+      REM Side Effects: Creates .txt file in destination
+      REM ========================================================================
+    
+    reference_example: "See Helpdesk-Tools.cmd lines 500-550 (to be added in Task #17)"
+  
+  packages_and_dependencies:
+    status: "NOT_APPLICABLE"
+    reason: "No package.json, requirements.txt, or dependency manifest"
+    alternative: |
+      External dependencies are:
+      - Windows built-in commands (reg, sc, wmic, etc.)
+      - Winget (optional, checked at runtime)
+      - Chocolatey (optional, checked at runtime)
+      - PowerShell (for Office Tool Plus download)
+      
+      Dependency check pattern:
+      ```cmd
+      where winget >nul 2>&1
+      if errorlevel 1 (
+          echo [WARNING] Winget not found - some features unavailable
+          goto :fallback_method
+      )
+      ```
+    
+    location: "Runtime checks in Helpdesk-Tools.cmd, no manifest file"
+  
+  feature_flags:
+    mechanism: "Environment variables (not TypeScript config)"
+    location: "Top of Helpdesk-Tools.cmd (dispatcher section)"
+    
+    implementation_pattern: |
+      REM Feature flag examples:
+      if defined TEST_MODE (
+          echo [TEST] Running in test mode - no system modifications
+          set DRY_RUN=1
+      )
+      
+      if defined DRY_RUN (
+          echo [DRY-RUN] Would execute: winget install %app_id%
+          exit /b 0
+      )
+      
+      REM Actually execute
+      winget install %app_id%
+    
+    recommended_flags:
+      - "TEST_MODE - Enable test harness mode (/test:Label support)"
+      - "DRY_RUN - Mock destructive operations (Phase 2 implementation)"
+      - "DEBUG - Verbose logging with echo statements"
+      - "SKIP_ADMIN_CHECK - For testing on non-admin environments"
+  
+  testing_infrastructure:
+    unit_tests:
+      status: "LIMITED"
+      method: "Call script with /test:Label and check ERRORLEVEL"
+      location: "tests/unit/ (minimal coverage)"
+      limitations: "Cannot isolate without dispatcher pattern (Task #5)"
+    
+    integration_tests:
+      status: "ACTIVE"
+      method: "Log file parsing with findstr"
+      location: "tests/integration/*.cmd"
+      reality: "Only verifies menu text rendering, NOT actual functionality"
+      confidence: "MEDIUM for refactoring, LOW for production"
+    
+    e2e_tests:
+      status: "MANUAL_ONLY"
+      method: "Human QA checklist"
+      location: "specs/*/qa_checklist.md (to be created)"
+      reason: "No VM infrastructure for real system modifications"
+    
+    ci_environment:
+      runner: "GitHub Actions - ubuntu-latest (cannot test Windows-specific code)"
+      limitation: "Can only verify syntax and navigation, not execution"
+      recommendation: "Consider windows-latest runner for Phase 3"
+  
+  type_system:
+    status: "NONE"
+    reason: "Batch is untyped - all variables are strings"
+    best_practice: |
+      Use naming conventions for type hints:
+      - %str_* for strings (explicit)
+      - %int_* for numeric values
+      - %bool_* for true/false flags (0/1)
+      - %path_* for file/directory paths
+      
+      Example:
+      set "str_appName=Google Chrome"
+      set "int_retryCount=3"
+      set "bool_isInstalled=0"
+      set "path_baseDir=%~dp0"
+  
+  modularity:
+    mechanism: ":labels as functions (not separate files)"
+    current_state: "Monolithic - single 2000-line .cmd file"
+    phase_1_goal: "Organize labels into logical sections (not extract to files)"
+    future_consideration: "Could split to includes (CALL external.cmd :Label) in Phase 3"
+
+# CMD-specific best practices for multi-agent collaboration
+cmd_specific_guidelines:
+  
+  variable_naming:
+    convention: "camelCase for locals, SCREAMING_SNAKE_CASE for constants"
+    examples:
+      - "set userChoice=1"
+      - "set officePath=%cd%"
+      - "set BASE_DIRECTORY=%~dp0"
+    
+    reserved_patterns:
+      never_rename:
+        - "%errorlevel%"
+        - "%~dp0, %~1, %~nx1" (all % batch syntax)"
+        - "%temp%, %windir%, %ProgramFiles%" (environment vars)"
+      
+      see_also: ".agents/project_workflow.yml (exclusionList section)"
+  
+  function_naming:
+    convention: ":PascalCase for menus, :camelCase for helpers"
+    examples:
+      - ":MainMenu (user-facing)"
+      - ":InstallAioMenu (user-facing)"
+      - ":downloadOffice (helper function)"
+      - ":defineOffice (helper function)"
+    
+    status: "Refactored in Task #11 (completed on refactor/structure-and-naming branch)"
+  
+  comment_style:
+    status: "INCONSISTENT - Task #17 will unify"
+    target_standard: |
+      REM for section headers and function docs
+      :: for inline explanations
+      REM === for major section dividers
+      
+      Example:
+      REM ========================================================================
+      REM Section: License Management Functions
+      REM ========================================================================
+      
+      :BackupWindowsLicense
+      REM Export activation key to file
+      set "destination=%~1"  :: Parameter: destination directory
+      if "%destination%"=="" set "destination=%temp%"  :: Default to temp
+  
+  error_handling:
+    pattern: "Check ERRORLEVEL after each external command"
+    example: |
+      winget install --id Google.Chrome
+      if errorlevel 1 (
+          echo [ERROR] Installation failed
+          exit /b 1
+      )
+      echo [SUCCESS] Installation completed
+      exit /b 0
+    
+    anti_pattern: "Ignoring errors - always check and handle"
+
+# Workflow adaptations for CMD projects
+workflow_overrides:
+  
+  spec_template:
+    use: "specs/template-plan.md (CARE structure)"
+    cmd_specific_sections:
+      - "Windows Version Requirements (7/10/11, x86/x64)"
+      - "Admin Rights Needed (yes/no/conditional)"
+      - "External Tool Dependencies (winget/choco/powershell versions)"
+      - "Registry Impact (keys to modify)"
+      - "Rollback Procedure (for destructive operations)"
+  
+  branch_naming:
+    follows: "Standard convention (feature/, refactor/, fix/)"
+    examples:
+      - "refactor/comment-standards (Task #17)"
+      - "refactor/layout-organization (Task #18)"
+      - "feature/dry-run-mode (future)"
+  
+  pr_checklist:
+    cmd_specific_items:
+      - "[ ] Tested on Windows 10/11 (if possible)"
+      - "[ ] Admin rights requirement documented"
+      - "[ ] No hardcoded paths (use %~dp0, %temp%, etc.)"
+      - "[ ] ERRORLEVEL checked after external commands"
+      - "[ ] Variables properly quoted (avoid space issues)"
+      - "[ ] Comments updated (if Task #17 complete)"
+  
+  handoff_requirements:
+    additional_context:
+      - "Windows version tested on"
+      - "Admin/non-admin execution notes"
+      - "Manual QA steps (until VM infrastructure exists)"
+
+# Project-specific constraints
+constraints:
+  
+  cannot_do:
+    - "Multi-file module system (all in Helpdesk-Tools.cmd for now)"
+    - "Automated testing of actual system modifications (no VM)"
+    - "Cross-platform support (Windows-only by design)"
+    - "Concurrent execution (Batch is single-threaded)"
+  
+  must_preserve:
+    - "Single-file distribution (easy deployment for helpdesk)"
+    - "No external dependencies (except optional winget/choco)"
+    - "Admin privilege escalation (goUAC section)"
+    - "Backward compatibility (existing user workflows)"
+  
+  technical_debt:
+    - "Monolithic structure (will address in Phase 2+)"
+    - "Limited error handling (will improve with Task #5)"
+    - "No logging framework (uses echo only)"
+    - "Hardcoded paths in some sections (audit needed)"
+
+# Quick reference for agents
+agent_checklist:
+  before_claiming_task:
+    - "[ ] Read this file (cmd_project_adaptations.yml)"
+    - "[ ] Check .agents/testing_strategy.yml current_reality section"
+    - "[ ] Verify task not blocked_by incomplete prerequisites"
+    - "[ ] Confirm Windows/CMD expertise (or willingness to learn Batch syntax)"
+  
+  before_pushing_code:
+    - "[ ] Test with /test:Label if dispatcher exists (Task #5)"
+    - "[ ] Check ERRORLEVEL handling for external commands"
+    - "[ ] Verify no Node.js/TypeScript artifacts introduced"
+    - "[ ] Update comments if Task #17 complete"
+  
+  before_handoff:
+    - "[ ] Document Windows version tested (if manual QA performed)"
+    - "[ ] Note any admin rights requirements"
+    - "[ ] Provide fallback for environments without winget/choco"
+
+# Integration with main framework
+framework_integration:
+  operational_model:
+    override: "Add project type detection in SOP step 1"
+    reference: "Read cmd_project_adaptations.yml before applying defaults"
+  
+  parallel_operations:
+    override: "Skip contracts/ and packages/ validation"
+    use_instead: "Function signature comments and env var feature flags"
+  
+  ai_partner_framework:
+    override: "Skip TypeScript/contract sections"
+    focus_on: "Spec-first approach, TDD with limited test scope, manual QA"
+
+related_files:
+  - ".agents/operational_model.yml (entry point)"
+  - ".agents/parallel_operations.yml (needs CMD section reference)"
+  - ".agents/testing_strategy.yml (current_reality section)"
+  - ".agents/project_workflow.yml (exclusionList for variables)"
+  - ".agents/multi_agent_stability_plan.yml (rationale for this file)"
+
+version_history:
+  - version: 1.0
+    date: "2025-10-23"
+    author: "GitHub Copilot CLI"
+    changes: "Initial creation to address framework-project mismatch (LL-020)"

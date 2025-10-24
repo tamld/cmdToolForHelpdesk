@@ -1,5 +1,16 @@
 echo off
 Title Script Auto install Software
+
+:: Check for /test or /test:<Label> argument
+if /i "%~1:~0,5"=="/test" (
+    for /f "tokens=1,2 delims=:" %%a in ("%~1") do (
+        if /i "%%a"=="/test" (
+            if not "%%b"=="" goto %%b
+            goto MainMenu
+        )
+    )
+)
+
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 if '%errorlevel%' NEQ '0' (
     echo  Run CMD as Administrator...
@@ -20,7 +31,7 @@ REM Go UAC to get Admin privileges
     pushd "%CD%"
     CD /D "%~dp0"
 REM ========================================================================================================================================    
-:main
+:MainMenu
 @echo off
 set "appversion=v0.6.80 Feb 15, 2025"
 set "dp=%~dp0"
@@ -44,23 +55,24 @@ echo    [6] Update CMD                                 : Press 6
 echo    [7] Exit                                       : Press 7
 ::echo    [8] Test                                       : Press 8
 echo    ========================================================
-Choice /N /C 1234567 /M " Press your choice :"
-::if %ERRORLEVEL% == 8 call :checkCompatibility & goto main
-if %ERRORLEVEL% == 7 call :clean && goto exit
-if %ERRORLEVEL% == 6 call :updateCMD & goto main
-if %ERRORLEVEL% == 5 goto packageManagementMenu
-if %ERRORLEVEL% == 4 goto utilities
-if %ERRORLEVEL% == 3 goto activeLicenses
-if %ERRORLEVEL% == 2 goto office-windows
-if %ERRORLEVEL% == 1 goto installAIOMenu
+if /i "%~1"=="/test" goto :EOF
+Choice /N /C 123456 /M " Press your choice : "
+if %ERRORLEVEL% == 6 goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 5 call :downloadOffice & "%temp%\Office Tool\Office Tool Plus.exe" & goto OfficeWindowsMenu
+if %ERRORLEVEL% == 4 set "office=2019"& set "office_type=Volume"& call :defineOffice& goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 3 set "office=2021"& set "office_type=Volume"& call :defineOffice& goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 2 set "office=2024"& set "office_type=Volume"& call :defineOffice& goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 1 set "office=365"& call :installO365& goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 2 goto OfficeWindowsMenu
+if %ERRORLEVEL% == 1 goto InstallMenu
 endlocal
-goto end
+goto exitScript
 
 REM ========================================================================================================================================
 REM ==============================================================================
 REM Start of installAIOMenu
 REM Install Software Online using Winget or Chocolatey
-:installAIOMenu
+:InstallMenu
 setlocal
 cls
 title Install All In One Online
@@ -72,46 +84,46 @@ echo        [3] Fresh Install with Office 2021           : Press 3
 echo        [4] Fresh Install with Office 2019           : Press 4
 echo        [5] Main Menu                                : Press 5
 echo        ======================================================
+if /i "%~1"=="/test" goto :EOF
 choice /n /c 12345 /M "Press your choice: "
 
-if errorlevel 5 goto main
-if errorlevel 4 goto installAIO-O2019
-if errorlevel 3 goto installAIO-O2021
-if errorlevel 2 goto installAIO-O2024
-if errorlevel 1 goto installAIO-Fresh
+if errorlevel 5 goto MainMenu
+if errorlevel 4 goto installAioWithOffice2019
+if errorlevel 3 goto installAioWithOffice2021
+if errorlevel 2 goto installAioWithOffice2024
+if errorlevel 1 goto installAioFresh
 
 echo Invalid selection. Please try again.
 pause >nul
 endlocal
-goto installAIOMenu
+goto InstallMenu
 
 REM ========================================================================================================================================
 REM function install fresh Windows using Winget utilities
-:installAIO
+:installAio
 Title Install All in One 
 cls
 call :checkCompatibility
-call :settingWindows
+call :applyWindowsSettings
 call :setHighPerformance
-call :installEndusers
+call :installEndUserApps
 call :installChatApps
 call :installRemoteApps
 call :installUnikey
-call :createShortcut
+call :createShortcutss
 call :installSupportAssistant
 call :debloat
 goto :EOF
 
 
-:installAIO-Fresh
-Title Install All in One from fresh Windows without Office
-call :installAIO
+:installAioFresh
+call :installAio
 call :Clean
-goto :installAIOMenu
+goto :InstallMenu
 
-:installAIO-O2019
+:installAioWithOffice2019
 Title Install All in One with Office 2019
-call :installAIO
+call :installAio
 set opt5=(NO)
 set opt6=(NO)
 set opt7=(NO)
@@ -125,9 +137,9 @@ set office_type=Volume
 call :installOffice
 goto :installAIOMenu
 
-:installAIO-O2021
+:installAioWithOffice2021
 Title Install All in One with Office 2021
-call :installAIO
+call :installAio
 set opt5=(NO)
 set opt6=(NO)
 set opt7=(NO)
@@ -141,9 +153,9 @@ set office_type=Volume
 call :installOffice
 goto :installAIOMenu
 
-:installAIO-O2024
+:installAioWithOffice2024
 Title Install All in One with Office 2024
-call :installAIO
+call :installAio
 set opt5=(NO)
 set opt6=(NO)
 set opt7=(NO)
@@ -157,23 +169,21 @@ set office_type=Volume
 call :installOffice
 goto :installAIOMenu
 
-:installAIO-System-Network
-call :hold
+:installAioSystemNetwork
+call :notifyUnderConstruction
 goto :installAIOMenu
 
-:installAIO-Helpdesk
-call :hold
+:installAioHelpdesk
+call :notifyUnderConstruction
 goto :installAIOMenu
 
 REM End of Install AIO Online
 ::========================================================================================================================================
 ::==============================================================================
 :: Start of Windows Office Utilities Menu
-:office-windows
-setlocal
-cd /d %dp%
+:displayOfficeWindowsMenu
 cls
-title Windows Office Main Menu
+    title Windows Office Main Menu
 echo.
 echo        ==============================================================
 echo        [1] Install Office Online                            : Press 1
@@ -184,13 +194,21 @@ echo        [5] Fix Noncore Windows                              : Press 5
 echo        [6] Load SKUS Windows                                : Press 6
 echo        [7] Main Menu                                        : Press 7
 echo        ==============================================================
+goto :eof
+
+:OfficeWindowsMenu
+setlocal
+cd /d %dp%
+call :displayOfficeWindowsMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234567 /M " Press your choice : "
-if %ERRORLEVEL% == 7 goto :main
-if %ERRORLEVEL% == 6 call :loadSkusMenu & goto :office-windows
+if %ERRORLEVEL% == 7 goto :MainMenu
+if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 6 call :LoadSkusMenu & goto :OfficeWindowsMenu
 if %ERRORLEVEL% == 5 goto :fixNonCore
-if %ERRORLEVEL% == 4 goto :convertOfficeEddition
-if %ERRORLEVEL% == 3 goto :removeOfficeKey
-if %ERRORLEVEL% == 2 goto :uninstallOffice
+if %ERRORLEVEL% == 4 goto :convertOfficeEdition
+if %ERRORLEVEL% == 3 goto :RemoveOfficeKeyMenu
+if %ERRORLEVEL% == 2 goto :UninstallOfficeMenu
 if %ERRORLEVEL% == 1 goto :installOfficeMenu
 endlocal
 REM ==============================================================================
@@ -198,9 +216,8 @@ REM Start of Windows Office Utilities functions
 REM ==============================================================================
 REM Sub menu Install Office Online
 
-:installOfficeMenu
+:displayInstallOfficeMenu
 Title Install Office Online
-setlocal
 cls
 echo.
 echo Select Office Version to Install
@@ -212,13 +229,19 @@ echo                [4] Office 2019 (PerpetualVL)                          : Pre
 echo                [5] Install Manually using Office Deploy Tool          : Press 5
 echo                [6] Main Menu                                          : Press 6
 echo                ================================================================
+goto :eof
+
+:installOfficeMenu
+setlocal
+call :displayInstallOfficeMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123456 /M " Press your choice : "
-if %ERRORLEVEL% == 6 goto :office-windows
-if %ERRORLEVEL% == 5 call :downloadOffice & "%temp%\Office Tool\Office Tool Plus.exe" & goto office-windows
-if %ERRORLEVEL% == 4 set "office=2019"& set "office_type=Volume"& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 3 set "office=2021"& set "office_type=Volume"& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 2 set "office=2024"& set "office_type=Volume"& call :defineOffice& goto :office-windows
-if %ERRORLEVEL% == 1 set "office=365"& call :installO365& goto :office-windows
+if %ERRORLEVEL% == 6 goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 5 call :downloadOffice & "%temp%\Office Tool\Office Tool Plus.exe" & goto OfficeWindowsMenu
+if %ERRORLEVEL% == 4 set "office=2019"& set "office_type=Volume"& call :defineOffice& goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 3 set "office=2021"& set "office_type=Volume"& call :defineOffice& goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 2 set "office=2024"& set "office_type=Volume"& call :defineOffice& goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 1 set "office=365"& call :installO365& goto :OfficeWindowsMenu
 endlocal
 REM ============================================
 REM Stat of install office  online
@@ -274,11 +297,10 @@ Set "opt8=%on%" ::OneDrive
 Set "opt9=%on%" ::VisioPro2021Retail
 Set "optP=%on%" ::ProjectPro2021Retail
 Set "optD=%on%" ::ProofingTools
-Set "optS=%on%" ::Skype
-goto :selectOfficeApp
+goto :SelectOfficeApp
      
 :: Function menu select app to install. Default is yes with Yes colored green.
-:selectOfficeApp
+:SelectOfficeApp
 cls
 @echo off
 echo.
@@ -297,6 +319,7 @@ echo List of components to install Office %office%
 <NUL Set/P=[S] & (if "%optS%"=="%on%" (Call :setColor "%optS%" 0a) Else (<NUL Set/P="%optS%")) & echo  Microsoft Skype.
 <NUL Set/P=[Q] & echo Quit to Office Menu
 echo.
+if /i "%~1"=="/test" goto :EOF
 CHOICE /c 123456789PDSXQ /n /m "--> Select option(s) and then press [X] to start the installation: "
 if %ERRORLEVEL% == 14 goto :installOfficeMenu
 if %ERRORLEVEL% == 13 goto :installOffice
@@ -396,8 +419,7 @@ if exist "%ProgramFiles(x86)%\Microsoft Office\Office1%%a\ospp.vbs" (cd /d "%Pro
 goto :eof
 
 :: Function Menu that selects which edition Windows will convert to
-:loadSkusMenu
-setlocal
+:displayLoadSkusMenu
 cls
 Title Load Windows Eddition
 echo.
@@ -414,20 +436,26 @@ echo        [7] LTSB 2016                           : PRESS 7
 echo        [8] LTSC 2019                           : PRESS 8
 echo        [9] Menu Active Office                  : PRESS 9
 echo        ==================================================
+goto :eof
+
+:LoadSkusMenu
+setlocal
+call :displayLoadSkusMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123456789 /M " Press your choice : "
-if %errorlevel% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSKUS
-if %errorlevel% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSKUS
-if %errorlevel% == 3 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set typeW=Enterprise&& goto :loadSKUS
-if %errorlevel% == 4 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set typeW=EnterpriseS&& goto :loadSKUS
-if %errorlevel% == 5 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=IoTEnterprise&& goto :loadSKUS
-if %errorlevel% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Education&& goto :loadSKUS
-if %errorlevel% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSKUS
-if %errorlevel% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSKUS
-if %errorlevel% == 9 goto :office-windows
+if %ERRORLEVEL% == 1 set keyW=VK7JG-NPHTM-C97JM-9MPGT-3V66T&& set typeW=Professional&& goto :loadSkus
+if %ERRORLEVEL% == 2 set keyW=DXG7C-N36C4-C4HTG-X4T3X-2YV77&& set typeW=ProfessionalWorkstation&& goto :loadSkus
+if %ERRORLEVEL% == 3 set keyW=XGVPP-NMH47-7TTHJ-W3FW7-8HV2C&& set typeW=Enterprise&& goto :loadSkus
+if %ERRORLEVEL% == 4 set keyW=NK96Y-D9CD8-W44CQ-R8YTK-DYJWX&& set typeW=EnterpriseS&& goto :loadSkus
+if %ERRORLEVEL% == 5 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=IoTEnterprise&& goto :loadSkus
+if %ERRORLEVEL% == 6 set keyW=YNMGQ-8RYV3-4PGQ3-C8XTP-7CFBY&& set typeW=Education&& goto :loadSkus
+if %ERRORLEVEL% == 7 set keyW=RW7WN-FMT44-KRGBK-G44WK-QV7YK&& set typeW=wdLTSB2016&& goto :loadSkus
+if %ERRORLEVEL% == 8 set keyW=M7XTQ-FN8P6-TTKYV-9D4CC-J462D&& set typeW=wdLTSC2019&& goto :loadSkus
+if %ERRORLEVEL% == 9 goto :OfficeWindowsMenu
 endlocal
 
 :: Loads a specified Windows SKU (edition) using downloaded license files.
-:loadSKUS
+:loadSkus
 setlocal
 cls
 echo off
@@ -460,16 +488,16 @@ goto :EOF
 
 :fixNonCore
 cls
-call :hold
-goto :office-windows
+call :notifyUnderConstruction
+goto :OfficeWindowsMenu
 
-:convertOfficeEddition
-call :hold
-goto :office-windows
+:convertOfficeEdition
+call :notifyUnderConstruction
+goto :OfficeWindowsMenu
 
 REM ============================================
 REM Start of Remove Office Keys
-:removeOfficeKey
+:displayRemoveOfficeKeyMenu
 cls
 Title Remove Office Key
 echo.
@@ -479,12 +507,17 @@ echo            [1] One by one                          : Press 1
 echo            [2] All                                 : Press 2
 echo            [3] Back to Windows Office Menu         : Press 3
 echo            =================================================
-Choice /N /C 123 /M " Press your choice : "
-if %ERRORLEVEL% == 3 goto :office-windows
-if %ERRORLEVEL% == 2 call :removeOfficeKey-All & goto :office-windows
-if %ERRORLEVEL% == 1 call :removeOfficeKey-1B1 & goto :office-windows
+goto :eof
 
-:removeOfficeKey-1B1
+:RemoveOfficeKeyMenu
+call :displayRemoveOfficeKeyMenu
+if /i "%~1"=="/test" goto :EOF
+Choice /N /C 123 /M " Press your choice : "
+if %ERRORLEVEL% == 3 goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 2 call :removeOfficeKeyAll & goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 1 call :removeOfficeKeyOneByOne & goto :OfficeWindowsMenu
+
+:removeOfficeKeyOneByOne
 cls
 setlocal 
 pushd %officePath%
@@ -500,7 +533,7 @@ popd
 ping -n 2 localhost 1>NUL
 goto :eof
 
-:removeOfficeKey-All
+:removeOfficeKeyAll
 echo off 
 cls
 setlocal 
@@ -517,7 +550,16 @@ goto :eof
 
     
     
-:uninstallOffice
+:UninstallOfficeMenu
+call :displayUninstallOfficeMenu
+if /i "%~1"=="/test" goto :EOF
+Choice /N /C 1234 /M " Press your choice : "
+if %ERRORLEVEL% == 4 goto :OfficeWindowsMenu
+if %ERRORLEVEL% == 3 goto :removeOfficeWithBCUninstaller
+if %ERRORLEVEL% == 2 goto :removeOfficeWithOfficeTool
+if %ERRORLEVEL% == 1 goto :removeOfficeWithSaraCmd
+
+:displayUninstallOfficeMenu
 cls
 Title Uninstall Office all versions
 echo.
@@ -527,22 +569,18 @@ echo            [2] Using Office Tool Plus                 : Press 2
 echo            [3] Using BCUninstaller                    : Press 3
 echo            [4] Back to Windows Office Menu            : Press 4
 echo            ====================================================
-Choice /N /C 1234 /M " Press your choice : "
-if %ERRORLEVEL% == 4 goto :office-windows
-if %ERRORLEVEL% == 3 goto :removeOffice-BCUninstaller
-if %ERRORLEVEL% == 2 goto :removeOffice-OfficeTool
-if %ERRORLEVEL% == 1 goto :removeOffice-saraCmd
+goto :eof
 
-:removeOffice-BCUninstaller
+:removeOfficeWithBCUninstaller
 cls
 Title Uninstall Office Using BulkCrapUninstaller
 echo This will install BCUninstaller into your computer
 call :checkCompatibility
 call :installSoft_ByWinget Klocman.BulkCrapUninstaller
 call :bcuninstaller-Settings
-goto :office-windows
+goto :OfficeWindowsMenu
 
-:removeOffice-OfficeTool
+:removeOfficeWithOfficeTool
 Title Uninstall Office Using Office Tool
 cls
 pushd %temp%
@@ -552,9 +590,9 @@ echo This script will uninstall your Office installation using the Office Tool.
 echo Please wait until the wizard has completed the uninstallation process
 ping -n 3 localhost > nul
 "Office Tool\Office Tool Plus.Console.exe" deploy /rmall /acpteula
-goto :office-windows
+goto :OfficeWindowsMenu
 
-:removeOffice-saraUI
+:removeOfficeWithSaraUI
 Title Uninstall Office Using Office Tool
 cls
 Title Uninstall Office Using Sara UI
@@ -562,10 +600,10 @@ echo This will download (browser download) and install Sara UI for uninstalling 
 echo You must install it manually and follow the wizard guide 
 ping -n 4 localhost 1>NUL
 start https://aka.ms/SaRA-officeUninstallFromPC
-goto :office-windows
+goto :OfficeWindowsMenu
 
 :: Uninstalls Office completely using the SaRA command-line tool.
-:removeOffice-saraCmd
+:removeOfficeWithSaraCmd
 Title Uninstall office completely using Sara Cmd
 cls
 echo This will download and remove office without interactive
@@ -584,17 +622,13 @@ SaRACmd\SaRAcmd.exe -S OfficeScrubScenario -AcceptEula
 popd
 cd /d %dp%
 cls
-goto :office-windows
+goto :OfficeWindowsMenu
 
 REM End of Remove Office Keys
 REM ============================================
 REM End of Windows Office Utilities functions
 REM ========================================================================================================================================
-:activeLicenses
-REM Start of Active Licenses Menu
-setlocal
-Title Active Licenses Menu
-cls
+:displayActiveLicensesMenu
 echo.
 echo        ========================================================
 echo        [1] Online                                     : Press 1
@@ -605,11 +639,20 @@ echo        [5] Restore License                            : Press 5
 echo        [6] MAS (Microsoft Activation Scripts)         : Press 6
 echo        [7] Back to Main Menu                          : Press 7
 echo        ========================================================
+goto :eof
+
+:ActiveLicensesMenu
+REM Start of Active Licenses Menu
+setlocal
+Title Active Licenses Menu
+cls
+call :displayActiveLicensesMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 1234567 /M " Press your choice : "
-if %ERRORLEVEL% == 7 goto :main
-if %ERRORLEVEL% == 6 goto :MAS
+if %ERRORLEVEL% == 7 goto :MainMenu
+if %ERRORLEVEL% == 6 goto :runMicrosoftActivationScripts
 if %ERRORLEVEL% == 5 goto :restoreLicenses
-if %ERRORLEVEL% == 4 goto :backupLicenses
+if %ERRORLEVEL% == 4 goto :BackupLicensesMenu
 if %ERRORLEVEL% == 3 goto :checkLicense
 if %ERRORLEVEL% == 2 goto :activeByPhone
 if %ERRORLEVEL% == 1 goto :activeOnline
@@ -618,9 +661,9 @@ endlocal
 REM End of Active Licenses Menu
 REM ==============================================================================
 ::@ Start of Active Lienses functions
-:MAS
+:runMicrosoftActivationScripts
 cls
-REM call :hold
+REM call :notifyUnderConstruction
 pushd %temp%
 start powershell.exe -command "irm https://get.activated.win | iex"
 popd
@@ -630,13 +673,12 @@ goto :activeLicenses
 
 :restoreLicenses
 cls
-call :hold
+call :notifyUnderConstruction
 goto :activeLicenses
 
 REM ============================================
 REM Start of Backup License Windows & Office
-:backupLicenses
-cls
+:displayBackupLicensesMenu
 Title Backup License Windows ^& Office
 echo.
 echo            =================================================
@@ -644,41 +686,43 @@ echo            [1] BACKUP To Local                     : Press 1
 echo            [2] BACKUP To NAS STORAGE               : Press 2
 echo            [3] Back to Main Menu                   : Press 3
 echo            =================================================
+goto :eof
+
+:BackupLicensesMenu
+cls
+call :displayBackupLicensesMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 123 /M " Press your choice : "
-if %ERRORLEVEL% == 3 goto :activeLicenses
-if %ERRORLEVEL% == 2 goto :backupToNAS
+if %ERRORLEVEL% == 3 goto :ActiveLicensesMenu
+if %ERRORLEVEL% == 2 goto :backupToNas
 if %ERRORLEVEL% == 1 goto :backupToLocal
 
-:backupToNAS
-call :hold
+:backupToNas
+call :notifyUnderConstruction
 goto :backupLicenses
 
 :backupToLocal
-call :hold
+call :notifyUnderConstruction
 goto :backupLicenses
 REM End of Backup License Windows & Office
 REM ============================================
 :checkLicense
 cls
-call :hold
+call :notifyUnderConstruction
 goto :activeLicenses
 
 :activeByPhone
 cls
-call :hold
+call :notifyUnderConstruction
 goto :activeLicenses
 
 :activeOnline
 cls
-call :hold
+call :notifyUnderConstruction
 goto :activeLicenses
 REM End of Active Lienses functions
 REM ========================================================================================================================================
-:utilities
-setlocal
-REM Start of Utilities Menu
-cls
-title Utilities Main Menu
+:displayUtilitiesMenu
 echo.
 echo        =================================================
 echo        [1] Set High Performance                : Press 1
@@ -690,12 +734,21 @@ echo        [6] Active IDM                          : Press 6
 echo        [7] Windows Debloat                     : Press 7
 echo        [8] Back to Main Menu                   : Press 8
 echo        =================================================
+goto :eof
+
+:UtilitiesMenu
+setlocal
+REM Start of Utilities Menu
+cls
+title Utilities Main Menu
+call :displayUtilitiesMenu
+if /i "%~1"=="/test" goto :EOF
 Choice /N /C 12345678 /M " Press your choice : "
-if %ERRORLEVEL% == 8 goto :main
+if %ERRORLEVEL% == 8 goto :MainMenu
 if %ERRORLEVEL% == 7 goto :debloat & goto :utilities
 if %ERRORLEVEL% == 6 call :activeIDM & goto :utilities
 if %ERRORLEVEL% == 5 goto :installSupportAssistant
-if %ERRORLEVEL% == 4 call :winutil & goto :utilities
+if %ERRORLEVEL% == 4 call :runWinUtil & goto :utilities
 if %ERRORLEVEL% == 3 goto :cleanUpSystem & goto :utilities
 if %ERRORLEVEL% == 2 goto :changeHostName & goto :utilities
 if %ERRORLEVEL% == 1 goto :setHighPerformance & goto :utilities
@@ -703,7 +756,7 @@ endlocal
 REM End of Utilities Menu
 REM ==============================================================================
 REM Start of Utilities functions
-:winutil  
+:runWinUtil  
 :: call https://github.com/ChrisTitusTech/winutil Powershell
 start powershell -command "irm "https://christitus.com/win" | iex"
 goto :EOF
@@ -729,7 +782,7 @@ echo Enter new username that you'd like to add:
 set /p user=
 
 REM Prompt user to set password or not
-:input_pass
+:inputPassword
 echo Do you want to set a password for %user%? [Y/N]
 set /p setpass=
 
@@ -747,7 +800,7 @@ net user %user% "" /add 2>nul
 cls
 ) else (
 echo Invalid input. Please try again.
-goto :input_pass
+goto :inputPassword
 cls
 )
 goto :EOF
@@ -779,7 +832,7 @@ ping -n 2 localhost 1>NUL
 cls
 goto :utilities
 
-:restartPC
+:restartPc
 cls
 echo This will force restart computer with 5s
 shutdown -r -t 5 -f
@@ -853,7 +906,7 @@ Title Clean Up System
 cls
 echo This will cleanup temp folder and add preset for Windows Cleanup Utilities
 echo You can execute the command cleanmgr /sagerun:1 afterward
-call :clean > NUL
+call :cleanTemp > NUL
 ping -n 3 localhost > NUL
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Active Setup Temp Folders" /v StateFlags0001 /t REG_DWORD /d 00000002 /f
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\BranchCache" /v StateFlags0001 /t REG_DWORD /d 00000002 /f
@@ -908,7 +961,7 @@ If ERRORLEVEL == Y goto :changeHostName
 endlocal
     goto :utilities
 
-:settingWindows
+:applyWindowsSettings
 cls
 echo off
 echo Setting OS
@@ -983,20 +1036,7 @@ COPY /Y "%startProgram%\Slack Technologies Inc\*.lnk" "%AllUsersProfile%\Desktop
 COPY /Y "%startProgram%\UltraViewer\*.lnk" "%AllUsersProfile%\Desktop"
 goto :eof
 
-:packageManagementMenu
-cls
-title Package Management Software Main Menu
-
-:: Define menu mapping
-set "pkg_menu[1]=packageManagement"
-set "pkg_menu[2]=installEndusers"
-set "pkg_menu[3]=installRemoteApps"
-set "pkg_menu[4]=installNetworkApps"
-set "pkg_menu[5]=installChatApps"
-set "pkg_menu[6]=update-All"
-set "pkg_menu[7]=main"
-
-:: Display menu
+:displayPackageManagerMenu
 echo.
 echo        ====================================================
 echo        [1] Install Package Management             : Press 1
@@ -1007,14 +1047,32 @@ echo        [5] Install Chat Applications              : Press 5
 echo        [6] Upgrade All Software Online            : Press 6
 echo        [7] Main Menu                              : Press 7
 echo        ====================================================
+goto :eof
+
+:PackageManagerMenu
+cls
+title Package Management Software Main Menu
+
+:: Define menu mapping
+set "pkg_menu[1]=installPackageManagers"
+set "pkg_menu[2]=installEndUserApps"
+set "pkg_menu[3]=installRemoteApps"
+set "pkg_menu[4]=installNetworkApps"
+set "pkg_menu[5]=installChatApps"
+set "pkg_menu[6]=updateAllPackages"
+set "pkg_menu[7]=MainMenu"
+
+:: Display menu
+call :displayPackageManagerMenu
+if /i "%~1"=="/test" goto :EOF
 choice /n /c 1234567 /m "Press your choice (1-7):"
 
 set "USER_CHOICE=%errorlevel%"
 call :dispatch_menu pkg_menu USER_CHOICE
-goto :packageManagementMenu
+goto :PackageManagerMenu
 
 
-:update-All
+:updateAllPackages
 Title Update Softwares
 call :checkCompatibility
 cls
@@ -1029,21 +1087,21 @@ echo Task done!
 ping -n 2 localhost > nul
 goto :EOF
 
-:winget-Deskjob
+:wingetInstallDeskjob
 cls
-call :hold
+call :notifyUnderConstruction
 goto :EOF
 
-:installEndusers
+:installEndUserApps
 cls
 Title Install End User Softwares
 where winget >nul 2>&1
 if %errorlevel%==0 (
     echo [*] Using Winget to install End Users Applications...
-    call :winget-Endusers
+    call :wingetInstallEndUsers
 ) else (
     echo [*] Winget not found. Switching to Chocolatey...
-    call :choco-Endusers
+    call :chocoInstallEndUsers
 )
 goto :EOF
 
@@ -1053,10 +1111,10 @@ Title Install Remote Apps
 where winget >nul 2>&1
 if %errorlevel%==0 (
     echo [*] Using Winget to install Remote Applications...
-    call :winget-RemoteSupport
+    call :wingetInstallRemoteSupport
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Remote Applications...
-    call :choco-RemoteSupport
+    call :chocoInstallRemoteSupport
 )
 goto :EOF
 
@@ -1066,10 +1124,10 @@ Title Install Network Apps
 where winget >nul 2>&1
 if %errorlevel%==0 (
     echo [*] Using Winget to install Network Applications...
-    call :winget-Network
+    call :wingetInstallNetwork
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Network Applications...
-    call :choco-Network
+    call :chocoInstallNetwork
 )
 goto :EOF
 
@@ -1079,14 +1137,14 @@ Title Install Chat Apps
 where winget >nul 2>&1
 if %errorlevel%==0 (
     echo [*] Using Winget to install Chat Applications...
-    call :winget-Chat
+    call :wingetInstallChat
 ) else (
     echo [*] Winget not found. Switching to Chocolatey for Chat Applications...
-    call :choco-Chat
+    call :chocoInstallChat
 )
 goto :EOF
 
-:choco-Network
+:chocoInstallNetwork
 cls
 Title Install Network softwares by Chocolatey
 call :checkCompatibility
@@ -1132,7 +1190,7 @@ call :killtasks
 endlocal
 goto :EOF
 
-:winget-Network
+:wingetInstallNetwork
 Title Install Network softwares by Winget
 setlocal
 
@@ -1177,7 +1235,7 @@ call :killtasks
 endlocal
 goto :EOF
 
-:choco-Chat
+:chocoInstallChat
 Title Install Chat softwares by Chocolatey
 call :checkCompatibility
 setlocal
@@ -1202,7 +1260,7 @@ for %%p in (%packageList%) do (choco install -y %%p)
 endlocal
 goto :EOF
 
-:winget-Chat
+:wingetInstallChat
 Title Install Chat softwares by Winget
 call :checkCompatibility
 setlocal
@@ -1229,7 +1287,7 @@ endlocal
 call :killtasks
 goto :EOF
 
-:winget-RemoteSupport
+:wingetInstallRemoteSupport
 cls
 call :checkCompatibility
 call :installSoft_ByWinget TeamViewer.TeamViewer
@@ -1237,7 +1295,7 @@ call :installSoft_ByWinget DucFabulous.UltraViewer
 call :killtasks
 goto :EOF
 
-:choco-RemoteSupport
+:chocoInstallRemoteSupport
 cls
 Title Install Remote Support Software by Chocolatey
 echo off
@@ -1246,7 +1304,7 @@ choco install -y teamviewer ultraviewer anydesk.install
 REM choco install -y ultraviewer --ignore-checksums
 goto :EOF
 
-:choco-Endusers
+:chocoInstallEndUsers
 cls
 Title Install Enduser Software by Chocolatey
 echo off
@@ -1275,7 +1333,7 @@ cls
 ENDLOCAL
 goto :EOF
 
-:winget-Endusers
+:wingetInstallEndUsers
 Title Install Enduser Software by Winget
 echo off
 call :checkCompatibility
@@ -1578,7 +1636,7 @@ set /p password=Enter the password:
 goto :EOF
 
 :: function force delete all file created in %temp% folder
-:clean
+:cleanTemp
 echo off
 cls
 setlocal
@@ -1603,7 +1661,7 @@ dir /b "C:\Program Files (x86)\Internet Download Manager" > nul 2>&1 || (
 )
 powershell -Command "iex(irm is.gd/idm_reset)"
 popd
-call :clean
+call :cleanTemp
 goto :EOF
 
 :: Kill all non-essential applications gracefully
@@ -1649,7 +1707,7 @@ goto :EOF
 
 :: End of child process functions
 :: ========================================================================================================================================
-:hold
+:notifyUnderConstruction
 cls
 echo This function is not fully implemented yet.
 echo Please open a request or contact the developer to expedite the development of this feature.
@@ -1657,9 +1715,9 @@ echo For more information, visit: https://github.com/tamld/cmdToolForHelpdesk
 ping -n 3 localhost >NUL
 goto :EOF
 
-:end
-call :clean
-exit
+:exitScript
+call :cleanTemp
+goto :EOF
 
 
 

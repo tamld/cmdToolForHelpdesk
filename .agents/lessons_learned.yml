@@ -1,0 +1,340 @@
+# A structured log of lessons learned to prevent repeating mistakes.
+# This file is part of the agent's core knowledge base.
+author: "Gemini Agent (based on user feedback)"
+date: "2025-10-19"
+
+lessons:
+  - id: LL-001
+    topic: "CMD Function Testability"
+    problem: "Cannot test CMD functions in isolation using `call script.cmd :label`."
+    root_cause: "The `call :label` syntax is unreliable and often re-executes the entire script from the top instead of targeting the specific label."
+    solution: "Mandate the use of a central 'Dispatcher Pattern' at the top of the script. Tests can then call `script.cmd function_name` to reliably execute only the desired function."
+
+  - id: LL-002
+    topic: "CMD Subroutine Return Mechanism"
+    problem: "Using `exit /b` in a called function terminates the entire test runner process, preventing the test from completing or reporting results."
+    root_cause: "`exit /b` terminates the current cmd.exe process, not just the subroutine."
+    solution: "Always use `goto :eof` to return from a subroutine. This passes control back to the caller and correctly preserves the ERRORLEVEL."
+
+  - id: LL-003
+    topic: "Debugging Strategy"
+    problem: "Attempting to debug complex errors by repeatedly modifying the main script is inefficient and risky."
+    root_cause: "Lack of a systematic isolation process."
+    solution: "When faced with a persistent error, create a minimal, temporary test case that isolates the single problematic operation. This provides clear, evidence-based direction for the fix."
+
+  - id: LL-004
+    topic: "CI Pathing Consistency"
+    problem: "Tests were failing in the CI environment with 'file not found' errors."
+    root_cause: "The `cd` command within test scripts was altering the relative working directory, breaking subsequent `call` commands."
+    solution: "Establish a stable working directory in the main test runner. All sub-tests must use paths relative to that stable directory and must not change it."
+
+  - id: LL-005
+    topic: "Test Result Verification"
+    problem: "A test was reported as 'passing' in the CI, but its logs contained errors like 'command not recognized'."
+    root_cause: "The test's validation mechanism itself was broken, leading to a false positive."
+    solution: "Always inspect the full logs of a 'successful' run to ensure tests are passing for the right reasons. A broken assertion is a failed test."
+
+  - id: LL-006
+    topic: "Agent Proactive Analysis"
+    problem: "Agent gave a superficial answer to a general query about project progress."
+    root_cause: "The agent's default scanning protocol prioritized common file names (`README.md`) over project-specific SSoT declarations (`.agents/` directory)."
+    solution: "The agent's core logic must be updated to always check for a project-specific SSoT first. This was formalized as `LAW-CONTEXT-001: SSoT Primacy`."
+
+  - id: LL-007
+    topic: "Agent Plan Interpretation"
+    problem: "Agent confused long-term strategic goals (`roadmap.yml`) with immediate tactical tasks (`backlog.yml`)."
+    root_cause: "The agent did not stratify the planning documents it found within the SSoT."
+    solution: "The agent's core logic must be updated to classify plans into 'Strategic' and 'Tactical' and to prioritize the Tactical plan for branch-specific work. This was formalized as `GUIDELINE-PLAN-001: Plan Stratification`."
+
+  - id: LL-019
+    topic: "Test Validity Gap - Infrastructure Constraints"
+    problem: "Test suite claims multi-layer coverage (unit/integration/e2e) but only validates UI text rendering, not actual functionality."
+    root_cause: "No Windows VM environment available for real system modification testing. Tests parse log files (findstr) to verify menu display, not business logic execution."
+    impact: "False confidence - CI passing does NOT mean code works in production. Only safe for refactoring structure/naming."
+    solution: |
+      1. Honest documentation: Add reality_check section to testing_strategy.yml
+      2. Scope limitation: Mark tests as 'smoke tests' not 'functional tests'
+      3. Recommended: Implement dry-run mode for all destructive operations (Phase 2)
+      4. Long-term: Invest in cloud VM infrastructure or accept manual QA requirement
+    evidence:
+      - "tests/integration/*.cmd - all use 'findstr /C:\"string\" log_file'"
+      - "No tests verify registry changes, file downloads, or service states"
+      - "GitHub Actions runs on ubuntu-latest (Linux) not windows-latest"
+    date_identified: "2025-10-23"
+    related_docs:
+      - ".agents/testing_strategy.yml (current_reality section)"
+      - ".agents/multi_agent_stability_plan.yml (IMM-001)"
+
+  - id: LL-020
+    topic: "Framework-Project Type Mismatch Detection"
+    problem: "Multi-agent framework (parallel_operations.yml, ai_partner_framework.md) assumes Node.js/TypeScript conventions but project is pure CMD Batch script."
+    root_cause: "Framework templates created for JavaScript projects - no project type detection in operational_model.yml SOP."
+    impact: "Agents may waste time looking for contracts/, packages/config/, or try to create TypeScript files."
+    solution: |
+      1. Create .agents/cmd_project_adaptations.yml with CMD-specific overrides
+      2. Add project type detection to operational_model.yml step 1
+      3. Update AGENTS.md with 'Read This First' section for CMD constraints
+      4. Reference adaptations file in parallel_operations.yml
+    examples_of_mismatch:
+      - "parallel_operations.yml:22 - 'Contracts live under contracts/' (N/A for CMD)"
+      - "parallel_operations.yml:26 - 'Feature flags in packages/config/flags.ts' (should be ENV vars)"
+      - "ai_partner_framework.md:117 - 'Type definitions (TypeScript)' (not applicable)"
+    date_identified: "2025-10-23"
+    related_docs:
+      - ".agents/brainstorm_cmd_project_constraints.yml (OBS-001)"
+      - ".agents/multi_agent_stability_plan.yml (IMM-002, GUARD-001)"
+
+  - id: LL-008
+    topic: "CMD Process Termination in CI"
+    problem: "A CI job was failing even though the test script reported internal success. The test runner itself seemed to crash."
+    root_cause: "The main script being tested (`Helpdesk-Tools.cmd`) used an `exit` command, which terminates the entire parent CMD process, killing the test runner that called it. The CI environment interprets this unexpected termination as a failure."
+    solution: "In scripts designed to be called by other scripts (like in a testing context), always use `goto :EOF` to return control to the caller, instead of `exit` which terminates the whole process tree."
+
+  - id: LL-009
+    topic: "Bulk Rename Strategy for CMD Labels"
+    problem: "Need to rename 16 remaining labels across multiple categories (Display helpers, controller, legacy functions) without breaking CI."
+    root_cause: "Previous incremental approach worked for functional areas but created overhead (multiple commits/CI runs) for small remaining scope."
+    solution: "For small scopes (<20 items), use atomic commit strategy: (1) Rename all labels in one pass, (2) Update all references (calls & gotos) in same commit, (3) Verify no old names remain via grep, (4) Single CI run validates all changes. Faster and safer than incremental for small scope."
+    
+  - id: LL-010
+    topic: "Git Operations in AI Agent Terminal"
+    problem: "Agent's git commands in terminal frequently fail to parse output correctly, causing workflow disruptions."
+    root_cause: "Complex git output with formatting, colors, and multi-line responses are hard for AI to parse reliably."
+    solution: "Use simpler, more parse-friendly git commands: (1) `git status --short` instead of `git status`, (2) `git diff --name-only` for file lists, (3) `git diff --stat` for change summary, (4) Avoid commands with interactive prompts or pager output, (5) Use `--porcelain` flags when available for machine-readable output."
+
+  - id: LL-011
+    topic: "GitHub CLI Pager Problem in AI Terminal"
+    problem: "Commands like `gh run list`, `gh run view`, `gh pr list` get stuck in pager (displays '(END)') and user must manually exit (q key), blocking AI workflow."
+    root_cause: "`gh` CLI defaults to using pager (less/more) for long output, which waits for user interaction. AI cannot send keystrokes to exit pager."
+    solution: 
+      immediate_fix: "Always append `| cat` to gh commands to bypass pager, e.g., `gh run list --limit 1 | cat`"
+      better_fix: "Use `--json` flag with `jq` for structured parsing: `gh run list --limit 1 --json status,conclusion,displayTitle | jq -r '.[0] | \"Status: \(.status), Result: \(.conclusion)\"'`"
+      environment_fix: "Set env var before gh commands: `PAGER=cat gh run list` or configure gh: `gh config set pager cat`"
+      best_practice: "For CI monitoring in AI agent, use REST API via curl instead of gh CLI to avoid pager issues entirely."
+    examples:
+      - cmd: "gh run list --limit 3 --json status,conclusion,displayTitle | jq -c '.[]'"
+        note: "Get last 3 runs as compact JSON, no pager"
+      - cmd: "gh run view 18718711338 --json conclusion,status | jq -r '.conclusion'"
+        note: "Get specific run result, parse with jq"
+      - cmd: "PAGER=cat gh run list --limit 1"
+        note: "Bypass pager with env var"
+
+  - id: LL-012
+    topic: "Codex Ask/Code Mode Separation"
+    problem: "Mixing Ask research prompts with Code execution inside the same Codex cloud task removed the 'Update PR' button, preventing agents from pushing fixes back to the active branch."
+    root_cause: "Codex treats Ask-mode completions as research-only sessions and finalises the task without associating generated code with the PR branch."
+    solution:
+      practice: "Keep discovery (Ask) tasks separate from implementation (Code) tasks; open a new Codex task when switching modes."
+      reminder: "Document the output of Ask tasks in `specs/<ticket>/notes.md` before triggering Code tasks."
+      enforcement: "Parallel workflow spec `.agents/parallel_operations.yml` requires explicit mode separation before tagging `@codex` in PRs."
+
+  - id: LL-013
+    topic: "Verifiable Multi-Agent Communication"
+    problem: "Brainstorm responses recorded agent actions without evidentiary references, making it impossible for a third agent to audit or trust the statements."
+    root_cause: "Lack of standard requiring links to diffs/backlog entries and clear attribution in multi-agent notes."
+    solution:
+      requirement: "Each response must cite specific files, line numbers, or commit hashes plus backlog/decision references when claiming work is complete."
+      process: "Update brainstorm templates to capture `status` (pending/done) and `evidence` fields; log follow-up tasks in backlog or decision log."
+      governance: "Include attribution (agent name, timestamp) and require secondary review or acknowledgment before marking observation resolved."
+
+  - id: LL-016
+    topic: "Remote Branch Inspection & Cleanup Policy"
+    problem: "Switching branches during analysis fails when the working tree has uncommitted changes; stale experimental branches accumulate and cause confusion."
+    root_cause: "Agents attempted to checkout branches to inspect them, and there was no standard cleanup criteria for experiment branches."
+    solution:
+      inspect_without_checkout:
+        - "Use remote refs: `git log --oneline origin/<branch> -n 3`"
+        - "Compare against main: `git diff --name-only origin/main...origin/<branch>`"
+        - "Check CI runs without pager: `GH_PAGER=cat gh run list --branch <branch> --json status,conclusion,displayTitle,createdAt`"
+      cleanup_criteria:
+        - "Merged into main (safe delete)"
+        - "No PR and repeated CI failures while an alternative path is already stable on active branch"
+        - "Inactivity > 30 days with no owner"
+      recommended_actions:
+        - "Propose deletion via decision_log.yml with CI evidence, then delete remote branch after approval"
+        - "Capture any valuable diffs into the active branch before deletion"
+    examples:
+      - "experiment/ci-parallelization: failure (run 18640530050); consolidate-tests idea not adopted in stable path → Delete after approval"
+      - "experiment/multi-test-capability: multiple failures; early matrix success later superseded by stable CI on refactor → Delete after approval"
+
+  - id: LL-017
+    topic: "Stateful Action Ordering Protocol"
+    problem: "Inconsistent order (execute first, log later) makes audit trails weaker and increases rollback risk."
+    root_cause: "Lack of a codified, step-by-step protocol for stateful actions (branch deletions, tag moves, prod config changes)."
+    solution:
+      protocol:
+        - "Plan: summarize goal, scope, risks; choose safe commands (dry-run if available)."
+        - "Capture: collect restore points (commit SHAs, tags, versions)."
+        - "Pre-record: add decision_log entry with restorePoints + awaiting approval."
+        - "Approve: explicit confirmation from user (who/when/how)."
+        - "Execute: run commands; avoid interactive prompts; capture outputs."
+        - "Post-record: update decision_log with executed.at/actor/commands/result; append metrics."
+        - "Notify: short PASS/FAIL report + rollback instructions using captured restore points."
+      acceptance_criteria:
+        - "decision_log has both approved and executed sections"
+        - "metrics_log has an entry referencing the decisionId"
+        - "Rollback can be performed with information present in logs"
+
+  - id: LL-014
+    topic: "Task Handoff Completeness via Reverse Engineering"
+    problem: "Agents completing tasks without considering 'what would I need to know if receiving this half-done?' led to incomplete handoffs and blocked successors."
+    root_cause: "Forward-only thinking (what I need to do) instead of empathy-driven reverse engineering (what successor needs to know)."
+    solution:
+      principle: "Before marking any task 'ready for handoff' or 'done', reverse-engineer the receiver's perspective by asking: 'If I received this task half-done, what information would block me?'"
+      mandatory_sections:
+        - "Context (why this approach, trade-offs, failed attempts, known issues, dependencies)"
+        - "Handoff checklist (environment setup, how to resume, critical files, credentials)"
+        - "State machine (workflow_state: authored/ready_for_runner/in_progress/blocked/review/done)"
+        - "Verification guide (test commands, expected results, regression checks)"
+        - "Rollback plan (safe point, revert steps, affected dependencies)"
+        - "Communication (discussion history, who to ask if stuck, previous handoffs)"
+        - "Metrics (estimated vs actual effort, time breakdown, handoff latency)"
+      artifact: ".agents/branch_progress.yml (comprehensive schema in each feature branch)"
+      ritual:
+        - "Before handoff OUT: commit 'docs: prepare handoff' with handoff_ready=true"
+        - "After handoff IN: commit 'docs: acknowledge handoff' with new owner recorded"
+      enforcement: "Backlog state 'Ready for handoff' requires branch_progress.yml completeness check"
+    examples:
+      - scenario: "Agent A implements 60% of CI check, then stops"
+        without_LL014: "Agent B wastes 2 hours figuring out 'why this approach?' and 'what was tried?'"
+        with_LL014: "Agent B reads branch_progress.yml context/verification sections, resumes in 15 min"
+      - scenario: "Multi-agent spec handoff (author → runner)"
+        without_LL014: "Runner doesn't know if spec is approved or where to start"
+        with_LL014: "workflow_state='ready_for_runner' + handoff_checklist guides runner immediately"
+    related_lessons:
+      - LL-013: "Verifiable communication requires evidence; LL-014 extends to handoff artifacts"
+      - LL-010: "Git operations need care; LL-014 adds handoff commit ritual for traceability"
+
+  - id: LL-015
+    topic: "Delegating Merge to Codex After Review"
+    problem: "Sessions idled waiting for human merge even after Codex completed review and CI passed, reducing parallel throughput."
+    root_cause: "We asked Codex for review but not for the final merge action once checks were green."
+    solution:
+      practice: "After `@codex review`, leave a follow-up `@codex` comment instructing it to merge and delete the branch once CI succeeds."
+      checklist:
+        - "Ensure CARE spec, handoff, branch_progress.yml, and metrics log are up to date before requesting merge."
+        - "Confirm PR checks (CI, security) are required and green; Codex will not merge when blockers remain."
+        - "Record the merge delegation in branch_progress.yml milestones and metrics log (codex_iterations)."
+
+  - id: LL-018
+    topic: "Reflective Practice & Reverse-Thinking Prompts"
+    problem: "Answers and handoff docs occasionally optimize for speed over quality, missing a brief reflection or 'challenge-your-own-solution' step that would reveal gaps early."
+    root_cause: "No explicit, lightweight ritual to pause and self-audit deliverables before sending or handing off."
+    solution:
+      practice: |
+        Add a short Reflection + Reverse-Thinking section to substantial replies and to `.agents/branch_progress.yml`.
+        - Reflection: What might still be wrong? What trade-offs did we consciously accept?
+        - Reverse-Thinking: Ask 2–3 questions a skeptical reviewer would ask to falsify or improve this work.
+      enforcement:
+        - "Template: Add `reflection` and `reverse_questions` sections to branch_progress.yml"
+        - "Validator: Ensure those sections exist and are not left as defaults"
+      benefits:
+        - "Surfaces blind spots early and reduces back-and-forth"
+        - "Improves decision quality and aligns with LAW-REFLECT-001"
+    examples:
+      - scenario: "CI rule added but regressed on Windows runners"
+        reflection: "We didn't test on Win2019; risk of path handling bug"
+        reverse_questions:
+          - "What breaks if the working directory differs on self-hosted runners?"
+          - "Can the rule be idempotent when pre-commit isn't installed?"
+
+  - id: LL-019
+    topic: "CI-Reliant Testing for Platform-Specific Scripts"
+    problem: "Local testing of platform-specific scripts (e.g., .cmd files) is impossible or unreliable on a host with a different OS (e.g., testing CMD on macOS)."
+    root_cause: "The agent's execution environment (non-Windows) cannot interpret or run the script's commands natively, leading to an inability to validate changes before pushing."
+    solution: "For platform-specific scripts, local validation must be skipped. All testing and verification MUST be delegated to the CI pipeline that uses the correct target OS runner (e.g., `runs-on: windows-latest` for `.cmd` scripts). This is the only reliable source of truth for script behavior."
+
+  - id: LL-020
+    topic: "Git Commit Author Consistency"
+    problem: "Commits created by AI agents were using the local machine's default Git user name (e.g., 'Mac') instead of the project's required author identity."
+    root_cause: "The `git commit` command, when run via shell, defaults to the system's `user.name` and `user.email` config. The agent did not explicitly override this default."
+    solution: "All `git commit` commands executed by agents MUST use the `--author` flag to explicitly set the author identity to the project standard (`tamld <ductam1828@gmail.com>`). This overrides any local or global Git configuration."
+    example: '`git commit --author="tamld <ductam1828@gmail.com>" -m "Your commit message"`'
+
+  - id: LL-021
+    topic: "First Agent Syndrome in Brainstorm Responses"
+    problem: "First agent to respond in brainstorm may give broad AGREE without depth. Example: Gemini claimed to address 8 items (OBS-001 to OBS-004, CQ-001 to CQ-004) but only detailed 4 in reasoning. No artifacts proposed despite having relevant experience from Task #13."
+    root_cause: |
+      1. Template may be intimidating - agent defaults to "blanket agree" to complete quickly
+      2. No examples of GOOD responses in template to guide first responder
+      3. Pressure to respond (be first) vs respond thoroughly
+      4. Unclear distinction between observations (OBS-XXX) requiring position vs critical questions (CQ-XXX) requiring explicit answers
+    impact: "Brainstorm loses depth - dialogue becomes shallow Q&A instead of structured analysis with artifacts"
+    solution: |
+      1. Update brainstorm_template.yml with "Good Response Example" section showing 1:1 observation mapping
+      2. Enforce: One observation block per item (not bundled addresses: [OBS-001, OBS-002, ...])
+      3. Mandate: ≥1 artifact proposal if agent has relevant experience from prior tasks
+      4. Add response quality self-checklist:
+         - [ ] Each item addressed in separate observation block
+         - [ ] CQ-XXX questions answered explicitly (not just AGREE)
+         - [ ] ≥1 artifact proposed if I have relevant experience
+         - [ ] Reverse-thinking check completed for my positions
+         - [ ] Evidence citations provided (file:line, commits, CI runs)
+    evidence:
+      - file: ".agents/brainstorm_cmd_project_constraints.yml"
+        commit: "fc64bbc"
+        detail: "Gemini response: addresses 8 items but reasoning covers 4, artifacts_proposed: []"
+      - context: "Gemini had Task #13 CI friction experience but didn't propose LL about it"
+    date_identified: "2025-10-23"
+    severity: "MEDIUM"
+    action: "Update template + add to facilitator_guide.md pitfalls section"
+    related_lessons: ["LL-013: Evidence-based responses", "LL-014: Handoff completeness"]
+
+  - id: LL-022
+    topic: "Critical Questions Need Explicit Answers, Not Just Agreement"
+    problem: "Critical Questions (CQ-XXX) designed to elicit specific answers and depth analysis, but agents can claim to 'address' them with blanket AGREE without actually answering. Example: Gemini 'addresses: [CQ-001, CQ-002, CQ-003, CQ-004]' but no explicit answers to questions like 'How do you verify project type?' or 'What's your protocol when docs promise exceed capabilities?'"
+    root_cause: |
+      Template allows 'addresses: [CQ-001]' without requiring 'answer' field.
+      Agent interprets CQ-XXX same as OBS-XXX (position: AGREE/DISAGREE) instead of providing substantive answer.
+      Response template doesn't distinguish between observations (require position) and questions (require answer).
+    impact: "Critical design questions remain unanswered, defeating purpose of depth_questions in brainstorm. Facilitator cannot synthesize decisions without answers."
+    solution: |
+      1. Update response template to make 'answer' field MANDATORY for CQ-XXX items:
+         ```yaml
+         # For Critical Questions (CQ-XXX):
+         - addresses: [CQ-001]
+           position: ANSWER  # Not AGREE/DISAGREE for questions
+           answer: |
+             Your specific answer here.
+             Include: approach, rationale, alternatives considered.
+           
+           depth_questions_response:
+             - question: "How granular? (from depth_questions)"
+               answer: "Your answer to depth question"
+         ```
+      
+      2. Template should include example CQ-XXX response showing expected detail level
+      
+      3. Facilitator guide: Flag responses with CQ-XXX in addresses but no 'answer' field as incomplete
+      
+      4. Add to response quality checklist:
+         - [ ] All CQ-XXX items have 'answer' field (not just position)
+         - [ ] Depth_questions from CQ-XXX addressed individually
+    evidence:
+      - file: ".agents/brainstorm_cmd_project_constraints.yml"
+        lines: "CQ-001 to CQ-004 define questions like 'How do you verify project type?'"
+        issue: "Gemini response shows 'addresses: [CQ-001, CQ-002, CQ-003, CQ-004]' but no answers"
+        proof: "Search for 'answer:' field in Gemini's response → Not found for CQ items"
+    date_identified: "2025-10-23"
+    severity: "HIGH"
+    action: "Update brainstorm_template.yml to require 'answer' for CQ-XXX"
+    related_lessons: ["LL-021: First Agent Syndrome"]
+
+  - id: LL-033
+    topic: "Learning Quality Quantification"
+    problem: "SoT 3-layer thiếu metrics cụ thể để quyết định khi nào STM → LTM và đo hiệu quả lesson."
+    root_cause: "Chưa có delta chuẩn (lần reuse, tỉ lệ lỗi) nên lesson dễ trở thành lý thuyết."
+    solution:
+      metrics:
+        - "error_recurrence_rate = (# incidents sau lesson) / (# incidents trước lesson); mục tiêu < 10% trong 30 ngày."
+        - "lesson_reuse_count = số lần lesson được trích trong branch_progress/backlog; promote LTM khi ≥3 lần reuse thành công."
+        - "handoff_latency_delta = (handoff latency sau lesson) / (trước lesson); mục tiêu giảm >20%."
+      automation:
+        - "Viết script quét branch_progress.yml & metrics_log.yml để đếm reuse, đo handoff latency; lưu kết quả vào lessons."
+        - "Thêm trường metrics (timestamp, value) vào mỗi lesson để log số liệu hiện tại."
+      governance:
+        - "Review 2 tuần/lần: lesson nào không đạt target → ghi chú cải tiến/hợp nhất, log vào decision_log.yml."
+    evidence:
+      - "Brainstorm 2025-10-23 yêu cầu định lượng STM/LTM."
+      - "metrics_log.yml chưa bám lesson reuse / handoff effect."
+

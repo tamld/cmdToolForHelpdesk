@@ -1,0 +1,376 @@
+- old_name: :main
+  new_name: :MainMenu
+  type: Controller
+  status: Done
+- old_name: :installAIOMenu
+  new_name: :InstallMenu
+  type: Controller
+  status: Done
+- old_name: :installAIO
+  new_name: :installAio
+  type: Helper
+  status: Done
+- old_name: :installAIO-Fresh
+  new_name: :installAioFresh
+  type: Helper
+  status: Done
+- old_name: :installAIO-O2019
+  new_name: :installAioWithOffice2019
+  type: Helper
+  status: Done
+- old_name: :installAIO-O2021
+  new_name: :installAioWithOffice2021
+  type: Helper
+  status: Done
+- old_name: :installAIO-O2024
+  new_name: :installAioWithOffice2024
+  type: Helper
+  status: Done
+- old_name: :office-windows
+  new_name: :OfficeWindowsMenu
+  type: Controller
+  status: Done
+- old_name: :installOfficeMenu
+  new_name: :InstallOfficeMenu
+  type: Controller
+  status: Done
+- old_name: :downloadOffice
+  new_name: :downloadOffice
+  type: Helper
+  status: To Do
+- old_name: :defineOffice
+  new_name: :defineOffice
+  type: Helper
+  status: To Do
+- old_name: :selectOfficeApp
+  new_name: :selectOfficeApp
+  type: Controller
+  status: Done
+- old_name: :setColor
+  new_name: :setColor
+  type: Helper
+  status: To Do
+- old_name: :installOffice
+  new_name: :installOffice
+  type: Helper
+  status: To Do
+- old_name: :installO365
+  new_name: :installO365
+  type: Helper
+  status: To Do
+- old_name: :getOfficePath
+  new_name: :getOfficePath
+  type: Helper
+  status: To Do
+- old_name: :loadSkusMenu
+  new_name: :LoadSkusMenu
+  type: Controller
+  status: Done
+- old_name: :loadSKUS
+  new_name: :loadSkus
+  type: Helper
+  status: Done
+- old_name: :fixNonCore
+  new_name: :fixNonCore
+  type: Helper
+  status: To Do
+- old_name: :convertOfficeEddition
+  new_name: :convertOfficeEdition
+  type: Helper
+  status: Done
+- old_name: :removeOfficeKey
+  new_name: :RemoveOfficeKeyMenu
+  type: Controller
+  status: Done
+- old_name: :removeOfficeKey-1B1
+  new_name: :removeOfficeKeyOneByOne
+  type: Helper
+  status: Done
+- old_name: :removeOfficeKey-All
+  new_name: :removeOfficeKeyAll
+  type: Helper
+  status: Done
+- old_name: :uninstallOffice
+  new_name: :UninstallOfficeMenu
+  type: Controller
+  status: Done
+- old_name: :removeOffice-BCUninstaller
+  new_name: :removeOfficeWithBCUninstaller
+  type: Helper
+  status: Done
+- old_name: :removeOffice-OfficeTool
+  new_name: :removeOfficeWithOfficeTool
+  type: Helper
+  status: Done
+- old_name: :removeOffice-saraUI
+  new_name: :removeOfficeWithSaraUI
+  type: Helper
+  status: Done
+- old_name: :removeOffice-saraCmd
+  new_name: :removeOfficeWithSaraCmd
+  type: Helper
+  status: Done
+- old_name: :activeLicenses
+  new_name: :ActiveLicensesMenu
+  type: Controller
+  status: Done
+- old_name: :MAS
+  new_name: :runMicrosoftActivationScripts
+  type: Helper
+  status: Done
+- old_name: :restoreLicenses
+  new_name: :restoreLicenses
+  type: Helper
+  status: To Do
+- old_name: :backupLicenses
+  new_name: :BackupLicensesMenu
+  type: Controller
+  status: Done
+- old_name: :backupToNAS
+  new_name: :backupToNas
+  type: Helper
+  status: Done
+- old_name: :backupToLocal
+  new_name: :backupToLocal
+  type: Helper
+  status: To Do
+- old_name: :checkLicense
+  new_name: :checkLicense
+  type: Helper
+  status: To Do
+- old_name: :activeByPhone
+  new_name: :activeByPhone
+  type: Helper
+  status: To Do
+- old_name: :activeOnline
+  new_name: :activeOnline
+  type: Helper
+  status: To Do
+- old_name: :utilities
+  new_name: :UtilitiesMenu
+  type: Controller
+  status: Done
+- old_name: :winutil
+  new_name: :runWinUtil
+  type: Helper
+  status: Done
+- old_name: :debloat
+  new_name: :debloat
+  type: Helper
+  status: To Do
+- old_name: :getUserInformation
+  new_name: :getUserInformation
+  type: Helper
+  status: To Do
+- old_name: :input_pass
+  new_name: :inputPassword
+  type: Helper
+  status: Done
+- old_name: :addUserToAdmins
+  new_name: :addUserToAdmins
+  type: Helper
+  status: To Do
+- old_name: :addUserToUsers
+  new_name: :addUserToUsers
+  type: Helper
+  status: To Do
+- old_name: :restartPC
+  new_name: :restartPc
+  type: Helper
+  status: Done
+- old_name: :installSupportAssistant
+  new_name: :installSupportAssistant
+  type: Helper
+  status: To Do
+- old_name: :joinDomain
+  new_name: :joinDomain
+  type: Helper
+  status: To Do
+- old_name: :cleanUpSystem
+  new_name: :cleanUpSystem
+  type: Helper
+  status: To Do
+- old_name: :changeHostName
+  new_name: :changeHostName
+  type: Helper
+  status: To Do
+- old_name: :settingWindows
+  new_name: :applyWindowsSettings
+  type: Helper
+  status: Done
+- old_name: :createShortcut
+  new_name: :createShortcuts
+  type: Helper
+  status: To Do
+- old_name: :packageManagementMenu
+  new_name: :PackageManagerMenu
+  type: Controller
+  status: Done
+- old_name: :update-All
+  new_name: :updateAllPackages
+  type: Helper
+  status: Done
+- old_name: :winget-Deskjob
+  new_name: :wingetInstallDeskjob
+  type: Helper
+  status: Done
+- old_name: :installEndusers
+  new_name: :installEndUserApps
+  type: Helper
+  status: Done
+- old_name: :installRemoteApps
+  new_name: :installRemoteApps
+  type: Helper
+  status: To Do
+- old_name: :installNetworkApps
+  new_name: :installNetworkApps
+  type: Helper
+  status: To Do
+- old_name: :installChatApps
+  new_name: :installChatApps
+  type: Helper
+  status: To Do
+- old_name: :choco-Network
+  new_name: :chocoInstallNetwork
+  type: Helper
+  status: Done
+- old_name: :winget-Network
+  new_name: :wingetInstallNetwork
+  type: Helper
+  status: Done
+- old_name: :choco-Chat
+  new_name: :chocoInstallChat
+  type: Helper
+  status: Done
+- old_name: :winget-Chat
+  new_name: :wingetInstallChat
+  type: Helper
+  status: Done
+- old_name: :winget-RemoteSupport
+  new_name: :wingetInstallRemoteSupport
+  type: Helper
+  status: Done
+- old_name: :choco-RemoteSupport
+  new_name: :chocoInstallRemoteSupport
+  type: Helper
+  status: Done
+- old_name: :choco-Endusers
+  new_name: :chocoInstallEndUsers
+  type: Helper
+  status: Done
+- old_name: :winget-Endusers
+  new_name: :wingetInstallEndUsers
+  type: Helper
+  status: Done
+- old_name: :packageManagement
+  new_name: :installPackageManagers
+  type: Helper
+  status: To Do
+- old_name: :updateCMD
+  new_name: :updateScript
+  type: Helper
+  status: To Do
+- old_name: :checkCompatibility
+  new_name: :checkCompatibility
+  type: Helper
+  status: To Do
+- old_name: :installSoft_ByWinget
+  new_name: :installSoftwareByWinget
+  type: Helper
+  status: To Do
+- old_name: :installSoft_ByChoco
+  new_name: :installSoftwareByChoco
+  type: Helper
+  status: To Do
+- old_name: :addScheduleUpgrade
+  new_name: :addScheduleUpgrade
+  type: Helper
+  status: To Do
+- old_name: :installUnikey
+  new_name: :installUnikey
+  type: Helper
+  status: To Do
+- old_name: :install7zip
+  new_name: :install7zip
+  type: Helper
+  status: To Do
+- old_name: :inputCredential
+  new_name: :inputCredential
+  type: Helper
+  status: To Do
+- old_name: :clean
+  new_name: :cleanTemp
+  type: Helper
+  status: Done
+- old_name: :activeIDM
+  new_name: :activeIdm
+  type: Helper
+  status: To Do
+- old_name: :killtasks
+  new_name: :killTasks
+  type: Helper
+  status: To Do
+- old_name: :hold
+  new_name: :notifyUnderConstruction
+  type: Helper
+  status: Done
+- old_name: :end
+  new_name: :exitScript
+  type: Helper
+  status: Done
+- old_name: :extractZip
+  new_name: :extractZip
+  type: Helper
+  status: To Do
+- old_name: :downloadFile
+  new_name: :downloadFile
+  type: Helper
+  status: To Do
+- old_name: :dispatch_menu
+  new_name: :dispatchMenu
+  type: Helper
+  status: To Do
+- old_name: :DisplayOfficeWindowsMenu
+  new_name: :displayOfficeWindowsMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayInstallOfficeMenu
+  new_name: :displayInstallOfficeMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayLoadSkusMenu
+  new_name: :displayLoadSkusMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayRemoveOfficeKeyMenu
+  new_name: :displayRemoveOfficeKeyMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayUninstallOfficeMenu
+  new_name: :displayUninstallOfficeMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayActiveLicensesMenu
+  new_name: :displayActiveLicensesMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayBackupLicensesMenu
+  new_name: :displayBackupLicensesMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayUtilitiesMenu
+  new_name: :displayUtilitiesMenu
+  type: Helper
+  status: Done
+- old_name: :DisplayPackageManagerMenu
+  new_name: :displayPackageManagerMenu
+  type: Helper
+  status: Done
+- old_name: :installAIO-System-Network
+  new_name: :installAioSystemNetwork
+  type: Helper
+  status: Done
+- old_name: :installAIO-Helpdesk
+  new_name: :installAioHelpdesk
+  type: Helper
+  status: Done
