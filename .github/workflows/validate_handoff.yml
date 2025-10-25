@@ -1,0 +1,45 @@
+name: validate-handoff
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine if validation is required
+        id: gate
+        shell: bash
+        run: |
+          # Always run when manually dispatched; on PRs, require label 'ready-for-handoff'
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "PR labels: $(echo '${{ toJson(github.event.pull_request.labels) }}')"
+          if echo '${{ toJson(github.event.pull_request.labels) }}' | grep -qi 'ready-for-handoff'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip (no ready-for-handoff label)
+        if: steps.gate.outputs.run != 'true'
+        run: |
+          echo "Skipping handoff validation because label 'ready-for-handoff' not present."
+
+      - name: Validate handoff file
+        if: steps.gate.outputs.run == 'true'
+        shell: bash
+        run: |
+          chmod +x .agents/scripts/validate_handoff.sh
+          REF="${GITHUB_SHA}"
+          echo "Running validator against ref: $REF"
+          .agents/scripts/validate_handoff.sh "$REF"

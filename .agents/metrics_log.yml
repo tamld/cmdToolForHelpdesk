@@ -1,0 +1,20 @@
+# Manual Metrics Log for Multi-Agent Workflow (temporary until Task #14)
+# Update cadence: after each PR merge or weekly if no merges.
+# Fields: date (UTC), branch, pr_number, handoff_latency_hours, ci_result (success/failure), codex_iterations, notes
+
+entries:
+  - date: "2025-10-22T00:00:00Z"
+    branch: "refactor/structure-and-naming"
+    pr_number: null
+    handoff_latency_hours: null
+    ci_result: "success"
+    codex_iterations: 0
+    notes: "Baseline created; atomic rename run passed; tracking docs updated."
+
+  - date: "2025-10-23T00:50:00Z"
+    branch: null
+    pr_number: null
+    handoff_latency_hours: null
+    ci_result: null
+    codex_iterations: 0
+    notes: "Cleanup executed: deleted remote branches experiment/ci-parallelization (51bddcc) and experiment/multi-test-capability (b062c6c). Restore SHAs recorded in decision_log.yml#11."

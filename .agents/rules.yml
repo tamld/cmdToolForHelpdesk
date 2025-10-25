@@ -1,0 +1,20 @@
+# Contribution Rules and Conventions
+# To ensure project quality and consistency, please adhere to the following rules when contributing.
+
+general_rules:
+  - title: Respect and Courtesy
+    description: Always maintain a respectful and professional attitude when communicating.
+  - title: Clear Bug Reports
+    description: When reporting bugs, provide detailed information, including steps to reproduce the error.
+  - title: Discuss Major Changes First
+    description: For major changes, create an issue to discuss before starting implementation.
+
+code_conventions:
+  - title: Style Guide
+    status: To be updated
+  - title: Commit Message
+    description: Use conventional commit messages (e.g., `feat: Add new feature`, `fix: Fix bug X`).
+  - title: Pull Request
+    description: Each PR should address a specific issue and have a clear description.
+  - title: Branching Strategy
+    description: All development, testing, and refactoring must be done in a descriptive branch per `ops/git/branching.md`. Direct changes to the `main` branch are prohibited. All changes must be thoroughly tested before creating a pull request to merge into `main`.

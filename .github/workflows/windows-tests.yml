@@ -1,0 +1,166 @@
+name: Run CMD Tests
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+      - 'refactor/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-main-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run MainMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:MainMenu > .\tests\reports\main_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-install-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run InstallMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:InstallMenu > .\tests\reports\install_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-install-aio:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run InstallAio Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:installAio > .\tests\reports\install_aio.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-install-aio-fresh:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run InstallAioFresh Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:installAioFresh > .\tests\reports\install_aio_fresh.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-office-windows-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run OfficeWindowsMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:OfficeWindowsMenu > .\tests\reports\office_windows_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-install-office-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run InstallOfficeMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:InstallOfficeMenu > .\tests\reports\install_office_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-load-skus-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run LoadSkusMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:LoadSkusMenu > .\tests\reports\load_skus_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-select-office-app:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run SelectOfficeApp Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:selectOfficeApp > .\tests\reports\select_office_app.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-remove-office-key-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run RemoveOfficeKeyMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:RemoveOfficeKeyMenu > .\tests\reports\remove_office_key_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-uninstall-office-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run UninstallOfficeMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:UninstallOfficeMenu > .\tests\reports\uninstall_office_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-active-licenses-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run ActiveLicensesMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:ActiveLicensesMenu > .\tests\reports\active_licenses_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-backup-licenses-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run BackupLicensesMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:BackupLicensesMenu > .\tests\reports\backup_licenses_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-utilities-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run UtilitiesMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:UtilitiesMenu > .\tests\reports\utilities_menu.log 2>&1
+          .\tests\test_runner.cmd
+
+  test-package-management-menu:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run PackageManagerMenu Test
+        shell: cmd
+        run: |
+          mkdir .\tests\reports
+          .\Helpdesk-Tools.cmd /test:PackageManagerMenu > .\tests\reports\package_management_menu.log 2>&1
+          .\tests\test_runner.cmd

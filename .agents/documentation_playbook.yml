@@ -1,0 +1,56 @@
+# Documentation structure and responsibilities for AI agents.
+version: 1.0
+last_updated: "2025-10-22"
+
+purpose:
+  - "Clarify which topics belong in public docs (`docs/`, `ops/`) versus the agent SSoT (`.agents/`)."
+  - "Ensure every parallel-workflow task ships with consistent documentation artefacts."
+
+public_docs:
+  directories:
+    - path: "docs/"
+      usage: "User-facing guidance, high-level architecture, release notes."
+    - path: "ops/"
+      usage: "Headlines and policy summaries (e.g., branching, parallel workflow headlines)."
+  rules:
+    - "Do not expose sensitive runbooks or credentials."
+    - "Summaries must link back to detailed `.agents/` specs for agent execution."
+    - "Include change log entries when public-facing behaviour changes."
+
+agent_docs:
+  directories:
+    - path: ".agents/"
+      usage: "Comprehensive SOP, checklists, lessons, backlog, decision logs."
+    - path: ".agents/playbooks/"
+      usage: "Role-specific quick-reference checklists (author, runner, reviewer)."
+  rules:
+    - "All procedural updates recorded within `.agents/parallel_operations.yml` and referenced in `operational_model.yml`."
+    - "Duplicate high-level headlines in ops/ only when they affect humans; keep canonical detail in `.agents/`."
+    - "Spec-first, human-led workflows must match `.agents/ai_partner_framework.md` before implementation tasks start."
+
+specs_folder:
+  path: "specs/<ticket>/"
+  required_files:
+    - "plan.md"
+    - "handoff.md"
+  optional_files:
+    - "mocks/"
+    - "fixtures/"
+    - "notes.md"
+  maintenance:
+    - "Update or remove once feature is fully released; archive lessons into `.agents/lessons_learned.yml`."
+
+update_process:
+  steps:
+    - "Propose change in backlog issue/task."
+    - "Edit `.agents` files first to keep SSoT accurate."
+    - "Reflect headline or summary in `ops/` if human stakeholders need awareness."
+    - "Notify team via PR description referencing updated docs."
+
+validation:
+  checks:
+    - name: "doc_links"
+      script_hint: "Ensure `.agents/` entries referenced in public docs exist and vice versa."
+    - name: "spec_presence"
+      script_hint: "Fail CI if branch references ticket without `specs/<ticket>/plan.md`."
+  cadence: "Run doc audit monthly or before major release."
