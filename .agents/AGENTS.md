@@ -1,156 +1,386 @@
-# Agent Workflow & Conventions
+# .agents/ - PRIVATE SOURCE OF TRUTH
 
-This document is the Single Source of Truth (SSoT) for AI agents operating in the `cmdToolForHelpdesk` repository. All agents must adhere to these guidelines.
+> ⚠️ **CRITICAL WARNING FOR ALL AI ASSISTANTS**
+> 
+> This directory contains **CONFIDENTIAL** information:
+> - Business strategies and trade secrets
+> - Technical implementation details and architectural decisions
+> - Training data and agent guidelines
+> - Operational logs and decision history
+> - Client information and proprietary workflows
+>
+> **NEVER commit, upload, or share contents of `.agents/` to public repositories!**
+> **NEVER reference specific content from `.agents/` in public documentation!**
+> **ALWAYS treat `.agents/` as PRIVATE and CONFIDENTIAL!**
 
-Agent scope and non-override etiquette
+---
 
-- This SSoT applies to all agents (GitHub Copilot, Gemini CLI, etc.) when working in this repository.
-- Agent-specific instruction files (e.g., `GEMINI_INSTRUCTIONS.md` for Gemini CLI) may exist for runtime behavior, but they must not override this repo-level workflow, quality gates, or handoff protocols.
-- If an agent-specific rule appears to conflict with this document, follow this document and raise a clarification in `.agents/brainstorm_*.yml` or the PR.
+## 🎯 Purpose
 
-## 1. Workflow Protocol
+`.agents/` is the **single source of truth** for all AI Assistant operations in this project. It contains:
 
-- **Objective**: The primary role of an agent is to assist in software development tasks, including bug fixing, feature implementation, refactoring, and testing.
-- **Core Work Loop**:
-  1. **Understand**: Analyze the user's request and the existing codebase. Use tools like `search_file_content`, `glob`, and `read_file` extensively.
-  2. **Plan**: Formulate a clear, step-by-step plan. For significant changes, present this plan to the user before execution.
-  3. **Implement**: Use tools (`replace`, `write_file`, `run_shell_command`) to execute the plan.
-  4. **Verify**: Run tests and linters to ensure changes are correct and adhere to project standards.
-  5. **Document**: Before handoff or completion, create/update `.agents/branch_progress.yml` with complete context (see LL-014).
-- **Git Operations**:
-  - **Branching**: All work must be done on a descriptive branch following naming conventions:
-    - Solo work: `feature/<domain>-<ticket>` (e.g., `feature/ci-spec-check-13`)
-    - Multi-agent: `feature/<domain>-<ticket>-<aAuthor>-<rRunner>` (e.g., `feature/ci-spec-check-13-agemini-rcodex`)
-  - **Marker Commits**: When starting a task, push a marker commit: `chore: claim task #X` for transparency.
-  - **Commits**: Follow the commit message conventions (see section 5).
-  - **Draft PRs**: Open draft PR immediately after first push for visibility to other agents.
-  - **Handoff Ritual** (LL-014):
-    - Before handoff OUT: `git commit -m "docs: prepare handoff for task #X"` with `handoff_ready: true` in branch_progress.yml
-    - After handoff IN: `git commit -m "docs: acknowledge handoff from @agent"` with new owner recorded
-  - **Codex Merge Delegation** (LL-015): After `@codex review`, leave a follow-up instruction (e.g., "@codex once CI is green ... merge") so Codex merges and deletes the branch automatically when checks pass; log the event in branch_progress milestones and metrics log.
-  - **Pull Requests**: Once a feature or fix is complete and verified, open a Pull Request to the appropriate base branch (e.g., `refactor/*` -> `main`). Do not merge without approval.
-  - **Workflow Reference**: See `ops/git/handbook.md` and `ops/git/branching.md` for multi-agent role definitions, branch naming, and handoff expectations.
-  - **Parallel Operations Spec**: Follow `.agents/parallel_operations.yml` for detailed rules on multi-agent planning, Codex usage, and compliance.
-  - **Human–AI Partnership**: Consult `.agents/ai_partner_framework.md` before delegating production tasks; it defines spec-first expectations, context engineering, and quality gates.
-  - **Sustainable Philosophy**: Adhere to `ops/ai/philosophy-headlines.md` and `.agents/ai_philosophy_framework.yml` when bootstrapping new projects or upgrading legacy systems.
-- **CI/CD Interaction**:
-  - After pushing changes, monitor the CI pipeline using `gh run list`.
-  - If a build fails, it is the agent's responsibility to investigate and fix it. Do not proceed with other tasks until the CI is green.
+1. **Training & Guidelines**: How AI Assistants should behave
+2. **Operational Rules**: Workflows, processes, and protocols
+3. **Decision Logs**: History of architectural and strategic decisions
+4. **Backlog & Planning**: Private task tracking and roadmap
+5. **Lessons Learned**: Incidents, improvements, and knowledge base
+6. **Business Context**: Confidential requirements and constraints
 
-## 2. `.agents/` Directory Structure
+---
 
-This directory is the central hub for agent configuration and documentation.
+## 📁 Directory Structure
 
-| Path                          | Format      | Purpose                                                                 |
-| ----------------------------- | ----------- | ----------------------------------------------------------------------- |
-| `AGENTS.md`                   | Markdown    | This file. The primary guide for agent behavior and project conventions. |
-| `lessons_learned.yml`         | YAML        | Structured log of lessons (LL-001 to LL-014) preventing repeated mistakes. |
-| `backlog.yml`                 | YAML        | Tactical task tracking with status, owner, branch, dates. |
-| `decision_log.yml`            | YAML        | Major strategic decisions, experiments, and outcomes. |
-| `metrics_log.yml`             | YAML        | Manual tracking of multi-agent workflow metrics (handoff latency, CI pass rate). |
-| `brainstorm_*.yml`            | YAML        | Multi-agent consensus files with observations + responder blocks. |
-| `branch_progress.yml`         | YAML        | (In feature branches only) Comprehensive handoff documentation (LL-014). |
-| `templates/`                  | Directory   | Templates for branch_progress.yml and other artifacts. |
-| `scripts/`                    | Directory   | Automation scripts (e.g., validate_handoff.sh for LL-014 enforcement). |
-| `logs/`                       | Directory   | Stores logs from agent operations or tool outputs. |
-| `parallel_operations.yml`     | YAML        | Specification for multi-agent workflows and Codex interaction. |
-| `documentation_playbook.yml`  | YAML        | Rules for splitting public vs agent-facing documentation. |
-| `operational_model.yml`       | YAML        | SSoT entry point with 6-step SOP (read → plan → spec → code → test → reflect). |
-| `ai_partner_framework.md`     | Markdown    | Comprehensive guide for human-led, AI-executed development. |
-| `ai_philosophy_framework.yml` | YAML        | Sustainable philosophy for new/legacy projects and guardrail audits. |
+> 📋 **File Format Guide**: See `.agents/guidelines/file_format_strategy.md` for when to use .md vs .yml vs .json vs .jsonl
 
-## 3. Memory Rules
+```
+.agents/
+├── AGENTS.md                           # This file - Navigation & rules (.md)
+├── config/
+│   ├── agent_profiles.yml              # AI Assistant capabilities & preferences
+│   ├── security_rules.yml              # Security policies and constraints
+│   └── quality_standards.yml           # Code quality and testing standards
+├── guidelines/
+│   ├── ai_philosophy_framework.yml     # Sustainable AI delivery principles
+│   ├── coding_standards.md             # Code style, patterns, anti-patterns
+│   ├── testing_strategy.md             # Testing approach and requirements
+│   └── refactoring_playbook.md         # How to safely refactor legacy code
+├── workflows/
+│   ├── git_workflow.md                 # Branch strategy, PR process, merge rules
+│   ├── handoff_protocol.md             # Author → Runner → Reviewer process
+│   ├── brainstorm_process.md           # How to facilitate decision sessions
+│   └── release_checklist.md            # Pre-release validation steps
+├── backlog/
+│   ├── backlog.yml                     # Task tracking with status & priority
+│   ├── roadmap.yml                     # Long-term feature planning
+│   └── blocked_issues.yml              # Tasks blocked by dependencies
+├── decisions/
+│   ├── decision_log.yml                # Architecture & strategy decisions
+│   ├── tech_stack_rationale.md         # Why CMD? Why not PowerShell?
+│   └── testing_infrastructure.md       # GitHub Actions vs Docker decision
+├── lessons_learned/
+│   ├── incidents.yml                   # Production issues & root causes
+│   ├── improvements.yml                # Process improvements over time
+│   └── retrospectives/                 # Sprint/milestone retrospectives
+├── metrics/
+│   ├── metrics_log.yml                 # CI/CD metrics, test coverage
+│   ├── performance_baseline.yml        # Execution time benchmarks
+│   └── code_quality.yml                # Complexity, duplication metrics
+├── templates/
+│   ├── care_spec_template.md           # Context, Actions, Risks, Expectations
+│   ├── pr_template.md                  # Pull request description format
+│   ├── handoff_template.yml            # Author → Runner handoff format
+│   └── retrospective_template.md       # Post-mortem format
+└── knowledge/
+    ├── cmd_best_practices.md           # CMD-specific patterns
+    ├── windows_api_reference.md        # Windows system calls reference
+    ├── troubleshooting_guide.md        # Common issues & solutions
+    └── vendor_documentation/           # Third-party tool docs
+```
 
-- **`save_memory` Tool**: This tool should ONLY be used to remember user-specific preferences or facts that persist across sessions (e.g., "My preferred language is Python", "Remember my alias is 'tamld'").
-- **Project Context**: DO NOT use `save_memory` to store general project information, code snippets, or temporary context. The project files themselves are the source of truth for project context.
+---
 
-## 4. Error Handling & Feedback
+## 🚨 SECURITY RULES FOR AI ASSISTANTS
 
-- **Proactive Clarification**: If a user's request is ambiguous or conflicts with established rules, the agent MUST pause and ask for clarification before proceeding.
-- **Action Confirmation**: For critical or destructive actions (e.g., deleting branches, overwriting files), the agent must explain the action and its potential impact, then ask for user confirmation before executing.
+### ❌ NEVER DO
 
-## 5. Commit Message Conventions
+```yaml
+prohibited_actions:
+  - "Commit .agents/ to Git"
+  - "Include .agents/ in public documentation"
+  - "Reference specific .agents/ content in README.md"
+  - "Share .agents/ content in issues or PRs"
+  - "Copy .agents/ content to public directories"
+  - "Mention client names, business strategies, or trade secrets publicly"
+  - "Expose internal decision-making rationale in public"
+  - "Upload .agents/ files to external services"
+```
 
-- **Format**: All commit messages MUST follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
-  - Example: `feat(testing): add test for office-windows menu`
-  - Example: `fix(ci): correct path in test runner`
-  - Handoff commits: `docs: prepare handoff for task #X` or `docs: acknowledge handoff from @agent`
-  - Marker commits: `chore: claim task #X` (first commit when starting work)
-- **Content**: The commit message body (if present) should focus on the "why" behind the change, not just the "what".
-- **Author**: All commits MUST be authored using the following identity: `tamld <ductam1828@gmail.com>`.
+### ✅ ALWAYS DO
 
-## 6. CI/CD Interaction
+```yaml
+required_actions:
+  - "Check .gitignore includes .agents/ before any commit"
+  - "Verify .agents/ is in .gitignore before creating new files"
+  - "Keep business logic and secrets in .agents/"
+  - "Use .agents/ as first reference for operational questions"
+  - "Update .agents/ logs when making decisions"
+  - "Sanitize public documentation to remove internal details"
+  - "Use generic examples in public docs, specific in .agents/"
+  - "Maintain separation between public docs and private knowledge"
+```
 
-- **Status Checks**: After pushing a commit, use `gh run list --branch <branch-name>` to check the status of the triggered workflow.
-- **Failure Analysis**: If a CI run fails, the **first step** is always to check the workflow file (`.github/workflows/*.yml`) for syntax errors. This is the most common cause of runs failing to even start.
-- **Debugging**: For test failures, enhance the `test_runner.cmd` or individual test scripts with detailed `echo` statements to trace the execution flow and variable states.
+---
 
-## 7. Refactoring Process
+## 📋 HOW TO USE .agents/
 
-- **Sensitive Variable Exclusion**: Before any automated refactoring, the agent must identify a list of variables and keywords that must not be renamed (e.g., system variables like `%errorlevel%`, magic strings like `"Enterprise"`). This list must be confirmed by the user.
-- **Strategy**: Refactoring should be done in small, verifiable batches.
-  1. Identify a self-contained functional area (e.g., a single menu).
-  2. Refactor the code for that area.
-  3. Add or update tests for that area.
-  4. Commit the changes.
-  5. Verify via CI before moving to the next area.
+### For AI Assistants
 
-## 8. Decision Log
+**1. On Every New Task:**
+```bash
+# Read relevant guidelines
+Read .agents/guidelines/ai_philosophy_framework.yml
+Read .agents/workflows/git_workflow.md
+Read .agents/backlog/backlog.yml
 
-- A file named `.agents/decision_log.yml` MUST be maintained.
-- It is used to log all major strategic decisions, experiments, and outcomes.
-- **Structure**:
+# Check if task is already documented
+Grep pattern:"task_name" path:.agents/backlog/
 
-  ```yaml
-  - branch: name-of-branch
-    objective: "What was being attempted."
-    strategic_review:
-      timestamp: YYYY-MM-DD
-      decision: "The decision that was made (e.g., pivot, proceed, abandon)."
-      new_strategy: "Description of the new path forward."
-    experiments:
-      - id: number
-        name: "Description of the experiment."
-        outcome: "Success/Failure"
-        conclusion: "What was learned."
-  ```
+# Follow templates
+Use .agents/templates/care_spec_template.md
+```
 
-## 9. Branching Strategy
+**2. During Implementation:**
+```bash
+# Log decisions
+Append to .agents/decisions/decision_log.yml
 
-This project follows a `strict`-like mode.
+# Track progress
+Update .agents/backlog/backlog.yml
 
-- All new work (features, fixes, refactors) must be done in a dedicated branch: `feature/*`, `fix/*`, or `refactor/*`.
-- Direct commits to `main` are forbidden.
-- Changes are integrated into `main` via Pull Requests, which must pass all CI checks.
+# Record lessons
+Note issues in .agents/lessons_learned/incidents.yml
+```
 
-## 10. Single Source of Truth (SSoT)
+**3. Before Committing:**
+```bash
+# Verify .agents/ is not staged
+git status | grep ".agents/"  # Should return nothing
 
-- **Primacy**: Documents within the `.agents/` and `.github/` directories are the primary SSoT for project status, strategy, and agent conventions.
-- **3-Layer Architecture** (from highest to lowest priority):
-  - **META Layer**: Immutable laws (e.g., LAW-REFLECT-001, LAW-CONTEXT-001) requiring human approval to change.
-  - **HARD Layer**: Stable policies (e.g., GUIDELINE-PLAN-001) requiring multi-agent consensus and high bar to modify.
-  - **SOFT Layer**: Adaptive practices in `lessons_learned.yml` (LL-001 to LL-014) that evolve through evidence-driven iteration.
-- **Classification**:
-  - **Strategic Plan**: Long-term vision and goals (`roadmap.yml`).
-  - **Tactical Plan**: Immediate tasks and short-term goals (`backlog.yml`, issues, `decision_log.yml`). Agents should be primarily guided by the Tactical Plan for their current tasks.
+# Double-check .gitignore
+grep "^\.agents/" .gitignore  # Must exist
+```
 
-## 11. Multi-Agent Collaboration
+---
 
-- **Consensus Pattern**: Use `.agents/brainstorm_<topic>.yml` for lightweight multi-agent discussions:
-  - Append-only responder blocks (never edit others' observations)
-  - Evidence-based responses: cite file:line, commit SHA, or backlog refs
-  - Use AGREE/DISAGREE/CONDITIONAL with explicit reasoning
-  - Attribution required: agent name + timestamp
-- **Evidence Requirements** (LL-013):
-  - All claims must be verifiable (file:line citations, command outputs)
-  - Challenge incorrect evidence politely but firmly
-  - Do not rubber-stamp responses without verification
-- **Handoff Completeness** (LL-014):
-  - Before marking task "Ready for handoff", create complete `.agents/branch_progress.yml` in feature branch
-  - 7 mandatory sections: context, handoff checklist, progress/milestones, verification, rollback, communication, metrics
-  - Run `.agents/scripts/validate_handoff.sh <branch>` to verify completeness
-  - Use handoff ritual commits for traceability
-- **Conflict Resolution**:
-  - Never self-resolve conflicts between Global MCP and repo instructions
-  - Escalate to user with: evidence of conflict, proposed resolution, impact assessment
-  - Document resolution in `decision_log.yml`
+## 🎓 TRAINING FOR AI ASSISTANTS
+
+### Core Principles
+
+1. **Privacy First**: `.agents/` content is CONFIDENTIAL
+2. **Transparency Within**: Document all decisions in `.agents/`
+3. **Sanitize Outward**: Public docs contain NO internal details
+4. **Single Source of Truth**: `.agents/` is authoritative
+5. **Audit Trail**: Every decision logged in `.agents/decisions/`
+
+### When to Add to .agents/
+
+```yaml
+add_to_agents:
+  - "Business requirements that reveal strategy"
+  - "Technical decisions with security implications"
+  - "Client-specific customizations"
+  - "Performance optimizations with trade-offs"
+  - "Failed experiments and reasons why"
+  - "Competitive analysis"
+  - "Cost/budget considerations"
+  - "Team internal processes"
+
+keep_public:
+  - "Generic usage instructions"
+  - "Open-source integration guides"
+  - "Contribution guidelines"
+  - "Basic feature descriptions"
+  - "Public API documentation"
+```
+
+### Example: Public vs Private
+
+**Public (README.md):**
+```markdown
+## Testing
+
+We use GitHub Actions for CI/CD. Tests run automatically on push.
+
+```bash
+# Run tests locally
+cd tests && test_runner.cmd
+```
+
+**Private (.agents/decisions/testing_infrastructure.md):**
+```markdown
+## Testing Strategy Decision (2024-01-24)
+
+**Context**: Considered 5 options: Docker Windows, WSL2, VM, GitHub Actions, AWS EC2.
+
+**Decision**: GitHub Actions Windows Runner
+
+**Rationale**:
+- Free tier sufficient for current scale (200 minutes/month actual usage)
+- No maintenance overhead vs self-hosted runner
+- Real Windows environment vs WSL limitations
+- Faster than Docker Desktop for Windows (2min vs 5min)
+
+**Trade-offs**:
+- Limited concurrency (1 job free tier) - acceptable for solo project
+- No offline testing capability - mitigated by local mocking strategy
+- Vendor lock-in to GitHub - low risk, can migrate to GitLab if needed
+
+**Rejected Alternatives**:
+- Docker: Windows containers not stable on macOS host
+- WSL2: CMD script compatibility issues
+- AWS EC2: Cost $30-50/month, overkill for current scale
+
+**Success Metrics**:
+- CI run time < 5 minutes (currently 2.5 min avg)
+- Zero flaky tests in 1 month
+- 100% CMD function coverage by Q2 2024
+```
+
+---
+
+## 🔄 WORKFLOW INTEGRATION
+
+### Standard Operating Procedure
+
+```yaml
+Phase 1 - Planning:
+  1. Read: .agents/backlog/backlog.yml
+  2. Check: .agents/guidelines/ai_philosophy_framework.yml
+  3. Create: specs/<task>/ with CARE template
+  4. Log: .agents/decisions/decision_log.yml
+
+Phase 2 - Implementation:
+  1. Follow: .agents/guidelines/coding_standards.md
+  2. Test: .agents/guidelines/testing_strategy.md
+  3. Update: .agents/backlog/backlog.yml (status)
+  4. Document: .agents/lessons_learned/ (if issues)
+
+Phase 3 - Review:
+  1. Check: .agents/workflows/release_checklist.md
+  2. Verify: .gitignore contains .agents/
+  3. Sanitize: Remove internal details from public docs
+  4. Merge: Update .agents/metrics/metrics_log.yml
+
+Phase 4 - Retrospective:
+  1. Record: .agents/lessons_learned/improvements.yml
+  2. Update: .agents/guidelines/ if patterns emerge
+  3. Archive: .agents/lessons_learned/retrospectives/
+```
+
+---
+
+## 🛡️ GITIGNORE ENFORCEMENT
+
+**Automated Check Script**: `.agents/scripts/verify_gitignore.sh`
+
+```bash
+#!/bin/bash
+# Verify .agents/ is git-ignored
+
+if ! grep -q "^\.agents/" .gitignore; then
+    echo "ERROR: .agents/ not in .gitignore!"
+    echo "Add this line to .gitignore:"
+    echo ".agents/"
+    exit 1
+fi
+
+# Check if .agents/ files are staged
+if git status --porcelain | grep -q "^[AM].*\.agents/"; then
+    echo "ERROR: .agents/ files are staged for commit!"
+    echo "Files found:"
+    git status --porcelain | grep "^[AM].*\.agents/"
+    echo ""
+    echo "Run: git reset HEAD .agents/"
+    exit 1
+fi
+
+echo "✓ .agents/ is properly git-ignored"
+exit 0
+```
+
+**Pre-commit Hook**: `.git/hooks/pre-commit`
+
+```bash
+#!/bin/bash
+# Prevent accidental .agents/ commits
+
+if git diff --cached --name-only | grep -q "^\.agents/"; then
+    echo "⚠️  ERROR: Attempting to commit .agents/ files!"
+    echo "⚠️  .agents/ contains CONFIDENTIAL information"
+    echo "⚠️  Commit blocked for security"
+    exit 1
+fi
+```
+
+---
+
+## 📊 METRICS & REPORTING
+
+Track these metrics in `.agents/metrics/`:
+
+```yaml
+code_quality:
+  - "Lines of code per function (target: <50)"
+  - "Cyclomatic complexity (target: <10)"
+  - "Test coverage (target: >80%)"
+  - "Duplicate code percentage (target: <5%)"
+
+operational:
+  - "CI build time (target: <5 min)"
+  - "Test pass rate (target: >95%)"
+  - "Deployment frequency"
+  - "Time to fix production issues"
+
+process:
+  - "Handoff latency (author→runner)"
+  - "Rework rate (% of PRs requiring changes)"
+  - "Spec completeness score"
+  - "Incident response time"
+```
+
+---
+
+## 🔗 RELATED DIRECTORIES
+
+```yaml
+public_directories:
+  README.md: "User-facing documentation"
+  specs/: "Versioned with code, sanitized"
+  docs/: "Public API documentation"
+  tests/: "Test cases (non-sensitive)"
+
+private_directories:
+  .agents/: "Internal operations (THIS DIRECTORY)"
+  .git/: "Version control metadata"
+```
+
+---
+
+## ⚡ QUICK REFERENCE
+
+```bash
+# Create new task
+vi .agents/backlog/backlog.yml
+
+# Log decision
+vi .agents/decisions/decision_log.yml
+
+# Check security
+bash .agents/scripts/verify_gitignore.sh
+
+# Add lesson learned
+vi .agents/lessons_learned/improvements.yml
+
+# View metrics
+cat .agents/metrics/metrics_log.yml
+```
+
+---
+
+## 🎯 SUCCESS CRITERIA
+
+This `.agents/` setup is successful when:
+
+- ✅ All AI Assistants know `.agents/` is PRIVATE
+- ✅ No `.agents/` content ever committed to Git
+- ✅ Decisions documented before implementation
+- ✅ Lessons learned captured after incidents
+- ✅ Public docs contain no internal details
+- ✅ Team can onboard new AI Assistants via `.agents/`
+- ✅ Audit trail exists for all major decisions
+
+---
+
+**Last Updated**: 2024-01-24  
+**Maintained By**: Project Owner  
+**AI Assistant Training**: Required reading before any work

@@ -38,3 +38,12 @@ VirtualBox VMs/
 *.iso
 dist/
 release/
+
+# ========================================
+# CONFIDENTIAL - AI Assistant Operations
+# ========================================
+# NEVER commit .agents/ directory
+# Contains business secrets, client info, strategies
+.agents/
+.agents/*
+**/.agents/

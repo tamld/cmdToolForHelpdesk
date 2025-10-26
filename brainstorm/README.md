@@ -1,12 +1,23 @@
-# Brainstorm Hub - Single Source of Truth
+# Brainstorm Hub - PUBLIC Brainstorm Sessions
 
 **Branch**: `dev/brainstorm`  
-**Purpose**: Centralized collaboration for all brainstorm sessions  
+**Purpose**: **PUBLIC** brainstorm sessions (git versioned)  
 **Status**: Active  
+**Visibility**: 🌍 **PUBLIC** - Committed to Git, visible on GitHub
+
+> ⚠️ **IMPORTANT**: This directory is PUBLIC and git-versioned
+> 
+> - ✅ Use for general technical discussions
+> - ✅ Open-source collaboration
+> - ✅ Community-beneficial decisions
+> - ❌ NO business secrets or client information
+> - ❌ NO financial data or competitive strategy
+> 
+> **For sensitive brainstorms**, use `.agents/brainstorm/` (private, gitignored)
 
 ## 🎯 **BRAINSTORM SYSTEM OVERVIEW**
 
-This is the **single source of truth** for all brainstorm sessions in the CMD Tool For Helpdesk project. All AI Assistants work on this branch to ensure unified collaboration.
+This is the **public brainstorm hub** for technical and open collaboration in the CMD Tool For Helpdesk project. All AI Assistants can participate on this branch for non-sensitive discussions.
 
 ### **Why Single Branch Approach?**
 - ✅ **Single source of truth** - All sessions in one place
