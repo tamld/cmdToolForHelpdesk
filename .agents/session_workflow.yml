@@ -1,0 +1,25 @@
+session_workflow:
+  lifecycle:
+    - step: "Prepare"
+      actions:
+        - "Confirm `.agents/` is present locally (restore from backup if needed)."
+        - "Update availability in `.agents/state/availability.yml`."
+        - "Review specs and sanitized brainstorm notes."
+        - "Check `.agents/inbox/brainstorm_queue.yml` for pending requests."
+        - "Ensure `.agents/branch_progress.yml` exists for the current branch."
+    - step: "Execute"
+      actions:
+        - "Use `.agents/process/session_guidelines.yml` during implementation."
+        - "Log evidence (commands, outputs, screenshots) and update `branch_progress.yml`."
+        - "Record decisions in `.agents/records/decision_log.yml`."
+    - step: "Handoff"
+      actions:
+        - "Run `.agents/scripts/validate_handoff.sh`."
+        - "Update `.agents/records/backlog.yml` and `.agents/metrics_log.yml`."
+        - "Document reflection/reverse questions in `branch_progress.yml`."
+        - "Release locks and archive `.agents/` if substantial updates were made."
+        - "Publish sanitized summary to `brainstorm/hub` when remote agents need context."
+  internal_source_of_truth:
+    description:
+      - "`.agents/` is the offline SoT; never commit it."
+      - "Sanitized documentation lives under `brainstorm/` and docs/*."

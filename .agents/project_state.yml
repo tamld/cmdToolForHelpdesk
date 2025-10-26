@@ -1,0 +1,21 @@
+project:
+  name: "hash-checker"
+  last_reviewed: "2025-10-24"
+  releases:
+    latest:
+      version: "0.1.7"
+      date: "2025-10-22"
+      highlights:
+        - "GTK4-native dialog (feature flag)."
+        - "Distribution dry-run workflow."
+        - "macOS DMG renamed to hash-checker.dmg."
+  security:
+    signpath:
+      status: "vendor_declined"
+      last_contact: "2025-10-23"
+      next_attempt: "2026-01-15"
+      notes: "Improve adoption metrics before reapplying."
+  brainstorming:
+    sanitized_branch: "brainstorm/hub"
+    offline_notes: ".agents/brainstorms/"
+    reminder: "Publish sanitized summary within 24h of any offline brainstorm."

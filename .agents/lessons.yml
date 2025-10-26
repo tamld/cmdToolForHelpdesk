@@ -1,0 +1,27 @@
+lessons:
+  - id: LL-101
+    date: 2025-10-24
+    topic: "Sanitized Brainstorm Workflow"
+    problem: "Sensitive context was previously pushed to GitHub."
+    impact: "Breach risk and diverging SoT versions."
+    prevention:
+      checklist:
+        - "Keep raw brainstorm notes offline; publish sanitized summaries only."
+        - "Audit remote branches periodically to confirm `.agents/` is absent."
+        - "Reference offline evidence when responding to brainstorm requests."
+    evidence:
+      - "PR #55"
+      - "branch_progress.yml milestone 2025-10-24"
+  - id: LL-102
+    date: 2025-10-24
+    topic: "Offline Evidence Discipline"
+    problem: "Successor lacked context because command output was not recorded."
+    impact: "Follow-up sessions lost time recreating proof."
+    prevention:
+      checklist:
+        - "Document commands and paths in `branch_progress.yml`."
+        - "Store raw logs under `logs/<timestamp>/`."
+        - "Update `.agents/records/decision_log.yml` whenever the plan changes."
+    evidence:
+      - "logs/session-20251024/ (local)"
+      - "decision_log.yml entry DL-2025-10-24-01"

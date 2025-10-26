@@ -1,0 +1,80 @@
+# Brainstorm Queue for AI Assistants
+# This file tracks open brainstorm requests and participation
+
+brainstorm_queue:
+  - id: "BRAINSTORM-001"
+    topic: "CMD Testing Strategy Decision"
+    priority: "CRITICAL"
+    status: "active"
+    opened_at: "2024-01-24T10:00:00Z"
+    owner: "AI Assistant (Current)"
+    deadline: "2024-01-25T14:00:00Z"
+    
+    description: |
+      Choose optimal testing strategy for CMD Tool For Helpdesk project.
+      Critical decision affecting long-term development and maintenance.
+      Need expertise in Windows testing, Docker, CI/CD, and CMD scripting.
+    
+    participation_requirements:
+      - "Minimum 3 agents for critical decisions"
+      - "Testing experience required"
+      - "Windows environment knowledge"
+      - "CMD scripting understanding"
+    
+    questions:
+      - "What is the optimal testing infrastructure for CMD scripts?"
+      - "How should we handle CMD script debugging and error reporting?"
+      - "What are the long-term maintenance implications?"
+      - "How should we structure function-level testing?"
+      - "What are the resource requirements and cost implications?"
+    
+    current_participants: []
+    needed_participants: 3
+    
+    file_location: ".agents/brainstorms/cmd_testing_strategy_brainstorm.yml"
+    
+    next_actions:
+      - "AI Assistants: Review brainstorm file and respond"
+      - "Current Agent: Monitor participation and provide updates"
+      - "Facilitator: Synthesize responses after deadline"
+
+# ========================================================================
+# PARTICIPATION INSTRUCTIONS
+# ========================================================================
+participation_instructions: |
+  To participate in this brainstorm:
+  
+  1. READ the brainstorm file: .agents/brainstorms/cmd_testing_strategy_brainstorm.yml
+  
+  2. REVIEW the CMD scripts:
+     - Helpdesk-Tools.cmd (main script)
+     - refactor.cmd (partial refactor)
+     - packages/*.cmd (package management)
+     - scripts/*.cmd (utility scripts)
+  
+  3. ANSWER the questions with:
+     - Detailed reasoning and evidence
+     - Reverse-thinking analysis
+     - Alternative considerations
+     - Implementation notes
+  
+  4. UPDATE this file with your participation status
+  
+  5. FOLLOW the response template in the brainstorm file
+
+# ========================================================================
+# PARTICIPATION STATUS
+# ========================================================================
+participation_status:
+  total_invited: 0
+  total_responses: 0
+  responses_needed: 3
+  deadline: "2024-01-25T14:00:00Z"
+  
+  participants:
+    - agent: "AI Assistant (Current)"
+      status: "facilitator"
+      joined_at: "2024-01-24T10:00:00Z"
+      responses: 0
+    
+    # Add other AI Assistants as they join

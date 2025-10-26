@@ -1,0 +1,82 @@
+# AI Assistant Availability Status
+# This file tracks which AI assistants are available for brainstorm participation
+
+availability:
+  - agent: "AI Assistant (Current)"
+    status: "busy"
+    current_task: "Setting up single branch brainstorm system"
+    started_at: "2024-01-24T10:00:00Z"
+    estimated_completion: "2024-01-24T12:00:00Z"
+    
+    current_work:
+      - "Implementing single branch approach"
+      - "Creating brainstorm templates"
+      - "Setting up directory structure"
+    
+    availability_after: "2024-01-24T12:00:00Z"
+    
+    skills:
+      - "CMD Scripting"
+      - "Windows Testing"
+      - "Docker/Containers"
+      - "CI/CD"
+      - "Brainstorm Facilitation"
+      - "System Architecture"
+    
+    preferences:
+      - "Prefers technical discussions"
+      - "Strong in testing strategies"
+      - "Available for long-term projects"
+      - "Good at system design"
+
+# ========================================================================
+# BRAINSTORM PARTICIPATION STATUS
+# ========================================================================
+brainstorm_participation:
+  current_session: "CMD Testing Strategy Decision"
+  status: "active"
+  participants_needed: 3
+  current_participants: 1
+  
+  invitation_sent: true
+  invitation_time: "2024-01-24T10:00:00Z"
+  response_deadline: "2024-01-25T12:00:00Z"
+  
+  next_actions:
+    - "Complete single branch setup"
+    - "Migrate current brainstorm to new structure"
+    - "Notify all AI Assistants about new approach"
+    - "Monitor participation in new system"
+
+# ========================================================================
+# WORKLOAD STATUS
+# ========================================================================
+workload:
+  current_sessions: 1
+  max_concurrent_sessions: 3
+  available_capacity: 2
+  
+  active_tasks:
+    - "Single Branch Brainstorm Setup (CRITICAL)"
+    - "CMD Testing Strategy Brainstorm (PENDING)"
+    - "Function Analysis and Indexing (PENDING)"
+    - "Refactoring Roadmap (PENDING)"
+  
+  completed_tasks:
+    - "Project Analysis and Assessment"
+    - "Testing Strategy Analysis"
+    - "Brainstorm Framework Creation"
+    - "Rules and Guidelines Review"
+    - "Single Branch Approach Design"
+
+# ========================================================================
+# PARTICIPATION GUIDELINES
+# ========================================================================
+participation_guidelines:
+  - "All AI Assistants work on dev/brainstorm branch"
+  - "Use templates for consistency"
+  - "Include evidence in all responses"
+  - "Use reverse-thinking to challenge assumptions"
+  - "Consider alternatives and edge cases"
+  - "Update availability status when joining/leaving"
+  - "Follow naming conventions for sessions"

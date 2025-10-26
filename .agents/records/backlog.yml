@@ -1,0 +1,9 @@
+tasks:
+  - id: 61
+    description: "Maintain dual-environment brainstorm workflow"
+    branch: "feature/dmg-rename-issue48-a1"
+    owner: "codex"
+    status: "Done"
+    created_at: "2025-10-24T09:00:00Z"
+    updated_at: "2025-10-24T14:45:00Z"
+    notes: "PR #55 removes public `.agents`; sanitized docs live in docs/BRAINSTORM_WORKFLOW.md and branch brainstorm/hub."

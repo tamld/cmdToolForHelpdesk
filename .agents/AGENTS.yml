@@ -1,0 +1,66 @@
+agent_guide:
+  purpose: "Offline guardrails and onboarding steps for Hash Checker agents."
+  sources_of_truth:
+    - "Local SoT: this .agents/ directory (never commit or push)."
+    - "Public docs: README.md, docs/PLAN.md, docs/OPERATIONS.md, docs/TASKS.md."
+    - "Brainstorm Hub: branch dev/brainstorm (single source of truth for all brainstorms)."
+  startup_checklist:
+    - "Sync with current README/PLAN/TASKS before acting."
+    - "Update `.agents/state/availability.yml` with your status."
+    - "Check `brainstorm/sessions/active/` for open brainstorm sessions and participate."
+    - "Review `.agents/branch_progress.yml` for your branch or create it from template."
+  law_tiers:
+    hard:
+      - id: "LAW-LOCAL-001"
+        statement: "Do not publish `.agents/` content to any public branch."
+        enforcement: "Stop work and remove offending files before proceeding."
+      - id: "LAW-LOCAL-002"
+        statement: "Every status claim must reference local evidence (logs/, screenshots, decisions)."
+        enforcement: "Sessions without evidence cannot be closed."
+    soft:
+      - id: "GUIDE-BRAINSTORM-001"
+        statement: "All brainstorm sessions on dev/brainstorm branch; use single source of truth."
+        expectation: "Work on dev/brainstorm branch for all brainstorm participation."
+      - id: "GUIDE-SESSION-001"
+        statement: "Follow `session_guidelines.yml` for each session."
+        expectation: "Complete Prepare -> Execute -> Handoff loop each time."
+  workflow_communication:
+    language:
+      dialogue: "Vietnamese allowed in human conversations."
+      artefacts: "English for all SoT files."
+    notes:
+      - "Store raw logs in `logs/<timestamp>/` and reference them in branch progress."
+      - "Use `.agents/locks.yml` if multiple agents edit the same file offline."
+  branch_pr_process:
+    issue_first: "Identify the GitHub issue or ticket before starting work."
+    branch_naming:
+      - "feature/<descriptor>"
+      - "fix/<descriptor>"
+      - "chore/<descriptor>"
+      - "brainstorm/<topic>-<yyyymmdd>-a<author>"
+    expectations:
+      - "Run `make ci-linux-local` before pushing."
+      - "Tag @codex review on PRs and enable auto-merge once CI is green."
+      - "Delete merged branches on the remote."
+  core_principles:
+    - "Each session adheres to Plan -> Execute -> Update."
+    - "Record assumptions and decisions in `.agents/records/decision_log.yml`."
+    - "Keep `.agents/records/backlog.yml` aligned with public TASKS."
+    - "Brainstorm hub is on dev/brainstorm branch; all AI Assistants work there."
+  session_lifecycle:
+    - "Prepare - follow `.agents/process/session_guidelines.yml` and update availability."
+    - "Execute - log milestones, evidence, and outcomes."
+    - "Document & Handoff - run local validation, update backlog/metrics, release locks."
+  testing_expectations:
+    - "`make rust-test` and `cargo test` for CLI code."
+    - "`make rust-gui-build` / GUI smoke where applicable."
+    - "Attach command outputs to branch progress milestones."
+  reporting_template:
+    - "Sources reviewed: ..."
+    - "Policies/guardrails touched: ..."
+    - "Backlog updates: ..."
+    - "Risks or conflicts: ..."
+    - "Next actions: ..."
+  escalation:
+    - "If local SoT conflicts with public docs, pause and escalate before publishing."
+    - "Security or signing issues require human approval regardless of code readiness."

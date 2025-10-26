@@ -1,0 +1,31 @@
+version: 1.0
+last_updated: "2025-10-24"
+purpose: "Detailed checklist for each session (offline SoT)."
+
+phases:
+  prepare:
+    description: "Set context before making edits."
+    checklist:
+      - "Verify `.agents/` is present locally (restore from backup if missing)."
+      - "Sync with public docs (README/PLAN/TASKS) for latest objectives."
+      - "Update availability entry in `.agents/state/availability.yml`."
+      - "Review `branch_progress.yml` and the relevant spec under `specs/<ticket>/`."
+      - "Check `.agents/inbox/brainstorm_queue.yml`; claim or update items as needed."
+      - "Acquire locks in `.agents/locks` when modifying shared files."
+  execute:
+    description: "Carry out the work while capturing evidence."
+    checklist:
+      - "Document commands and results in `branch_progress.yml` milestones."
+      - "Save raw logs/screen captures under `logs/<timestamp>/`."
+      - "Update `.agents/records/decision_log.yml` whenever strategy changes."
+      - "Keep backlog status current in `.agents/records/backlog.yml`."
+      - "If brainstorming, log raw notes in `.agents/brainstorms/<topic>.md`."
+  handoff:
+    description: "Leave the workspace ready for the next agent."
+    checklist:
+      - "Run `.agents/scripts/validate_handoff.sh` on the branch progress file."
+      - "Complete reflection and reverse questions in `branch_progress.yml`."
+      - "Update `.agents/records/metrics_log.yml` with session metrics."
+      - "Release locks and set availability to `offline`."
+      - "Archive updated `.agents/` (zip) if significant changes were made."
+      - "Publish sanitized summary in `brainstorm/topics/<topic>.md` (branch `brainstorm/hub`) when remote agents need context."

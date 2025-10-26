@@ -1,0 +1,124 @@
+# Response Template for AI Assistants
+# Use this template when responding to brainstorm sessions
+
+agent_name: "AI Assistant Name"
+timestamp: "YYYY-MM-DDTHH:MM:SSZ"
+session_id: "session-topic-YYYYMMDD-owner"
+question_id: 1
+
+# ========================================================================
+# RESPONSE CONTENT
+# ========================================================================
+position: "AGREE | DISAGREE | CONDITIONAL"
+reasoning: |
+  Detailed explanation of your position.
+  Include your analysis and thought process.
+  Explain why you support or oppose this approach.
+
+evidence:
+  - "file: Helpdesk-Tools.cmd:123-145"
+  - "command: docker run --rm windows-container test"
+  - "test_result: test-results.jsonl:function_tests:pass_rate"
+  - "performance: execution_time:45s, memory_usage:256MB"
+  - "error_log: error-details.log:error_type:resolution"
+
+reverse_thinking:
+  - "What if this approach fails? Fallback strategy: ..."
+  - "What are the hidden costs? Resource overhead: ..."
+  - "What if requirements change? Adaptability: ..."
+  - "What are the risks? Mitigation strategies: ..."
+
+conditions:
+  - "Only if Windows Container support is available"
+  - "Provided that Docker Desktop is installed"
+  - "Assuming team has Windows expertise"
+  - "If budget allows for additional resources"
+
+alternatives_considered:
+  - "GitHub Actions: Pros/Cons"
+  - "WSL2 Testing: Pros/Cons"
+  - "VM-based Testing: Pros/Cons"
+  - "Hybrid approach: Pros/Cons"
+
+implementation_notes:
+  - "Setup steps required"
+  - "Dependencies needed"
+  - "Potential blockers"
+  - "Timeline estimates"
+  - "Resource requirements"
+
+# ========================================================================
+# ADDITIONAL ANALYSIS
+# ========================================================================
+risk_assessment:
+  technical_risks:
+    - "Risk: Description and mitigation"
+    - "Risk: Description and mitigation"
+  
+  operational_risks:
+    - "Risk: Description and mitigation"
+    - "Risk: Description and mitigation"
+  
+  business_risks:
+    - "Risk: Description and mitigation"
+    - "Risk: Description and mitigation"
+
+cost_analysis:
+  setup_costs:
+    - "Cost: Description and amount"
+    - "Cost: Description and amount"
+  
+  ongoing_costs:
+    - "Cost: Description and amount"
+    - "Cost: Description and amount"
+  
+  hidden_costs:
+    - "Cost: Description and amount"
+    - "Cost: Description and amount"
+
+scalability_considerations:
+  - "How will this scale with project growth?"
+  - "What are the limitations?"
+  - "How can we adapt to future changes?"
+
+# ========================================================================
+# RECOMMENDATIONS
+# ========================================================================
+primary_recommendation: |
+  Your main recommendation with clear rationale.
+
+secondary_options:
+  - "Alternative 1: Description and when to use"
+  - "Alternative 2: Description and when to use"
+
+implementation_priority:
+  - "Phase 1: Immediate actions"
+  - "Phase 2: Short-term goals"
+  - "Phase 3: Long-term objectives"
+
+success_metrics:
+  - "Metric 1: How to measure success"
+  - "Metric 2: How to measure success"
+  - "Metric 3: How to measure success"
+
+# ========================================================================
+# QUESTIONS FOR OTHER PARTICIPANTS
+# ========================================================================
+questions_for_others:
+  - "Question 1: What do you think about...?"
+  - "Question 2: How would you handle...?"
+  - "Question 3: What are your concerns about...?"
+
+# ========================================================================
+# ADDITIONAL CONTEXT
+# ========================================================================
+additional_context: |
+  Any additional information that might be relevant.
+  Include any assumptions you're making.
+  Mention any limitations in your analysis.
+
+references:
+  - "Document: Link or reference"
+  - "Command: Command and output"
+  - "Test: Test file and results"
+  - "Experience: Previous experience or knowledge"

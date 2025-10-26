@@ -1,0 +1,142 @@
+# Brainstorm Session Template
+# Use this template to create new brainstorm sessions
+
+topic: "Session Topic"
+opened_at: "YYYY-MM-DDTHH:MM:SSZ"
+owner: "AI Assistant Name"
+status: "active"  # active | resolved | archived
+priority: "high"  # low | medium | high | critical
+
+context:
+  goal: |
+    Describe the objective of the brainstorm session.
+    What decision needs to be made?
+    Why is this important?
+  
+  project_scope:
+    - "Relevant files or components"
+    - "Current challenges or issues"
+    - "Target outcomes"
+  
+  related_branches: []
+  references:
+    - "file:path:line_range"
+    - "command:output"
+    - "test_result:file:test_case:result"
+
+questions:
+  - id: 1
+    text: "First question"
+    category: "technical"  # technical | operational | strategic | business
+    priority: "high"  # low | medium | high | critical
+    context: |
+      Additional context for this question.
+      What should participants consider?
+  
+  - id: 2
+    text: "Second question"
+    category: "operational"
+    priority: "medium"
+    context: |
+      Additional context for this question.
+
+responses: []
+
+outcome:
+  summary: ""
+  next_steps: []
+  artifacts_created: []
+  unresolved_conflicts: []
+  process_learnings: []
+
+# ========================================================================
+# BRAINSTORM RULES FOR AI ASSISTANTS
+# ========================================================================
+participation_requirements:
+  - "Minimum 3 agents for critical decisions"
+  - "All responses must include evidence"
+  - "Use reverse-thinking to challenge assumptions"
+  - "Consider alternatives and edge cases"
+
+evidence_requirements:
+  - "Cite specific files: file:path:line_number"
+  - "Reference test results: test_file:test_case:result"
+  - "Include performance metrics: execution_time, memory_usage"
+  - "Provide error logs: error_file:error_type:resolution"
+
+decision_criteria:
+  - "Technical feasibility"
+  - "Resource requirements"
+  - "Maintenance overhead"
+  - "Long-term sustainability"
+  - "Team collaboration impact"
+
+escalation_triggers:
+  - "No consensus after 3 rounds"
+  - "Conflicting evidence from different agents"
+  - "Value judgments requiring human input"
+  - "Resource constraints beyond project scope"
+
+# ========================================================================
+# RESPONSE TEMPLATE FOR AI ASSISTANTS
+# ========================================================================
+response_template: |
+  agent_name: "AI Assistant Name"
+  timestamp: "YYYY-MM-DDTHH:MM:SSZ"
+  question_id: 1
+  
+  position: "AGREE | DISAGREE | CONDITIONAL"
+  reasoning: "Detailed explanation with evidence"
+  
+  evidence:
+    - "file: Helpdesk-Tools.cmd:123-145"
+    - "command: docker run --rm windows-container test"
+    - "test_result: test-results.jsonl:function_tests:pass_rate"
+    - "performance: execution_time:45s, memory_usage:256MB"
+  
+  reverse_thinking:
+    - "What if this approach fails? Fallback strategy: ..."
+    - "What are the hidden costs? Resource overhead: ..."
+    - "What if requirements change? Adaptability: ..."
+  
+  conditions:
+    - "Only if Windows Container support is available"
+    - "Provided that Docker Desktop is installed"
+    - "Assuming team has Windows expertise"
+  
+  alternatives_considered:
+    - "GitHub Actions: Pros/Cons"
+    - "WSL2 Testing: Pros/Cons"
+    - "VM-based Testing: Pros/Cons"
+  
+  implementation_notes:
+    - "Setup steps required"
+    - "Dependencies needed"
+    - "Potential blockers"
+
+# ========================================================================
+# BRAINSTORM TIMELINE
+# ========================================================================
+timeline:
+  round_1_observations: "YYYY-MM-DDTHH:MM:SSZ - YYYY-MM-DDTHH:MM:SSZ"
+  round_2_responses: "YYYY-MM-DDTHH:MM:SSZ - YYYY-MM-DDTHH:MM:SSZ"
+  round_3_synthesis: "YYYY-MM-DDTHH:MM:SSZ - YYYY-MM-DDTHH:MM:SSZ"
+  decision_deadline: "YYYY-MM-DDTHH:MM:SSZ"
+
+# ========================================================================
+# INVITATION TO AI ASSISTANTS
+# ========================================================================
+invitation: |
+  🤖 AI ASSISTANTS: Please participate in this brainstorm session!
+  
+  This decision will impact the CMD Tool For Helpdesk project.
+  We need your expertise and input.
+  
+  To participate:
+  1. Read this session file carefully
+  2. Review the referenced files and context
+  3. Provide detailed responses with evidence
+  4. Use reverse-thinking to challenge assumptions
+  5. Consider alternatives and edge cases
+  
+  Your input is crucial for making the right decision!

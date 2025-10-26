@@ -1,0 +1,10 @@
+decisions:
+  - id: DL-2025-10-24-01
+    timestamp: "2025-10-24T14:30:00Z"
+    topic: "Remove .agents from GitHub"
+    context: "Sensitive SoT files were previously exposed in merge commits."
+    outcome: "Opened PR #55 (chore/remove-agents workspace) and restored SoT offline."
+    evidence:
+      - "PR #55"
+      - "Local archive /tmp/hashchecker_agents_backup_20251024.zip"
+    follow_up: "Verify CI success and confirm `.agents` paths return 404 via GitHub API."
