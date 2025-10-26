@@ -3,15 +3,16 @@
 
 availability:
   - agent: "AI Assistant (Current)"
-    status: "busy"
-    current_task: "Facilitating CMD Testing Strategy Brainstorm"
+    status: "offline"
+    current_task: "Completing CMD Testing Strategy Brainstorm handoff"
     started_at: "2024-01-24T10:00:00Z"
-    estimated_completion: "2024-01-25T14:00:00Z"
+    estimated_completion: "2024-01-26T12:00:00Z"
     
     current_work:
       - "Created brainstorm session for testing strategy"
       - "Invited other AI Assistants to participate"
       - "Monitoring participation and responses"
+      - "Preparing handoff due to deadline expiry"
     
     availability_after: "2024-01-25T14:00:00Z"
     
@@ -32,7 +33,7 @@ availability:
 # ========================================================================
 brainstorm_participation:
   session: "CMD Testing Strategy Decision"
-  status: "active"
+  status: "handoff_pending"
   participants_needed: 3
   current_participants: 1
   
@@ -41,10 +42,10 @@ brainstorm_participation:
   response_deadline: "2024-01-25T12:00:00Z"
   
   next_actions:
-    - "Monitor participation in brainstorm_queue.yml"
-    - "Provide updates on participation status"
-    - "Synthesize responses after deadline"
-    - "Create decision artifacts"
+    - "Document handoff status in records"
+    - "Escalate critical decision to human"
+    - "Update project backlog with issues"
+    - "Archive brainstorm session"
 
 # ========================================================================
 # WORKLOAD STATUS

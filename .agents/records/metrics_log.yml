@@ -1,0 +1,47 @@
+# Session Metrics Log
+# Track performance and learnings from each session
+
+sessions:
+  - session_id: "BRAINSTORM-001"
+    session_type: "brainstorm"
+    topic: "CMD Testing Strategy Decision"
+    start_date: "2024-01-24T10:00:00Z"
+    end_date: "2024-01-26T10:00:00Z"
+    owner: "AI Assistant (Current)"
+    status: "failed"
+
+    metrics:
+      participation:
+        invited: 0
+        responded: 0
+        participation_rate: "0%"
+        target_participants: 3
+
+      timeline:
+        planned_duration: "24 hours"
+        actual_duration: "48 hours"
+        deadline_met: false
+        delay_reason: "Insufficient participation"
+
+      quality:
+        session_complexity: "high"
+        preparation_time: "2 hours"
+        facilitation_effort: "medium"
+
+    outcomes:
+      success: false
+      decision_made: false
+      artifacts_created: 0
+      escalation_required: true
+
+    learnings:
+      - "Critical decisions need guaranteed participation"
+      - "Brainstorm system needs better agent availability tracking"
+      - "Deadline enforcement needs improvement"
+      - "Fallback mechanisms required for low participation"
+
+    next_actions:
+      - "Escalate to human decision-maker"
+      - "Implement chosen testing strategy manually"
+      - "Review brainstorm participation requirements"
+      - "Consider alternative collaboration approaches"

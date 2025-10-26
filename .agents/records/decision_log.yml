@@ -8,3 +8,14 @@ decisions:
       - "PR #55"
       - "Local archive /tmp/hashchecker_agents_backup_20251024.zip"
     follow_up: "Verify CI success and confirm `.agents` paths return 404 via GitHub API."
+
+  - id: DL-2024-01-26-01
+    timestamp: "2024-01-26T10:00:00Z"
+    topic: "Escalate CMD Testing Strategy Decision"
+    context: "Critical brainstorm session expired with insufficient participation (1/3 agents). Cannot make testing strategy decision without minimum participation."
+    outcome: "Escalating to human decision-maker for CMD testing strategy choice."
+    evidence:
+      - "brainstorm/sessions/active/cmd-testing-strategy-20240124.yml"
+      - ".agents/state/availability.yml"
+      - ".agents/inbox/brainstorm_queue.yml"
+    follow_up: "Human will decide testing approach and implement accordingly."
