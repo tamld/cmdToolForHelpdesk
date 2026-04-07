@@ -3,11 +3,14 @@
 <p align="center">
   <img src="https://img.shields.io/badge/status-active-brightgreen" alt="Status">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
-  <img src="https://img.shields.io/github/downloads/tamld/tao-repo-tren-github/total.svg">
+  <img src="https://img.shields.io/badge/platform-Windows-0078D6?logo=windows&logoColor=white" alt="Platform">
+  <img src="https://img.shields.io/badge/shell-CMD%20%7C%20PowerShell-blue?logo=powershell&logoColor=white" alt="Shell">
+  <img src="https://img.shields.io/badge/Winget-supported-9cf?logo=microsoft&logoColor=white" alt="Winget">
 </p>
 <p align="center">
-  <img src="https://img.shields.io/github/forks/tamld/tao-repo-tren-github.svg">
-  <img src="https://img.shields.io/github/stars/tamld/tao-repo-tren-github.svg">
+  <img src="https://img.shields.io/github/downloads/tamld/cmdToolForHelpdesk/total.svg">
+  <img src="https://img.shields.io/github/forks/tamld/cmdToolForHelpdesk.svg">
+  <img src="https://img.shields.io/github/stars/tamld/cmdToolForHelpdesk.svg">
   <img src="https://img.shields.io/github/followers/tamld.svg?style=social&label=Follow&maxAge=2592000">
 </p>
 
