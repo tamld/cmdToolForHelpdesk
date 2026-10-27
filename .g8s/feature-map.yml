@@ -1,0 +1,38 @@
+schema_version: "2.0"
+inherits_spec_kit: "g8s/offer/profiles/utility@v0.21"
+
+hotspots:
+  - id: "HOT-DOCS-01"
+    paths:
+      - "README.md"
+      - "AGENTS.md"
+      - ".g8s/**"
+    policy: "serialize"
+    rationale: "Shared repository governance and top-level documentation"
+
+features:
+  - id: "FEAT-CORE-01"
+    title: "Core Repository Surface & Automation"
+    persona_story: "As a repository maintainer or agent, I need deterministic boundaries and verification checks so that mutations remain safe and auditable."
+    collision_domain: "CD-CORE"
+    srs_reqs:
+      - "FR-CORE-01"
+    owned_paths:
+      - "**"
+      - "!README.md"
+      - "!AGENTS.md"
+      - "!.g8s/**"
+    shared_paths:
+      - "README.md"
+      - "AGENTS.md"
+      - ".g8s/**"
+    code_paths:
+      - "**"
+    invariants:
+      - "All changes pass repository CI and g8s offer check gates"
+    visible_tests:
+      - "tools/ci_spec_code_sync.sh"
+    verifier_class: "ci-gates"
+    blast_radius:
+      depends_on: []
+      direct_consumers: []

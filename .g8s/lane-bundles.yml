@@ -1,0 +1,5 @@
+schema_version: "lane-bundles.v1"
+# utility profile — R/F dominant, audit per PR
+default_lane: R
+audit_cadence: per-pr
+dominant_dimensions: [tests, docs-freshness]

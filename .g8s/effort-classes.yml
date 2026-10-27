@@ -1,0 +1,25 @@
+# Effort Classes Configuration — Utility Profile (issue #550 / C2)
+# Maps task write-scope paths to reasoning effort defaults.
+# Schema: schema_version "effort-classes.v1", first match by priority wins.
+# Unregistered tasks implicitly default to medium (fail-open floor).
+
+schema_version: "effort-classes.v1"
+
+classes:
+  # pilot-proven: doc-freshness audits and markdown updates run reliably at low effort (SCORECARD Gate 3.4)
+  - name: docs
+    default_effort: low
+    priority: 10
+    paths:
+      - "*.md"
+      - "docs/**"
+
+  - name: test
+    default_effort: medium
+    priority: 20
+    paths:
+      - "tests/**"
+      - "*_test.*"
+      - "**/*_test.*"
+      - "**/*.test.*"
+      - "**/*.spec.*"

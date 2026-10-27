@@ -1,0 +1,17 @@
+schema_version: "verifier-classes.v1"
+# Verifier Classes Configuration (scaffolded by g8s offer init)
+# Maps task write-scope paths to machine verification check bundles.
+
+classes:
+  - name: ci-gates
+    status: advisory
+    priority: 10
+    paths:
+      - "**"
+    checks:
+      - type: script
+        run: tools/ci_link_integrity.sh
+      - type: script
+        run: tools/ci_structure_sync.sh
+      - type: script
+        run: tools/ci_spec_code_sync.sh
